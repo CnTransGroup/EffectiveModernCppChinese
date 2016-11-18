@@ -11,9 +11,9 @@
 	2. [Item 2:理解auto类型推导[已翻译]](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item2.md)
 	3. [Item 2:理解decltype[已翻译]](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item3.md)
 	3. [Item 2:学会查看类型推导结果[已翻译]](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item4.md)
-2.auto
+2. auto
 
 
 ## 翻译相关
 + constness译为常量性，volatitleness译为易变性，reference-ness视情况直接译为引用<br>
-+ 诚恳接受typo-pull-request以及错译pr
++ 诚恳接受typo-pull-request以及错译pr<br>
