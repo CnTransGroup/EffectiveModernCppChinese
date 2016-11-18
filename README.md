@@ -6,6 +6,6 @@
 # 目录
 
 1. 类型推导
-	1. [Item 1:理解模板类型推导[已翻译]](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/item1.md)
-	2. [Item 2:理解auto类型推导[已翻译]](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/item2.md)
-	3. [Item 2:理解decltype[已翻译]](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/item3.md)
+	1. [Item 1:理解模板类型推导[已翻译]](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item1.md)
+	2. [Item 2:理解auto类型推导[已翻译]](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item2.md)
+	3. [Item 2:理解decltype[已翻译]](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item3.md)
