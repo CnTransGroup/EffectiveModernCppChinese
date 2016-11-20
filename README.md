@@ -9,8 +9,8 @@
 1. 类型推导
 	1. [Item 1:理解模板类型推导[已翻译]](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item1.md)
 	2. [Item 2:理解auto类型推导[已翻译]](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item2.md)
-	3. [Item 2:理解decltype[已翻译]](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item3.md)
-	3. [Item 2:学会查看类型推导结果[已翻译]](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item4.md)
+	3. [Item 3:理解decltype[已翻译]](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item3.md)
+	3. [Item 4:学会查看类型推导结果[已翻译]](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item4.md)
 2. auto
 	1. [Item 5:优先考虑auto而非显式类型声明[已翻译]](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/2.auto/item5.md)
 
