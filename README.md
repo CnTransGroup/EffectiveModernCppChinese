@@ -14,7 +14,7 @@
 2. auto
 	1. [Item 5:优先考虑auto而非显式类型声明](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/2.auto/item5.md)
 	2. [Item 6:auto推导若非己愿，使用显式类型初始化惯用法](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/2.auto/item6.md)
-3.移步现代C++
+3. 移步现代C++
 	1. [Item 7:区别使用()和{}创建对象[未翻译]]()
 
 ## 翻译相关
