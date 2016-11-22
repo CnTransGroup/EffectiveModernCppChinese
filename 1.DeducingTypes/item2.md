@@ -74,7 +74,7 @@ auto& func2 = someFunc; //func2的类型是void(&)(int,double)
 int x1=27;
 int x2(27);
 ````
-C++11由于也添加了用于支持**uniform initialization**的语法：
+C++11由于也添加了用于支持统一初始化（**uniform initialization**）的语法：
 ````cpp
 int x3={27};
 int x47{27};
