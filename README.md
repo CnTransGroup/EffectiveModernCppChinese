@@ -16,7 +16,7 @@
 	2. [Item 6:auto推导若非己愿，使用显式类型初始化惯用法](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/2.auto/item6.md)
 3. 移步现代C++
 	1. [Item 7:区别使用()和{}创建对象](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item7.md)
-	2. Item 8:优先考虑nullptr而非0和NULL
+	2. [Item 8:优先考虑nullptr而非0和NULL]((https://github.com/racaljk/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item8.md))
 	3. Item 9:优先考虑alias声明而非typedefs
 	4. Item 10:优先考虑域内enum而非域外enum
 	5. Item 11:优先考虑使用delete而非使用未定义的私有声明
