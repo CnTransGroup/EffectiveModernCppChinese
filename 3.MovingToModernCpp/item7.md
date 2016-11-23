@@ -269,7 +269,10 @@ std::vector<int> v;
 
 ## 译注
 [0] 结合上下文得知这里的"任何地方"指的是初始化表达式存在的地方而不是广义上源代码的各处。
+
 [1] 注意，这里的括号初始化指的是花括号初始化，在没有歧义的情况下下文的括号初始化指的都是用花括号进行初始化；当与小括号初始化同时存在并可能产生歧义时我会直接指出
+
 [2] 所谓最令人头疼的解析即_most vexing parse_，更多信息请参见https://en.wikipedia.org/wiki/Most_vexing_parse
+
 [3] 参见https://en.wikipedia.org/wiki/Edge_case
 

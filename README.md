@@ -2,11 +2,12 @@
 ![bookLogo](http://p1.bpimg.com/567571/bc7c228ba08fae01.png)
 
 > ！本书要求读者有较高水平的C++知识<br>
-> ！未翻译的条款名称现在直译，翻译时可能适当修改 
+> ！未翻译的条款名称现在直译，翻译时可能适当修改<br>
+> ！条款后的revised表明该条款已经经过初步修订<br>
 
 # 目录
 1. 类型推导
-	1. [Item 1:理解模板类型推导](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item1.md)
+	1. [Item 1:理解模板类型推导](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item1.md)_revised_
 	2. [Item 2:理解auto类型推导](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item2.md)
 	3. [Item 3:理解decltype](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item3.md)
 	3. [Item 4:学会查看类型推导结果](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item4.md)
@@ -59,6 +60,7 @@
 ## 翻译相关
 + constness译为常量性，volatitleness译为易变性，reference-ness视情况直接译为引用
 + built-in译为内置而不是内建
++ literal译为字面值
 + 诚恳接受typo-pull-request以及错译pr
 + 我蒟多线程方面(7.)基础薄弱，所幸译前还有大量时间进行知识储备
 + 翻译到后面我觉得要想坚持不写译注几乎不可能，所以译注将会以_[num]_标出，详细内容将会出现在文末。
