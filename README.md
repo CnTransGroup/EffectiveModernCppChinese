@@ -1,5 +1,5 @@
 # 《Effective Modern C++ 》翻译
-![bookLogo](http://p1.bpimg.com/567571/f96696591a3857f4.png)
+![bookLogo](http://p1.bpimg.com/567571/bc7c228ba08fae01.png)
 
 > ！本书要求读者有较高水平的C++知识<br>
 > ！未翻译的条款名称现在直译，翻译时可能适当修改 
