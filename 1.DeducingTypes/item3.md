@@ -1,4 +1,4 @@
-## Item 3:Understand decltype
+## Item 3: Understand decltype
 条款三:理解decltype
 
 **decltype**是一个奇怪的东西。给它一个名字或者表达式**decltype**就会告诉你名字或者表达式的类型。通常，它会精确的告诉你你想要的结果。但有时候它得出的结果也会让你挠头半天最后只能网上问答求助寻求解释。
@@ -96,7 +96,7 @@ decltype(auto) myWidget2 = cw;  //decltype类型推导
 template<typename Container,typename Index>
 decltype(auto) authAndAccess(Container& c,Index i);
 ````
-容器通过传引用的方式传递非常量左值引用，因为返回一个引用允许用户可以修改容器。但是这意味着在这个函数里面不能传值调用，右值不能被绑定到左值引用上（除非这个左值引用时一个const，但是这里明显不是）。
+容器通过传引用的方式传递非常量左值引用，因为返回一个引用允许用户可以修改容器。但是这意味着在这个函数里面不能传值调用，右值不能被绑定到左值引用上（除非这个左值引用是一个const，但是这里明显不是）。
 
 公认的向**authAndAccess**传递一个右值是一个[edge case](https://en.wikipedia.org/wiki/Edge_case)。一个右值容器，是一个临时对象，通常会在authAndAccess调用结束被销毁，这意味着authAndAccess返回的引用将会成为一个悬置的(dangle)引用。但是使用向authAndAccess传递一个临时变量也并不是没有意义，有时候用户可能只是想简单的获得临时容器中的一个元素的拷贝，比如这样：
 ````cpp
@@ -121,7 +121,7 @@ authAndAccess(Container&& c,Index i){
     return std::forward<Container>(c)[i];
 }
 ````
-这样就能对我们的期望交上一份满意的答卷，但是这要求编译器支持C++14。如果你没有这样的编译器，你还需要使用C++11版本的模板，它看起来和C++14版本的极为相识，除了你不得不指定函数返回类型之外：
+这样就能对我们的期望交上一份满意的答卷，但是这要求编译器支持C++14。如果你没有这样的编译器，你还需要使用C++11版本的模板，它看起来和C++14版本的极为相似，除了你不得不指定函数返回类型之外：
 ````cpp
 template<typename Container,typename Index>     //最终的C++11版本
 decltype(auto)
@@ -145,7 +145,7 @@ int x =0;
 ````
 中，x是一个变量的名字，所以**decltype(x)**是**int**。但是如果用一个小括号包覆这个名字，比如这样**(x)**，就会产生一个比名字更复杂的表达式。对于名字来说，**x**是一个左值，C++11定义了表达式**(x)**也是一个左值。因此**decltype((x))**是**int&**。用小括号覆盖一个名字可以改变decltype对于名字产生的结果。
 
-在C++11中这稍微有点奇怪，但是由于C++14允许了**decltype(auto）**的使用，这意味着你在函数返回语句中细微的改变就可以影响类型的推导：
+在C++11中这稍微有点奇怪，但是由于C++14允许了**decltype(auto)**的使用，这意味着你在函数返回语句中细微的改变就可以影响类型的推导：
 ````cpp
 decltype(auto) f1()
 {
