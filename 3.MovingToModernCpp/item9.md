@@ -1,14 +1,14 @@
 ## Item 9:Prefer alias declarations to typedefs
 条款九:优先考虑别名声明而非typedefs
 
-我相信每个人都同意使用STL容器是个好主意，并且我希望Item18能说服你让你觉得使用**std:unique_ptr**也是个好主意，但我猜没有人喜欢写上几次**“std::unique_ptr<std::unor dered_map<std::string, std::string>>**这样的类型。
-它可能会让患上腕管综合征的风险大增加。
+我相信每个人都同意使用STL容器是个好主意，并且我希望Item18能说服你让你觉得使用**std:unique_ptr**也是个好主意，但我猜没有人喜欢写上几次 `std::unique_ptr<std::unordered_map<std::string,std::string>>`这样的类型。
+它可能会让患上腕管综合征的风险大大增加。
 
-要想不患病也很简单，可以使用**typedef**：
+避免上述医疗事故也很简单，引入**typedef**即可：
 ````cpp
 typedef  std::unique_ptr<std::unordered_map<std::string, std::string>>  UPtrMapSS; 
 ````
-但**typedef**是C++98的东西，它可以在C++11中使用，但是C++11也提供了一个别名声明（alias declaration）：
+但**typedef**是C++98的东西。虽然它可以在C++11中工作，但是C++11也提供了一个别名声明（alias declaration）：
 ````cpp
 using UPtrMapSS =  std::unique_ptr<std::unordered_map<std::string, std::string>>;
 ````
@@ -16,15 +16,18 @@ using UPtrMapSS =  std::unique_ptr<std::unordered_map<std::string, std::string>>
 
 这里，在说它们之前我想提醒一下很多人都发现当声明一个函数指针时别名声明更容易理解：
 ````cpp
-// FP表示一个指向函数的指针，这个函数带有int和const std::string&形参，返回void
+// FP是一个指向函数的指针的同义词，它指向的函数带有int和const std::string&形参，不返回任何东西
 typedef void (*FP)(int, const std::string&);      // typedef
-using FP = void (*)(int, const std::string&);     // 别名声明
+
+//同上
+using FP = void (*)(int, const std::string&);     // 别名声明
 ````
+
 当然，两个结构都不是非常让人满意，没有人喜欢花大量的时间处理函数指针类型的别名_[0]_，所以至少在这里，没有一个吸引人的理由让你觉得别名声明比**typedef**好。
 
-但是在这里有一个能吸引你的理由：模板。特别的，别名声明可以被模板化但是**typedef**不能。
-因此C++11程序员可以很直接的表达一些C++98程序员只能把**typedef**嵌套进模板化的**struct**才能表达的东西，
-考虑顶一个链表的别名，链表使用自定义的内存分配器，**MyAlloc**。
+不过有一个地方使用别名声明吸引人的理由是存在的：模板。特别的，别名声明可以被模板化但是**typedef**不能。
+这使得C++11程序员可以很直接的表达一些C++98程序员只能把**typedef**嵌套进模板化的**struct**才能表达的东西，
+考虑一个链表的别名，链表使用自定义的内存分配器，**MyAlloc**。
 
 使用别名模板，这真是太容易了：
 ````cpp
@@ -87,18 +90,18 @@ private:
 在**Widget**模板内，如果**MyAllocList<Wine>::typ**表示的类型依赖于**T**，编译器就会坚持要求你在前面加上**typename**。
 
 如果你尝试过模板元编程（TMP）， 你一定会碰到取模板类型参数然后基于它创建另一种类型的情况。
-举个例子，给一个类型**T**，如果你想去掉**T**的常量修饰和引用修饰，比如你想把**const std::string&**变成**const std::string&**。
+举个例子，给一个类型**T**，如果你想去掉**T**的常量修饰和引用修饰，比如你想把**const std::string&**变成**const std::string**。
 又或者你想给一个类型加上**const**或左值引用，比如把**Widget**变成**const Widget**或**Widget&**。
 （如果你没有用过玩过模板元编程，太遗憾了，因为如果你真的想成为一个高效C++程序员_[1]_，至少你需要熟悉C++的基础。你可以看看我在Item23，27提到的类型转换）。
 C++11在_type traits_中给了你一系列工具去实现类型转换，如果要使用这些模板请包含头文件<type_traits>。
-里面不全是类型转换的工具，也包含一些预测接口的工具。给一个类型**T**，你想将它应用于转换中，结果类型就是**std::transformation <T>::type**，比如：
+里面不全是类型转换的工具，也包含一些`predictable`接口的工具。给一个类型**T**，你想将它应用于转换中，结果类型就是**std::transformation <T>::type**，比如：
 ````cpp
-std::remove_const<T>::type           // 从T中产出const T
-std::remove_reference<T>::type       // 从T中产出T&和T&&
-std::add_lvalue_reference<T>::type   // 从T&中产出T
+std::remove_const<T>::type           // 从const T中产出T
+std::remove_reference<T>::type       // 从T&和T&&中产出T
+std::add_lvalue_reference<T>::type   // 从T中产出T&
 ````
 注释仅仅简单的中介了类型转换做了什么，所以不要太随便的使用。
-在项目要它们之前，你最好看看它们的详细说明书。
+在你的项目使用它们之前，你最好看看它们的详细说明书。
 尽管写了一些，但我这里不是想给你一个关于type traits使用的教程。注意类型转换尾部的**::type**。
 如果你在一个模板内部使用类型参数，你也需要在它们前面加上**typename**。
 至于为什么要这么做是因为这些type traits是通过在**struct**内嵌套**typedef**来实现的。
