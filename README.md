@@ -1,7 +1,9 @@
 # 《Effective Modern C++ 》翻译
 ![bookLogo](http://p1.bpimg.com/567571/bc7c228ba08fae01.png)
 
-> ！本书要求读者有较高水平的C++知识<br>
+> ! 2017.10开始更新<br>
+> ! 我没有版权，我没有版权，我没有版权，侵权请告知1948638989@qq.com<br>
+> ！本书要求读者具有C++基础<br>
 > ！未翻译的条款名称现在直译，翻译时可能适当修改<br>
 > ！条款后的revised表明该条款已经经过初步修订<br>
 
@@ -18,7 +20,7 @@
 	1. [Item 7:区别使用()和{}创建对象](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item7.md)
 	2. [Item 8:优先考虑nullptr而非0和NULL](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item8.md)
 	3. [Item 9:优先考虑别名声明而非typedefs](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item9.md)
-	4. Item 10:优先考虑域内enum而非域外enum
+	4. [Item 10:优先考虑限域枚举而非未限域枚举](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item10.md) _updating_
 	5. Item 11:优先考虑使用delete而非使用未定义的私有声明
 	6. Item 12:使用override声明重载函数
 	7. Item 13:优先考虑const_iterator而非iterator
@@ -56,12 +58,3 @@
 8. 微调
 	1. Item 41:对于那些可移动总是被拷贝的形参使用传值方式
 	2. Item 42:考虑就地创建而非插入
-
-## 翻译相关
-+ constness译为常量性，volatitleness译为易变性，reference-ness视情况直接译为引用
-+ built-in译为内置而不是内建
-+ literal译为字面值
-+ 诚恳接受typo-pull-request以及错译pr
-+ 我蒟多线程方面(7.)基础薄弱，所幸译前还有大量时间进行知识储备
-+ 翻译到后面我觉得要想坚持不写译注几乎不可能，所以译注将会以_[num]_标出，详细内容将会出现在文末。
-+ :)
