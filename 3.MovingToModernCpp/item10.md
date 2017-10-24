@@ -20,3 +20,17 @@ Color c = Color::white;                 // 没问题
 auto c = Color::white;                  // 也没问题（也符合条款5的建议）
 ```
 因为限域枚举是通过**enum class**声明，所以它们有时候也被称为枚举类(enum classes)。
+
+使用限域枚举减少命名空间污染是一个足够合理使用它而不是它的同胞未限域枚举的理由，其实限域枚举还有第二个吸引人的优点：在它的作用域中的枚举名是强类型。未限域枚举中的枚举名会隐式的转换为整型（现在，也可以转换为浮点类型）。因此下面这种歪曲语义的做法也是完全有效的：
+```cpp
+enum Color { black, white, red };       // 未限域枚举
+std::vector<std::size_t>                // func返回x的质因子
+primeFactors(std::size_t x);            
+Color c = red;
+…
+if (c < 14.5) {                         // Color与double比较 (!)
+    auto factors =                      // 计算一个Color的质因子(!)
+    primeFactors(c);                    
+…
+}
+```
