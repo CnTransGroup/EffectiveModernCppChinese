@@ -34,3 +34,133 @@ if (c < 14.5) {                         // Color与double比较 (!)
 …
 }
 ```
+在**enum**后面写一个**class**就可以将非限域枚举转换为限域枚举，接下来就是完全不同的故事展开了。
+现在不存在任何隐式的转换可以将限域枚举中的枚举量转化为任何其他类型。
+```cpp
+enum class Color { black, white, red }; // Color现在是限域枚举
+Color c = Color::red;                   // 和之前一样，只是
+…                                       // 多了一个域修饰符
+if (c < 14.5) {                         // 错误！不能比较
+                                        // Color和double
+    auto factors =                      // 错误! 不能向参数为std::size_t的函数
+        primeFactors(c);                // 传递Color参数
+    …
+}
+```
+如果你真的很想执行Color到其他类型的转换，和平常一样，使用正确的类型转换运算符扭曲类型系统：
+```cpp
+if (static_cast<double>(c) < 14.5) { // 奇怪的代码，但是
+                                     // 有效
+    auto factors = // suspect, but
+        primeFactors(static_cast<std::size_t>(c)); // 能通过编译
+    …
+}
+```
+看来比起非限域枚举而言限域枚举有第三个好处，因为限域枚举可以前声明。比如，它们可以不指定枚举量直接前向声明：
+```cpp
+enum Color;         // 错误！
+enum class Color;   // 没问题
+```
+这是一个误导。在C++11中，非限域枚举也可以被前向声明，但是只有在做一些其他工作后才能实现。这些工作来源于一个事实：
+在C++中所有的枚举都有一个由编译器决定的基础整型类型。对于非限域枚举比如Color，
+```cpp
+enum Color { black, white, red };
+```
+编译器可能选择**char**作为基础类型，因为这里只需要表示三个值。然而，有些枚举中的枚举值范围可能会大些，比如：
+```cpp
+enum Status { good = 0,
+                failed = 1,
+                incomplete = 100,
+                corrupt = 200,
+                indeterminate = 0xFFFFFFFF
+                };
+```
+这里值的范围从**0**到**0xFFFFFFFF**。除了在不寻常的机器上（比如一个**char**至少有32bits的那种），编译器都会选择一个比**char**大的整型类型来表示**Status**。
+To make efficient use of memory, compilers often want to choose the smallest underlying
+type for an enum that’s sufficient to represent its range of enumerator values. In
+some cases, compilers will optimize for speed instead of size, and in that case, they
+may not choose the smallest permissible underlying type, but they certainly want to
+be able to optimize for size. To make that possible, C++98 supports only enum definitions
+(where all enumerators are listed); enum declarations are not allowed. That
+makes it possible for compilers to select an underlying type for each enum prior to the
+enum being used.
+
+But the inability to forward-declare enums has drawbacks. The most notable is probably
+the increase in compilation dependencies. Consider again the Status enum:
+```cpp
+enum Status { good = 0,
+                failed = 1,
+                incomplete = 100,
+                corrupt = 200,
+                indeterminate = 0xFFFFFFFF
+                };
+```
+This is the kind of enum that’s likely to be used throughout a system, hence included
+in a header file that every part of the system is dependent on. If a new status value is
+then introduced,
+```cpp
+enum Status { good = 0,
+                failed = 1,
+                incomplete = 100,
+                corrupt = 200,
+                audited = 500,
+                indeterminate = 0xFFFFFFFF
+                };
+```
+it’s likely that the entire system will have to be recompiled, even if only a single subsystem—
+possibly only a single function!—uses the new enumerator. This is the kind
+of thing that people hate. And it’s the kind of thing that the ability to forward-declare
+enums in C++11 eliminates. For example, here’s a perfectly valid declaration of a
+scoped enum and a function that takes one as a parameter:
+```cpp
+enum class Status; // forward declaration
+void continueProcessing(Status s); // use of fwd-declared enum
+```
+The header containing these declarations requires no recompilation if Status’s
+definition is revised. Furthermore, if Status is modified (e.g., to add the audited
+enumerator), but continueProcessing’s behavior is unaffected (e.g., becausecontinueProcessing doesn’t use audited), continueProcessing’s implementation
+need not be recompiled, either.
+But if compilers need to know the size of an enum before it’s used, how can C++11’s
+enums get away with forward declarations when C++98’s enums can’t? The answer is
+simple: the underlying type for a scoped enum is always known, and for unscoped
+enums, you can specify it.
+By default, the underlying type for scoped enums is int:
+```cpp
+enum class Status; // underlying type is int
+```
+If the default doesn’t suit you, you can override it:
+```cpp
+enum class Status: std::uint32_t;   // underlying type for
+                                    // Status is std::uint32_t
+                                    // (from <cstdint>)
+```
+Either way, compilers know the size of the enumerators in a scoped enum.
+To specify the underlying type for an unscoped enum, you do the same thing as for a
+scoped enum, and the result may be forward-declared:
+```cpp
+enum Color: std::uint8_t;   // fwd decl for unscoped enum;
+                            // underlying type is
+                            // std::uint8_t
+```
+Underlying type specifications can also go on an enum’s definition:
+```cpp
+enum class Status: std::uint32_t { good = 0,
+                                    failed = 1,
+                                    incomplete = 100,
+                                    corrupt = 200,
+                                    audited = 500,
+                                    indeterminate = 0xFFFFFFFF
+                                    };
+```
+In view of the fact that scoped enums avoid namespace pollution and aren’t susceptible
+to nonsensical implicit type conversions, it may surprise you to hear that there’s
+at least one situation where unscoped enums may be useful. That’s when referring to
+fields within C++11’s std::tuples. For example, suppose we have a tuple holding
+values for the name, email address, and reputation value for a user at a social networking
+website:
+```cpp
+using UserInfo = // type alias; see Item 9
+    std::tuple<std::string, // name
+    std::string, // email
+    std::size_t> ; // reputation
+```
