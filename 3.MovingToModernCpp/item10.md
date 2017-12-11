@@ -76,17 +76,12 @@ enum Status { good = 0,
                 };
 ```
 这里值的范围从**0**到**0xFFFFFFFF**。除了在不寻常的机器上（比如一个**char**至少有32bits的那种），编译器都会选择一个比**char**大的整型类型来表示**Status**。
-To make efficient use of memory, compilers often want to choose the smallest underlying
-type for an enum that’s sufficient to represent its range of enumerator values. In
-some cases, compilers will optimize for speed instead of size, and in that case, they
-may not choose the smallest permissible underlying type, but they certainly want to
-be able to optimize for size. To make that possible, C++98 supports only enum definitions
-(where all enumerators are listed); enum declarations are not allowed. That
-makes it possible for compilers to select an underlying type for each enum prior to the
-enum being used.
 
-But the inability to forward-declare enums has drawbacks. The most notable is probably
-the increase in compilation dependencies. Consider again the Status enum:
+为了高效使用内存，编译器通常在确保能包含所有枚举值的前提下为枚举选择一个最小的基础类型。在一些情况下，编译器
+将会优化速度，舍弃大小，这种情况下它可能不会选择最小的基础类型，而是选择对优化大小有帮助的类型。为此，C++98
+只支持枚举定义（所有枚举量全部列出来）；枚举声明是不被允许的。这使得编译器能为之前使用的每一个枚举选择一个基础类型。
+
+但是不能前向声明枚举也是有缺点的。最大的缺点莫过于它可能增加编译依赖。再次考虑**Status**枚举：
 ```cpp
 enum Status { good = 0,
                 failed = 1,
