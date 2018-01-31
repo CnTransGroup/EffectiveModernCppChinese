@@ -1,5 +1,5 @@
 # 《Effective Modern C++ 》翻译
-![bookLogo](http://p1.bpimg.com/567571/bc7c228ba08fae01.png)
+![bookLogo](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/x.public/1.png?raw=true)
 
 > ! 2017.10开始更新<br>
 > ! 我没有版权，我没有版权，我没有版权<br>
