@@ -8,7 +8,7 @@ enum Color { black, white, red };   // black, white, red 和
 auto white = false;                 // 错误! white早已在这个作用
                                     // 域中存在
 ```
-事实上这些枚举名泄漏进和它们所被定义的enum域一样的作用域有一个官方的术语：未限域(unscoped)枚举。在C++11中它们有一个相似物，限域枚举，它不会导致枚举名泄漏：
+事实上这些枚举名泄漏进和它们所被定义的enum域一样的作用域。有一个官方的术语：未限域枚举(unscoped enum)在C++11中它们有一个相似物，限域枚举(scoped enum)，它不会导致枚举名泄漏：
 ```cpp
 enum class Color { black, white, red }; // black, white, red
                                         // 限制在Color域内
@@ -21,7 +21,7 @@ auto c = Color::white;                  // 也没问题（也符合条款5的建
 ```
 因为限域枚举是通过**enum class**声明，所以它们有时候也被称为枚举类(enum classes)。
 
-使用限域枚举减少命名空间污染是一个足够合理使用它而不是它的同胞未限域枚举的理由，其实限域枚举还有第二个吸引人的优点：在它的作用域中的枚举名是强类型。未限域枚举中的枚举名会隐式的转换为整型（现在，也可以转换为浮点类型）。因此下面这种歪曲语义的做法也是完全有效的：
+使用限域枚举减少命名空间污染是一个足够合理使用它而不是它的同胞未限域枚举的理由，其实限域枚举还有第二个吸引人的优点：在它的作用域中,枚举名是强类型。未限域枚举中的枚举名会隐式转换为整型（现在，也可以转换为浮点类型）。因此下面这种歪曲语义的做法也是完全有效的：
 ```cpp
 enum Color { black, white, red };       // 未限域枚举
 std::vector<std::size_t>                // func返回x的质因子
@@ -35,7 +35,7 @@ if (c < 14.5) {                         // Color与double比较 (!)
 }
 ```
 在**enum**后面写一个**class**就可以将非限域枚举转换为限域枚举，接下来就是完全不同的故事展开了。
-现在不存在任何隐式的转换可以将限域枚举中的枚举量转化为任何其他类型。
+现在不存在任何隐式转换可以将限域枚举中的枚举名转化为任何其他类型。
 ```cpp
 enum class Color { black, white, red }; // Color现在是限域枚举
 Color c = Color::red;                   // 和之前一样，只是
@@ -56,17 +56,17 @@ if (static_cast<double>(c) < 14.5) { // 奇怪的代码，但是
     …
 }
 ```
-看来比起非限域枚举而言限域枚举有第三个好处，因为限域枚举可以前声明。比如，它们可以不指定枚举量直接前向声明：
+似乎比起非限域枚举而言限域枚举有第三个好处，因为限域枚举可以前置声明。比如，它们可以不指定枚举名直接前向声明：
 ```cpp
 enum Color;         // 错误！
 enum class Color;   // 没问题
 ```
-这是一个误导。在C++11中，非限域枚举也可以被前向声明，但是只有在做一些其他工作后才能实现。这些工作来源于一个事实：
-在C++中所有的枚举都有一个由编译器决定的基础整型类型。对于非限域枚举比如Color，
+其实这是一个误导。在C++11中，非限域枚举也可以被前置声明，但是只有在做一些其他工作后才能实现。这些工作来源于一个事实：
+在C++中所有的枚举都有一个由编译器决定的整型的基础类型。对于非限域枚举比如`Color`，
 ```cpp
 enum Color { black, white, red };
 ```
-编译器可能选择**char**作为基础类型，因为这里只需要表示三个值。然而，有些枚举中的枚举值范围可能会大些，比如：
+编译器可能选择`char`作为基础类型，因为这里只需要表示三个值。然而，有些枚举中的枚举值范围可能会大些，比如：
 ```cpp
 enum Status { good = 0,
                 failed = 1,
@@ -79,9 +79,9 @@ enum Status { good = 0,
 
 为了高效使用内存，编译器通常在确保能包含所有枚举值的前提下为枚举选择一个最小的基础类型。在一些情况下，编译器
 将会优化速度，舍弃大小，这种情况下它可能不会选择最小的基础类型，而是选择对优化大小有帮助的类型。为此，C++98
-只支持枚举定义（所有枚举量全部列出来）；枚举声明是不被允许的。这使得编译器能为之前使用的每一个枚举选择一个基础类型。
+只支持枚举定义（所有枚举名全部列出来）；枚举声明是不被允许的。这使得编译器能为之前使用的每一个枚举选择一个基础类型。
 
-但是不能前向声明枚举也是有缺点的。最大的缺点莫过于它可能增加编译依赖。再次考虑**Status**枚举：
+但是不能前置声明枚举也是有缺点的。最大的缺点莫过于它可能增加编译依赖。再次考虑**Status**枚举：
 ```cpp
 enum Status { good = 0,
                 failed = 1,
@@ -90,7 +90,7 @@ enum Status { good = 0,
                 indeterminate = 0xFFFFFFFF
                 };
 ```
-这种*enum*很有可能用于整个系统，因此系统中每个包含这个头文件的组件都会依赖它。如果引入一个新状态值，
+这种**enum**很有可能用于整个系统，因此系统中每个包含这个头文件的组件都会依赖它。如果引入一个新状态值，
 ```cpp
 enum Status { good = 0,
                 failed = 1,
@@ -100,15 +100,15 @@ enum Status { good = 0,
                 indeterminate = 0xFFFFFFFF
                 };
 ```
-那么可能整个系统都得重新编译，即使只有一个子系统——或者一个函数使用了新添加的枚举量。这是大家都不希望看到的。C++11中的前置声明可以解决这个问题。
+那么可能整个系统都得重新编译，即使只有一个子系统——或者一个函数使用了新添加的枚举名。这是大家都不希望看到的。C++11中的前置声明可以解决这个问题。
 比如这里有一个完全有效的限域枚举声明和一个以该限域枚举作为形参的函数声明：
 ```cpp
 enum class Status; // forward declaration
 void continueProcessing(Status s); // use of fwd-declared enum
 ```
-即使*Status*的定义发生改变，包含这些声明的头文件也不会重新编译。而且如果*Status*添加一个枚举量（比如添加一个_audited_），*continueProcessing*的行为不受影响（因为*continueProcessing*没有使用这个新添加的_audited_），*continueProcessing*也不需要重新编译。
-但是如果编译器在使用它前需要知晓该枚举的大小，该怎么声明才能让C++11做到C++98不能做到的事情呢？
-答案很简单：限域枚举的基础类型总是已知的，对于非限域枚举，你可以指定它。默认情况下，限域枚举的基础类型是*int*：
+即使**Status**的定义发生改变，包含这些声明的头文件也不会重新编译。而且如果**Status**添加一个枚举名（比如添加一个_audited_），**continueProcessing**的行为不受影响（因为**continueProcessing**没有使用这个新添加的_audited_），**continueProcessing**也不需要重新编译。
+但是如果编译器在使用它之前需要知晓该枚举的大小，该怎么声明才能让C++11做到C++98不能做到的事情呢？
+答案很简单：限域枚举的基础类型总是已知的，而对于非限域枚举，你可以指定它。默认情况下，限域枚举的基础类型是`int`：
 ```cpp
 enum class Status; // 基础类型是int
 ```
@@ -118,7 +118,7 @@ enum class Status: std::uint32_t;   // Status的基础类型
                                     // 是std::uint32_t
                                     // (需要包含 <cstdint>)
 ```
-不管怎样，编译器都知道限域枚举中的枚举量占用多少字节。要为非限域枚举指定基础类型，你可以同上，然后前向声明一下：
+不管怎样，编译器都知道限域枚举中的枚举名占用多少字节。要为非限域枚举指定基础类型，你可以同上，然后前向声明一下：
 ```cpp
 enum Color: std::uint8_t;   // 为非限域枚举Color指定
                             // 基础为
@@ -134,37 +134,30 @@ enum class Status: std::uint32_t { good = 0,
                                     indeterminate = 0xFFFFFFFF
                                     };
 ```
-由于限域枚举避免命名空间污染而且不接受隐式类型转换，你可能会很惊讶听到至少有一种情况下非限域枚举是很有用的。
-那就是引用C++11 tuples中的字段的时候。比如在社交网站中，假设我们有一个tuple保存了用户的名字，email地址，声望点：
-
-website:
+限域枚举避免命名空间污染而且不接受隐式类型转换，但它并非万事皆宜，你可能会很惊讶听到至少有一种情况下非限域枚举是很有用的。
+那就是获取C++11 tuples中的字段的时候。比如在社交网站中，假设我们有一个`tuple`保存了用户的名字，email地址，声望点：
 ```cpp
-using UserInfo = // type alias; see Item 9
-    std::tuple<std::string, // name
-    std::string, // email
-    std::size_t> ; // reputation
+using UserInfo = // 类型别名，参见Item 9
+    std::tuple<std::string, // 名字
+    std::string, // email地址
+    std::size_t> ; // 声望
 ```
-Though the comments indicate what each field of the tuple represents, that’s probably
-not very helpful when you encounter code like this in a separate source file:
+虽然注释说明了tuple各个字段对应的意思，但当你在另文件遇到下面的代码那之前的注释就不是那么有用了：
 ```cpp
-UserInfo uInfo; // object of tuple type
+UserInfo uInfo; // tuple对象
 …
+auto val = std::get<1>(uInfo); // 获取第一个字段
 ```
-auto val = std::get<1>(uInfo); // get value of field 1
-As a programmer, you have a lot of stuff to keep track of. Should you really be
-expected to remember that field 1 corresponds to the user’s email address? I think
-not. Using an unscoped enum to associate names with field numbers avoids the need
-to:
+作为一个程序员，你有很多工作要持续跟进。你应该记住第一个字段代表用户的email地址吗？我认为不。
+可以使用非限域枚举将名字和字段编号关联起来以避免上述需求：
 ```cpp
 enum UserInfoFields { uiName, uiEmail, uiReputation };
-UserInfo uInfo; // as before
+UserInfo uInfo; 
 …
-auto val = std::get<uiEmail>(uInfo); // ah, get value of
-// email field
+auto val = std::get<uiEmail>(uInfo); // ，获取用户email
 ```
-What makes this work is the implicit conversion from UserInfoFields to
-std::size_t, which is the type that std::get requires.
-The corresponding code with scoped enums is substantially more verbose:
+之所以它能正常工作是因为`UserInfoFields`中的枚举名隐式转换成**std::size_t**了,其中**std::size_t**是**std::get**模板实参所需的。
+对应的限域枚举版本就很啰嗦了：
 ```cpp
 enum class UserInfoFields { uiName, uiEmail, uiReputation };
 UserInfo uInfo; // as before
@@ -173,67 +166,56 @@ auto val =
 std::get<static_cast<std::size_t>(UserInfoFields::uiEmail)>
 (uInfo);
 ```
-The verbosity can be reduced by writing a function that takes an enumerator and
-returns its corresponding std::size_t value, but it’s a bit tricky. std::get is a template,
-and the value you provide is a template argument (notice the use of angle
-brackets, not parentheses), so the function that transforms an enumerator into a
-std::size_t has to produce its result during compilation. As Item 15 explains, that
-means it must be a constexpr function.
-In fact, it should really be a constexpr function template, because it should work
-with any kind of enum. And if we’re going to make that generalization, we should
-generalize the return type, too. Rather than returning std::size_t, we’ll return the
-enum’s underlying type. It’s available via the std::underlying_type type trait. (See
-Item 9 for information on type traits.) Finally, we’ll declare it noexcept (see Item 14),
-because we know it will never yield an exception. The result is a function template
-toUType that takes an arbitrary enumerator and can return its value as a compiletime
-constant:
+为避免这种冗长的表示，我们可以写一个函数传入枚举名并返回对应的**std::size_t**值，但这有一点技巧性。
+**std::get**是一个模板（函数），需要你给出一个**std::size_t**值的模板实参（注意使用`<>`而不是`()`），因此将枚举名变换为**std::size_t**值会发生在编译期。
+如Item 15提到的，那必须是一个**constexpr**模板函数。
+事实上，它也的确该是一个**constexpr**函数，因为它应该能用于任何`enum`。
+如果我们想让它更一般化，我们还要泛化它的返回类型。较之于返回**std::size_t**，我们更应该泛化枚举的基础类型。
+这可以通过**std::underlying_type**这个`type trait`获得。（参见Item 9关于type trait的内容）。
+最终我们还要再加上**noexcept**修饰（参见Item 14），因为我们知道它肯定不会产生异常。
+根据上述分析最终得到的**toUType**模板函数在编译期接受任意枚举名并返回它的值：
 ```cpp
 template<typename E>
 constexpr typename std::underlying_type<E>::type
-toUType(E enumerator) noexcept
+  toUType(E enumerator) noexcept
 {
-return
-static_cast<typename
-std::underlying_type<E>::type>(enumerator);
+  return
+    static_cast<typename
+      std::underlying_type<E>::type>(enumerator);
 }
 ```
-In C++14, toUType can be simplified by replacing typename std::underly
-ing_type<E>::type with the sleeker std::underlying_type_t (see Item 9):
-  
+在C++14中，**toUType**还可以进一步用`std::underlying_type_t`（参见Item 9）代替`typename std::underly
+ing_type<E>::type`打磨：
 ```cpp
 template<typename E> // C++14
 constexpr std::underlying_type_t<E>
-toUType(E enumerator) noexcept
+  toUType(E enumerator) noexcept
 {
-return static_cast<std::underlying_type_t<E>>(enumerator);
+  return static_cast<std::underlying_type_t<E>>(enumerator);
 }
 ```
-The even-sleeker auto return type (see Item 3) is also valid in C++14:
+还可以再用C++14 auto（参见Item 3）打磨一下代码：
 ```cpp
 template<typename E> // C++14
 constexpr auto
-toUType(E enumerator) noexcept
+  toUType(E enumerator) noexcept
 {
-return static_cast<std::underlying_type_t<E>>(enumerator);
+  return static_cast<std::underlying_type_t<E>>(enumerator);
 }
 ```
-Regardless of how it’s written, toUType permits us to access a field of the tuple like
-this:
+不管它怎么写，**toUType**现在允许这样访问tuple的字段了：
 ```cpp
 auto val = std::get<toUType(UserInfoFields::uiEmail)>(uInfo);
 ```
-It’s still more to write than use of the unscoped enum, but it also avoids namespace
-pollution and inadvertent conversions involving enumerators. In many cases, you
+比起使用非限域枚举，限域有很多可圈可点的地方，它避免命名空间污染，防止不经意间使用隐式转换。
+（下面这句我没看懂，保留原文。。（是什么典故吗。。。））
+In many cases, you 
 may decide that typing a few extra characters is a reasonable price to pay for the ability
 to avoid the pitfalls of an enum technology that dates to a time when the state of
 the art in digital telecommunications was the 2400-baud modem.
 
 记住
-• C++98-style enums are now known as unscoped enums.
-• Enumerators of scoped enums are visible only within the enum. They convert
-to other types only with a cast.
-• Both scoped and unscoped enums support specification of the underlying type.
-The default underlying type for scoped enums is int. Unscoped enums have no
-default underlying type.
-• Scoped enums may always be forward-declared. Unscoped enums may be
-forward-declared only if their declaration specifies an underlying type.
++ C++98的枚举即非限域枚举
++ 限域枚举的枚举名仅在enum内可见。要转换为其它类型只能使用cast。
++ 非限域/限域枚举都支持基础类型说明语法，限域枚举基础类型默认是`int`。非限域枚举没有默认基础类型。
++ 限域枚举总是可以前置声明。非限域枚举仅当指定它们的基础类型时才能前置。
