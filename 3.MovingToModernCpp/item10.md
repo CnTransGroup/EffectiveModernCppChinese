@@ -90,9 +90,7 @@ enum Status { good = 0,
                 indeterminate = 0xFFFFFFFF
                 };
 ```
-This is the kind of enum that’s likely to be used throughout a system, hence included
-in a header file that every part of the system is dependent on. If a new status value is
-then introduced,
+这种*enum*很有可能用于整个系统，因此系统中每个包含这个头文件的组件都会依赖它。如果引入一个新状态值，
 ```cpp
 enum Status { good = 0,
                 failed = 1,
@@ -102,42 +100,31 @@ enum Status { good = 0,
                 indeterminate = 0xFFFFFFFF
                 };
 ```
-it’s likely that the entire system will have to be recompiled, even if only a single subsystem—
-possibly only a single function!—uses the new enumerator. This is the kind
-of thing that people hate. And it’s the kind of thing that the ability to forward-declare
-enums in C++11 eliminates. For example, here’s a perfectly valid declaration of a
-scoped enum and a function that takes one as a parameter:
+那么可能整个系统都得重新编译，即使只有一个子系统——或者一个函数使用了新添加的枚举量。这是大家都不希望看到的。C++11中的前置声明可以解决这个问题。
+比如这里有一个完全有效的限域枚举声明和一个以该限域枚举作为形参的函数声明：
 ```cpp
 enum class Status; // forward declaration
 void continueProcessing(Status s); // use of fwd-declared enum
 ```
-The header containing these declarations requires no recompilation if Status’s
-definition is revised. Furthermore, if Status is modified (e.g., to add the audited
-enumerator), but continueProcessing’s behavior is unaffected (e.g., becausecontinueProcessing doesn’t use audited), continueProcessing’s implementation
-need not be recompiled, either.
-But if compilers need to know the size of an enum before it’s used, how can C++11’s
-enums get away with forward declarations when C++98’s enums can’t? The answer is
-simple: the underlying type for a scoped enum is always known, and for unscoped
-enums, you can specify it.
-By default, the underlying type for scoped enums is int:
+即使*Status*的定义发生改变，包含这些声明的头文件也不会重新编译。而且如果*Status*添加一个枚举量（比如添加一个_audited_），*continueProcessing*的行为不受影响（因为*continueProcessing*没有使用这个新添加的_audited_），*continueProcessing*也不需要重新编译。
+但是如果编译器在使用它前需要知晓该枚举的大小，该怎么声明才能让C++11做到C++98不能做到的事情呢？
+答案很简单：限域枚举的基础类型总是已知的，对于非限域枚举，你可以指定它。默认情况下，限域枚举的基础类型是*int*：
 ```cpp
-enum class Status; // underlying type is int
+enum class Status; // 基础类型是int
 ```
-If the default doesn’t suit you, you can override it:
+如果默认的*int*不适用，你可以重写它：
 ```cpp
-enum class Status: std::uint32_t;   // underlying type for
-                                    // Status is std::uint32_t
-                                    // (from <cstdint>)
+enum class Status: std::uint32_t;   // Status的基础类型
+                                    // 是std::uint32_t
+                                    // (需要包含 <cstdint>)
 ```
-Either way, compilers know the size of the enumerators in a scoped enum.
-To specify the underlying type for an unscoped enum, you do the same thing as for a
-scoped enum, and the result may be forward-declared:
+不管怎样，编译器都知道限域枚举中的枚举量占用多少字节。要为非限域枚举指定基础类型，你可以同上，然后前向声明一下：
 ```cpp
-enum Color: std::uint8_t;   // fwd decl for unscoped enum;
-                            // underlying type is
-                            // std::uint8_t
+enum Color: std::uint8_t;   // 为非限域枚举Color指定
+                            // 基础为
+                            // std::uint8_t
 ```
-Underlying type specifications can also go on an enum’s definition:
+基础类型说明也可以放到枚举定义处：
 ```cpp
 enum class Status: std::uint32_t { good = 0,
                                     failed = 1,
@@ -147,11 +134,9 @@ enum class Status: std::uint32_t { good = 0,
                                     indeterminate = 0xFFFFFFFF
                                     };
 ```
-In view of the fact that scoped enums avoid namespace pollution and aren’t susceptible
-to nonsensical implicit type conversions, it may surprise you to hear that there’s
-at least one situation where unscoped enums may be useful. That’s when referring to
-fields within C++11’s std::tuples. For example, suppose we have a tuple holding
-values for the name, email address, and reputation value for a user at a social networking
+由于限域枚举避免命名空间污染而且不接受隐式类型转换，你可能会很惊讶听到至少有一种情况下非限域枚举是很有用的。
+那就是引用C++11 tuples中的字段的时候。比如在社交网站中，假设我们有一个tuple保存了用户的名字，email地址，声望点：
+
 website:
 ```cpp
 using UserInfo = // type alias; see Item 9
@@ -159,3 +144,96 @@ using UserInfo = // type alias; see Item 9
     std::string, // email
     std::size_t> ; // reputation
 ```
+Though the comments indicate what each field of the tuple represents, that’s probably
+not very helpful when you encounter code like this in a separate source file:
+```cpp
+UserInfo uInfo; // object of tuple type
+…
+```
+auto val = std::get<1>(uInfo); // get value of field 1
+As a programmer, you have a lot of stuff to keep track of. Should you really be
+expected to remember that field 1 corresponds to the user’s email address? I think
+not. Using an unscoped enum to associate names with field numbers avoids the need
+to:
+```cpp
+enum UserInfoFields { uiName, uiEmail, uiReputation };
+UserInfo uInfo; // as before
+…
+auto val = std::get<uiEmail>(uInfo); // ah, get value of
+// email field
+```
+What makes this work is the implicit conversion from UserInfoFields to
+std::size_t, which is the type that std::get requires.
+The corresponding code with scoped enums is substantially more verbose:
+```cpp
+enum class UserInfoFields { uiName, uiEmail, uiReputation };
+UserInfo uInfo; // as before
+…
+auto val =
+std::get<static_cast<std::size_t>(UserInfoFields::uiEmail)>
+(uInfo);
+```
+The verbosity can be reduced by writing a function that takes an enumerator and
+returns its corresponding std::size_t value, but it’s a bit tricky. std::get is a template,
+and the value you provide is a template argument (notice the use of angle
+brackets, not parentheses), so the function that transforms an enumerator into a
+std::size_t has to produce its result during compilation. As Item 15 explains, that
+means it must be a constexpr function.
+In fact, it should really be a constexpr function template, because it should work
+with any kind of enum. And if we’re going to make that generalization, we should
+generalize the return type, too. Rather than returning std::size_t, we’ll return the
+enum’s underlying type. It’s available via the std::underlying_type type trait. (See
+Item 9 for information on type traits.) Finally, we’ll declare it noexcept (see Item 14),
+because we know it will never yield an exception. The result is a function template
+toUType that takes an arbitrary enumerator and can return its value as a compiletime
+constant:
+```cpp
+template<typename E>
+constexpr typename std::underlying_type<E>::type
+toUType(E enumerator) noexcept
+{
+return
+static_cast<typename
+std::underlying_type<E>::type>(enumerator);
+}
+```
+In C++14, toUType can be simplified by replacing typename std::underly
+ing_type<E>::type with the sleeker std::underlying_type_t (see Item 9):
+  
+```cpp
+template<typename E> // C++14
+constexpr std::underlying_type_t<E>
+toUType(E enumerator) noexcept
+{
+return static_cast<std::underlying_type_t<E>>(enumerator);
+}
+```
+The even-sleeker auto return type (see Item 3) is also valid in C++14:
+```cpp
+template<typename E> // C++14
+constexpr auto
+toUType(E enumerator) noexcept
+{
+return static_cast<std::underlying_type_t<E>>(enumerator);
+}
+```
+Regardless of how it’s written, toUType permits us to access a field of the tuple like
+this:
+```cpp
+auto val = std::get<toUType(UserInfoFields::uiEmail)>(uInfo);
+```
+It’s still more to write than use of the unscoped enum, but it also avoids namespace
+pollution and inadvertent conversions involving enumerators. In many cases, you
+may decide that typing a few extra characters is a reasonable price to pay for the ability
+to avoid the pitfalls of an enum technology that dates to a time when the state of
+the art in digital telecommunications was the 2400-baud modem.
+
+记住
+• C++98-style enums are now known as unscoped enums.
+• Enumerators of scoped enums are visible only within the enum. They convert
+to other types only with a cast.
+• Both scoped and unscoped enums support specification of the underlying type.
+The default underlying type for scoped enums is int. Unscoped enums have no
+default underlying type.
+• Scoped enums may always be forward-declared. Unscoped enums may be
+forward-declared only if their declaration specifies an underlying type.
