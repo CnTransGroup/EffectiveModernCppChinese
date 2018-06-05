@@ -35,3 +35,68 @@ public:
 };
 ```
 删除这些函数(译注：添加"= delete")和声明为私有成员可能看起来只是方式不同，别无其他区别。其实还有一些实质性意义。`deleted`函数不能以任何方式被调用，即使你在成员函数或者友元函数里面调用`deleted`函数也不能通过编译。这是较之C++98行为的一个改进，后者不正确的使用这些函数在链接时才被诊断出来。
+
+通常，`deleted`函数被声明为*public*而不是*private*.这也是有原因的。当客户端代码试图调用成员函数，C++会在检查`deleted`状态前检查它的访问性。当客户端代码调用一个私有的`deleted`函数，一些编译器只会给出该函数是*private*的错误(译注：而没有诸如该函数被`deleted`修饰的错误)，即使函数的访问性不影响它的使用。所以值得牢记，如果要将老代码的"私有且未定义"函数替换为`deleted`函数时请一并修改它的访问性为*public*，这样可以让编译器产生更好的错误信息。
+
+`deleted`函数还有一个重要的优势是任何函数都可以标记为`deleted`，而只有*private*只能修饰成员函数。假如我们有一个非成员函数，它接受一个整型参数，检查它是否为幸运数：
+```cpp
+bool isLucky(int number);
+```
+C++有沉重的C包袱，使得含糊的、能被视作数值的任何类型都能隐式转换为`int`，但是有一些调用可能是没有意义的：
+```cpp
+if (isLucky('a')) … // 字符'a'是幸运数？
+if (isLucky(true)) … // "true"是?
+if (isLucky(3.5)) … // 难道判断它的幸运之前还要先截尾成3？
+```
+如果幸运数必须真的是整数，我们该禁止这些调用通过编译。
+其中一种方法就是创建`deleted`重载函数，其参数就是我们想要过滤的类型：
+```cpp
+bool isLucky(int number); // 原始版本
+bool isLucky(char) = delete; // 拒绝char
+bool isLucky(bool) = delete; // 拒绝bool
+bool isLucky(double) = delete; // 拒绝float和double
+```
+(上面double重载版本的注释说拒绝float和double可能会让你惊讶，但是请回想一下：将`float`转换为`int`和`double`，C++更喜欢转换为`double`。使用`float`调用`isLucky`因此会调用`double`重载版本，而不是`int`版本。好吧，它也会那么去尝试。事实是调用被删除的`double`重载版本不能通过编译。不再惊讶了吧。)
+
+虽然`deleted`寒暑假不能被使用，它它们还是存在于你的程序中。也即是说，重载决议会考虑它们。这也是为什么上面的函数声明导致编译器拒绝一些不合适的函数调用。
+```cpp
+if (isLucky('a')) … //错误! 调用deleted函数
+if (isLucky(true)) … // 错误!
+if (isLucky(3.5f)) … // 错误!
+```
+另一个`deleted`函数用武之地（private成员函数做不到的地方）是禁止一些模板的实例化。
+假如你要求一个模板仅支持原生指针（尽管第四章建议使用智能指针代替原生指针）
+```cpp
+template<typename T>
+void processPointer(T* ptr);
+```
+在指针的世界里有两种特殊情况。一是`void*`指针，因为没办法对它们进行解引用，或者加加减减等。
+另一种指针是`char*`，因为它们通常代表C风格的字符串，而不是正常意义下指向单个字符的指针。
+这两种情况要特殊处理，在`processPointer`模板里面，我们假设正确的函数应该拒绝这些类型。
+也即是说，`processPointer`不能被`void*`和`char*`调用。
+要想确保这个很容易，使用`delete`标注模板实例：
+```cpp
+template<>
+void processPointer<void>(void*) = delete;
+template<>
+void processPointer<char>(char*) = delete;
+```
+现在如果使用`void*`和`char*`调用`processPointer`就是无效的，按常理说`const void*`和`const void*`也应该无效，所以这些实例也应该标注`delete`:
+```cpp
+template<>
+void processPointer<const void>(const void*) = delete;
+template<>
+void processPointer<const char>(const char*) = delete;
+```
+And if you really want to be thorough, you’ll also delete the const volatile void*
+and const volatile char* overloads, and then you’ll get to work on the overloads
+for pointers to the other standard character types: std::wchar_t, std::char16_t,
+and std::char32_t.
+
+Interestingly, if you have a function template inside a class, and you’d like to disable
+some instantiations by declaring them private (à la classic C++98 convention), you
+can’t, because it’s not possible to give a member function template specialization a
+different access level from that of the main template. If processPointer were a
+member function template inside Widget, for example, and you wanted to disable
+calls for void* pointers, this would be the C++98 approach, though it would not
+compile:
