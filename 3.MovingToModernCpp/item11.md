@@ -90,7 +90,7 @@ void processPointer<const char>(const char*) = delete;
 ```
 如果你想做得更彻底一些，你还要删除`const volatile void*`和`const volatile char*`重载版本，另外还需要一并删除其他标准字符类型的重载版本：`std::wchar_t`,`std::char16_t`和`std::char32_t`。
 
-有趣的是，如果的类里面有一个函数模板，你可能想用`private`（经典的C++98惯例）来禁止这些函数模板实例化，但是不能这样做，因为不能给特化的模板函数指定一个不同的访问级别。如果`processPointer`是类`Widget`里面的模板函数， 你想禁止它接受`void*`参数，那么通过下面这样C++98的方法就不能通过编译：
+有趣的是，如果的类里面有一个函数模板，你可能想用`private`（经典的C++98惯例）来禁止这些函数模板实例化，但是不能这样做，因为不能给特化的模板函数指定一个不同（于函数模板）的访问级别。如果`processPointer`是类`Widget`里面的模板函数， 你想禁止它接受`void*`参数，那么通过下面这样C++98的方法就不能通过编译：
 compile:
 ```cpp
 class Widget {
@@ -124,4 +124,6 @@ void Widget::processPointer<void>(void*) = delete; // 还是public，但是已�
 + 比起声明函数为private但不定义，使用delete函数更好
 + 任何函数都能`delete`，包括非成员函数和模板实例
 
-_译注：本条款`delete`，`deleted`,`删除`视情况使用，都表示一个意思.`删除函数`和`delete函数`也是如此_
+_译注：
++本条款`delete`，`deleted`,`删除`视情况使用，都表示一个意思.`删除函数`和`delete函数`也是如此_
++ 函数模板意指未特化前的源码，模板函数则倾向于模板实例化后的函数
