@@ -22,7 +22,6 @@
 	3. [Item 9:优先考虑别名声明而非typedefs](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item9.md)
 	4. [Item 10:优先考虑限域枚举而非未限域枚举](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item10.md) _revised_
 	5. [Item 11:优先考虑使用deleted函数而非使用未定义的私有声明](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item11.md)
-	_updating_
 	6. Item 12:使用override声明重载函数
 	7. Item 13:优先考虑const_iterator而非iterator
 	8. Item 14:如果函数不抛出异常请使用noexcept
