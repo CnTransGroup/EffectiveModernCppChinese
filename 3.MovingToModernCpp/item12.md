@@ -102,59 +102,84 @@ public:
 	void mf4() const override; // 可以添加virtual，但不是必要
 }; 
 ```
-Note that in this example, part of getting things to work involves declaring mf4 virtual
-in Base. Most overriding-related errors occur in derived classes, but it’s possible
-for things to be incorrect in base classes, too.
-A policy of using override on all your derived class overrides can do more than just
-enable compilers to tell you when would-be overrides aren’t overriding anything. It
-can also help you gauge the ramifications if you’re contemplating changing the signature
-of a virtual function in a base class. If derived classes use override everywhere,
-you can just change the signature, recompile your system, see how much damage
-you’ve caused (i.e., how many derived classes fail to compile), then decide whether
-the signature change is worth the trouble. Without override, you’d have to hope you
-have comprehensive unit tests in place, because, as we’ve seen, derived class virtuals that are supposed to override base class functions, but don’t, need not elicit compiler
-diagnostics.
-C++ has always had keywords, but C++11 introduces two contextual keywords, over
-ride and final.2 These keywords have the characteristic that they are reserved, but
-only in certain contexts. In the case of override, it has a reserved meaning only
-when it occurs at the end of a member function declaration. That means that if you
-have legacy code that already uses the name override, you don’t need to change it
-for C++11:
+注意在这个例子中`mf4`有别于之前，它在`Base`中的声明有`virtual`修饰，所以能正常工作。
+大多数和重写有关的错误都是在派生类引发的，但也可能是基类的不正确导致。
+
+比起让编译器（译注：通过warnings）告诉你"将要"重写实际不会重写，不如给你的派生类成员函数全都加上`override`。如果你考虑修改修改基类虚函数的函数签名，`override`还可以帮你评估后果。
+如果派生类全都用上`override`，你可以只改变基类函数签名，重编译系统，再看看你造成了多大的问题（即，多少派生类不能通过编译），然后决定是否值得如此麻烦更改函数签名。没有重写，你只能寄希望于完善的单元测试，因为，正如我们所见，派生类虚函数本想重写基类，但是没有，编译器也没有探测并发出诊断信息。
+
+C++既有很多关键字，C++11引入了两个上下文关键字(contextual keywords),`override`和`final`（向虚函数添加`final`可以防止派生类重写。`final`也能用于类，这时这个类不能用作基类）。
+这两个关键字的特点是它们是保留的，它们只是位于特定上下文才被视为关键字。对于`override`，它只在成员函数声明结尾处才被视为关键字。这意味着如果你以前写的代码里面已经用过**override**这个名字，那么换到C++11标准你也无需修改代码：
 ```cpp
 class Warning { // potential legacy class from C++98
 public:
 	…
-void override(); // legal in both C++98 and C++11
+void override(); // C++98和C++11都合法
 };
 ```
-That’s all there is to say about override, but it’s not all there is to say about member
-function reference qualifiers. I promised I’d provide more information on them later,
-and now it’s later.
-If we want to write a function that accepts only lvalue arguments, we declare a nonconst
-lvalue reference parameter:
+关于`override`想说的就这么多，但对于成员函数引用限定(reference qualifiers)还有一些内容。我之前承诺我会在后面提供更多的关于它们的资料，现在就是"后面"了。
+如果我们想写一个函数只接受左值实参，我们的声明可以包含一个左值引用形参：
 ```cpp
-void doSomething(Widget& w); // accept
-If we want to write a function that accepts only rvalue arguments, we declare an
-rvalue reference parameter:
-```cpp
-void doSomething(Widget&& w); // accepts only rvalue Widgets
+void doSomething(Widget& w); // 只接受左值Widget对象
 ```
-Member function reference qualifiers simply make it possible to draw the same distinction
-for the object on which a member function is invoked, i.e., *this. It’s precisely
-analogous to the const at the end of a member function declaration, which
-indicates that the object on which the member function is invoked (i.e., *this) is
-const.
-The need for reference-qualified member functions is not common, but it can arise.
-For example, suppose our Widget class has a std::vector data member, and we
-offer an accessor function that gives clients direct access to it:
+如果我们想写一个函数只接受右值实参，我们的声明可以包含一个右值引用形参：
+```cpp
+void doSomething(Widget&& w); // 只接受右值Widget对象
+```
+成员函数的引用限定可以很容易的区分哪个成员函数被对象调用（即`*this`）。它和在成员函数声明尾部添加一个`const`暗示该函数的调用者（即`*this`）是`const` 很相似。
+对成员函数添加引用限定不常见，但是可以见。
+举个例子，假设我们的`Widget`类有一个`std::vector`数据成员，我们提供一个范围函数让客户端可以直接访问它：
 ```cpp
 class Widget {
 public:
-	using DataType = std::vector<double>; // see Item 9 for
-	… // info on "using"
+	using DataType = std::vector<double>; // 参见Item
+	… 
 	DataType& data() { return values; }
 	…
-	private:
+private:
 	DataType values;
 };
 ```
+这是最具封装性的设计，只给外界保留一线光。但先把这个放一边，思考一下下面的客户端代码：
+```cpp
+Widget w;
+…
+auto vals1 = w.data(); // 拷贝w.values到vals1
+```
+**Widget::data**函数的返回值是一个左值引用（准确的说是`std::vector<double>&`）,
+因为左值引用是左值，`vals1`从左值初始化，因此它由`w.values`拷贝构造而得，就像注释说的那样。
+现在假设我们有一个创建`Widgets`的工厂函数，
+```cpp
+Widget makeWidget();
+```
+我们想用`makeWidget`返回的`std::vector`初始化一个变量：
+```cpp
+auto vals2 = makeWidget().data(); // 拷贝Widget里面的值到vals2
+```
+再说一次，`Widgets::data`返回的是左值引用，还有，左值引用是左值。所以，我们的对象(vals2)又得从Widget里的values拷贝构造。这一次，`Widget`是`makeWidget`返回的临时对象（即右值），所以将其中的`std::vector`进行拷贝纯属浪费。最好是移动，但是因为`data`返回左值引用，C++的规则要求编译器不得不生成一个拷贝。
+我们需要的是指明当`data`被右值`Widget`对象调用的时候结果也应该是一个右值。
+现在就可以使用引用限定写一个重载函数来达成这一目的：
+```cpp
+class Widget {
+public:
+	using DataType = std::vector<double>;
+	…
+	DataType& data() & 				// 对于左值Widgets,
+	{ return values; } 				// 返回左值
+	DataType data() && 				// 对于右值Widgets,
+	{ return std::move(values); } 	// 返回右值
+	…
+private:
+	DataType values;
+};
+```
+注意`data`重载的返回类型是不同的，左值引用重载版本返回一个左值引用，右值引用重载返回一个临时对象。这意味着现在客户端的行为和我们的期望相符了：
+```cpp
+auto vals1 = w.data(); 				//调用左值重载版本的Widget::data，拷贝构造vals1
+auto vals2 = makeWidget().data(); 	//调用右值重载版本的Widget::data, 移动构造vals2
+```
+这真的很nice，但别被这结尾的暖光照耀分心以致忘记了该条款的中心。这个条款的中心是只要你在派生类声明想要重写基类虚函数的函数，就加上`override`。
+
+记住：
++ 为重载函数加上`override`
++ 成员函数限定让我们可以区别对待左值对象和右值对象（即`*this`)
