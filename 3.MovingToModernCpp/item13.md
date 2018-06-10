@@ -61,7 +61,7 @@ const V& insertVal) 				// 然后插入insertVal
 	container.insert(it, insertVal);
 }
 ```
-它可以在C++14工作良好，但是很遗憾，C++11不在良好之列。由于标准化的疏漏，C++11只添加了非成员函数**begin**和**end**但是没有添加**cbegin**，**cend**，**rbegin**，**rend**，**crbegin**，**crend**，C++14修订了这个疏漏。如果你使用C++11，并且想写一个最大程度通用的代码，而你使用的STL没有提供缺失的非成员函数**cbegin**和它的朋友们，你可以简单的抛出你自己的实现。举个例子，这是非成员函数**cbegin**的实现：
+它可以在C++14工作良好，但是很遗憾，C++11不在良好之列。由于标准化的疏漏，C++11只添加了非成员函数**begin**和**end**但是没有添加**cbegin**，**cend**，**rbegin**，**rend**，**crbegin**，**crend**，C++14修订了这个疏漏。如果你使用C++11，并且想写一个最大程度通用的代码，而你使用的STL没有提供缺失的非成员函数**cbegin**和它的朋友们，你可以简单的抛出你自己的实现。比如，下面就是非成员函数**cbegin**的实现：
 ```cpp
 template <class C>
 auto cbegin(const C& container)->decltype(std::begin(container))

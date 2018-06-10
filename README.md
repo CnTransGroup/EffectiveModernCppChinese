@@ -24,7 +24,7 @@
 	5. [Item 11:优先考虑使用deleted函数而非使用未定义的私有声明](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item11.md)
 	6. [Item 12:使用override声明重载函数](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item12.md)
 	7. [Item 13:优先考虑const_iterator而非iterator](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item13.md)
-	8. [Item 14:如果函数不抛出异常请使用noexcept]()
+	8. [Item 14:如果函数不抛出异常请使用noexcept](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item14.md)_updating_
 	9. Item 15:尽可能的使用constexpr
 	10. Item 16:确保const成员函数线程安全
 	11. Item 17:理解特殊成员函数函数的生成
