@@ -71,9 +71,9 @@ auto cbegin(const C& container)->decltype(std::begin(container))
 ```
 你可能很惊讶非成员函数**cbegin**没有调用成员函数**cbegin**吧？但是请跟逻辑走。这个**cbegin**模板接受任何容器或者类似容器的数据结构**C**，并且通过const引用访问第一个实参**container**。如果**C**是一个普通的容器类型（如`std::vector<int>`），**container**将会引用一个常量版本的容器（即`const std::vector<int>&`）。对const容器调用非成员函数**begin**（由C++11提供)将产出**const_iterator**，这个迭代器也是模板要返回的。用这种方法实现的好处是就算容器只提供**begin**不提供**cbegin**也没问题。那么现在你可以将这个非成员函数**cbegin**施于只支持**begin**的容器。
 
-如果**C**是原生数组，这个模板也能工作。这时，**container**成为一个const数组。C++11为数组提供特化版本的非成员函数**begin**，它返回指向数组第一个元素的指针。一个const数组的元素也是const，所以对于const数组，非成员函数**begin**返回指向cosnt的指针。在数组的上下文中，所谓指向const的指针，也就是**const_iterator**了。
+如果**C**是原生数组，这个模板也能工作。这时，**container**成为一个const数组。C++11为数组提供特化版本的非成员函数**begin**，它返回指向数组第一个元素的指针。一个const数组的元素也是const，所以对于const数组，非成员函数**begin**返回指向const的指针。在数组的上下文中，所谓指向const的指针，也就是**const_iterator**了。
 
-回到最开始，本条款的中心是鼓励你只要能就使用**const_iterator**。最原始的动机是——只要它有意义就加上cosnt——C++98就有的思想。但是在C++98，它（译注：const_iterator）只是一般有用，到了C++11,它就是极其有用了，C++14在其基础上做了些修补工作。
+回到最开始，本条款的中心是鼓励你只要能就使用**const_iterator**。最原始的动机是——只要它有意义就加上const——C++98就有的思想。但是在C++98，它（译注：const_iterator）只是一般有用，到了C++11,它就是极其有用了，C++14在其基础上做了些修补工作。
 
 记住
 + 优先考虑const_iterator而非iterator
