@@ -15,3 +15,21 @@
 int f(int x) throw(); // C++98风格
 int f(int x) noexcept; // C++11风格
 ```
+如果在运行时，**f**出现一个异常，那么就和**f**的异常说明冲突了。在C++98的异常说明中，调用栈会展开至**f**的调用者，一些不合适的动作比如程序终止也会发生。C++11异常说明的运行时行为明显不同：调用栈只是_可能_在程序终止前展开。
+展开调用栈和_可能_展开调用栈两者对于代码生成（code generation）有非常大的影响。在一个**noexcept**函数中，当异常传播到函数外，优化器不需要保证运行时栈的可展开状态，也不需要保证**noexcept**函数中的对象按照构造的反序析构。而"**throw()**"标注的异常声明缺少这样的优化灵活性，它和没加一样。可以总结一下：
+```cpp
+RetType function(params) noexcept;   // 极尽所能优化
+RetType function(params) throw();    // 较少优化
+RetType function(params);            // 较少优化
+```
+这是一个充分的理由使得你当知道它不抛异常时加上**noexcept**。
+
+还有一些函数让这个案例更充分。移动操作是绝佳的例子。假如你有一份C++98代码，里面用到了`std::vector<Widget>`。**Widget**通过**push_back**一次又一次的添加进`std::vector`：
+```cpp
+std::vector<Widget> vw;
+…
+Widget w;
+…                   // work with w
+vw.push_back(w);    // add w to vw
+
+```
