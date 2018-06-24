@@ -42,4 +42,20 @@ vw.push_back(w);    // add w to vw
 
 这是个很严重的问题，因为老代码可能依赖于`push_back`提供的强烈的异常安全保证。因此，C++11版本的实现不能简单的将`push_back`里面的复制操作替换为移动操作，除非知晓移动操作绝不抛异常，这时复制替换为移动就是安全的，唯一的副作用就是性能得到提升。
 
-`std::vector::push_back`受益于"如果可以就移动，如果必要则复制"策略，并且它不是标准库中唯一采取该策略的函数。
+`std::vector::push_back`受益于"如果可以就移动，如果必要则复制"策略，并且它不是标准库中唯一采取该策略的函数。C++98中还有一些函数如`std::vector::reverse`,`std:;deque::insert`等也受益于这种强异常保证。对于这个函数只有在知晓移动不抛异常的情况下用C++11的move替换C++98的copy才是安全的。但是如何知道一个函数中的移动操作是否产生异常？答案很明显：它检查是否声明**noexcept**。
+
+**swap**函数是**noexcept**的绝佳用地。**swap**是STL算法实现的一个关键组件，它也常用于拷贝运算符重载中。它的广泛使用意味着对其施加不抛异常的优化是非常有价值的。有趣的是，标准库的**swap**是否**noexcept**有时依赖于用户定义的**swap**是否**noexcept**。比如，数组和`std::pair`的**swap**声明如下：
+```cpp
+template <class T, size_t N>
+void swap(T (&a)[N], // see
+		  T (&b)[N]) noexcept(noexcept(swap(*a, *b))); // below
+
+template <class T1, class T2>
+struct pair {
+	…
+	void swap(pair& p) noexcept(noexcept(swap(first, p.first)) &&
+	noexcept(swap(second, p.second)));
+	…
+};
+```
+这些函数视情况**noexcept**：它们是否**noexcept**依赖于`noexcept`声明中的表达式是否**noexcept**。假设有两个**Widget**数组，不抛异常的交换数组前提是数组中的元素交换不抛异常。对于**Widget**的交换是否**noexcept**决定了对于`Widget`数组的交换是否**noexcept**，反之亦然。类似的，交换两个存放**Widget**的`std::pair`是否**noexcept**依赖于**Widget**的交换是否**noexcept**。事实上交换高层次数据结构是否**noexcept**取决于它的构成部分的那些低层次数据结构是否异常，这激励你只要可以就提供**noexcept swap**函数（译注：因为如果你的函数不提供**noexcept**保证，其它依赖你的高层次**swap**就不能保证**noexcept**）。
