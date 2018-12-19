@@ -151,3 +151,37 @@ public:
 }
 ```
 
+假设`cacheVaild`是false，那么：
+
++ 一个线程调用`Widget::magicValue`，在`cacheVaild` 被设置成true时执行到它。
++ 在这时，第二个线程调用`Widget::magicValue`随后检查缓存值。看到它是true，就返回`cacheValue`，即使第一个线程还没有给它赋值。因此返回的值是不正确的。
+
+这里有一个坑。对于需要同步的是单个的变量或者内存位置，使用`std::atomic`就足够了。
+不过，一旦你需要对两个以上的变量或内存位置作为一个单元来操作的话，就应该使用互斥锁。对于`Widget::magicValue`是这样的。
+
+```c++
+class Widget {
+public:
+
+    int magicValue() const
+    {
+        std::lock_guard<std::mutex> guard(m);   // lock m
+        if (cacheValid) return cachedValue;
+        else {
+            auto val1 = expensiveComputation1();
+            auto val2 = expensiveComputation2();
+            cachedValue = val1 + val2;
+            cacheValid = true;
+            return cachedValue;
+        }
+    }                                           // unlock m
+
+private:
+    mutable std::mutex m;
+    mutable int cachedValue;                    // no longer atomic
+    mutable bool cacheValid{ false };           // no longer atomic
+};
+
+```
+
+
