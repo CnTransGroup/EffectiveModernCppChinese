@@ -26,7 +26,7 @@
 	7. [Item 13:优先考虑const_iterator而非iterator](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item13.md)
 	8. [Item 14:如果函数不抛出异常请使用noexcept](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item14.md)
 	9. [Item 15:尽可能的使用constexpr](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item15.md) _updating_
-	10. Item 16:确保const成员函数线程安全
+	10. [Item 16:让const成员函数线程安全](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item16.md) __contribute by @windski__
 	11. Item 17:理解特殊成员函数函数的生成
 4. 智能指针
 	1. Item 18:对于占有性资源使用std::unique_ptr
