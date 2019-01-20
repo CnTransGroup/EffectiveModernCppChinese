@@ -1,5 +1,7 @@
 # 《Effective Modern C++ 》翻译
 ![bookLogo](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/x.public/1.png?raw=true)
+[![Backers on Open Collective](https://opencollective.com/EffectiveModernCppChinese/backers/badge.svg)](#backers)
+ [![Sponsors on Open Collective](https://opencollective.com/EffectiveModernCppChinese/sponsors/badge.svg)](#sponsors) 
 
 > ! 2017.10开始更新<br>
 > ! 我没有版权，我没有版权，我没有版权<br>
@@ -58,3 +60,33 @@
 8. 微调
 	1. Item 41:对于那些可移动总是被拷贝的形参使用传值方式
 	2. Item 42:考虑就地创建而非插入
+
+## Contributors
+
+This project exists thanks to all the people who contribute. 
+<a href="https://github.com/racaljk/EffectiveModernCppChinese/graphs/contributors"><img src="https://opencollective.com/EffectiveModernCppChinese/contributors.svg?width=890&button=false" /></a>
+
+
+## Backers
+
+Thank you to all our backers! 🙏 [[Become a backer](https://opencollective.com/EffectiveModernCppChinese#backer)]
+
+<a href="https://opencollective.com/EffectiveModernCppChinese#backers" target="_blank"><img src="https://opencollective.com/EffectiveModernCppChinese/backers.svg?width=890"></a>
+
+
+## Sponsors
+
+Support this project by becoming a sponsor. Your logo will show up here with a link to your website. [[Become a sponsor](https://opencollective.com/EffectiveModernCppChinese#sponsor)]
+
+<a href="https://opencollective.com/EffectiveModernCppChinese/sponsor/0/website" target="_blank"><img src="https://opencollective.com/EffectiveModernCppChinese/sponsor/0/avatar.svg"></a>
+<a href="https://opencollective.com/EffectiveModernCppChinese/sponsor/1/website" target="_blank"><img src="https://opencollective.com/EffectiveModernCppChinese/sponsor/1/avatar.svg"></a>
+<a href="https://opencollective.com/EffectiveModernCppChinese/sponsor/2/website" target="_blank"><img src="https://opencollective.com/EffectiveModernCppChinese/sponsor/2/avatar.svg"></a>
+<a href="https://opencollective.com/EffectiveModernCppChinese/sponsor/3/website" target="_blank"><img src="https://opencollective.com/EffectiveModernCppChinese/sponsor/3/avatar.svg"></a>
+<a href="https://opencollective.com/EffectiveModernCppChinese/sponsor/4/website" target="_blank"><img src="https://opencollective.com/EffectiveModernCppChinese/sponsor/4/avatar.svg"></a>
+<a href="https://opencollective.com/EffectiveModernCppChinese/sponsor/5/website" target="_blank"><img src="https://opencollective.com/EffectiveModernCppChinese/sponsor/5/avatar.svg"></a>
+<a href="https://opencollective.com/EffectiveModernCppChinese/sponsor/6/website" target="_blank"><img src="https://opencollective.com/EffectiveModernCppChinese/sponsor/6/avatar.svg"></a>
+<a href="https://opencollective.com/EffectiveModernCppChinese/sponsor/7/website" target="_blank"><img src="https://opencollective.com/EffectiveModernCppChinese/sponsor/7/avatar.svg"></a>
+<a href="https://opencollective.com/EffectiveModernCppChinese/sponsor/8/website" target="_blank"><img src="https://opencollective.com/EffectiveModernCppChinese/sponsor/8/avatar.svg"></a>
+<a href="https://opencollective.com/EffectiveModernCppChinese/sponsor/9/website" target="_blank"><img src="https://opencollective.com/EffectiveModernCppChinese/sponsor/9/avatar.svg"></a>
+
+
