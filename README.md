@@ -7,11 +7,10 @@
 > ! 我没有版权，我没有版权，我没有版权<br>
 > ！本书要求读者具有C++基础<br>
 > ！未翻译的条款名称现在直译，翻译时可能适当修改<br>
-> ！条款后的revised表明该条款已经经过初步修订<br>
 
 # 目录
 1. 类型推导
-	1. [Item 1:理解模板类型推导](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item1.md)_revised_
+	1. [Item 1:理解模板类型推导](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item1.md) __已修订__
 	2. [Item 2:理解auto类型推导](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item2.md)
 	3. [Item 3:理解decltype](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item3.md)
 	3. [Item 4:学会查看类型推导结果](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item4.md)
@@ -22,13 +21,13 @@
 	1. [Item 7:区别使用()和{}创建对象](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item7.md)
 	2. [Item 8:优先考虑nullptr而非0和NULL](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item8.md)
 	3. [Item 9:优先考虑别名声明而非typedefs](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item9.md)
-	4. [Item 10:优先考虑限域枚举而非未限域枚举](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item10.md) _revised_
+	4. [Item 10:优先考虑限域枚举而非未限域枚举](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item10.md) __已修订__
 	5. [Item 11:优先考虑使用deleted函数而非使用未定义的私有声明](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item11.md)
 	6. [Item 12:使用override声明重载函数](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item12.md)
 	7. [Item 13:优先考虑const_iterator而非iterator](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item13.md)
 	8. [Item 14:如果函数不抛出异常请使用noexcept](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item14.md)
-	9. [Item 15:尽可能的使用constexpr](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item15.md) _updating_
-	10. [Item 16:让const成员函数线程安全](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item16.md) __contribute by @windski__
+	9. [Item 15:尽可能的使用constexpr](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item15.md) __更新中__
+	10. [Item 16:让const成员函数线程安全](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item16.md) __由 @windski贡献__
 	11. Item 17:理解特殊成员函数函数的生成
 4. 智能指针
 	1. Item 18:对于占有性资源使用std::unique_ptr
@@ -61,32 +60,14 @@
 	1. Item 41:对于那些可移动总是被拷贝的形参使用传值方式
 	2. Item 42:考虑就地创建而非插入
 
-## Contributors
+## 贡献者
 
-This project exists thanks to all the people who contribute. 
+感谢所有参与翻译/勘误/建议的贡献者们~
 <a href="https://github.com/racaljk/EffectiveModernCppChinese/graphs/contributors"><img src="https://opencollective.com/EffectiveModernCppChinese/contributors.svg?width=890&button=false" /></a>
 
 
-## Backers
+## 赞助翻译
 
-Thank you to all our backers! 🙏 [[Become a backer](https://opencollective.com/EffectiveModernCppChinese#backer)]
+ 🙏 [[Become a backer](https://opencollective.com/EffectiveModernCppChinese#backer)]
 
 <a href="https://opencollective.com/EffectiveModernCppChinese#backers" target="_blank"><img src="https://opencollective.com/EffectiveModernCppChinese/backers.svg?width=890"></a>
-
-
-## Sponsors
-
-Support this project by becoming a sponsor. Your logo will show up here with a link to your website. [[Become a sponsor](https://opencollective.com/EffectiveModernCppChinese#sponsor)]
-
-<a href="https://opencollective.com/EffectiveModernCppChinese/sponsor/0/website" target="_blank"><img src="https://opencollective.com/EffectiveModernCppChinese/sponsor/0/avatar.svg"></a>
-<a href="https://opencollective.com/EffectiveModernCppChinese/sponsor/1/website" target="_blank"><img src="https://opencollective.com/EffectiveModernCppChinese/sponsor/1/avatar.svg"></a>
-<a href="https://opencollective.com/EffectiveModernCppChinese/sponsor/2/website" target="_blank"><img src="https://opencollective.com/EffectiveModernCppChinese/sponsor/2/avatar.svg"></a>
-<a href="https://opencollective.com/EffectiveModernCppChinese/sponsor/3/website" target="_blank"><img src="https://opencollective.com/EffectiveModernCppChinese/sponsor/3/avatar.svg"></a>
-<a href="https://opencollective.com/EffectiveModernCppChinese/sponsor/4/website" target="_blank"><img src="https://opencollective.com/EffectiveModernCppChinese/sponsor/4/avatar.svg"></a>
-<a href="https://opencollective.com/EffectiveModernCppChinese/sponsor/5/website" target="_blank"><img src="https://opencollective.com/EffectiveModernCppChinese/sponsor/5/avatar.svg"></a>
-<a href="https://opencollective.com/EffectiveModernCppChinese/sponsor/6/website" target="_blank"><img src="https://opencollective.com/EffectiveModernCppChinese/sponsor/6/avatar.svg"></a>
-<a href="https://opencollective.com/EffectiveModernCppChinese/sponsor/7/website" target="_blank"><img src="https://opencollective.com/EffectiveModernCppChinese/sponsor/7/avatar.svg"></a>
-<a href="https://opencollective.com/EffectiveModernCppChinese/sponsor/8/website" target="_blank"><img src="https://opencollective.com/EffectiveModernCppChinese/sponsor/8/avatar.svg"></a>
-<a href="https://opencollective.com/EffectiveModernCppChinese/sponsor/9/website" target="_blank"><img src="https://opencollective.com/EffectiveModernCppChinese/sponsor/9/avatar.svg"></a>
-
-
