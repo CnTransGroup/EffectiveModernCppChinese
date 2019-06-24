@@ -50,4 +50,89 @@ auto base = readFromDB("base");     // 运行时获取三个值
 auto exp = readFromDB("exponent"); 
 auto baseToExp = pow(base, exp);    // 运行时调用pow
 ```
-因为**constexpr**函数必须能在编译期值调用的时候返回编译器结果，就必须对它的实现施加一些限制
+因为**constexpr**函数必须能在编译期值调用的时候返回编译器结果，就必须对它的实现施加一些限制。这些限制在C++11和C++14标准间有所出入。
+
+C++11中，**constexpr**函数的代码不超过一行语句：一个**return**。听起来很受限，但实际上有两个技巧可以扩展**constexpr**函数的表达能力。第一，使用三元运算符“?:”来代替**if-else**语句，第二，使用递归代替循环。因此**pow**可以像这样实现：
+```cpp
+constexpr int pow(int base, int exp) noexcept
+{
+ return (exp == 0 ? 1 : base * pow(base, exp - 1));
+}
+```
+这样没问题，但是很难想象除了使用函数式语言的程序员外会觉得这样硬核的编程方式更好。在C++14中，**constexpr**函数的限制变得非常宽松了，所以下面的函数实现成为了可能；
+```cpp
+constexpr int pow(int base, int exp) noexcept  // C++14
+{
+  auto result = 1;
+  for (int i = 0; i < exp; ++i) result *= base;
+  return result;
+}
+```
+**constexpr**函数限制为只能获取和返回字面值类型，这基本上意味着具有那些类型的值能在编译期决定。在C++11中，除了void外的所有内置类型外还包括一些用户定义的字面值，因为构造函数和其他成员函数可以是**constexpr**：
+```cpp
+class Point {
+  public:
+	constexpr Point(double xVal = 0, double yVal = 0) noexcept : x(xVal), y(yVal)
+	{}
+	constexpr double xValue() const noexcept { return x; } 
+	constexpr double yValue() const noexcept { return y; }
+	
+	void setX(double newX) noexcept { x = newX; }
+    void setY(double newY) noexcept { y = newY; }
+  private:
+	double x, y;
+};
+```
+**Point**的构造函数被声明为**constexpr**，因为如果传入的参数在编译期可知，**Point**的数据成员也能在编译器可知。因此**Point**就能被初始化为**constexpr**：
+```cpp
+constexpr Point p1(9.4, 27.7); // 没问题，构造函数会在编译期“运行”
+constexpr Point p2(28.8, 5.3); // 也没问题
+```
+类似的，xValue和yValue的getter函数也能是**constexpr**，因为如果对一个编译期已知的**Point**对象调用getter，数据成员x和y的值也能在编译期知道。这使得我们可以写一个**constexpr**函数里面调用**Point**的getter并初始化**constexpr**的对象：
+```cpp
+constexpr
+Point midpoint(const Point& p1, const Point& p2) noexcept
+{
+  return { (p1.xValue() + p2.xValue()) / 2, 
+  		   (p1.yValue() + p2.yValue()) / 2 };
+}
+constexpr auto mid = midpoint(p1, p2);
+```
+这太令人激动了。它意味着mid对象通过调用构造函数，getter和成员函数就能在只读内存中创建！它也意味着你可以在模板或者需要枚举量的表达式里面使用像`mid.xValue()*10`的表达式！它也意味着以前相对严格的某一行代码只能用于编译期，某一行代码只能用于运行时的界限变得模糊，一些运行时的普通计算能并入编译时。越多这样的代码并入，你的程序就越快。（当然，编译会花费更长时间）
+
+在C++11中，有两个限制使得**Point**的成员函数`setX`和`setY`不能声明为**constexpr**。第一，它们修改它们操作的对象的状态， 并且在C++11中，**constexpr**成员函数是隐式的const。第二，它们只能有void返回类型，void类型不是C++11中的字面值类型。这两个限制在C++14中放开了，所以C++14中Point的setter也能声明为**constexpr**：
+```cpp
+class Point {
+  public:
+	...
+	constexpr void setX(double newX) noexcept { x = newX; }
+	constexpr void setY(double newY) noexcept { y = newY; }
+	...
+};
+```
+现在也能写这样的函数：
+```cpp
+constexpr Point reflection(const Point& p) noexcept
+{
+	Point result; 
+	result.setX(-p.xValue());
+	result.setY(-p.yValue()); 
+	return result;
+}
+```
+客户端代码可以这样写：
+```cpp
+constexpr Point p1(9.4, 27.7);
+constexpr Point p2(28.8, 5.3);
+constexpr auto mid = midpoint(p1, p2);
+
+constexpr auto reflectedMid =         // reflectedMid的值
+     reflection(mid);                 // 在编译期可知                                
+```
+本章的建议是尽可能的使用**constexpr**，现在我希望大家已经明白缘由：**constexopr**对象和**constexpr**函数可以用于很多非**constexpr**不能使用的场景。使用**constexpr**关键字可以最大化你的对象和函数可以使用的场景。
+
+还有个重要的需要注意的是**constexpr**是对象和函数接口的一部分。加上**constexpr**相当于宣称“我能在C++要求常量表达式的地方使用它”。如果你声明一个对象或者函数是constexpr，客户端程序员就会在那些场景中使用它。如果你后面认为使用constexpr是一个错误并想移除它，你可能造成大量客户端代码不能编译。**尽可能**的使用**constexpr**表示你需要长期坚持对某个对象或者函数施加这种限制。
+
+记住
++ **constexpr**对象是**cosnt**，它的值在编译期可知
++ 当传递编译期可知的值时，**cosntexpr**函数可以产出编译期可知的结果
