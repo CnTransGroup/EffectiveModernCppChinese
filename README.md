@@ -1,5 +1,7 @@
 # 《Effective Modern C++ 》翻译
-![bookLogo](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/x.public/1.png?raw=true)
+
+<img src="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/x.public/1.png?raw=true" align="right" weight="300" height="400"/>
+
 [![Backers on Open Collective](https://opencollective.com/EffectiveModernCppChinese/backers/badge.svg)](#backers)
  [![Sponsors on Open Collective](https://opencollective.com/EffectiveModernCppChinese/sponsors/badge.svg)](#sponsors) 
 
