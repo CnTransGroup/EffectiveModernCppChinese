@@ -1,5 +1,5 @@
 # 《Effective Modern C++ 》翻译
-![bookLogo](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/x.public/1.png?raw=true)
+![bookLogo](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/x.public/1.png?raw=true)
 [![Backers on Open Collective](https://opencollective.com/EffectiveModernCppChinese/backers/badge.svg)](#backers)
  [![Sponsors on Open Collective](https://opencollective.com/EffectiveModernCppChinese/sponsors/badge.svg)](#sponsors) 
 
@@ -11,27 +11,27 @@
 
 # 目录
 1. 类型推导
-	1. [Item 1:理解模板类型推导](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item1.md) __已修订__
-	2. [Item 2:理解auto类型推导](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item2.md)
-	3. [Item 3:理解decltype](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item3.md)
-	3. [Item 4:学会查看类型推导结果](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item4.md)
+	1. [Item 1:理解模板类型推导](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item1.md) __已修订__
+	2. [Item 2:理解auto类型推导](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item2.md)
+	3. [Item 3:理解decltype](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item3.md)
+	3. [Item 4:学会查看类型推导结果](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item4.md)
 2. auto
-	1. [Item 5:优先考虑auto而非显式类型声明](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/2.auto/item5.md)
-	2. [Item 6:auto推导若非己愿，使用显式类型初始化惯用法](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/2.auto/item6.md)
+	1. [Item 5:优先考虑auto而非显式类型声明](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/2.auto/item5.md)
+	2. [Item 6:auto推导若非己愿，使用显式类型初始化惯用法](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/2.auto/item6.md)
 3. 移步现代C++
-	1. [Item 7:区别使用()和{}创建对象](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item7.md)
-	2. [Item 8:优先考虑nullptr而非0和NULL](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item8.md)
-	3. [Item 9:优先考虑别名声明而非typedefs](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item9.md)
-	4. [Item 10:优先考虑限域枚举而非未限域枚举](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item10.md) __已修订__
-	5. [Item 11:优先考虑使用deleted函数而非使用未定义的私有声明](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item11.md)
-	6. [Item 12:使用override声明重载函数](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item12.md)
-	7. [Item 13:优先考虑const_iterator而非iterator](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item13.md)
-	8. [Item 14:如果函数不抛出异常请使用noexcept](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item14.md)
-	9. [Item 15:尽可能的使用constexpr](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item15.md)
-	10. [Item 16:让const成员函数线程安全](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item16.md) __由 @windski贡献__
-	11. [Item 17:理解特殊成员函数函数的生成](https://github.com/racaljk/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item17.md) __更新中__
+	1. [Item 7:区别使用()和{}创建对象](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item7.md)
+	2. [Item 8:优先考虑nullptr而非0和NULL](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item8.md)
+	3. [Item 9:优先考虑别名声明而非typedefs](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item9.md)
+	4. [Item 10:优先考虑限域枚举而非未限域枚举](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item10.md) __已修订__
+	5. [Item 11:优先考虑使用deleted函数而非使用未定义的私有声明](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item11.md)
+	6. [Item 12:使用override声明重载函数](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item12.md)
+	7. [Item 13:优先考虑const_iterator而非iterator](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item13.md)
+	8. [Item 14:如果函数不抛出异常请使用noexcept](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item14.md)
+	9. [Item 15:尽可能的使用constexpr](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item15.md)
+	10. [Item 16:让const成员函数线程安全](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item16.md) __由 @windski贡献__
+	11. [Item 17:理解特殊成员函数函数的生成](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item17.md) 
 4. 智能指针
-	1. Item 18:对于占有性资源使用std::unique_ptr
+	1. [Item 18:对于独占资源使用std::unique_ptr](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item18.md) __更新中__
 	2. Item 19:对于共享性资源使用std::shared_ptr
 	3. Item 20:对于类似于std::shared_ptr的指针使用std::weak_ptr可能造成悬置
 	4. Item 21:优先考虑使用std::make_unique和std::make_shared而非new
@@ -64,7 +64,7 @@
 ## 贡献者
 
 感谢所有参与翻译/勘误/建议的贡献者们~
-<a href="https://github.com/racaljk/EffectiveModernCppChinese/graphs/contributors"><img src="https://opencollective.com/EffectiveModernCppChinese/contributors.svg?width=890&button=false" /></a>
+<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/graphs/contributors"><img src="https://opencollective.com/EffectiveModernCppChinese/contributors.svg?width=890&button=false" /></a>
 
 
 ## 赞助翻译
