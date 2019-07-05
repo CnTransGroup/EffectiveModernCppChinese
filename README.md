@@ -35,7 +35,7 @@
 4. 智能指针
 	1. [Item 18:对于独占资源使用std::unique_ptr](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item18.md) __更新中__
 	2. [Item 19:对于共享资源使用std::shared_ptr](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item19.md)
-	3. Item 20:对于类似于std::shared_ptr的指针使用std::weak_ptr可能造成悬置
+	3. [Item 20:像std::shared_ptr一样使用std::weak_ptr可能造成dangle](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item20.md) __更新中__
 	4. Item 21:优先考虑使用std::make_unique和std::make_shared而非new
 	5. Item 22:当使用Pimpl惯用法，请在实现文件中定义特殊成员函数
 5. 右值引用，移动语意，完美转发
