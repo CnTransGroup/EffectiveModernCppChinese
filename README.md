@@ -39,7 +39,7 @@
 	4. Item 21:优先考虑使用std::make_unique和std::make_shared而非new
 	5. Item 22:当使用Pimpl惯用法，请在实现文件中定义特殊成员函数
 5. 右值引用，移动语意，完美转发
-	1. Item 23:理解std::move和std::forward
+	1. [Item 23:理解std::move和std::forward](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RvalueReferences_MovingSemantics_And_PerfectForwarding/item23.md)
 	2. Item 24:区别通用引用和右值引用
 	3. Item 25:对于右值引用使用std::move，对于通用引用使用std::forward
 	4. Item 26:避免重载通用引用
