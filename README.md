@@ -37,10 +37,10 @@
 	2. [Item 19:对于共享资源使用std::shared_ptr](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item19.md) __已修订__
 	3. [Item 20:像std::shared_ptr一样使用std::weak_ptr可能造成dangle](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item20.md) __更新中__
 	4. Item 21:优先考虑使用std::make_unique和std::make_shared而非new
-	5. Item 22:当使用Pimpl惯用法，请在实现文件中定义特殊成员函数
+	5. [Item 22:当使用Pimpl惯用法，请在实现文件中定义特殊成员函数](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item22.md)
 5. 右值引用，移动语意，完美转发
 	1. [Item 23:理解std::move和std::forward](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RvalueReferences_MovingSemantics_And_PerfectForwarding/item23.md)
-	2. Item 24:区别通用引用和右值引用
+	2. [Item 24:区别通用引用和右值引用](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RvalueReferences_MovingSemantics_And_PerfectForwarding/item24.md)
 	3. Item 25:对于右值引用使用std::move，对于通用引用使用std::forward
 	4. Item 26:避免重载通用引用
 	5. Item 27:熟悉重载通用引用的替代品
