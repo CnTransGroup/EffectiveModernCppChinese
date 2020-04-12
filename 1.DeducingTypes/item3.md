@@ -12,7 +12,7 @@ bool f(const Widget& w);      //decltype(w)是const Widget&
 
 struct Point{
     int x;                                  //decltype(Point::x)是int
-    int y;                                  //decltype(Point:;y)是int
+    int y;                                  //decltype(Point::y)是int
 };
 
 template<typename T>
