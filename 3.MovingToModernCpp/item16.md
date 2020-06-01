@@ -32,8 +32,8 @@ public:
     }
     
 private:
-    mutable bool rootsAreVaild() { false };    // initializers 的更多信息
-    mutable RootsType rootVals() {};           // 请查看条款7
+    mutable bool rootsAreVaild{ false };    // initializers 的更多信息
+    mutable RootsType rootVals{};           // 请查看条款7
 };
 ```
 
