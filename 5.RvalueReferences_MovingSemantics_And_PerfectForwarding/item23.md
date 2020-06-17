@@ -44,7 +44,7 @@ move(T&& param)
 
 该函数返回类型的`&&`部分表明`std::move`函数返回的是一个右值引用，但是，正如Item 28所解释的那样，如果类型`T`恰好是一个左值引用，那么`T&&`将会成为一个左值引用。为了避免如此，类型萃取器（type trait，见Item 9)`std::remove_reference`应用到了类型`T`上，因此确保了`&&`被正确的应用到了一个不是引用的类型上。这保证了`std::move`返回的真的是右值引用，这很重要，因为函数返回的右值引用是右值（rvalues)。因此，`std::move`将它的参数转换为一个右值，这就是它的全部作用。
 
-此外，`std;:move`在C++14中可以被更简单地实现。多亏了函数返回值类型推导（见Item 3)和标准库的模板别名`std::remove_reference_t`（见Item 9)，`std::move`可以这样写：
+此外，`std::move`在C++14中可以被更简单地实现。多亏了函数返回值类型推导（见Item 3)和标准库的模板别名`std::remove_reference_t`（见Item 9)，`std::move`可以这样写：
 
 ```cpp
 template <typename T>
