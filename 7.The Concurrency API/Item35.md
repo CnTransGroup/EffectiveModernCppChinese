@@ -60,7 +60,7 @@ auto fut = std::async(doAsyncWork);  // onus of thread mgmt is
 
 
 
-## 总结
+## 记住
 
 - `std::thread`API不能直接访问异步执行的结果，如果执行函数有异常抛出，代码会终止执行
 - 基于线程的编程方式关于解决资源超限，负载均衡的方案移植性不佳
