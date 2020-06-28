@@ -46,7 +46,7 @@
 	4. Item 26:避免重载通用引用
 	5. Item 27:熟悉重载通用引用的替代品
 	6. Item 28:理解引用折叠
-	7. [Item 29:认识移动操作的缺点](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RvalueReferences_MovingSemantics_And_PerfectForwarding/item29.md) __由 @wendajiang共享__
+	7. [Item 29:认识移动操作的缺点](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RvalueReferences_MovingSemantics_And_PerfectForwarding/item29.md) __由 @wendajiang贡献__
 	8. Item 30:熟悉完美转发失败的情况
 6. Lambda表达式
 	1. [Item 31:避免使用默认捕获模式](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/6.Lambda%20Expressions/item31.md) __由 @LucienXian贡献__
