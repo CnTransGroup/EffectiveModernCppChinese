@@ -6,6 +6,7 @@
  [![Sponsors on Open Collective](https://opencollective.com/EffectiveModernCppChinese/sponsors/badge.svg)](#sponsors) 
 
 > ! 2017.10开始更新<br>
+> ! 标注“已修订”的章节表示已经没有大致的错误
 > ! 我没有版权，我没有版权，我没有版权<br>
 > ！本书要求读者具有C++基础<br>
 > ！未翻译的条款名称现在直译，翻译时可能适当修改<br>
@@ -37,30 +38,30 @@
 	2. [Item 19:对于共享资源使用std::shared_ptr](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item19.md) __已修订__
 	3. [Item 20:像std::shared_ptr一样使用std::weak_ptr可能造成dangle](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item20.md) __更新中__
 	4. Item 21:优先考虑使用std::make_unique和std::make_shared而非new
-	5. [Item 22:当使用Pimpl惯用法，请在实现文件中定义特殊成员函数](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item22.md)
+	5. [Item 22:当使用Pimpl惯用法，请在实现文件中定义特殊成员函数](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item22.md) __由 @BlurryLight贡献__
 5. 右值引用，移动语意，完美转发
-	1. [Item 23:理解std::move和std::forward](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RvalueReferences_MovingSemantics_And_PerfectForwarding/item23.md)
-	2. [Item 24:区别通用引用和右值引用](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RvalueReferences_MovingSemantics_And_PerfectForwarding/item24.md)
+	1. [Item 23:理解std::move和std::forward](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RvalueReferences_MovingSemantics_And_PerfectForwarding/item23.md) __由 @BlurryLight贡献__
+	2. [Item 24:区别通用引用和右值引用](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RvalueReferences_MovingSemantics_And_PerfectForwarding/item24.md) __由 @BlurryLight贡献__
 	3. Item 25:对于右值引用使用std::move，对于通用引用使用std::forward
 	4. Item 26:避免重载通用引用
 	5. Item 27:熟悉重载通用引用的替代品
 	6. Item 28:理解引用折叠
-	7. Item 29:认识移动操作的缺点
+	7. [Item 29:认识移动操作的缺点](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RvalueReferences_MovingSemantics_And_PerfectForwarding/item29.md) __由 @wendajiang贡献__
 	8. Item 30:熟悉完美转发失败的情况
 6. Lambda表达式
-	1. [Item 31:避免使用默认捕获模式](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/6.Lambda%20Expressions/item31.md)
-	2. [Item 32:使用初始化捕获来移动对象到闭包中](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/6.Lambda%20Expressions/item32.md)
+	1. [Item 31:避免使用默认捕获模式](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/6.Lambda%20Expressions/item31.md) __由 @LucienXian贡献__
+	2. [Item 32:使用初始化捕获来移动对象到闭包中](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/6.Lambda%20Expressions/item32.md) __由 @LucienXian贡献__
 	3. Item 33:对于std::forward的auto&&形参使用decltype
 	4. Item 34:有限考虑lambda表达式而非std::bind
 7. 并发API
-	1. Item 35:优先考虑基于任务的编程而非基于线程的编程
+	1. [Item 35:优先考虑基于任务的编程而非基于线程的编程](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.The%20Concurrency%20API/Item35.md) __由 @wendajiang贡献__
 	2. Item 36:如果有异步的必要请指定std::launch::threads
 	3. Item 37:从各个方面使得std::threads unjoinable
 	4. Item 38:知道不同线程句柄析构行为
 	5. Item 39:考虑对于单次事件通信使用void
 	6. Item 40:对于并发使用std::atomic，volatile用于特殊内存区
 8. 微调
-	1. Item 41:对于那些可移动总是被拷贝的形参使用传值方式
+	1. [Item 41:对于那些可移动总是被拷贝的形参使用传值方式](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/8.Tweaks/item41.md) __由 @wendajiang贡献__
 	2. Item 42:考虑就地创建而非插入
 
 ## 贡献者
