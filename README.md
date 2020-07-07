@@ -49,7 +49,7 @@
 	8. Item 30:熟悉完美转发失败的情况
 6. Lambda表达式
 	1. [Item 31:避免使用默认捕获模式](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/6.Lambda%20Expressions/item31.md)
-	2. Item 32:使用初始化捕获来移动对象到闭包中
+	2. [Item 32:使用初始化捕获来移动对象到闭包中](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/6.Lambda%20Expressions/item32.md)
 	3. Item 33:对于std::forward的auto&&形参使用decltype
 	4. Item 34:有限考虑lambda表达式而非std::bind
 7. 并发API
