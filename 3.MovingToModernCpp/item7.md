@@ -204,7 +204,7 @@ Widget w5{{}};        // 同上
 此时，括号初始化的晦涩规则，std::initializer_list和构造函数重载就会一下子涌进你的脑袋，你可能会想研究了半天这些东西在你的日常编程中到底占多大比例。
 可能比你想象的要多。因为std::vector也会受到影响。
 std::vector有一个非std::initializer_list构造函数允许你去指定容器的初始大小，以及使用一个值填满你的容器。
-但它也有一个std::initializer_list构造函数允许你使用花括号里面的值初始化容器。如果你创建一个数值类型的veector，然后你传递两个实参。把这两个实参放到小括号和放到花括号中是不同：
+但它也有一个std::initializer_list构造函数允许你使用花括号里面的值初始化容器。如果你创建一个数值类型的vector，然后你传递两个实参。把这两个实参放到小括号和放到花括号中是不同：
 ````cpp
 std::vector<int> v1(10, 20);    //使用非std::initializer_list
                                 //构造函数创建一个包含10个元素的std::vector
