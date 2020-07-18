@@ -100,7 +100,7 @@ auto ep = static_cast<float>(calEpsilon());
 ````cpp
 int index = d * c.size();
 ````
-但是这种写法并没有明确表明你想把double类型转换成int类型，显式类型初始器可以帮助你正确表意：
+但是这种写法并没有明确表明你想将右侧的double类型转换成int类型，显式类型初始器可以帮助你正确表意：
 ````cpp
 auto index = static_cast<int>(d * size());
 ````
