@@ -16,7 +16,7 @@ int x;
 
 别介意，让我们转换一个话题， 对一个局部变量使用解引用迭代器的方式初始化：
 ````cpp
-template<typename T>
+template<typename It>
 void dwim(It b, It e)
 {
 	while(b!=e){
