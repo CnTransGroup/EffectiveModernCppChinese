@@ -1,8 +1,7 @@
 ## Item 9:Prefer alias declarations to typedefs
 条款九:优先考虑别名声明而非typedefs
 
-我相信每个人都同意使用STL容器是个好主意，并且我希望Item18能说服你让你觉得使用**std:unique_ptr**也是个好主意，但我猜没有人喜欢写上几次 `std::unique_ptr<std::unordered_map<std::string,std::string>>`这样的类型。
-它可能会让患上腕管综合征的风险大大增加。
+我相信每个人都同意使用STL容器是个好主意，并且我希望Item18能说服你让你觉得使用**std:unique_ptr**也是个好主意，但我猜没有人喜欢写上几次 `std::unique_ptr<std::unordered_map<std::string,std::string>>`这样的类型，它可能会让你患上腕管综合征的风险大大增加。
 
 避免上述医疗事故也很简单，引入**typedef**即可：
 ````cpp
