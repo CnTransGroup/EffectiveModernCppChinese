@@ -4,6 +4,7 @@
 在C++面向对象的世界里，涉及的概念有类，继承，虚函数。这个世界最基本的概念是派生类的虚函数重写基类同名函数。令人遗憾的是虚函数重写可能一不小心就错了。给人感觉语言的这一部分设计观点是墨菲定律不是用来遵守的，只是值得尊敬的。
 
 鉴于"重写"听起来像"重载"，尽管两者完全不相关，下面就通过一个派生类和基类来说明什么是虚函数重写：
+
 ```cpp
 class Base {
 public:
@@ -14,7 +15,7 @@ class Derived: public Base {
 	public:
 	virtual void doWork(); // 重写Base::doWork(这里"virtual"是可以省略的)
 	… 
-}; 	
+}; 
 std::unique_ptr<Base> upb = 		// 创建基类指针
 	std::make_unique<Derived>(); 	// 指向派生类对象
 									// 关于std：：make_unique请
