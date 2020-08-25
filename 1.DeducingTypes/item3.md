@@ -5,7 +5,7 @@
 
 我们将从一个简单的情况开始，没有任何令人惊讶的情况。相比模板类型推导和auto类型推导，decltype只是简单的返回名字或者表达式的类型：
 ````cpp
-const int x=0;                         //decltype(i)是const int
+const int i=0;                         //decltype(i)是const int
 
 bool f(const Widget& w);      //decltype(w)是const Widget&
                                                 //decltype(f)是bool(const Widget&)
