@@ -34,7 +34,7 @@
 	10. [Item 16:让const成员函数线程安全](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item16.md) __由 @windski贡献__
 	11. [Item 17:理解特殊成员函数函数的生成](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item17.md) 
 4. 智能指针
-	1. [Item 18:对于独占资源使用std::unique_ptr](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item18.md) __更新中__
+	1. [Item 18:对于独占资源使用std::unique_ptr](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item18.md) __@wendajiang更新完成__
 	2. [Item 19:对于共享资源使用std::shared_ptr](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item19.md) __已修订__
 	3. [Item 20:像std::shared_ptr一样使用std::weak_ptr可能造成dangle](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item20.md) __更新中__
 	4. Item 21:优先考虑使用std::make_unique和std::make_shared而非new
@@ -54,7 +54,7 @@
 	3. Item 33:对于std::forward的auto&&形参使用decltype
 	4. Item 34:有限考虑lambda表达式而非std::bind
 7. 并发API
-	1. [Item 35:优先考虑基于任务的编程而非基于线程的编程](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.The%20Concurrency%20API/Item35.md) __由 @wendajiang贡献__
+	1. [Item 35:优先考虑基于任务的编程而非基于线程的编程](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.The%20Concurrency%20API/item35.md) __由 @wendajiang贡献__
 	2. Item 36:如果有异步的必要请指定std::launch::threads
 	3. Item 37:从各个方面使得std::threads unjoinable
 	4. Item 38:知道不同线程句柄析构行为
