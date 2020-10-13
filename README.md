@@ -37,7 +37,7 @@
 	1. [Item 18:对于独占资源使用std::unique_ptr](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item18.md) __@wendajiang更新完成__
 	2. [Item 19:对于共享资源使用std::shared_ptr](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item19.md) __已修订__
 	3. [Item 20:像std::shared_ptr一样使用std::weak_ptr可能造成dangle](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item20.md) __更新中__
-	4. Item 21:优先考虑使用std::make_unique和std::make_shared而非new
+	4. [Item 21:优先考虑使用std::make_unique和std::make_shared而非new](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item21.md) __由 @pusidun贡献__
 	5. [Item 22:当使用Pimpl惯用法，请在实现文件中定义特殊成员函数](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item22.md) __由 @BlurryLight贡献__
 5. 右值引用，移动语意，完美转发
 	1. [Item 23:理解std::move和std::forward](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RvalueReferences_MovingSemantics_And_PerfectForwarding/item23.md) __由 @BlurryLight贡献__
@@ -51,7 +51,7 @@
 6. Lambda表达式
 	1. [Item 31:避免使用默认捕获模式](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/6.Lambda%20Expressions/item31.md) __由 @LucienXian贡献__
 	2. [Item 32:使用初始化捕获来移动对象到闭包中](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/6.Lambda%20Expressions/item32.md) __由 @LucienXian贡献__
-	3. Item 33:对于std::forward的auto&&形参使用decltype
+	3. [Item 33:对于std::forward的auto&&形参使用decltype](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/6.Lambda%20Expressions/item33.md) __由 @LucienXian贡献__
 	4. Item 34:有限考虑lambda表达式而非std::bind
 7. 并发API
 	1. [Item 35:优先考虑基于任务的编程而非基于线程的编程](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.The%20Concurrency%20API/item35.md) __由 @wendajiang贡献__
