@@ -196,7 +196,7 @@ typedef int& RvalueRefToT;
 
 这清楚表明我们为typedef选择的name可能不是我们希望的那样：RvalueRefToT是左值引用的typedef，当使用Widget被左值引用实例化时。
 
-最后，**也是第四**中情况是，decltype使用的情况，如果在分析decltype期间，出现了引用的引用，引用折叠规则就会起作用（关于decltype，参见Item3）
+最后，**也是第四**种情况是，decltype使用的情况，如果在分析decltype期间，出现了引用的引用，引用折叠规则就会起作用（关于decltype，参见Item3）
 
 ### 需要记住的事
 
