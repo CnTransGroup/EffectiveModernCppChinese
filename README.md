@@ -42,12 +42,12 @@
 5. 右值引用，移动语意，完美转发
 	1. [Item 23:理解std::move和std::forward](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RvalueReferences_MovingSemantics_And_PerfectForwarding/item23.md) __由 @BlurryLight贡献__
 	2. [Item 24:区别通用引用和右值引用](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RvalueReferences_MovingSemantics_And_PerfectForwarding/item24.md) __由 @BlurryLight贡献__
-	3. [Item 25:对于右值引用使用std::move，对于通用引用使用std::forward](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RvalueReferences_MovingSemantics_And_PerfectForwarding/item25.md)__由@wendajiang贡献__
+	3. [Item 25:对于右值引用使用std::move，对于通用引用使用std::forward](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RvalueReferences_MovingSemantics_And_PerfectForwarding/item25.md)__由 @wendajiang贡献__
 	4. Item 26:避免重载通用引用
 	5. Item 27:熟悉重载通用引用的替代品
-	6. [Item 28:理解引用折叠](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RvalueReferences_MovingSemantics_And_PerfectForwarding/item28.md)__由@wendajiang贡献__
+	6. [Item 28:理解引用折叠](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RvalueReferences_MovingSemantics_And_PerfectForwarding/item28.md)__由 @wendajiang贡献__
 	7. [Item 29:认识移动操作的缺点](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RvalueReferences_MovingSemantics_And_PerfectForwarding/item29.md) __由 @wendajiang贡献__
-	8. [Item 30:熟悉完美转发失败的情况](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RvalueReferences_MovingSemantics_And_PerfectForwarding/item30.md)__由@wendajiang贡献__
+	8. [Item 30:熟悉完美转发失败的情况](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RvalueReferences_MovingSemantics_And_PerfectForwarding/item30.md)__由 @wendajiang贡献__
 6. Lambda表达式
 	1. [Item 31:避免使用默认捕获模式](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/6.Lambda%20Expressions/item31.md) __由 @LucienXian贡献__
 	2. [Item 32:使用初始化捕获来移动对象到闭包中](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/6.Lambda%20Expressions/item32.md) __由 @LucienXian贡献__
