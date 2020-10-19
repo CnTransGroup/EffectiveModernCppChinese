@@ -1,4 +1,9 @@
+C++11的伟大标志之一是将并发整合到语言和库中。熟悉其他线程API（比如pthreads或者Windows threads）的开发者有时可能会对C++提供的斯巴达式（译者注：应该是简陋和严谨的意思）功能集感到惊讶，这是因为C++对于并发的大量支持是在编译器的约束层面。由此产生的语言保证意味着在C++的历史中，开发者首次通过标准库可以写出跨平台的多线程程序。这位构建表达库奠定了坚实的基础，并发标准库（tasks, futures, threads, mutexes, condition variables, atomic objects等）仅仅是成为并发软件开发者丰富工具集的基础。
+
+在接下来的Item中，记住标准库有两个futures的模板：`std::future和std::shared_future`。在许多情况下，区别不重要，所以我们经常简单的混于一谈为*futures*。
+
 # 优先基于任务编程而不是基于线程
+
 如果开发者想要异步执行 `doAsyncWork` 函数，通常有两种方式。其一是通过创建 `std::thread` 执行 `doAsyncWork`， 比如
 ```cpp
 int doAsyncWork();

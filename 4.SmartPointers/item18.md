@@ -187,4 +187,4 @@ std::shared_ptr<Investment> sp = makeInvestment(arguments);
 
 - `std::unique_ptr`是轻量级、快速的、只能move的管理专有所有权语义资源的智能指针
 - 默认情况，资源销毁通过delete，但是支持自定义delete函数。有状态的删除器和函数指针会增加`std::unique_ptr`的大小
-- 将`std::unique_ptr`转化为`std::shared+ptr`是简单的
+- 将`std::unique_ptr`转化为`std::shared_ptr`是简单的
