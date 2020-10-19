@@ -62,7 +62,7 @@
 	6. Item 40:对于并发使用std::atomic，volatile用于特殊内存区
 8. 微调
 	1. [Item 41:对于那些可移动总是被拷贝的形参使用传值方式](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/8.Tweaks/item41.md) __由 @wendajiang贡献__
-	2. Item 42:考虑就地创建而非插入
+	2. [Item 42:考虑就地创建而非插入](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/8.Tweaks/item42.md) __由 @wendajiang贡献__
 
 ## 贡献者
 
