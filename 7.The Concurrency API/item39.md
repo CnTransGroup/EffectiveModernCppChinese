@@ -172,7 +172,7 @@ void detect()
 
 这样看起来安全多了。问题在于第一个"..."区域（注释了thread inside tr is suspended here），如果异常发生，`p.set_value()`永远不会调用，这意味着`lambda中的wait`永远不会返回，即lambda不会结束，问题就是，因为RAII对象tr再析构函数中join。换句话说，如果在第一个"..."中发生了异常，函数挂起，因为tr的析构不会被调用。
 
-有很多方案解决这个问题，但是我留给读者（http://scottmeyers.blogspot.com/2013/12/threadraii-thread-suspension-trouble.html 中有介绍）。这里，我只想展示如何扩展原始代码（不使用RAII类）使其挂起然后取消挂起，这不仅是个例，是个通用场景。简单概括，关键就是在反应任务的代码中使用`std::shared_future`代替`std::future。`一旦你知道`std::future`的`share`成员函数将共享状态所有权转移到`std::shared_future`中，代码自然就写出来了。唯一需要注意的是，每个反应线程需要处理自己的`std::shared_future`副本，该副本引用共享状态，因此通过`share`获得的`shared_future`要被lambda按值捕获：
+有很多方案解决这个问题，但是我把这个经验留给读者（译者注：http://scottmeyers.blogspot.com/2013/12/threadraii-thread-suspension-trouble.html 中这个问题的讨论）。这里，我只想展示如何扩展原始代码（不使用RAII类）使其挂起然后取消挂起，这不仅是个例，是个通用场景。简单概括，关键就是在反应任务的代码中使用`std::shared_future`代替`std::future。`一旦你知道`std::future`的`share`成员函数将共享状态所有权转移到`std::shared_future`中，代码自然就写出来了。唯一需要注意的是，每个反应线程需要处理自己的`std::shared_future`副本，该副本引用共享状态，因此通过`share`获得的`shared_future`要被lambda按值捕获：
 
 ```cpp
 std::promise<void> p; // as before
