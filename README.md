@@ -59,7 +59,7 @@
 	3. [Item 37:从各个方面使得std::threads unjoinable](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.The%20Concurrency%20API/item37.md) __由 @wendajiang贡献__
 	4. [Item 38:关注不同线程句柄析构行为](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.The%20Concurrency%20API/item38.md) __由 @wendajiang贡献__
 	5. [Item 39:考虑对于单次事件通信使用void](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.The%20Concurrency%20API/item39.md) __由 @wendajiang贡献__
-	6. Item 40:对于并发使用std::atomic，volatile用于特殊内存区
+	6. [Item 40:对于并发使用std::atomic，volatile用于特殊内存区](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.The%20Concurrency%20API/item40.md) __由 @wendajiang贡献__
 8. 微调
 	1. [Item 41:对于那些可移动总是被拷贝的形参使用传值方式](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/8.Tweaks/item41.md) __由 @wendajiang贡献__
 	2. [Item 42:考虑就地创建而非插入](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/8.Tweaks/item42.md) __由 @wendajiang贡献__
