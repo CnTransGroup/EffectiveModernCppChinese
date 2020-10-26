@@ -121,7 +121,77 @@ tag dispatch的关键是存在单独一个函数（没有重载）给客户端AP
 
 这种情况，采用通用引用的重载函数通常比期望的更加贪心，但是有不满足使用tag dispatch的条件。你需要不同的技术，可以让你确定允许使用通用引用模板的条件。朋友你需要的就是`std::enable_if`。
 
-`std::enable_if`
+`std::enable_if`可以给你提供一种强制编译器执行行为的方法，即使特定模板不存在。这种模板也会被禁止。默认情况下，所有模板是启用的，但是使用`std::enable_if`可以使得仅在条件满足时模板才启用。在这个例子中，我们只在传递的参数类型不是`Person`使用`Person`的完美转发构造函数。如果传递的参数是`Person`，我们要禁止完美转发构造函数（即让编译器忽略它），因此就是拷贝或者移动构造函数处理，这就是我们想要使用`Person`初始化另一个`Person`的初衷。
+
+这个主意听起来并不难，但是语法比较繁杂，尤其是之前没有接触过的话，让我慢慢引导你。有一些使用`std::enbale_if`的样板，让我们从这里开始。下面的代码是`Person`完美转发构造函数的声明，我仅展示声明，因为实现部分跟Item 26中没有区别。
+
+```cpp
+class Person {
+public:
+  template<typename T,
+  				typename = typename std::enable_if<condition>::type> // 本行高亮
+  explicit Person(T&& n);
+  ...
+};
+```
+
+为了理解高亮部分发生了什么，我很遗憾的表示你要自行查询语法含义，因为详细解释需要花费一定空间和时间，而本书并没有足够的空间（在你自行学习过程中，请研究"SFINAE"以及`std::enable_if`，因为“SFINAE”就是使`std::enable_if`起作用的技术）。这里我想要集中讨论条件的表示，该条件表示此构造函数是否启用。
+
+这里我们想表示的条件是确认T不是`Person`类型，即模板构造函数应该在T不是`Person`类型的时候启用。因为type trait可以确定两个对象类型是否相同（`std::is_same`），看起来我们需要的就是`!std::is_same<Person, T>::value`（注意语句开始的！，我们想要的是不相同）。这很接近我们想要的了，但是不完全正确，因为如同Item 28中所述，对于通用引用的类型推导，如果是左值的话会推导成左值引用，比如这个代码:
+
+```cpp
+Person p("Nancy");
+auto cloneOfP(p); // initialize from lvalue
+```
+
+T的类型在通用引用的构造函数中被推导为`Person&`。`Person`和`Person&`类型是不同的，`std::is_same`对比`std::is_same<Person, Person&>::value`会是`false`。
+
+如果我们更精细考虑仅当T不是`Person`类型才启用模板构造函数，我们会意识到当我们查看T时，应该忽略：
+
+- **是否引用**。对于决定是否通用引用构造器启用的目的来说，`Person, Person&, Person&&`都是跟`Person`一样的。
+- **是不是`const`或者`volatile`**。如上所述，`const Person , volatile Person , const volatile Person`也是跟`Person`一样的。
+
+这意味着我们需要一种方法消除对于`T`的`引用，const, volatile`修饰。再次，标准库提供了这样的功能type trait，就是`std::decay`。`std::decay<T>::value`与`T`是相同的，只不过会移除`引用, const, volatile`的修饰。（这里我没有说出另外的真相，`std::decay`如同其名一样，可以将array或者function退化成指针，参考Item 1，但是在这里讨论的问题中，它刚好合适）。我们想要控制构造器是否启用的条件可以写成：
+
+```cpp
+!std::is_same<Person, typename std::decay<T>::type>::value
+```
+
+表示`Person`与`T`的类型不同。
+
+将其带回整体代码中，`Person`的完美转发构造函数的声明如下：
+
+```cpp
+class Person {
+public:
+  template<typename T,
+  				typename = typename std::enable_if<
+            !std::is_same<Person, typename std::decay<T>::type>::value
+            >::type> // 本行高亮
+  explicit Person(T&& n);
+  ...
+};
+```
+
+如果你之前从没有看到过这种类型的代码，那你可太幸福了。最后是这种设计是有原因的。当你使用其他机制来避免同时使用重载和通用引用时（你总会这样做），确实应该那样做。不过，一旦你习惯了使用函数语法和尖括号的使用，也不坏。此外，这可以提供你一直想要的行为表现。在上面的声明中，使用`Person`初始化一个`Person`----无论是左值还是右值，`const`还是`volatile`都不会调用到通用引用构造函数。
+
+成功了，对吗？确实！
+
+当然没有。等会再庆祝。Item 26还有一个情景需要解决，我们需要继续探讨下去。
+
+假定从`Person`派生的类以常规方式实现拷贝和移动操作：
+
+```cpp
+class SpecialPerson: public Person {
+public:
+  SpecialPerson(const SpecialPerson& rhs): Person(rhs)
+  {...} // copy ctor; calls base class forwarding ctor!
+  SpecialPerson(SpecialPerson&& rhs): Person(std::move(rhs))
+  {...} // move ctor; calls base class forwarding ctor!
+};
+```
+
+
 
 ### Trade-offs （权衡，折中）
 
