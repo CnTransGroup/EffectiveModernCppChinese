@@ -191,7 +191,79 @@ public:
 };
 ```
 
+这和Item 26中的代码是一样的，包括注释也是一样。当我们拷贝或者移动一个`SpecialPerson`对象时，我们希望调用基类对应的拷贝和移动构造函数，但是这里，我们将`SpecialPerson`传递给基类的构造器，因为`SpecialPerson`和`Person`类型不同，所以完美转发构造函数是启用的，会实例化为精确匹配的构造函数。生成的精确匹配的构造函数之于重载规则比基类的拷贝或者移动构造函数更优，所以这里的代码，拷贝或者移动`SpecialPerson`对象就会调用`Person`类的完美转发构造函数来执行基类的部分。跟Item 26的困境一样。
 
+派生类仅仅是按照常规的规则生成了自己的移动和拷贝构造函数，所以这个问题的解决还要落实在在基类，尤其是控制是否使用`Person`通用引用构造函数启用的条件。现在我们意识到不只是禁止`Person`类型启用模板构造器，而是禁止`Person`以及任何派生自`Person`的类型启用模板构造器。讨厌的继承！
+
+你应该不意外在这里看到标准库中也有type trait判断一个类型是否继承自另一个类型，就是`std::is_base_of`。如果`std::is_base_of<T1, T2>`是`true`表示`T2`派生自`T1`。类型系统是自派生的，表示`std::is_base_of<T, T>::value`总是`true`。这就很方便了，我们想要修正关于我们控制`Person`完美转发构造器的启用条件，只有当`T`在消除`引用，const, volatile`修饰之后，并且既不是`Person`又不是`Person`的派生类，才满足条件。所以使用`std::is_base_of`代替`std::is_same`就可以了：
+
+```cpp
+class Person {
+public:
+  template<
+  	typename T,
+    typename = typename std::enable_if<
+     	         !std::is_base_if<Person, 
+  															typename std::decay<T>::type
+                                >::value
+               >::type
+  >
+  explicit Person(T&& n);
+  ...
+};
+```
+
+现在我们终于完成了最终版本。这是C++11版本的代码，如果我们使用C++14，这份代码也可以工作，但是有更简洁一些的写法如下：
+
+```cpp
+class Person  { // C++14
+public:
+  template<
+  	typename T,
+  	typename = std::enable_if_t<   // less code here
+      					!std::is_base_of<Person,
+                                 std::decay_t<T> // and here
+                                >::value
+               > // and here
+  >
+  explicit Person(T&& n);
+  ...
+};
+```
+
+好了，我承认，我又撒谎了。我们还没有完成，但是越发接近最终版本了。非常接近，我保证。
+
+我们已经知道如何使用`std::enable_if`来选择性禁止`Person`通用引用构造器来使得一些参数确保使用到拷贝或者移动构造器，但是我们还是不知道将其应用于区分整型参数和非整型参数。毕竟，我们的原始目标是解决构造函数模糊性问题。
+
+我们需要的工具都介绍过了，我保证都介绍了，
+（1）加入一个`Person`构造函数重载来处理整型参数
+（2）约束模板构造器使其对于某些参数禁止
+使用这些我们讨论过的技术组合起来，就能解决这个问题了：
+
+```cpp
+class Person { // C++14
+public:
+  template<
+  	typename T,
+  	typename = std::enable_if_t<
+     !std::is_base_of<Person, std::decay_t<T>::value
+       &&
+       !std::is_integral<std::remove_reference_t<T>>::value
+    >
+  >
+  explicit Person(T&& n): name(std::forward<T>(n))
+  {...} // ctor for std::strings and args convertible to strings
+  
+  explicit Person(int idx): name(nameFromIdx(idx))
+  {...} // ctor for integral args
+  
+  ... // copy and move ctors, etc
+private:
+  std::string name;
+};
+```
+
+看！多么优美！好吧，优美之处只是对于那些迷信模板元编程之人，但是事实却是提出了不仅能工作的方法，而且极具技巧。因为使用了完美转发，所以具有最大效率，因为控制了使用通用引用的范围，可以避免对于大多数参数能实例化精确匹配的滥用问题。
 
 ### Trade-offs （权衡，折中）
 

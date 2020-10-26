@@ -44,7 +44,7 @@
 	2. [Item 24:区别通用引用和右值引用](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RvalueReferences_MovingSemantics_And_PerfectForwarding/item24.md) __由 @BlurryLight贡献__
 	3. [Item 25:对于右值引用使用std::move，对于通用引用使用std::forward](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RvalueReferences_MovingSemantics_And_PerfectForwarding/item25.md)__由 @wendajiang贡献__
 	4. [Item 26:避免重载通用引用](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RvalueReferences_MovingSemantics_And_PerfectForwarding/item26.md)__由 @wendajiang贡献__
-	5. Item 27:熟悉重载通用引用的替代品
+	5. [Item 27:熟悉重载通用引用的替代品](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RvalueReferences_MovingSemantics_And_PerfectForwarding/item27.md)__由 @wendajiang贡献__
 	6. [Item 28:理解引用折叠](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RvalueReferences_MovingSemantics_And_PerfectForwarding/item28.md)__由 @wendajiang贡献__
 	7. [Item 29:认识移动操作的缺点](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RvalueReferences_MovingSemantics_And_PerfectForwarding/item29.md) __由 @wendajiang贡献__
 	8. [Item 30:熟悉完美转发失败的情况](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RvalueReferences_MovingSemantics_And_PerfectForwarding/item30.md)__由 @wendajiang贡献__
