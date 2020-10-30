@@ -6,8 +6,8 @@
 应该在创建对象时用{}而不是()吗？为什么alias声明比typedef好？constexpr和const有什么不同？常量成员函数和线程安全有什么关系？这个列表越列越多。
 这章将会逐个回答这些问题。
 
-## Item 5:Distinguish between () and {} when creating objects
-条款五:区别使用()和{}创建对象
+## Item 7:Distinguish between () and {} when creating objects
+条款七:区别使用()和{}创建对象
 
 从不同的角度看，C++11初始化对象的语法选择既丰富得让人尴尬又混乱得让人糊涂。一般来说，初始化值要用()或者{}括起来或者放到"="的右边：
 ````cpp
@@ -159,7 +159,7 @@ public:
   …                                   
 };                                      
 Widget w{10, 5.0};      //错误！要求变窄转换
-```` 
+````
 这里，编译器会直接忽略前面两个构造函数，然后尝试调用第三个构造函数，也即是std::initializer_list构造函数。
 调用这个函数将会把`int(10)`和double(5.0)`转换为bool，由于括号初始化拒绝变窄转换，所以这个调用无效，代码无法通过编译。
 
