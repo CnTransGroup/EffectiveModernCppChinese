@@ -26,7 +26,7 @@ void dwim(It b, It e)
 }
 ````
 
-嘿！“typename std::iterator_traits<It>::value_type是想表达迭代器指向的元素的值的类型吗？我无论如何都说不出它是多么有趣这样的话，该死！等等，我早就说过了吗？
+嘿！`typename std::iterator_traits<It>::value_type`是想表达迭代器指向的元素的值的类型吗？我无论如何都说不出它是多么有趣这样的话，该死！等等，我早就说过了吗？
 
 好吧，声明一个局部变量，变量的类型只有编译后知道，这里必须使用'typename'指定，该死!
 

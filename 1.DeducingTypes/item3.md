@@ -48,7 +48,7 @@ auto authAndAccess(Container& c,Index i)
 
 C++11允许自动推导单一语句的lambda表达式的返回类型， C++14扩展到允许自动推导所有的lambda表达式和函数，甚至它们内含多条语句。对于**authAndAccess**来说这意味着在C++14标准下我们可以忽略尾置返回类型，只留下一个**auto**。在这种形式下**auto**不再进行auto类型推导，取而代之的是它意味着编译器将会从函数实现中推导出函数的返回类型。
 ````cpp
-template<typename Container,typename Index>
+template<typename Container,typename Index> //C++ 14版本
 auto authAndAccess(Container& c,Index i)
 {
     authenticateUser();
@@ -63,7 +63,7 @@ authAndAccess(d,5)=10;        //认证用户，返回d[5]，
                                                 //然后把10赋值给它
                                                  //无法通过编译器！
 ````
-在这里**d[5]**本该返回一个**int&** ，但是模板类型推导会剥去引用的部分，因此产生了**int**返回类型。函数返回的值是一个右值，，上面的代码尝试把10赋值给右值，C++11禁止这样做，所以代码无法编译。
+在这里**d[5]**本该返回一个**int&** ，但是模板类型推导会剥去引用的部分，因此产生了**int**返回类型。函数返回的值是一个右值，上面的代码尝试把10赋值给右值，C++11禁止这样做，所以代码无法编译。
 
 要想让**authAndAccess**像我们期待的那样工作，我们需要使用**decltype**类型推导来推导它的返回值，比如指定**authAndAccess**应该返回一个和**c[i]** 表达式类型一样的类型。C++期望在某些情况下当类型被暗示时需要使用**decltype**类型推导的规则，C++14通过使用**decltype(auto)** 说明符使得这成为可能。我们第一次看见**decltype(auto)** 可能觉得非常的矛盾，（到底是decltype还是auto？），实际上我们可以这样解释它的意义：**auto**说明符表示这个类型将会被推导，**decltype**说明**decltype**的规则将会引用到这个推导过程中。因此我们可以这样写**authAndAccess**：
 ````cpp

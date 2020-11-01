@@ -92,5 +92,5 @@ std::thread t(std::move(pt)); // run pt on t
 
 ### 需要记住的事
 
-- `future`的正常析构行为就是销毁future本身的成员数据
+- `future`的正常析构行为就是销毁`future`本身的成员数据
 - 最后一个引用`std::async`创建共享状态的`future`析构函数会在任务结束前block
