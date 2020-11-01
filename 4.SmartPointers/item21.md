@@ -12,7 +12,7 @@ std::unique_ptr<T> make_unique(Ts&&... params)
 
 正如你看到的，make_unique只是将它的参数完美转发到所要创建的对象的构造函数，从新产生的原始指针里面构造出std::unique_ptr，并返回这个std::unique_ptr。这种形式的函数不支持数组和自定义析构，但它给出了一个示范：只需一点努力就能写出你想要的make_uniqe函数。需要记住的是，不要把它放到std命名空间中，因为你可能并不希望在升级厂家编译器到符合C++14标准的时候产生冲突。
 
-std::make_unique和std::make_shared有两三个make functions:接收抽象参数，完美转发到构造函数去动态分配一个对象，然后返回这个指向这个对象的指针。第三个make function 是std::allocate_shared.它和std::make_shared一样，除了第一个参数是用来动态分配内存的对象。
+`std::make_unique`和`std::make_shared`有三个make functions中的两个：接收抽象参数，完美转发到构造函数去动态分配一个对象，然后返回这个指向这个对象的指针。第三个make function 是`std::allocate_shared.`它和`std::make_shared`一样，除了第一个参数是用来动态分配内存的对象。
 
 即使是对使用和不使用make函数创建智能指针的最简单比较，也揭示了为什么最好使用这些函数的第一个原因。例如：
 
@@ -48,7 +48,7 @@ processWidget(std::shared_ptr<Widget>(new Widget), computePriority()); // potent
 答案和编译器将源码转换为目标代码有关。在运行时，一个函数的参数必须先被计算，才能被调用，所以在调用processWidget之前，必须执行以下操作，processWidget才开始执行：
 
 - 表达式'new Widget'必须计算，例如,一个Widget对象必须在堆上被创建
-- 负责管理new出来指针的std::shared_ptr<Widget>构造函数必须被执行
+- 负责管理new出来指针的`std::shared_ptr<Widget>`构造函数必须被执行
 -  computePriority()必须运行
 
 编译器不需要按照执行顺序生成代码。“new Widget"必须在std::shared_ptr的构造函数被调用前执行，因为new出来的结果作为构造函数的参数，但compute Priority可能在这之前，之后，或者之间执行。也就是说，编译器可能按照这个执行顺序生成代码：
@@ -205,6 +205,8 @@ processWidget(std::move(spw), computePriority());
 这很有趣，也值得了解，但通常是无关紧要的，因为您很少有理由不使用make函数。除非你有令人信服的理由这样做，否则你应该使用make函数。
 
 记住：
-- 和直接使用new相比，make函数消除了代码重复，提高了异常安全性。对于std::make_shared和std::allocate_shared,生成的代码更小更快。
+- 和直接使用new相比，make函数消除了代码重复，提高了异常安全性。对于`std::make_shared`和`std::allocate_shared`,生成的代码更小更快。
 - 不适合使用make函数的情况包括需要指定自定义删除器和希望用大括号初始化
-- 对于std::shared_ptrs, make函数可能不被建议的其他情况包括(1)有自定义内存管理的类和(2)特别关注内存的系统，非常大的对象，以及std::weak_ptrs比对应的std::shared_ptrs活得更久
+- 对于`std::shared_ptr`s, make函数可能不被建议的其他情况包括
+  (1)有自定义内存管理的类和
+  (2)特别关注内存的系统，非常大的对象，以及`std::weak_ptr`s比对应的`std::shared_ptr`s活得更久
