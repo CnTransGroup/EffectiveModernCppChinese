@@ -1,6 +1,6 @@
 ## 当使用Pimpl惯用法，请在实现文件中定义特殊成员函数
 
-如果你曾经与过多的编译次数斗争过，你会对`Pimpl`(Pointer to implementation)惯用法很熟悉。 凭借这样一种技巧，你可以把一个**类数据成员**替换成一个指向包含具体实现的类(或者结构体), 将放在主类(primary class)的数据成员们移动到实现类去(implementation class), 而这些数据成员的访问将通过指针间接访问呢。 举个例子，假如有一个类`Widget`看起来如下:
+如果你曾经与过多的编译次数斗争过，你会对`Pimpl`(Pointer to implementation)惯用法很熟悉。 凭借这样一种技巧，你可以将一个**类数据成员**替换成一个指向包含具体实现的类或结构体的指针, 并将放在主类(primary class)的数据成员们移动到实现类去(implementation class), 而这些数据成员的访问将通过指针间接访问。 举个例子，假如有一个类`Widget`看起来如下:
 
 ```cpp
 class Widget()      //定义在头文件`widget.h`
