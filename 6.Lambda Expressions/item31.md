@@ -40,16 +40,16 @@ C++11中有两种默认的捕获模式：按引用捕获和按值捕获。但按
 按引用捕获会导致闭包中包含了对局部变量或者某个形参（位于定义lambda的作用域）的引用，如果该lambda创建的闭包生命周期超过了局部变量或者参数的生命周期，那么闭包中的引用将会变成悬空引用。举个例子，假如我们有一个元素是过滤函数的容器，该函数接受一个int作为参数，并返回一个布尔值，该布尔值的结果表示传入的值是否满足过滤条件。
 
 ```c++
-using FilterContainer = // see Item 9 for
+using FilterContainer =                  // see Item 9 for
 	std::vector<std::function<bool(int)>>; // "using", Item 2
-// for std::function
-FilterContainer filters; // filtering funcs
+                                         // for std::function
+FilterContainer filters;                 // filtering funcs
 ```
 
 我们可以添加一个过滤器，用来过滤掉5的倍数。
 
 ```c++
-filters.emplace_back( // see Item 42 for
+filters.emplace_back(                      // see Item 42 for
 	[](int value) { return value % 5 == 0; } // info on
 );
 ```
@@ -62,11 +62,11 @@ void addDivisorFilter()
     auto calc1 = computeSomeValue1();
     auto calc2 = computeSomeValue2();
     auto divisor = computeDivisor(calc1, calc2);
-    filters.emplace_back( 							    // danger!
+    filters.emplace_back( 							                // danger!
     	[&](int value) { return value % divisor == 0; }   // ref to
-    ); 												  // divisor
-} 													 // will
- 													 // dangle!
+    ); 												                          // divisor
+} 													                            // will
+ 													                              // dangle!
 ```
 
 这个代码实现是一个定时炸弹。lambda对局部变量divisor进行了引用，但该变量的生命周期会在addDivisorFilter返回时结束，刚好就是在语句filters.emplace_back返回之后，因此该函数的本质就是容器添加完，该函数就死亡了。使用这个filter会导致未定义行为，这是由它被创建那一刻起就决定了的。
