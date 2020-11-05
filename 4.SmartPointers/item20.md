@@ -1,7 +1,7 @@
-## Item 20:像std::shared_ptr一样使用std::weak_ptr可能造成dangle
+## Item 20: 当std::shard_ptr可能悬空时使用std::weak_ptr
 
 
-自相矛盾的是，如果有一个像`std::shared_ptr`的指针但是不参与资源所有权共享的指针是很方便的。换句话说，类似`std::shared_ptr`的指针但是不影响对象的引用计数。这种类型的智能指针必须要解决一个`std::shared_ptr`不存在的问题：可能指向已经销毁的对象。一个真正的智能指针应该跟踪所值对象，在dangle时知晓，比如当指向对象不再存在。那就是对`std::weak_ptr`最精确的描述。
+自相矛盾的是，如果有一个像`std::shared_ptr`的指针但是不参与资源所有权共享的指针是很方便的。换句话说，是一个类似`std::shared_ptr`但不影响对象引用计数的指针。这种类型的智能指针必须要解决一个`std::shared_ptr`不存在的问题：可能指向已经销毁的对象。一个真正的智能指针应该跟踪所值对象，在悬空时知晓，悬空(*dangle*)就是指针指向的对象不再存在。这就是对`std::weak_ptr`最精确的描述。
 
 你可能想知道什么时候该用`std::weak_ptr`。你可能想知道关于`std::weak_ptr`API的更多。它什么都好除了不太智能。`std::weak_ptr`不能解引用，也不能测试是否为空值。因为`std::weak_ptr`不是一个独立的智能指针。它是`std::shared_ptr`的增强。
 
@@ -41,15 +41,17 @@ std::shared_ptr<Widget> spw3(wpw);			// if wpw's expired, throw std::bad_weak_pt
 ```
 如果调用`loadWidget`是一个昂贵的操作（比如它操作文件或者数据库I/O）并且对于ID来重复使用很常见，一个合理的优化是再写一个函数除了完成`loadWidget`做的事情之外再缓存它的结果。当请求获取一个Widget时阻塞在缓存操作上这本身也会导致性能问题，所以另一个合理的优化可以是当Widget不再使用的时候销毁它的缓存。
 
-对于可缓存的工厂函数，返回`std::unique_ptr`不是好的选择。调用者接受缓存后的对象的只能指针，调用者也应该确定这些对象的生命周期，但是缓存本身也需要一个指针指向它所缓的对象。缓存对象的指针需要知道它是否已经dangle，因为当工厂客户端使用完工厂产生的对象后，对象将被销毁，关联的缓存条目会dangle。所以缓存应该使用`std::weak_ptr`，这可以知道是否已经dangle。这意味着工厂函数返回值类型应该是`std::shared_ptr`，因为`std::weak_ptr`依赖`std::shared_ptr`。
+对于可缓存的工厂函数，返回`std::unique_ptr`不是好的选择。调用者应该接收缓存对象的智能指针，调用者也应该确定这些对象的生命周期，但是缓存本身也需要一个指针指向它所缓的对象。缓存对象的指针需要知道它是否已经悬空，因为当工厂客户端使用完工厂产生的对象后，对象将被销毁，关联的缓存条目会悬空。所以缓存应该使用`std::weak_ptr`，这可以知道是否已经悬空。这意味着工厂函数返回值类型应该是`std::shared_ptr`，因为只有当对象的生命周期由`std::shared_ptr`管理时，`std::weak_ptr`才能检测到悬空。
 
-下面是一个粗制滥造的缓存版本的`loadWidget`实现：
+下面是一个临时凑合的`loadWidget`的缓存版本的实现：
 ```cpp
 std::shared_ptr<const Widget> fastLoadWidget(WidgetID id)
 {
 	static std::unordered_map<WidgetID,
-								std::weak_ptr<const Widget>> cache; // 译者注：这里是高亮
-	auto objPtr = cache[id].lock(); 	// objPtr is std::shared_ptr to cached object (or null if object's not in cache)
+							  std::weak_ptr<const Widget>> cache; // 译者注：这里是高亮
+	auto objPtr = cache[id].lock(); 	// objPtr is std::shared_ptr 
+										// to cached object 
+										// (or null if object's not in cache)
 	if (!objPtr) { 						// if not in cache
 		objPtr = loadWidget(id); 		// load it 
 		cache[id] = objPtr; 			// cache it 
@@ -58,11 +60,11 @@ std::shared_ptr<const Widget> fastLoadWidget(WidgetID id)
 }
 ```
 
-这个实现使用了C++11的hash表容器`std::unordered_map`，尽管没有显式表明需要`WidgetID`哈希和相等性比较的能力。
+这个实现使用了C++11的hash表容器`std::unordered_map`，但是需要的`WidgetID`哈希和相等性比较函数在这里没有展示。
 
-`fastLoadWidget`的实现忽略了以下事实：cache可能会累积`expired`的与已经销毁的`Widget`相关联的`std::weak_ptr`。可以改进实现方式，但不要花时间在不会引起对`std :: weak_ptr`的深入了解的问题上，让我们考虑第二个用例：观察者设计模式。此模式的主要组件是subjects（状态可能会更改的对象）和observers（状态发生更改时要通知的对象）。在大多数实现中，每个subject都包含一个数据成员，该成员持有指向其observer的指针。这使subject很容易发布状态更改通知。subject对控制observers的生命周期（例如，当它们被销毁时）没有兴趣，但是subject对确保observers被销毁时，不会访问它具有极大的兴趣 。一个合理的设计是每个subject持有其observers的`std::weak_ptr`，因此可以在使用前检查是否已经dangle。
+`fastLoadWidget`的实现忽略了以下事实：cache可能会累积过期的`std::weak_ptr`(对应已经销毁的`Widget`)。可以改进实现方式，但不要花时间在不会引起对`std :: weak_ptr`的深入了解的问题上，让我们考虑第二个用例：观察者设计模式。此模式的主要组件是subjects（状态可能会更改的对象）和observers（状态发生更改时要通知的对象）。在大多数实现中，每个subject都包含一个数据成员，该成员持有指向其observer的指针。这使subject很容易发布状态更改通知。subject对控制observers的生命周期（例如，当它们被销毁时）没有兴趣，但是subject对确保observers被销毁时，不会访问它具有极大的兴趣 。一个合理的设计是每个subject持有其observers的`std::weak_ptr`，因此可以在使用前检查是否已经悬空。
 
-作为最后一个使用`std::weak_ptr`的例子，考虑一个持有三个对象A,B,C的数据结构，A和C共享B的所有权，因此持有`std::shared_ptr`：
+作为最后一个使用`std::weak_ptr`的例子，考虑一个持有三个对象A、B、C的数据结构，A和C共享B的所有权，因此持有`std::shared_ptr`：
 
 ​	![image-20201101170753295](media/item20/image-20201101170753295.png)
 
@@ -72,9 +74,9 @@ std::shared_ptr<const Widget> fastLoadWidget(WidgetID id)
 
 有三种选择：
 
-- **原始指针**。使用这种方法，如果A被销毁，但是C继续指向B，B就会有一个指向A的悬垂指针。而且B不知道指针已经悬垂，所以B可能会继续访问，就会导致未定义行为
-- **`std::shared_ptr`**。这种设计，A和B都互相持有对方的`std::shared_ptr`，导致`std::shared_ptr`在销毁时出现循环。即使A和B无法从其他数据结构被访问（比如，C不再指向B），每个的引用计数都是1.如果发升了这种情况，A和B都被泄露：程序无法访问它们，但是资源并没有被回收。
-- **`std::weak_ptr`**。这避免了上述两个问题。如果A被销毁，B还是有dangle指针，但是B可以检查。尤其是尽管A和B互相指向，B的指针不会影响A的引用计数，因此不会导致无法销毁。
+- **原始指针**。使用这种方法，如果A被销毁，但是C继续指向B，B就会有一个指向A的悬空指针。而且B不知道指针已经悬空，所以B可能会继续访问，就会导致未定义行为。
+- **`std::shared_ptr`**。这种设计，A和B都互相持有对方的`std::shared_ptr`，导致`std::shared_ptr`在销毁时出现循环。即使A和B无法从其他数据结构被访问（比如，C不再指向B），每个的引用计数都是1。如果发生了这种情况，A和B都被泄露：程序无法访问它们，但是资源并没有被回收。
+- **`std::weak_ptr`**。这避免了上述两个问题。如果A被销毁，B还是有悬空指针，但是B可以检查。尤其是尽管A和B互相指向，B的指针不会影响A的引用计数，因此不会导致无法销毁。
 
 使用`std::weak_ptr`显然是这些选择中最好的。但是，需要注意使用`std::weak_ptr`打破`std::shared_ptr`循环并不常见。在严格分层的数据结构比如树，子节点只被父节点持有。当父节点被销毁时，子节点就被销毁。从父到子的链接关系可以使用`std::unique_ptr`很好的表征。从子到父的反向连接可以使用原始指针安全实现，因此子节点的生命周期肯定短于父节点。因此子节点解引用一个悬垂的父节点指针是没有问题的。
 
@@ -84,5 +86,5 @@ std::shared_ptr<const Widget> fastLoadWidget(WidgetID id)
 
 ### 记住
 
-- 像`std::shared_ptr`使用`std::weak_ptr`可能会dangle
-- `std::weak_ptr`的潜在使用场景包括：caching、observer lists、打破`std::shared_ptr`指向循环
+- 像`std::shared_ptr`使用`std::weak_ptr`可能会悬空。
+- `std::weak_ptr`的潜在使用场景包括：caching、observer lists、打破`std::shared_ptr`指向循环。
