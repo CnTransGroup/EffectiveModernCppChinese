@@ -36,6 +36,7 @@ w1 = w2;                //是一个赋值运算符，调用operator=函数
 C++11使用统一初始化(uniform initialization)来整合这些混乱且繁多的初始化语法，所谓统一初始化是指使用单一初始化语法在任何地方_[0]_表达任何东西。
 它基于花括号，出于这个原因我更喜欢称之为括号初始化_[1]_。统一初始化是一个概念上的东西，而括号初始化是一个具体语法构型。
 括号初始化让你可以表达以前表达不出的东西。使用花括号，指定一个容器的元素变得很容易：
+
 ````cpp
 std::vector<int> v{1,3,5};      //v包含1,3,5
 ````
@@ -72,6 +73,7 @@ int sum3 = x + y + z;       //同上
 另一个值得注意的特性是括号表达式对于C++最令人头疼的解析问题_[2]_有天生的免疫性。
 C++规定任何能被决议为一个声明的东西必须被决议为声明。这个规则的副作用是让很多程序员备受折磨：当他们想创建一个使用默认构造函数构造的对象，却不小心变成了函数声明。
 问题的根源是如果你想使用一个实参调用一个构造函数，你可以这样做：
+
 ````cpp
 Widget w1(10);              //使用实参10调用Widget的一个构造函数
 ````
@@ -112,7 +114,8 @@ Widget w4{10, 5.0};           // 同上
 ````cpp
 class Widget { 
 public:  
-    Widget(int i, bool b);                         
+    Widget(int i, bool b);     // 同上
+  	Widget(int i, double d);   // 同上
     Widget(std::initializer_list<long double> il);      //新添加的
     … 
 }; 
@@ -131,15 +134,16 @@ Widget w3(10, 5.0);      // 使用小括号初始化
 
 Widget w4{10, 5.0};      // 使用花括号初始化                        
                          // 调用第二个构造函数                       
-                         // (10 和 true 转化为long double)
+                         // (10 和 5.0 转化为long double)
 ````
 甚至普通的构造函数和移动构造函数都会被std::initializer_list构造函数劫持：
 ````cpp
 class Widget { 
 public:  
-    Widget(int i, bool b);                                                  
+    Widget(int i, bool b);       
+  	Widget(int i, double d);
     Widget(std::initializer_list<long double> il);   
-    operator float() const;                         
+    operator float() const;       // convert to float (译者注：高亮)                  
 };
 Widget w5(w4);               // 使用小括号，调用拷贝构造函数
 
@@ -155,8 +159,8 @@ class Widget {
 public:  
     Widget(int i, bool b);
     Widget(int i, double d);                         
-    Widget(std::initializer_list<bool> il);                               
-  …                                   
+    Widget(std::initializer_list<bool> il);    // element type is now bool                     
+  …                                   // no implicit conversion funcs
 };                                      
 Widget w{10, 5.0};      //错误！要求变窄转换
 ````
@@ -164,8 +168,8 @@ Widget w{10, 5.0};      //错误！要求变窄转换
 调用这个函数将会把`int(10)`和double(5.0)`转换为bool，由于括号初始化拒绝变窄转换，所以这个调用无效，代码无法通过编译。
 
 只有当没办法把括号初始化中实参的类型转化为std::initializer_list时，编译器才会回到正常的函数决议流程中。
-比如我们在构造函数中用`std::initializer_list<std::string`代替`std::initializer_list<bool>`，这时非std::initializer_list构造函数将再次成为函数决议的候选者，
-因为没有办法把int和bool转换为std::string:
+比如我们在构造函数中用`std::initializer_list<std::string`代替`std::initializer_list<bool>`，这时非std::initializer_list构造函数将再次成为函数决议的候选者，因为没有办法把int和bool转换为std::string:
+
 ````cpp
 class Widget { 
 public:  
@@ -205,6 +209,7 @@ Widget w5{{}};        // 同上
 可能比你想象的要多。因为std::vector也会受到影响。
 std::vector有一个非std::initializer_list构造函数允许你去指定容器的初始大小，以及使用一个值填满你的容器。
 但它也有一个std::initializer_list构造函数允许你使用花括号里面的值初始化容器。如果你创建一个数值类型的vector，然后你传递两个实参。把这两个实参放到小括号和放到花括号中是不同：
+
 ````cpp
 std::vector<int> v1(10, 20);    //使用非std::initializer_list
                                 //构造函数创建一个包含10个元素的std::vector
