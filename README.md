@@ -6,11 +6,11 @@
  [![Sponsors on Open Collective](https://opencollective.com/EffectiveModernCppChinese/sponsors/badge.svg)](#sponsors) 
 
 > ! 2017.10开始更新<br>
-> ! 标注“已修订”的章节表示已经没有大致的错误
+> ! 标注“已修订”的章节表示已经没有大致的错误<br>
 > ! 我没有版权，我没有版权，我没有版权<br>
 > ！本书要求读者具有C++基础<br>
 > ！未翻译的条款名称现在直译，翻译时可能适当修改<br>
-> ! [PDf版本下载](x.public/EffectiveModernCpp.pdf),仅供翻译参考
+> ! [PDF格式英文版下载](x.public/EffectiveModernCpp.pdf),仅供翻译参考
 
 # 目录
 1. 类型推导
@@ -63,6 +63,9 @@
 8. 微调
 	1. [Item 41:对于那些可移动总是被拷贝的形参使用传值方式](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/8.Tweaks/item41.md) __由 @wendajiang贡献__
 	2. [Item 42:考虑就地创建而非插入](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/8.Tweaks/item42.md) __由 @wendajiang贡献__
+
+
+**[PDF格式中文版下载](./translate.public/translate-zh-combine.pdf)** 
 
 ## 贡献者
 
