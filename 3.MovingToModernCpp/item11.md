@@ -58,7 +58,7 @@ bool isLucky(double) = delete; // 拒绝float和double
 ```
 (上面double重载版本的注释说拒绝float和double可能会让你惊讶，但是请回想一下：将`float`转换为`int`和`double`，C++更喜欢转换为`double`。使用`float`调用`isLucky`因此会调用`double`重载版本，而不是`int`版本。好吧，它也会那么去尝试。事实是调用被删除的`double`重载版本不能通过编译。不再惊讶了吧。)
 
-虽然`deleted`寒暑假不能被使用，它它们还是存在于你的程序中。也即是说，重载决议会考虑它们。这也是为什么上面的函数声明导致编译器拒绝一些不合适的函数调用。
+虽然deleted函数不能被使用，但它们还是存在于你的程序中。也即是说，重载决议会考虑它们。这也是为什么上面的函数声明导致编译器拒绝一些不合适的函数调用。
 ```cpp
 if (isLucky('a')) … //错误! 调用deleted函数
 if (isLucky(true)) … // 错误!
