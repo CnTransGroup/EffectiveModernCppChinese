@@ -138,7 +138,7 @@ auto result3 = lockAndCall(f3, f3m, nullptr);    // 没问题
 另外，使用**nullptr**不会让你受到同重载决议特殊对待**0**和**NULL**一样的待遇。
 当你想用一个空指针，使用**nullptr**，不用**0**或者**NULL**。
 
-记住
+**记住**
 + 优先考虑nullptr而非0和NULL
 + 避免重载指针和整型
 

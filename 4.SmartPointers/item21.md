@@ -204,7 +204,7 @@ processWidget(std::move(spw), computePriority());
 ```
 这很有趣，也值得了解，但通常是无关紧要的，因为您很少有理由不使用make函数。除非你有令人信服的理由这样做，否则你应该使用make函数。
 
-记住：
+**记住**：
 - 和直接使用new相比，make函数消除了代码重复，提高了异常安全性。对于`std::make_shared`和`std::allocate_shared`,生成的代码更小更快。
 - 不适合使用make函数的情况包括需要指定自定义删除器和希望用大括号初始化
 - 对于`std::shared_ptr`s, make函数可能不被建议的其他情况包括

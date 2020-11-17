@@ -81,7 +81,7 @@ auto cbegin(const C& container)->decltype(std::begin(container))
 
 回到最开始，本条款的中心是鼓励你只要能就使用**const_iterator**。最原始的动机是——只要它有意义就加上const——C++98就有的思想。但是在C++98，它（译注：const_iterator）只是一般有用，到了C++11,它就是极其有用了，C++14在其基础上做了些修补工作。
 
-记住
+**记住**
 
 + 优先考虑const_iterator而非iterator
 + 在最大程度通用的代码中，优先考虑非成员函数版本的**begin**，**end**，**rbegin**等，而非同名成员函数

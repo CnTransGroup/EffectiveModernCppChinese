@@ -135,7 +135,7 @@ using add_lvalue_reference_t =  typename add_lvalue_reference<T>::type;
 ````
 看见了吧？不能再简单了。
 
-记住
+**记住**
 + typedef不支持模板化，但是别名声明支持。
 + 别名模板避免了使用"<b>::type</b>"后缀，而且在模板中使用**typedef**还需要在前面加上**typename**
 + C++14提供了C++11所有类型转换的别名声明版本
