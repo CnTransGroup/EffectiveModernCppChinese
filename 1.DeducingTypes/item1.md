@@ -217,7 +217,7 @@ template<typename T>
 void f2(T & param);		//传引用
 
 f1(someFunc);			//param被推导为指向函数的指针，类型是void(*)(int, double)
-f2(someFunc);			//param被推导为指向函数的引用，类型为void(&)(int, bouel)
+f2(someFunc);			//param被推导为指向函数的引用，类型为void(&)(int, double)
 ````
 这个实际上没有什么不同，但是如果你知道数组退化为指针，你也会知道函数退化为指针。
 
