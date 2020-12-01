@@ -126,7 +126,7 @@ void logAndProcess(T&& param)
 {
     auto now =                      //获取现在时间
         std::chrono::system_clock::now();
-    makeLogEntry("calling 'process',now);
+    makeLogEntry("calling 'process'",now);
     process(std::forward<T>(param));
 }
 ```
