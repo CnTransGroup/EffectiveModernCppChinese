@@ -203,7 +203,7 @@ public:
   template<
   	typename T,
     typename = typename std::enable_if<
-     	         !std::is_base_if<Person, 
+     	         !std::is_base_of<Person, 
   															typename std::decay<T>::type
                                 >::value
                >::type
