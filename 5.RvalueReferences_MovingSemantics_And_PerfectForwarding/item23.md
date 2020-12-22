@@ -34,7 +34,7 @@ typename remove_reference<T>::type&&
 move(T&& param)
 {
     using ReturnType =                      // alias declaration;
-    typename remove_reference<T>::type&&;   // 见 Item 9
+    typename remove_reference<T>::type&&;   // see Item 9
 
     return static_cast<ReturnType>(param);
 }
@@ -187,6 +187,11 @@ public:
 + `std::move`执行到右值的无条件的转换，但就自身而言，它不移动任何东西。
 + `std::forward`只有当它的参数被绑定到一个右值时，才将参数转换为右值。
 + `std::move`和`std::forward`在运行期什么也不做。
+
+### 参考问题（非书籍内容）
+
+关于move语义的解释
+https://stackoverflow.com/questions/36827900/what-makes-moving-objects-faster-than-copying
 
 
 
