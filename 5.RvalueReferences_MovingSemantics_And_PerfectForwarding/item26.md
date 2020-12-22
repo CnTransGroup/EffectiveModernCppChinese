@@ -72,7 +72,7 @@ logAndAdd(22); // calls int overload
 
 ```cpp
 short nameIdx;
-...
+...       // give nameIdx a value
 logAndAdd(nameIdx); // error!
 ```
 
@@ -84,7 +84,7 @@ logAndAdd(nameIdx); // error!
 
 使用通用引用类型的函数在C++中是贪婪函数。他们几乎可以精确匹配任何类型的参数（极少不适用的类型在Item 30中介绍）。这也是组合重载和通用引用使用是糟糕主意的原因：通用引用的实现会匹配比开发者预期要多得多的参数类型。
 
-一个更容易调入这种陷阱的例子是完美转发构造函数。简单对`logAndAdd`例子进行改造就可以说明这个问题。将使用`std::string`类型改为自定义`Person`类型即可：
+一个更容易掉入这种陷阱的例子是完美转发构造函数。简单对`logAndAdd`例子进行改造就可以说明这个问题。将使用`std::string`类型改为自定义`Person`类型即可：
 
 ```cpp
 class Person
