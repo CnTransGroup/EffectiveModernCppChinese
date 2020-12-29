@@ -1,3 +1,36 @@
+Lambda表达式是C++编程中的游戏规则改变者。这有点令人惊讶，因为它没有给语言带来新的表达能力。Lambda可以做的所有事情都可以通过其他方式完成。但是lambda是创建函数对象相当便捷的一种方法，对于日常的C++开发影响是巨大的。没有lambda时，标准库中的`_if`算法（比如，`std::find_if, std::remove_if, std::count_if`等）通常需要繁琐的谓词，但是当有lambda可用时，这些算法使用起来就变得相当方便。比较函数（比如，`std::sort, std::nth_element, std::lower_bound`等）与算法函数也是相同的。在标准库外，lambda可以快速创建`std::unique_ptr`和`std::shared_ptr`的自定义`deleter`，并且使线程API中条件变量的条件设置变得同样简单（参见Item 39）。除了标准库，lambda有利于即时的回调函数，接口适配函数和特定上下文中的一次性函数。Lambda确实使C++成为更令人愉快的编程语言。
+
+与Lambda相关的词汇可能会令人疑惑，这里做一下简单的回顾：
+
+- *lambda表达式就是一个表达式*。在代码的高亮部分就是lambda
+
+  ```cpp
+  std::find_if(container.begin(), container.end(),
+              [](int val){ return 0 < val && val < 10; }); // 本行高亮
+  ```
+
+- *闭包*是lambda创建的运行时对象。依赖捕获模式，闭包持有捕获数据的副本或者引用。在上面的`std::find_if`调用中，闭包是运行时传递给``std::find_if`第三个参数。
+
+- *闭包类（closure class）*是从中实例化闭包的类。每个lambda都会使编译器生成唯一的闭包类。Lambda中的语句成为其闭包类的成员函数中的可执行指令。
+
+Lambda通常被用来创建闭包，该闭包仅用作函数的参数。上面对`std::find_if`的调用就是这种情况。然而，闭包通常可以拷贝，所以可能有多个闭包对应于一个lambda。比如下面的代码：
+
+```cpp
+{
+  int x; // x is local variable
+  ...
+  auto c1 = [x](int y) { return x * y > 55; }; // c1 is copy of the closure produced by the lambda
+  
+  auto c2 = c1; // c2 is copy of c1
+  auto c3 = c2; // c3 is copy of c2
+  ...
+}
+```
+
+c1， c2，c3都是lambda产生的闭包的副本。
+
+非正式的讲，模糊lambda，闭包和闭包类之间的界限是可以接受的。但是，在随后的Item中，区分编译期（lambdas 和 closure classes）还是运行时（closures）以及它们之间的相互关系是重要的。
+
 # 避免使用默认捕获模式
 
 C++11中有两种默认的捕获模式：按引用捕获和按值捕获。但按引用捕获可能会带来悬空引用的问题，而按值引用可能会诱骗你让你以为能解决悬空引用的问题（实际上并没有），还会让你以为你的闭包是独立的（事实上也不是独立的）。
@@ -7,16 +40,16 @@ C++11中有两种默认的捕获模式：按引用捕获和按值捕获。但按
 按引用捕获会导致闭包中包含了对局部变量或者某个形参（位于定义lambda的作用域）的引用，如果该lambda创建的闭包生命周期超过了局部变量或者参数的生命周期，那么闭包中的引用将会变成悬空引用。举个例子，假如我们有一个元素是过滤函数的容器，该函数接受一个int作为参数，并返回一个布尔值，该布尔值的结果表示传入的值是否满足过滤条件。
 
 ```c++
-using FilterContainer = // see Item 9 for
+using FilterContainer =                  // see Item 9 for
 	std::vector<std::function<bool(int)>>; // "using", Item 2
-// for std::function
-FilterContainer filters; // filtering funcs
+                                         // for std::function
+FilterContainer filters;                 // filtering funcs
 ```
 
 我们可以添加一个过滤器，用来过滤掉5的倍数。
 
 ```c++
-filters.emplace_back( // see Item 42 for
+filters.emplace_back(                      // see Item 42 for
 	[](int value) { return value % 5 == 0; } // info on
 );
 ```
@@ -29,11 +62,11 @@ void addDivisorFilter()
     auto calc1 = computeSomeValue1();
     auto calc2 = computeSomeValue2();
     auto divisor = computeDivisor(calc1, calc2);
-    filters.emplace_back( 							    // danger!
+    filters.emplace_back( 							                // danger!
     	[&](int value) { return value % divisor == 0; }   // ref to
-    ); 												  // divisor
-} 													 // will
- 													 // dangle!
+    ); 												                          // divisor
+} 													                            // will
+ 													                              // dangle!
 ```
 
 这个代码实现是一个定时炸弹。lambda对局部变量divisor进行了引用，但该变量的生命周期会在addDivisorFilter返回时结束，刚好就是在语句filters.emplace_back返回之后，因此该函数的本质就是容器添加完，该函数就死亡了。使用这个filter会导致未定义行为，这是由它被创建那一刻起就决定了的。

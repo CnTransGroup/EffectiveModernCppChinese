@@ -19,7 +19,7 @@ void f(Widget&& w);
 ```
 参数`w`是一个左值，即使它的类型是一个**Widget**的右值引用(如果这里震惊到你了，请重新回顾从本书第二页开始的关于左值和右值的总览。)
 
-## Item 20: 理解std::move和std::forward
+## Item 23: 理解std::move和std::forward
 
 为了了解`std::move`和`std::forward`，一种有用的方式是从*它们不做什么*这个角度来了解它们。`std::move`不移动(move)任何东西，`std::forward`也不转发(forward)任何东西。在运行期间(run-time)，它们不做任何事情。它们不产生任何可执行代码，一字节也没有。
 
@@ -34,7 +34,7 @@ typename remove_reference<T>::type&&
 move(T&& param)
 {
     using ReturnType =                      // alias declaration;
-    typename remove_reference<T>::type&&;   // 见 Item 9
+    typename remove_reference<T>::type&&;   // see Item 9
 
     return static_cast<ReturnType>(param);
 }
@@ -126,7 +126,7 @@ void logAndProcess(T&& param)
 {
     auto now =                      //获取现在时间
         std::chrono::system_clock::now();
-    makeLogEntry("calling 'process',now);
+    makeLogEntry("calling 'process'",now);
     process(std::forward<T>(param));
 }
 ```
@@ -146,7 +146,7 @@ logAndProcess(std::move(w));    //call with rvalue
 
 你也许会想知道`std::forward`是怎么知道它的参数是否是被一个右值初始化的。举个例子，在上述代码中，`std::forward`是怎么分辨参数`param`是被一个左值还是右值初始化的？ 简短的说，该信息藏在函数`logAndProcess`的模板参数`T`中。该参数被传递给了函数`std::forward`，它解开了含在其中的信息。该机制工作的细节可以查询 Item 28.
 
-考虑到`std::move`和`std::forward`都可以归结于**转换**，他们唯一的区别就是`std::move`总是执行转换，而`std::forward`偶尔为之。你可能会问是否我们可以免于使用`std::move`而在任何地方只使用`std::forward`。 从纯技术的角度，答案是yes: `std::forward`是可以完全胜任，`std::move`并非必须。当然，其实两者中没有哪一个函数是**真的必须**的，因为我们可以到处直接写转换代码，但是我希望我们能同意：这将相当的,嗯，让人恶心。
+考虑到`std::move`和`std::forward`都可以归结于**转换**，他们唯一的区别就是`std::move`总是执行转换，而`std::forward`偶尔为之。你可能会问是否我们可以免于使用`std::move`而在任何地方只使用`std::forward`。 从纯技术的角度，答案是yes: `std::forward`是可以完全胜任，`std::move`并非必须。当然，其实两者中没有哪一个函数是**真的必须**的，因为我们可以到处直接写转换代码，但是我希望我们能同意：这将相当的，嗯，让人恶心。
 
 `std::move`的吸引力在于它的便利性： 减少了出错的可能性，增加了代码的清晰程度。考虑一个类，我们希望统计有多少次移动构造函数被调用了。我们只需要一个静态的计数器(static counter)，它会在移动构造的时候自增。假设在这个类中，唯一一个非静态的数据成员是`std::string`，一种经典的移动构造函数（例如，使用std::move)可以被实现如下:
 
@@ -178,15 +178,20 @@ public:
 }
 ```
 
-注意，第一，`std::move`只需要一个函数参数(rhs.s),而`std::forward`不但需要一个函数参数(rhs.s)，还需要一个模板类型参数`std::string`。其次，我们转发给`std::forward`的参数类型应当是一个**非引用**(non-reference),因为传递的参数应该是一个右值（见 Item 28)。 同样，这意味着`std::move`比起`std::forward`来说需要打更少的字，并且免去了传递一个表示我们正在传递一个右值的类型参数。同样，它根绝了我们传递错误类型的可能性，（例如，`std::string&`可能导致数据成员`s`被复制而不是被移动构造）。
+注意，第一，`std::move`只需要一个函数参数(rhs.s)，而`std::forward`不但需要一个函数参数(rhs.s)，还需要一个模板类型参数`std::string`。其次，我们转发给`std::forward`的参数类型应当是一个**非引用**(non-reference)，因为传递的参数应该是一个右值（见 Item 28)。 同样，这意味着`std::move`比起`std::forward`来说需要打更少的字，并且免去了传递一个表示我们正在传递一个右值的类型参数。同样，它根绝了我们传递错误类型的可能性，（例如，`std::string&`可能导致数据成员`s`被复制而不是被移动构造）。
 
 更重要的是，`std::move`的使用代表着无条件向右值的转换，而使用`std::forward`只对绑定了右值的引用进行到右值转换。这是两种完全不同的动作。前者是典型地为了移动操作，而后者只是传递（亦作转发）一个对象到另外一个函数，保留它原有的左值属性或右值属性。因为这些动作实在是差异太大，所以我们拥有两个不同的函数（以及函数名）来区分这些动作。
 
-记住：
+**记住**：
 
 + `std::move`执行到右值的无条件的转换，但就自身而言，它不移动任何东西。
 + `std::forward`只有当它的参数被绑定到一个右值时，才将参数转换为右值。
 + `std::move`和`std::forward`在运行期什么也不做。
+
+### 参考问题（非书籍内容）
+
+关于move语义的解释
+https://stackoverflow.com/questions/36827900/what-makes-moving-objects-faster-than-copying
 
 
 

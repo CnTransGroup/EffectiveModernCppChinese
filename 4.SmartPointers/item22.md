@@ -1,7 +1,6 @@
 ## 当使用Pimpl惯用法，请在实现文件中定义特殊成员函数
 
-如果你曾经与过多的编译次数斗争过，你会对`Pimpl`(Pointer to implementation)惯用法很熟悉。 凭借这样一种技巧，你可以把一个
-**类数据成员**替换成一个指向包含具体实现的类(或者结构体), 将放在主类(primary class)的数据成员们移动到实现类去(implementation class), 而这些数据成员的访问将通过指针间接访问呢。 举个例子，假如有一个类`Widget`看起来如下:
+如果你曾经与过多的编译次数斗争过，你会对`Pimpl`(Pointer to implementation)惯用法很熟悉。 凭借这样一种技巧，你可以将一个**类数据成员**替换成一个指向包含具体实现的类或结构体的指针, 并将放在主类(primary class)的数据成员们移动到实现类去(implementation class), 而这些数据成员的访问将通过指针间接访问。 举个例子，假如有一个类`Widget`看起来如下:
 
 ```cpp
 class Widget()      //定义在头文件`widget.h`
@@ -117,6 +116,19 @@ Wdiget w;       //编译出错
 
 做出这样的调整很容易。只需要在先在`widget.h`里，只**声明**(declare)类`Widget`的析构函数，却不要在这里**定义**(define)它:
 
+```cpp
+class Widget {      // as before, in "widget.h"
+public:
+  Widget();
+  ~Widget();     // declaration only
+  ...
+
+private:     // as before
+  struct Impl;
+  std::unique_ptr<Impl> pImpl; 
+};
+```
+
 
 
 在`widget.cpp`文件中，在结构体`Widget::Impl`被定义之后，再定义析构函数:
@@ -137,21 +149,17 @@ Widget::Widget()        //根据Item 21,　通过std::make_shared来创建std::u
 : pImpl(std::make_unique<Imple>())
 {}
 
-Widget::~Widget()       //析构函数的定义
+Widget::~Widget()       //析构函数的定义(译者注：这里高亮)
 {}
 ```
 
-这样就可以了，并且这样增加的代码也最少，但是，如果你想要强调编译器自动生成的析构函数会工作的很好——你声明`Widget`的析构函
-数的唯一原因，是确保它会在`Widget`的实现文件内(指`Widget.cpp`，译者注)被自动生成，你可以把析构函数体直接定义为
-`=default`:
+这样就可以了，并且这样增加的代码也最少，但是，如果你想要强调编译器自动生成的析构函数会工作的很好——你声明`Widget`的析构函数的唯一原因，是确保它会在`Widget`的实现文件内(指`widget.cpp`，译者注)被自动生成，你可以把析构函数体直接定义为`=default`:
 
 ```cpp
     Widget::~Widget() = default;       //同上述代码效果一致
 ```
 
-使用了`Pimpl`惯用法的类自然适合支持移动操作，因为编译器自动生成的移动操作正合我们所意： 对隐藏的`std::unique_ptr`进行移
-动。 正如`Item 17`所解释的那样，声明一个类`Widget`的析构函数会阻止编译器生成移动操作，所以如果你想要支持移动操作，你必须自己声明相关的函数。
-考虑到编译器自动生成的版本能够正常功能，你可能会被诱使着来这样实现:
+使用了`Pimpl`惯用法的类自然适合支持移动操作，因为编译器自动生成的移动操作正合我们所意： 对隐藏的`std::unique_ptr`进行移动。 正如`Item 17`所解释的那样，声明一个类`Widget`的析构函数会阻止编译器生成移动操作，所以如果你想要支持移动操作，你必须自己声明相关的函数。考虑到编译器自动生成的版本能够正常功能，你可能会被诱使着来这样实现:
 
 ```cpp
 class Widget       //在"Widget.h"中
@@ -171,10 +179,7 @@ public:
 }
 ```
 
-这样的做法会导致同样的错误，和之前的声明一个不带析构函数的类的错误一样，并且是因为同样的原因。 编译器生成的移动赋值操作
-符(move assignment operator)，在重新赋值之前，需要先销毁指针`pImpl`指向的对象。然而在`Widget`的头文件里，`pImpl`指针指向的是一个未完成类型。
-情况和移动构造函数(move constructor)有所不同。 移动构造函数的问题是编译器自动生成的代码里，包含有抛出异常的事件，在这个事件里会生成销毁`pImpl`的代码。
-然而，销毁`pImpl`需要`Impl`是一个完成类型。
+这样的做法会导致同样的错误，和之前的声明一个不带析构函数的类的错误一样，并且是因为同样的原因。 编译器生成的移动赋值操作符(move assignment operator)，在重新赋值之前，需要先销毁指针`pImpl`指向的对象。然而在`Widget`的头文件里，`pImpl`指针指向的是一个未完成类型。情况和移动构造函数(move constructor)有所不同。 移动构造函数的问题是编译器自动生成的代码里，包含有抛出异常的事件，在这个事件里会生成销毁`pImpl`的代码。然而，销毁`pImpl`需要`Impl`是一个完成类型。
 
 因为这个问题同上面一致，所以解决方案也一样——把移动操作的定义移动到实现文件里:
 ```cpp
@@ -217,10 +222,7 @@ Widget(Widget&& rhs) = default;             //在这里定义
 Widget& operator=(Widget&& rhs) = default;
 ```
 
-`pImpl`惯用法是用来减少类实现者和类使用者之间的编译依赖的一种方法，但是，从概念而言，使用这种惯用法并不改变这个类的表
-现。 原来的类`Widget`包含有`std::string`,`std::vector`和`Gadget`数据成员，并且，假设类型`Gadget`，如同`std::string`和
-`std::vector`一样,允许复制操作，所以类`Widget`支持复制操作也很合理。 我们必须要自己来写这些函数，因为第一，对包含有
-**只可移动(move-only)**类型，如`std::unique_ptr`的类，编译器不会生成复制操作;第二，即使编译器帮我们生成了，生成的复制操作也只会复制`std::unique_ptr`(也即浅复制(shallow copy)),而实际上我们需要复制指针所指向的对象(也即深复制(deep copy))。
+**`pImpl`惯用法是用来减少类实现者和类使用者之间的编译依赖的一种方法**，但是，从概念而言，使用这种惯用法并不改变这个类的表现。 原来的类`Widget`包含有`std::string`,`std::vector`和`Gadget`数据成员，并且，假设类型`Gadget`，如同`std::string`和`std::vector`一样,允许复制操作，所以类`Widget`支持复制操作也很合理。 我们必须要自己来写这些函数，因为第一，对包含有**只可移动(move-only)**类型，如`std::unique_ptr`的类，编译器不会生成复制操作;第二，即使编译器帮我们生成了，生成的复制操作也只会复制`std::unique_ptr`(也即浅复制(shallow copy)),而实际上我们需要复制指针所指向的对象(也即深复制(deep copy))。
 
 使用我们已经熟悉的方法，我们在头文件里声明函数，而在实现文件里去实现他们:
 
@@ -271,8 +273,7 @@ Widget& Widget::operator=(const Widget& rhs)
 
 两个函数的实现都比较中规中矩。 在每个情况中，我们都只从源对象(rhs)中，复制了结构体`Impl`的内容到目标对象中(*this)。我们利用了编译器会为我们自动生成结构体`Impl`的复制操作函数的机制，而不是逐一复制结构体`Impl`的成员，自动生成的复制操作能自动复制每一个成员。 因此我们通过调用`Widget::Impl`的编译器生成的复制操作函数来实现了类`Widget`的复制操作。 在复制构造函数中，注意，我们仍然遵从了Item 21的建议，使用`std::make_unique`而非直接使用`new`。
 
-为了实现`Pimpl`惯用法，`std::unique_ptr`是我们使用的智能指针，因为位于对象内部的`pImpl`指针(例如，在类`Widget`内部)，对所指向的对应实现的对象的享有独占所有权(exclusive ownership)。
-然而，有趣的是，如果我们使用`std::shared_ptr`而不是`std::unique_ptr`来做`pImpl`指针， 我们会发现本节的建议不再适用。 我们不需要在类`Widget`里声明析构函数，也不用用户定义析构函数，编译器将会愉快地生成移动操作，并且将会如我们所期望般工作。代码如下:
+为了实现`Pimpl`惯用法，`std::unique_ptr`是我们使用的智能指针，因为位于对象内部的`pImpl`指针(例如，在类`Widget`内部)，对所指向的对应实现的对象的享有独占所有权(exclusive ownership)。然而，有趣的是，如果我们使用`std::shared_ptr`而不是`std::unique_ptr`来做`pImpl`指针， 我们会发现本节的建议不再适用。 我们不需要在类`Widget`里声明析构函数，也不用用户定义析构函数，编译器将会愉快地生成移动操作，并且将会如我们所期望般工作。代码如下:
 
 ```cpp
 //在Widget.h中
@@ -300,7 +301,7 @@ w1 = std::move(w2);      //移动赋值w1
 
 对于`pImpl`惯用法而言，在`std::unique_ptr`和`std::shared_ptr`的特性之间，没有一个比较好的折中。 因为对于类`Widget`以及`Widget::Impl`而言，他们是独享占有权关系，这让`std::unique_ptr`使用起来很合适。 然而，有必要知道，在其他情况中，当共享所有权(shared ownership)存在时，`std::shared_ptr`是很适用的选择的时候，没有必要使用`std::unique_ptr`所必需的**声明——定义**(function-definition)这样的麻烦事了。
 
-记住
+**记住**
 
 - `pImpl`惯用法通过减少在类实现和类使用者之间的编译依赖来减少编译时间。
 -  对于`std::unique_ptr`类型的`pImpl`指针，需要在头文件的类里声明特殊的成员函数，但是在实现文件里面来实现他们。即使是编译器自动生成的代码可以工作，也要这么做。

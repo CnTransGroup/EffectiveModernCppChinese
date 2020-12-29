@@ -214,7 +214,7 @@ may decide that typing a few extra characters is a reasonable price to pay for t
 to avoid the pitfalls of an enum technology that dates to a time when the state of
 the art in digital telecommunications was the 2400-baud modem.
 
-记住
+**记住**
 + C++98的枚举即非限域枚举
 + 限域枚举的枚举名仅在enum内可见。要转换为其它类型只能使用cast。
 + 非限域/限域枚举都支持基础类型说明语法，限域枚举基础类型默认是`int`。非限域枚举没有默认基础类型。

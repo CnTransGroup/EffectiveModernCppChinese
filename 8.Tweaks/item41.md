@@ -2,11 +2,11 @@
 
 -------
 
-对于C++中的通用技术，总是存在适用场景。除了本章覆盖的两个例外，描述什么场景使用哪种通用技术通常来说很容易。这两个例外是传值（pass by value）和 emplacement。决定何时使用这两种技术受到多种因素的影响，本书提供的最佳建议是在使用它们的同时仔细考虑清除，尽管它们都是高效的现代C++编程的重要角色。接下来的Items提供了是否使用它们来编写软件的所需信息。
+对于C++中的通用技术，总是存在适用场景。除了本章覆盖的两个例外，描述什么场景使用哪种通用技术通常来说很容易。这两个例外是传值（pass by value）和 emplacement。决定何时使用这两种技术受到多种因素的影响，本书提供的最佳建议是在使用它们的同时仔细考虑清楚，尽管它们都是高效的现代C++编程的重要角色。接下来的Items提供了是否使用它们来编写软件的所需信息。
 
 
 
-## Item41.Consider pass by value for copyable parameters that are cheap to move and always copied 总是考虑直接按值传递，如果参数可拷贝并且移动操作开销很低
+## Item41.Consider pass by value for copyable parameters that are cheap to move and always copied 如果参数可拷贝并且移动操作开销很低，总是考虑直接按值传递
 
 有些函数的参数是可复制的。比如说，`addName`成员函数可以拷贝自己的参数到一个私有容器。为了提高效率，应该拷贝左值，移动右值。
 
