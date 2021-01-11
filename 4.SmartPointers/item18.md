@@ -31,14 +31,14 @@
 
 ```cpp
 class Investment { ... };
-class Sock: public Investment {...};
+class Stock: public Investment {...};
 class Bond: public Investment {...};
 class RealEstate: public Investment {...};
 ```
 
 ```mermaid
 classDiagram
-	Investment <|-- Sock
+	Investment <|-- Stock
 	Investment <|-- Bond
 	Investment <|-- RealEstate
 ```
@@ -121,7 +121,7 @@ makeInvestment(Ts&& params)
 
 ```cpp
 template<typename... Ts>
-makeInvestment(Ts&& params)
+auto makeInvestment(Ts&& params)
 {
   auto delInvmt = [](Investment* pInvestment)
 	{
