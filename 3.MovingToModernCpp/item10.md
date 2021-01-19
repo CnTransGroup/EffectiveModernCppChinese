@@ -207,12 +207,8 @@ constexpr auto
 ```cpp
 auto val = std::get<toUType(UserInfoFields::uiEmail)>(uInfo);
 ```
-比起使用非限域枚举，限域有很多可圈可点的地方，它避免命名空间污染，防止不经意间使用隐式转换。
-（下面这句我没看懂，保留原文。。（是什么典故吗。。。））
-In many cases, you 
-may decide that typing a few extra characters is a reasonable price to pay for the ability
-to avoid the pitfalls of an enum technology that dates to a time when the state of
-the art in digital telecommunications was the 2400-baud modem.
+这仍然比使用非限域枚举要写更多的代码，但同时它也避免命名空间污染，防止不经意间使用隐式转换。在大多情况下，你可能会认为多输入一些字符是一个合理的代价，
+用来避免这种可以追溯到数字电信领域最先的进技术是2400波特调制解调器的远古时代的枚举技术缺陷。
 
 **记住**
 + C++98的枚举即非限域枚举
