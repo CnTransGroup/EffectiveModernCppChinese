@@ -86,5 +86,5 @@ std::shared_ptr<const Widget> fastLoadWidget(WidgetID id)
 
 ### 记住
 
-- 像`std::shared_ptr`使用`std::weak_ptr`可能会悬空。
+- 用`std::weak_ptr`替代可能会悬空的`std::shared_ptr`。
 - `std::weak_ptr`的潜在使用场景包括：caching、observer lists、打破`std::shared_ptr`指向循环。
