@@ -34,7 +34,7 @@ typename remove_reference<T>::type&&
 move(T&& param)
 {
     using ReturnType =                      // alias declaration;
-    typename remove_reference<T>::type&&;   // 见 Item 9
+    typename remove_reference<T>::type&&;   // see Item 9
 
     return static_cast<ReturnType>(param);
 }
@@ -126,7 +126,7 @@ void logAndProcess(T&& param)
 {
     auto now =                      //获取现在时间
         std::chrono::system_clock::now();
-    makeLogEntry("calling 'process',now);
+    makeLogEntry("calling 'process'",now);
     process(std::forward<T>(param));
 }
 ```
@@ -182,11 +182,16 @@ public:
 
 更重要的是，`std::move`的使用代表着无条件向右值的转换，而使用`std::forward`只对绑定了右值的引用进行到右值转换。这是两种完全不同的动作。前者是典型地为了移动操作，而后者只是传递（亦作转发）一个对象到另外一个函数，保留它原有的左值属性或右值属性。因为这些动作实在是差异太大，所以我们拥有两个不同的函数（以及函数名）来区分这些动作。
 
-记住：
+**记住**：
 
 + `std::move`执行到右值的无条件的转换，但就自身而言，它不移动任何东西。
 + `std::forward`只有当它的参数被绑定到一个右值时，才将参数转换为右值。
 + `std::move`和`std::forward`在运行期什么也不做。
+
+### 参考问题（非书籍内容）
+
+关于move语义的解释
+https://stackoverflow.com/questions/36827900/what-makes-moving-objects-faster-than-copying
 
 
 

@@ -91,13 +91,14 @@ private:
 
 我希望这段代码是不言自明的，但是下面几点说明可能会有所帮助：
 
-- 构造器只接受`std::thread`右值，因为我们想要move`std::thread`对象给`ThreadRAII`（再次强调，`std::thread`不可以复制）
+- 构造器只接受`std::thread`右值，因为我们想要move `std::thread`对象给`ThreadRAII`（再次强调，`std::thread`不可以复制）
 
 - 构造器的参数顺序设计的符合调用者直觉（首先传递`std::thread`，然后选择析构执行的动作），但是成员初始化列表设计的匹配成员声明的顺序。将`std::thread`成员放在声明最后。在这个类中，这个顺序没什么特别之处，调整为其他顺序也没有问题，但是通常，可能一个成员的初始化依赖于另一个，因为`std::thread`对象可能会在初始化结束后就立即执行了，所以在最后声明是一个好习惯。这样就能保证一旦构造结束，所有数据成员都初始化完毕可以安全的异步绑定线程执行
 
 - `ThreadRAII`提供了`get`函数访问内部的`std::thread`对象。这类似于标准智能指针提供的`get`函数，可以提供访问原始指针的入口。提供`get`函数避免了`ThreadRAII`复制完整`std::thread`接口的需要，因为着`ThreadRAII`可以在需要`std::thread`上下文的环境中使用
 
-- 在`ThreadRAII`析构函数调用`std::thread`对象t的成员函数之前，检查t是否joinable。这是必须的，因为在unjoinbale的`std::thread`上调用`join or detach`会导致未定义行为。客户端可能会构造一个`std::thread`t，然后通过t构造一个`ThreadRAII`，使用`get`获取t，然后移动t，或者调用`join or detach`，每一个操作都使得t变为unjoinable
+- 在`ThreadRAII`析构函数调用`std::thread`对象t的成员函数之前，检查t是否joinable。这是必须的，因为在unjoinbale的`std::thread`上调用`join or detach`会导致未定义行为。客户端可能会构造一个`std::thread` t，然后通过t构造一个`ThreadRAII`，使用`get`获取t，然后移动t，或者调用`join or detach`，每一个操作都使得t变为unjoinable
+
   如果你担心下面这段代码
 
   ```cpp

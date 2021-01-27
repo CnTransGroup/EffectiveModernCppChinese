@@ -1,6 +1,6 @@
 ## 当使用Pimpl惯用法，请在实现文件中定义特殊成员函数
 
-如果你曾经与过多的编译次数斗争过，你会对`Pimpl`(Pointer to implementation)惯用法很熟悉。 凭借这样一种技巧，你可以把一个**类数据成员**替换成一个指向包含具体实现的类(或者结构体), 将放在主类(primary class)的数据成员们移动到实现类去(implementation class), 而这些数据成员的访问将通过指针间接访问呢。 举个例子，假如有一个类`Widget`看起来如下:
+如果你曾经与过多的编译次数斗争过，你会对`Pimpl`(Pointer to implementation)惯用法很熟悉。 凭借这样一种技巧，你可以将一个**类数据成员**替换成一个指向包含具体实现的类或结构体的指针, 并将放在主类(primary class)的数据成员们移动到实现类去(implementation class), 而这些数据成员的访问将通过指针间接访问。 举个例子，假如有一个类`Widget`看起来如下:
 
 ```cpp
 class Widget()      //定义在头文件`widget.h`
@@ -301,7 +301,7 @@ w1 = std::move(w2);      //移动赋值w1
 
 对于`pImpl`惯用法而言，在`std::unique_ptr`和`std::shared_ptr`的特性之间，没有一个比较好的折中。 因为对于类`Widget`以及`Widget::Impl`而言，他们是独享占有权关系，这让`std::unique_ptr`使用起来很合适。 然而，有必要知道，在其他情况中，当共享所有权(shared ownership)存在时，`std::shared_ptr`是很适用的选择的时候，没有必要使用`std::unique_ptr`所必需的**声明——定义**(function-definition)这样的麻烦事了。
 
-记住
+**记住**
 
 - `pImpl`惯用法通过减少在类实现和类使用者之间的编译依赖来减少编译时间。
 -  对于`std::unique_ptr`类型的`pImpl`指针，需要在头文件的类里声明特殊的成员函数，但是在实现文件里面来实现他们。即使是编译器自动生成的代码可以工作，也要这么做。

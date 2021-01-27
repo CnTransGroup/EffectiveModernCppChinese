@@ -71,13 +71,13 @@ vs.push_back(queenOfDisco); // copy-construct queenOfDisco
 vs.emplace_back(queenOfDisco); // ditto
 ```
 
-因此，emplacement函数可以完成insertion函数的所有功能。并且有时效率更高，至上在理论上，不会更低效。那为什么不在所有场合使用它们？
+因此，emplacement函数可以完成insertion函数的所有功能。并且有时效率更高，至少在理论上，不会更低效。那为什么不在所有场合使用它们？
 
 因为，就像说的那样，理论上，在理论和实际上没有什么区别，但是实际，区别还是有的。在当前标准库的实现下，有些场景，就像预期的那样，emplacement执行性能优于insertion，但是，有些场景反而insertion更快。这种场景不容易描述，因为依赖于传递的参数类型、容器类型、emplacement或insertion的容器位置、容器类型构造器的异常安全性和对于禁止重复值的容器（即`std::set,std::map,std::unorder_set,set::unorder_map`）要添加的值是否已经在容器中。因此，大致的调用建议是：通过benchmakr测试来确定emplacment和insertion哪种更快。
 
 当然这个结论不是很令人满意，所以还有一种启发式的方法来帮助你确定是否应该使用emplacement。如果下列条件都能满足，emplacement会优于insertion：
 
-- **值是通过构造器添加到容器，而不是直接赋值。**例子就像本Item刚开始的那样（添加"xyzzy"到`std::string的std::vector`中）。新值必须通过`std::string`的构造器添加到`std::vector`。如果我们回看这个例子，新值放到已经存在对象的位置，那情况就完全不一样了。考虑下：
+- **值是通过构造器添加到容器，而不是直接赋值。** 例子就像本Item刚开始的那样（添加"xyzzy"到`std::string的std::vector`中）。新值必须通过`std::string`的构造器添加到`std::vector`。如果我们回看这个例子，新值放到已经存在对象的位置，那情况就完全不一样了。考虑下：
 
   ```cpp
   std::vector<std::string> vs; // as before
@@ -89,9 +89,9 @@ vs.emplace_back(queenOfDisco); // ditto
 
   而且，向容器添加元素是通过构造还是赋值通常取决于实现者。但是，启发式仍然是有帮助的。基于节点的容器实际上总是使用构造器添加新元素，大多数标准库容器都是基于节点的。例外的容器只有`std::vector, std::deque, std::string`（`std::array`也不是基于节点的，但是它不支持emplacement和insertion）。在不是基于节点的容器中，你可以依靠`emplace_back`来使用构造向容器添加元素，对于`std::deque`，`emplace_front`也是一样的。
 
-- **传递的参数类型与容器的初始化类型不同。**再次强调，emplacement优于insertion通常基于以下事实：当传递的参数不是容器保存的类型时，接口不需要创建和销毁临时对象。当将类型为T的对象添加到container<T>时，没有理由期望emplacement比insertion运行的更快，因为不需要创建临时对象来满足insertion接口。
+- **传递的参数类型与容器的初始化类型不同。** 再次强调，emplacement优于insertion通常基于以下事实：当传递的参数不是容器保存的类型时，接口不需要创建和销毁临时对象。当将类型为T的对象添加到container<T>时，没有理由期望emplacement比insertion运行的更快，因为不需要创建临时对象来满足insertion接口。
 
-- **容器不拒绝重复项作为新值。**这意味着容器要么允许添加重复值，要么你添加的元素都是不重复的。这样要求的原因是为了判断一个元素是否已经存在于容器中，emplacement实现通常会创建一个具有新值的节点，以便可以将该节点的值与现有容器中节点的值进行比较。如果要添加的值不在容器中，则链接该节点。然后，如果值已经存在，emplacement创建的节点就会被销毁，意味着构造和析构时浪费的开销。这样的创建就不会在insertion函数中出现。
+- **容器不拒绝重复项作为新值。** 这意味着容器要么允许添加重复值，要么你添加的元素都是不重复的。这样要求的原因是为了判断一个元素是否已经存在于容器中，emplacement实现通常会创建一个具有新值的节点，以便可以将该节点的值与现有容器中节点的值进行比较。如果要添加的值不在容器中，则链接该节点。然后，如果值已经存在，emplacement创建的节点就会被销毁，意味着构造和析构时浪费的开销。这样的创建就不会在insertion函数中出现。
 
 本Item开始的例子中下面的调用满足上面的条件。所以调用比`push_back`运行更快。
 
@@ -130,7 +130,7 @@ ptrs.push_back({new Widget, killWidget});
 
 `std::shared_ptr`的临时对象创建应该可以避免，但是在这个场景下，临时对象值得被创建。考虑如下可能的时间序列：
 
-1. 在上述的调用中，一个`std::shared_ptr<Widget> `的临时对象被创建来持有`new Widget`对象。称这个对象为*temp*。
+1. 在上述的调用中，一个`std::shared_ptr<Widget>`的临时对象被创建来持有`new Widget`对象。称这个对象为*temp*。
 2. `push_back`接受*temp*的引用。在节点的分配一个副本来复制*temp*的过程中，OOM异常被抛出
 3. 随着异常从`push_back`的传播，*temp*被销毁。作为唯一管理Widget的弱指针`std::shared_ptr`对象，会自动销毁`Widget`，在这里就是调用`killWidget`。
 
@@ -221,7 +221,7 @@ std::regex r2(nullptr); // compiles
 
 在标准的官方术语中，用于初始化r1的语法是所谓的复制初始化。相反，用于初始化r2的语法是（也被称为braces）被称为直接初始化。复制初始化不是显式调用构造器的，直接初始化是。这就是r2可以编译的原因。
 
-然后回到`push_back和 emplace_back`，更一般来说，insertion函数对比emplacment函数。emplacement函数使用直接初始化，这意味着使用显式构造器。insertion函数使用复制初始化。因此：
+然后回到`push_back和emplace_back`，更一般来说，insertion函数对比emplacment函数。emplacement函数使用直接初始化，这意味着使用显式构造器。insertion函数使用复制初始化。因此：
 
 ```cpp
 regexes.emplace_back(nullptr); // compiles. Direct init permits use of explicit std::regex ctor taking a pointer
