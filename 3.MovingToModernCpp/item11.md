@@ -3,10 +3,7 @@
 
 如果你写的代码要被其他人使用，你不想让他们调用某个特殊的函数，你通常不会声明这个函数。无声明，不函数。简简单单！但有时C++会给你自动声明一些函数，如果你想防止客户调用这些函数，事情就不那么简单了。
 
-上述场景见于特殊的成员函数，即当有必要时C++自动生成的那些函数。Item 17 详细讨论了这些函数，但是现在，我们只关心拷贝构造函数和拷贝赋值运算符重载。This chapter is largely devoted to common practices in
-C++98 that have been superseded by better practices in C++11, and in C++98, if you
-want to suppress use of a member function, it’s almost always the copy constructor,
-the assignment operator, or both.
+上述场景见于特殊的成员函数，即当有必要时C++自动生成的那些函数。Item 17 详细讨论了这些函数，但是现在，我们只关心拷贝构造函数和拷贝赋值运算符重载。本节主要致力于讨论C++98中那些被C++11所取代的最佳实践，而且在C++98中，你想要禁止使用的成员函数，几乎总是拷贝构造函数或者拷贝赋值函数，或者两者都是。
 
 在C++98中防止调用这些函数的方法是将它们声明为私有成员函数。举个例子，在C++ 标准库*iostream*继承链的顶部是模板类`basic_ios`。所有`istream`和`ostream`类都继承此类(直接或者间接)。拷贝`istream`和`ostream`是不合适的，因为要进行哪些操作是模棱两可的。比如一个`istream`对象，代表一个输入值的流，流中有一些已经被读取，有一些可能马上要被读取。如果一个`istream`被拷贝，需要像拷贝将要被读取的值那样也拷贝已经被读取的值吗？解决这个问题最好的方法是不定义这个操作。直接禁止拷贝流。
 
