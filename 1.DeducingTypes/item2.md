@@ -46,7 +46,7 @@ void func_for_cx(const T param);
 func_for_cx(x);			//概念化调用：
 				//param的推导类型是cx的类型
 
-template<typename T>	//概念化的模板用来推导rx的类型
+template<typename T>		//概念化的模板用来推导rx的类型
 void func_for_rx(const T & param);
 
 func_for_rx(x);			//概念化调用：
