@@ -146,7 +146,6 @@ f(27);					//27是右值，所以T是int，
 
 <font size = 5>**情景三：`ParamType`既不是指针也不是引用**</font>
 
-## 情景三：ParamType既不是指针也不是引用
 当`ParamType`既不是指针也不是引用时，我们通过传值（pass-by-value）的方式处理：
 ````cpp
 template<typename T>
