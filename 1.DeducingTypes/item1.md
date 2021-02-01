@@ -52,7 +52,7 @@ void f(ParamType param);
 f(expr);				//从expr中推导T和ParamType
 ````
 
-<font size = 5>**情景一：`ParamType`是一个指针或引用，但不是通用引用**</font>
+### 情景一：`ParamType`是一个指针或引用，但不是通用引用
 
 最简单的情况是`ParamType`是一个指针或者引用，但非通用引用。在这种情况下，类型推导会这样进行：
 
@@ -114,7 +114,7 @@ f(px);					//T是const int，param的类型是const int*
 
 到现在为止，你会发现你自己打哈欠犯困，因为C++的类型推导规则对引用和指针形参如此自然，书面形式来看这些非常枯燥。所有事情都那么理所当然！那正是在类型推导系统中你所想要的。
 
-<font size = 5>**情景二：`ParamType`是一个通用引用**</font>
+### 情景二：`ParamType`是一个通用引用
 
 模板使用通用引用形参的话，那事情就不那么明显了。这样的形参被声明为像右值引用一样（也就是，在函数模板中假设有一个类型形参`T`，那么通用引用声明形式就是`T&&`)，它们的行为在传入左值实参时大不相同。完整的叙述请参见[Item24](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item24.md)，在这有些最必要的你还是需要知道：
 
@@ -144,7 +144,7 @@ f(27);					//27是右值，所以T是int，
 ````
 [Item24](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item24.md)详细解释了为什么这些例子是像这样发生的。这里关键在于通用引用的类型推导规则是不同于普通的左值或者右值引用的。尤其是，当通用引用被使用时，类型推导会区分左值实参和右值实参，但是对非通用引用时不会区分。
 
-<font size = 5>**情景三：`ParamType`既不是指针也不是引用**</font>
+### 情景三：`ParamType`既不是指针也不是引用
 
 当`ParamType`既不是指针也不是引用时，我们通过传值（pass-by-value）的方式处理：
 ````cpp
@@ -180,7 +180,7 @@ f(ptr);					//传递const char * const类型的实参
 ````
 在这里，解引用符号（\*）的右边的`const`表示`ptr`本身是一个`const`：`ptr`不能被修改为指向其它地址，也不能被设置为null（解引用符号左边的`const`表示`ptr`指向一个字符串，这个字符串是`const`，因此字符串不能被修改）。当`ptr`作为实参传给`f`，组成这个指针的每一比特都被拷贝进`param`。像这种情况，`ptr`**自身的值会被传给形参**，根据类型推导的第三条规则，`ptr`自身的常量性`const`ness将会被省略，所以`param`是`const char*`，也就是一个可变指针指向`const`字符串。在类型推导中，这个指针指向的数据的常量性`const`ness将会被保留，但是当拷贝`ptr`来创造一个新指针`param`时，`ptr`自身的常量性`const`ness将会被忽略。
 
-<font size = 5>**数组实参**</font>
+### 数组实参
 
 上面的内容几乎覆盖了模板类型推导的大部分内容，但这里还有一些小细节值得注意，比如数组类型不同于指针类型，虽然它们两个有时候是可互换的。关于这个错觉最常见的例子是，在很多上下文中数组会退化为指向它的第一个元素的指针。这样的退化允许像这样的代码可以被编译：
 ````cpp
@@ -246,7 +246,7 @@ std::array<int, arraySize(keyVals)> mappedVals;	//mappedVals的大小为7
 ````
 至于`arraySize`被声明为`noexcept`，会使得编译器生成更好的代码，具体的细节请参见[Item14](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item14.md)。
 
-<font size = 5>**函数实参**</font>
+### 函数实参
 
 在C++中不止是数组会退化为指针，函数类型也会退化为一个函数指针，我们对于数组类型推导的全部讨论都可以应用到函数类型推导和退化为函数指针上来。结果是：
 ````cpp
