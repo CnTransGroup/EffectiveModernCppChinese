@@ -41,7 +41,7 @@ vw.push_back(w);    //把w添加进vw
 
 这是个很严重的问题，因为老代码可能依赖于`push_back`提供的强烈的异常安全保证。因此，C++11版本的实现不能简单的将`push_back`里面的复制操作替换为移动操作，除非知晓移动操作绝不抛异常，这时复制替换为移动就是安全的，唯一的副作用就是性能得到提升。
 
-`std::vector::push_back`受益于“如果可以就移动，如果必要则复制”策略，并且它不是标准库中唯一采取该策略的函数。C++98中还有一些函数（如`std::vector::reverse`，`std::deque::insert`等）也受益于这种强异常保证。对于这个函数只有在知晓移动不抛异常的情况下用C++11的移动操作替换C++98的复制操作才是安全的。但是如何知道一个函数中的移动操作是否产生异常？答案很明显：它检查这个操作是否被声明为`noexcept`。（这个检查非常弯弯绕。像是`std::vector::push_back`之类的函数调用`std::move_if_noexcept`，根据其中类型的移动构造函数是否为`noexcept`的，`std::move`的不同实现视情况转换为右值（参见[Item23](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item23.md)）。反过来，`std::move_if_noexcept`查阅`std::is_nothrow_move_constructible`这个*type trait*，基于移动构造函数是否有`noexcept`（或者`throw()`）的设计，编译器设置这个*type trait*的值。）
+`std::vector::push_back`受益于“如果可以就移动，如果必要则复制”策略，并且它不是标准库中唯一采取该策略的函数。C++98中还有一些函数（如`std::vector::reverse`，`std::deque::insert`等）也受益于这种强异常保证。对于这个函数只有在知晓移动不抛异常的情况下用C++11的移动操作替换C++98的复制操作才是安全的。但是如何知道一个函数中的移动操作是否产生异常？答案很明显：它检查这个操作是否被声明为`noexcept`。（这个检查非常弯弯绕。像是`std::vector::push_back`之类的函数调用`std::move_if_noexcept`，这是个`std::move`的变体，根据其中类型的移动构造函数是否为`noexcept`的，视情况转换为右值或保持左值（参见[Item23](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item23.md)）。反过来，`std::move_if_noexcept`查阅`std::is_nothrow_move_constructible`这个*type trait*，基于移动构造函数是否有`noexcept`（或者`throw()`）的设计，编译器设置这个*type trait*的值。）
 
 `swap`函数是`noexcept`的另一个绝佳用地。`swap`是STL算法实现的一个关键组件，它也常用于拷贝运算符重载中。它的广泛使用意味着对其施加不抛异常的优化是非常有价值的。有趣的是，标准库的`swap`是否`noexcept`有时依赖于用户定义的`swap`是否`noexcept`。比如，数组和`std::pair`的`swap`声明如下：
 
