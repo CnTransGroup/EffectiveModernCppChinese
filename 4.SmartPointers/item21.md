@@ -12,7 +12,7 @@ std::unique_ptr<T> make_unique(Ts&&... params)
 }
 ```
 
-正如你看到的，`make_unique`只是将它的参数完美转发到所要创建的对象的构造函数，从`new`产生的原始指针里面构造出`std::unique_ptr`，并返回这个`std::unique_ptr`。这种形式的函数不支持数组和自定义析构（见[Item18](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item18.md)），但它给出了一个示范：只需一点努力就能写出你想要的`make_uniqe`函数。（要用可能的最小的努力创建一个有所有特性的`make_unique`，去找提供这个的标准化文件吧，然后拷贝你在那看到的那个实现。你想要的这个文件是N3656，是Stephan T. Lavavej写于2013-04-18的文档。）需要记住的是，不要把它放到`std`命名空间中，因为你可能并不希望在升级厂家编译器到符合C++14标准的时候产生冲突。
+正如你看到的，`make_unique`只是将它的参数完美转发到所要创建的对象的构造函数，从`new`产生的原始指针里面构造出`std::unique_ptr`，并返回这个`std::unique_ptr`。这种形式的函数不支持数组和自定义析构（见[Item18](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item18.md)），但它给出了一个示范：只需一点努力就能写出你想要的`make_unique`函数。（要用可能的最小的努力创建一个有所有特性的`make_unique`，去找提供这个的标准化文件吧，然后拷贝你在那看到的那个实现。你想要的这个文件是N3656，是Stephan T. Lavavej写于2013-04-18的文档。）需要记住的是，不要把它放到`std`命名空间中，因为你可能并不希望在升级厂家编译器到符合C++14标准的时候产生冲突。
 
 `std::make_unique`和`std::make_shared`是三个**`make`函数**中的两个：接收任意的多参数集合，完美转发到构造函数去动态分配一个对象，然后返回这个指向这个对象的指针。第三个`make`函数是`std::allocate_shared`。它行为和`std::make_shared`一样，只不过第一个参数是用来动态分配内存的*allocator*对象。
 
