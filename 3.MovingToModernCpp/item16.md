@@ -155,7 +155,7 @@ public:
 
 假设`cacheValid`是false，那么：
 
-+ 一个线程调用`Widget::magicValue`，刚执行过`cacheValid`被设置成`true`的点。
++ 一个线程调用`Widget::magicValue`，刚执行完将`cacheValid`设置`true`的语句。
 + 在这时，第二个线程调用`Widget::magicValue`，检查`cacheValid`。看到它是`true`，就返回`cacheValue`，即使第一个线程还没有给它赋值。因此返回的值是不正确的。
 
 这里有一个坑。对于需要同步的是单个的变量或者内存位置，使用`std::atomic`就足够了。不过，一旦你需要对两个以上的变量或内存位置作为一个单元来操作的话，就应该使用互斥量。对于`Widget::magicValue`是这样的。
