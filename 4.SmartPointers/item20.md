@@ -30,7 +30,7 @@ std::shared_ptr<Widget> spw1 = wpw.lock();  //如果wpw失效，spw1就为空
  											
 auto spw2 = wpw.lock();                     //同上，但是使用auto
 ```
-另一种形式是以`std::weak_ptr`为实参构造`std::shared_ptr`。这种情况中，如果`std::weak_ptr`过期，会抛出一个异常：
+另一种形式是以`std::weak_ptr`为实参构造`std::shared_ptr`。这种情况中，如果`std::weak_ptr`失效，会抛出一个异常：
 ```cpp
 std::shared_ptr<Widget> spw3(wpw);          //如果wpw失效，抛出std::bad_weak_ptr异常
 ```
@@ -38,7 +38,7 @@ std::shared_ptr<Widget> spw3(wpw);          //如果wpw失效，抛出std::bad_w
 ```cpp
 std::unique_ptr<const Widget> loadWidget(WidgetID id);
 ```
-如果调用`loadWidget`是一个昂贵的操作（比如它操作文件或者数据库I/O）并且对于ID来重复使用很常见，一个合理的优化是再写一个函数除了完成`loadWidget`做的事情之外再缓存它的结果。当每个请求获取的`Widget`阻塞了缓存也会导致本身性能问题，所以另一个合理的优化可以是当`Widget`不再使用的时候销毁它的缓存。
+如果调用`loadWidget`是一个昂贵的操作（比如它操作文件或者数据库I/O）并且重复使用ID很常见，一个合理的优化是再写一个函数除了完成`loadWidget`做的事情之外再缓存它的结果。当每个请求获取的`Widget`阻塞了缓存也会导致本身性能问题，所以另一个合理的优化可以是当`Widget`不再使用的时候销毁它的缓存。
 
 对于可缓存的工厂函数，返回`std::unique_ptr`不是好的选择。调用者应该接收缓存对象的智能指针，调用者也应该确定这些对象的生命周期，但是缓存本身也需要一个指针指向它所缓存的对象。缓存对象的指针需要知道它是否已经悬空，因为当工厂客户端使用完工厂产生的对象后，对象将被销毁，关联的缓存条目会悬空。所以缓存应该使用`std::weak_ptr`，这可以知道是否已经悬空。这意味着工厂函数返回值类型应该是`std::shared_ptr`，因为只有当对象的生命周期由`std::shared_ptr`管理时，`std::weak_ptr`才能检测到悬空。
 
@@ -53,9 +53,9 @@ std::shared_ptr<const Widget> fastLoadWidget(WidgetID id)
                                         //std::shared_ptr（或
                                         //当对象不在缓存中时为null）
 
-    if (!objPtr) {                              //如果不在缓存中
-        objPtr = loadWidget(id); 		//加载它
-        cache[id] = objPtr; 			//缓存它
+    if (!objPtr) {                      //如果不在缓存中
+        objPtr = loadWidget(id);        //加载它
+        cache[id] = objPtr;             //缓存它
     }
     return objPtr;
 }
