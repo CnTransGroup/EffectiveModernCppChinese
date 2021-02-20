@@ -111,7 +111,7 @@ public:
     …
 };
 ```
-正如我所说，`std::enable_shared_from_this`是一个用作基类模板。它的模板参数总是某个继承自它的类，所以`Widget`继承自`std::enable_shared_from_this<Widget>`。如果某类型继承自一个由该类型（译注：作为模板类型参数）进行模板化得到的基类这个东西让你心脏有点遭不住，别去想它就好了。代码完全合法，而且它背后的设计模式也是没问题的，并且这种设计模式还有个标准名字，尽管该名字和`std::enable_shared_from_this`一样怪异。这个标准名字就是奇异递归模板模式（*The Curiously Recurring Template Pattern*（*CRTP*））。如果你想学更多关于它的内容，请搜索引擎一展身手，现在我们要回到`std::enable_shared_from_this`上。
+正如我所说，`std::enable_shared_from_this`是一个基类模板。它的模板参数总是某个继承自它的类，所以`Widget`继承自`std::enable_shared_from_this<Widget>`。如果某类型继承自一个由该类型（译注：作为模板类型参数）进行模板化得到的基类这个东西让你心脏有点遭不住，别去想它就好了。代码完全合法，而且它背后的设计模式也是没问题的，并且这种设计模式还有个标准名字，尽管该名字和`std::enable_shared_from_this`一样怪异。这个标准名字就是奇异递归模板模式（*The Curiously Recurring Template Pattern*（*CRTP*））。如果你想学更多关于它的内容，请搜索引擎一展身手，现在我们要回到`std::enable_shared_from_this`上。
 
 `std::enable_shared_from_this`定义了一个成员函数，成员函数会创建指向当前对象的`std::shared_ptr`却不创建多余控制块。这个成员函数就是`shared_from_this`，无论在哪当你想在成员函数中使用`std::shared_ptr`指向`this`所指对象时都请使用它。这里有个`Widget::process`的安全实现：
 
