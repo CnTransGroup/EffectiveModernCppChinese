@@ -98,7 +98,7 @@ auto spw = std::make_shared<Widget>();
 ```cpp
 auto widgetDeleter = [](Widget* pw) { … };
 ```
-创建一个使用它的只能指针只能直接使用`new`：
+创建一个使用它的智能指针只能直接使用`new`：
 ```cpp
 std::unique_ptr<Widget, decltype(widgetDeleter)>
     upw(new Widget, widgetDeleter);
