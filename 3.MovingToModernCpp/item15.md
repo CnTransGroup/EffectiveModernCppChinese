@@ -70,7 +70,7 @@ constexpr int pow(int base, int exp) noexcept   //C++14
     return result;
 }
 ```
-`constexpr`函数限制为只能获取和返回**字面值类型**，这基本上意味着那些有了值的类型能在编译期决定。在C++11中，除了void外的所有内置类型外，还包括一些用户定义类型都可以是字面值类型，因为构造函数和其他成员函数可能是`constexpr`：
+`constexpr`函数限制为只能获取和返回**字面值类型**，这基本上意味着那些有了值的类型能在编译期决定。在C++11中，除了`void`外的所有内置类型，以及一些用户定义类型都可以是字面值类型，因为构造函数和其他成员函数可能是`constexpr`：
 
 ```cpp
 class Point {
