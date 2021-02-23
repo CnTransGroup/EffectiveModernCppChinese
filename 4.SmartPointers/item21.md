@@ -92,7 +92,7 @@ auto spw = std::make_shared<Widget>();
 
 对于`std::make_shared`的效率分析同样适用于`std::allocate_shared`，因此`std::make_shared`的性能优势也扩展到了该函数。
 
-更倾向于使用`make`函数而不是直接使用`new`的争论非常激烈。尽管它们在软件工程、异常安全和效率方面具有优势，但本条款的意见是，更**倾向于**使用`make`函数，而不是完全依赖于它们。这是因为有些情况下它们不能或不应该被使用。
+更倾向于使用`make`函数而不是直接使用`new`的争论非常激烈。尽管它们在软件工程、异常安全和效率方面具有优势，但本条款的建议是，更**倾向于**使用`make`函数，而不是完全依赖于它们。这是因为有些情况下它们不能或不应该被使用。
 
 例如，`make`函数都不允许指定自定义删除器（见[Item18](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item18.md)和[19](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item19.md)），但是`std::unique_ptr`和`std::shared_ptr`有构造函数这么做。有个`Widget`的自定义删除器：
 ```cpp
