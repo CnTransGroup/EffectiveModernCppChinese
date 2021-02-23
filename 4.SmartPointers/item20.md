@@ -63,7 +63,7 @@ std::shared_ptr<const Widget> fastLoadWidget(WidgetID id)
 
 这个实现使用了C++11的hash表容器`std::unordered_map`，但是需要的`WidgetID`哈希和相等性比较函数在这里没有展示。
 
-`fastLoadWidget`的实现忽略了以下事实：缓存可能会累积失效的`std::weak_ptr`，这些指针对应了不再使用的`Widget`（也已经被销毁了）。可以改进实现方式，但不要花时间在不会引起对`std::weak_ptr`有深入了解的问题上，让我们考虑第二个用例：观察者设计模式（Observer design pattern）。此模式的主要组件是subjects（状态可能会更改的对象）和observers（状态发生更改时要通知的对象）。在大多数实现中，每个subject都包含一个数据成员，该成员持有指向其observers的指针。这使subjects很容易发布状态更改通知。subjects对控制observers的生命周期（即它们什么时候被销毁）没有兴趣，但是subjects对确保另一件事具有极大的兴趣，那事就是一个observer被销毁时，不再尝试访问它。一个合理的设计是每个subject持有一个`std::weak_ptr`s容器指向observers，因此可以在使用前检查是否已经悬空。
+`fastLoadWidget`的实现忽略了以下事实：缓存可能会累积失效的`std::weak_ptr`，这些指针对应了不再使用的`Widget`（也已经被销毁了）。其实可以改进实现方式，但是花时间在这个问题上不会让我们对`std::weak_ptr`有更深入的理解，让我们考虑第二个用例：观察者设计模式（Observer design pattern）。此模式的主要组件是subjects（状态可能会更改的对象）和observers（状态发生更改时要通知的对象）。在大多数实现中，每个subject都包含一个数据成员，该成员持有指向其observers的指针。这使subjects很容易发布状态更改通知。subjects对控制observers的生命周期（即它们什么时候被销毁）没有兴趣，但是subjects对确保另一件事具有极大的兴趣，那事就是一个observer被销毁时，不再尝试访问它。一个合理的设计是每个subject持有一个`std::weak_ptr`s容器指向observers，因此可以在使用前检查是否已经悬空。
 
 作为最后一个使用`std::weak_ptr`的例子，考虑一个持有三个对象`A`、`B`、`C`的数据结构，`A`和`C`共享`B`的所有权，因此持有`std::shared_ptr`：
 
