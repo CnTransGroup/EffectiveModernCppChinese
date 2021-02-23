@@ -107,7 +107,7 @@ std::shared_ptr<Widget> spw(new Widget, widgetDeleter);
 ```
 对于`make`函数，没有办法做同样的事情。
 
-`make`函数第二个限制来自于其实现中的句法细节。[Item7](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item7.md)解释了，当构造函数重载，有使用`std::initializer_list`作为参数的和不用其作为参数的时，用花括号创建对象更倾向于使用`std::initializer_list`作为形参的构造函数，而用小括号创建对象调用不用`std::initializer_list`作为参数的构造函数。`make`函数会将它们的参数完美转发给对象构造函数，但是它们是使用小括号还是花括号？对某些类型，问题的答案会很不相同。例如，在这些调用中，
+`make`函数第二个限制来自于其实现中的语法细节。[Item7](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item7.md)解释了，当构造函数重载，有使用`std::initializer_list`作为参数的重载形式和不用其作为参数的的重载形式，用花括号创建的对象更倾向于使用`std::initializer_list`作为形参的重载形式，而用小括号创建对象将调用不用`std::initializer_list`作为参数的的重载形式。`make`函数会将它们的参数完美转发给对象构造函数，但是它们是使用小括号还是花括号？对某些类型，问题的答案会很不相同。例如，在这些调用中，
 
 ```cpp
 auto upv = std::make_unique<std::vector<int>>(10, 20);
