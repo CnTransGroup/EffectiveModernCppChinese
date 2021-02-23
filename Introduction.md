@@ -28,7 +28,7 @@
 
 对于判断一个表达式是否是左值的一个有用的启发就是，看看能否取得它的地址。如果能取地址，那么通常就是左值。如果不能，则通常是右值。这个启发的好处就是帮你记住，一个表达式的类型与它是左值还是右值无关。也就是说，有个类型`T`，你可以有类型`T`的左值和右值。当你碰到右值引用类型的形参时，记住这一点非常重要，因为形参本身是个左值：
 
-```c++
+```cpp
 class Widget {
 public:
     Widget(Widget&& rhs);   //rhs是个左值，
@@ -44,7 +44,7 @@ public:
 
 + 我使用形参名`rhs`（“right-hand side”）。这是我喜欢的**移动操作**（即移动构造函数和移动赋值运算符）和**拷贝操作**（拷贝构造函数和拷贝构造运算符）的形参名。我也在双目运算符的右侧形参用它：
 
-	```c++
+	```cpp
 	class Widget {
 	public:
 	  Widget(Widget&& rhs);   //rhs是个左值，
@@ -58,7 +58,7 @@ public:
 
 + 我使用“`…`”来表示“这里有一些别的代码”。这种窄省略号不同于C++11可变参数模板源代码中的宽省略号（“`...`”）。这听起来不太清楚，但实际并不。比如：
 
-	```c++
+	```cpp
 	template<typename... Ts>                //这些是C++源代码的
 	void processVals(const Ts&... params)   //省略号
 	{
@@ -70,8 +70,8 @@ public:
 
 当使用另一个同类型的对象来初始化一个对象时，新的对象被称为是来初始化的对象（译者注：initializing object，即源对象）的一个**副本**（*copy*），尽管这个副本是通过移动构造函数创建的。很抱歉地说，C++中没有术语来区别一个对象是拷贝构造的副本还是移动构造的副本（译者注：此处为了区别拷贝这个“动作”与拷贝得到的“东西”，将*copy*按语境译为拷贝（动作）和副本（东西），此处及接下来几段按此方式翻译。在后面的条款中可能会不加区别地全部翻译为“拷贝”。）：
 
-```c++
-void someFunc(Widget w);		//someFunc的形参w是传值过来
+```cpp
+void someFunc(Widget w);        //someFunc的形参w是传值过来
 
 Widget wid;                     //wid是个Widget
 
@@ -88,13 +88,13 @@ someFunc(std::move(wid));       //在这个someFunc调用中，w是通过移动�
 
 设计优良的函数是**异常安全**（*exception safe*）的，意味着他们至少提供基本的异常安全保证（即基本保证*basic guarantee*）。这样的函数保证调用者在异常抛出时，程序不变量保持完整（即没有数据结构是毁坏的），且没有资源泄漏。有强异常安全保证的函数确保调用者在异常产生时，程序保持在调用前的状态。
 
-当我提到“**函数对象**”时，我通常指的是某个支持`operator()`成员函数的类型的对象。换句话说，这个对象的行为像函数一样。偶尔我用稍微更普遍一些的术语，表示可以用非成员函数语法调用的任何东西（即“*`fuctionName(arguments)`*”）。这个广泛定义包括的不仅有支持`operator()`的对象，还有函数和类似C的函数指针。（较窄的定义来自于C++98，广泛点的定义来自于C++11。）将成员函数指针加进来的更深的普遍化产生了我们所知的**可调用对象**（*callable objects*）。你通常可以忽略其中的微小区别，简单地认为函数对象和可调用对象为C++中可以用函数调用语法调用的东西。
+当我提到“**函数对象**”时，我通常指的是某个支持`operator()`成员函数的类型的对象。换句话说，这个对象的行为像函数一样。偶尔我用稍微更普遍一些的术语，表示可以用非成员函数语法调用的任何东西（即“`fuctionName(arguments)`”）。这个广泛定义包括的不仅有支持`operator()`的对象，还有函数和类似C的函数指针。（较窄的定义来自于C++98，广泛点的定义来自于C++11。）将成员函数指针加进来的更深的普遍化产生了我们所知的**可调用对象**（*callable objects*）。你通常可以忽略其中的微小区别，简单地认为函数对象和可调用对象为C++中可以用函数调用语法调用的东西。
 
 通过*lambda*表达式创建的函数对象称为**闭包**（*closures*）。没什么必要去区别*lambda*表达式和它们创建的闭包，所以我经常把它们统称*lambdas*。类似地，我几乎不区分**函数模板**（*function templates*）（即产生函数的模板）和**模板函数**（*template functions*）（即从函数模板产生的函数）。**类模板**（*class templates*）和**模板类**（*template classes*）同上。
 
 C++中的许多东西都可被声明和定义。**声明**（*declarations*）引入名字和类型，并不给出比如存放在哪或者怎样实现等的细节：
 
-```c++
+```cpp
 extern int x;                       //对象声明
 
 class Widget;                       //类声明
@@ -106,7 +106,7 @@ enum class Color;                   //限域enum声明（见条款10）
 
 **定义**（*definitions*）提供存储位置或者实现细节：
 
-```c++
+```cpp
 int x;                              //对象定义
 
 class Widget {                      //类定义
@@ -130,10 +130,10 @@ enum class Color
 
 我将那些比如从`new`返回的内置指针（*build-in pointers*）称为**原始指针**（*raw pointers*）。原始指针的“反义词”是**智能指针**（*smart pointers*）。智能指针通常重载指针解引用运算符（`operator->`和`operator*`），但在[Item20](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item20.md)中解释看`std::weak_ptr`是个例外。
 
-在源代码注释中，我有时将“constructor”（构造函数）缩写为*`ctor`*，将“destructor”（析构函数）缩写为*`dtor`*。（译者注：但译文中基本都完整翻译了而没使用缩写。）
+在源代码注释中，我有时将“constructor”（构造函数）缩写为`ctor`，将“destructor”（析构函数）缩写为`dtor`。（译者注：但译文中基本都完整翻译了而没使用缩写。）
 
 ### 报告bug，提出改进意见
 
 我尽力将本书写的清晰、准确、富含有用的信息，但是当然还有些去做得更好的办法。如果你找到了任何类型的错误（技术上的，叙述上的，语法上的，印刷上的等），或者有些建议如何改进本书，请给我发电子邮件到emc++@aristeia.com。新的印刷给了我改进《Modern Effective C++》的机会，但我也不能解决我不知道的问题！
 
-要查看我所知道的事情，参见本书勘误表页，http://www.aristeia.com/BookErrata/emc++-errata.html。
+要查看我所知道的事情，参见本书勘误表页，http://www.aristeia.com/BookErrata/emc++-errata.html 。
