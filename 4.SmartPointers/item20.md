@@ -17,22 +17,22 @@ std::weak_ptr<Widget> wpw(spw); //wpw指向与spw所指相同的Widget。RC仍�
 spw = nullptr;                  //RC变为0，Widget被销毁。
                                 //wpw现在悬空
 ```
-悬空的`std::weak_ptr`被称作已经**expired**（失效）。你可以用它直接做测试：
+悬空的`std::weak_ptr`被称作已经**expired**（过期）。你可以用它直接做测试：
 
 ```CPP
 if (wpw.expired()) …            //如果wpw没有指向对象…
 ```
-但是通常你期望的是检查`std::weak_ptr`是否已经失效，如果没有失效则访问其指向的对象。这做起来可不是想着那么简单。因为缺少解引用操作，没有办法写这样的代码。即使有，将检查和解引用分开会引入竞态条件：在调用`expired`和解引用操作之间，另一个线程可能对指向这对象的`std::shared_ptr`重新赋值或者析构，并由此造成对象已析构。这种情况下，你的解引用将会产生未定义行为。
+但是通常你期望的是检查`std::weak_ptr`是否已经过期，如果没有过期则访问其指向的对象。这做起来可不是想着那么简单。因为缺少解引用操作，没有办法写这样的代码。即使有，将检查和解引用分开会引入竞态条件：在调用`expired`和解引用操作之间，另一个线程可能对指向这对象的`std::shared_ptr`重新赋值或者析构，并由此造成对象已析构。这种情况下，你的解引用将会产生未定义行为。
 
-你需要的是一个原子操作检查`std::weak_ptr`是否已经失效，如果没有失效就访问所指对象。这可以通过从`std::weak_ptr`创建`std::shared_ptr`来实现，具体有两种形式可以从`std::weak_ptr`上创建`std::shared_ptr`，具体用哪种取决于`std::weak_ptr`过期时你希望`std::shared_ptr`表现出什么行为。一种形式是`std::weak_ptr::lock`，它返回一个`std::shared_ptr`，如果`std::weak_ptr`过期这个`std::shared_ptr`为空：
+你需要的是一个原子操作检查`std::weak_ptr`是否已经过期，如果没有过期就访问所指对象。这可以通过从`std::weak_ptr`创建`std::shared_ptr`来实现，具体有两种形式可以从`std::weak_ptr`上创建`std::shared_ptr`，具体用哪种取决于`std::weak_ptr`过期时你希望`std::shared_ptr`表现出什么行为。一种形式是`std::weak_ptr::lock`，它返回一个`std::shared_ptr`，如果`std::weak_ptr`过期这个`std::shared_ptr`为空：
 ```cpp
-std::shared_ptr<Widget> spw1 = wpw.lock();  //如果wpw失效，spw1就为空
+std::shared_ptr<Widget> spw1 = wpw.lock();  //如果wpw过期，spw1就为空
  											
 auto spw2 = wpw.lock();                     //同上，但是使用auto
 ```
-另一种形式是以`std::weak_ptr`为实参构造`std::shared_ptr`。这种情况中，如果`std::weak_ptr`失效，会抛出一个异常：
+另一种形式是以`std::weak_ptr`为实参构造`std::shared_ptr`。这种情况中，如果`std::weak_ptr`过期，会抛出一个异常：
 ```cpp
-std::shared_ptr<Widget> spw3(wpw);          //如果wpw失效，抛出std::bad_weak_ptr异常
+std::shared_ptr<Widget> spw3(wpw);          //如果wpw过期，抛出std::bad_weak_ptr异常
 ```
 但是你可能还想知道为什么`std::weak_ptr`就有用了。考虑一个工厂函数，它基于一个唯一ID从只读对象上产出智能指针。根据[Item18](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item19.md)的描述，工厂函数会返回一个该对象类型的`std::unique_ptr`：
 ```cpp
