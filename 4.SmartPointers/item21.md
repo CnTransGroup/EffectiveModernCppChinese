@@ -124,7 +124,7 @@ auto initList = { 10, 20 };
 auto spv = std::make_shared<std::vector<int>>(initList);
 ```
 
-对于`std::unique_ptr`，只有这两种情景（自定义删除器和花括号初始化）使用`make`函数有点问题。对于`std::shared_ptr`和它的`make`函数，还有2个问题。都属于边界问题，但是一些开发者常碰到，你也可能是其中之一。
+对于`std::unique_ptr`，只有这两种情景（自定义删除器和花括号初始化）使用`make`函数有点问题。对于`std::shared_ptr`和它的`make`函数，还有2个问题。都属于边缘情况，但是一些开发者常碰到，你也可能是其中之一。
 
 一些类重载了`operator new`和`operator delete`。这些函数的存在意味着对这些类型的对象的全局内存分配和释放是不合常规的。设计这种定制操作往往只会精确的分配、释放对象大小的内存。例如，`Widget`类的`operator new`和`operator delete`只会处理`sizeof(Widget)`大小的内存块的分配和释放。这种系列行为不太适用于`std::shared_ptr`对自定义分配（通过`std::allocate_shared`）和释放（通过自定义删除器）的支持，因为`std::allocate_shared`需要的内存总大小不等于动态分配的对象大小，还需要**再加上**控制块大小。因此，使用`make`函数去创建重载了`operator new`和`operator delete`类的对象是个典型的糟糕想法。
 
