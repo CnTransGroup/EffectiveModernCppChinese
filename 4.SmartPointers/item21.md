@@ -16,7 +16,7 @@ std::unique_ptr<T> make_unique(Ts&&... params)
 
 `std::make_unique`和`std::make_shared`是三个**`make`函数**中的两个：接收任意的多参数集合，完美转发到构造函数去动态分配一个对象，然后返回这个指向这个对象的指针。第三个`make`函数是`std::allocate_shared`。它行为和`std::make_shared`一样，只不过第一个参数是用来动态分配内存的*allocator*对象。
 
-即使是对使用和不使用`make`函数创建智能指针的最简单比较，也揭示了为什么最好使用`make`函数的第一个原因。例如：
+即使通过用和不用make函数来创建智能指针的一个小小比较，也揭示了为何使用make函数更好的第一个原因。例如：
 
 ```c++
 auto upw1(std::make_unique<Widget>());      //使用make函数
@@ -193,31 +193,4 @@ processWidget( 									    //和之前一样，
 ```
 回想一下：如果`computePriority`在“`new Widget`”之后，而在`std::shared_ptr`构造函数之前调用，并且如果`computePriority`产生一个异常，那么动态分配的`Widget`将会泄漏。
 
-这里使用自定义删除排除了对`std::make_shared`的使用，因此避免出现问题的方法是将`Widget`的分配和`std::shared_ptr`的构造放入它们自己的语句中，然后使用得到的`std::shared_ptr`调用`processWidget`。这是该技术的本质，不过，正如我们稍后将看到的，我们可以对其进行调整以提高其性能：
-```c++
-std::shared_ptr<Widget> spw(new Widget, cusDel);
-processWidget(spw, computePriority());  // 正确，但是没优化，见下
-```
-这是可行的，因为`std::shared_ptr`获取了传递给它的构造函数的原始指针的所有权，即使构造函数产生了一个异常。此例中，如果`spw`的构造函数抛出异常（比如无法为控制块动态分配内存），仍然能够保证`cusDel`会在“`new Widget`”产生的指针上调用。
-
-一个小小的性能问题是，在非异常安全调用中，我们将一个右值传递给`processWidget`：
-```c++
-processWidget(
-    std::shared_ptr<Widget>(new Widget, cusDel),    //实参是一个右值
-    computePriority()
-);
-```
-但是在异常安全调用中，我们传递了左值：
-```c++
-processWidget(spw, computePriority());              //实参是左值
-```
-因为`processWidget`的`std::shared_ptr`形参是传值，从右值构造只需要移动，而传递左值构造需要拷贝。对`std::shared_ptr`而言，这种区别是有意义的，因为拷贝`std::shared_ptr`需要对引用计数原子递增，移动则不需要对引用计数有操作。为了使异常安全代码达到非异常安全代码的性能水平，我们需要用`std::move`将`spw`转换为右值（见[Item23](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item23.md)）：
-```c++
-processWidget(std::move(spw), computePriority());   //高效且异常安全
-```
-这很有趣，也值得了解，但通常是无关紧要的，因为您很少有理由不使用`make`函数。除非你有令人信服的理由这样做，否则你应该使用`make`函数。
-
-**请记住：**
-- 和直接使用`new`相比，`make`函数消除了代码重复，提高了异常安全性。对于`std::make_shared`和`std::allocate_shared`，生成的代码更小更快。
-- 不适合使用`make`函数的情况包括需要指定自定义删除器和希望用花括号初始化。
-- 对于`std::shared_ptr`s，其他不建议使用`make`函数的情况包括(1)有自定义内存管理的类；(2)特别关注内存的系统，非常大的对象，以及`std::weak_ptr`s比对应的`std::shared_ptr`s活得更久。
+这里使用自定义删除排除了对`std::make_shared`的
