@@ -187,12 +187,12 @@ public:
 ```cpp
 class SpecialPerson: public Person {
 public:
-    SpecialPerson(const SpecialPerson& rhs) //拷贝构造函数，
-    : Person(rhs)                           //调用基类的转发构造函数！
+    SpecialPerson(const SpecialPerson& rhs) //拷贝构造函数，调用基类的
+    : Person(rhs)                           //完美转发构造函数！
     { … }
 
-    SpecialPerson(SpecialPerson&& rhs)      //移动构造函数，
-    : Person(std::move(rhs))                //调用基类的转发构造函数！
+    SpecialPerson(SpecialPerson&& rhs)      //移动构造函数，调用基类的
+    : Person(std::move(rhs))                //完美转发构造函数！
     { … }
 };
 ```
