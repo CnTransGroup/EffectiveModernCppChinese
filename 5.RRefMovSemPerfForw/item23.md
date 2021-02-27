@@ -44,7 +44,7 @@ move(T&& param)
 
 我为你们高亮了这段代码的两部分（译者注：高亮的部分为函数名`move`和`static_cast<ReturnType>(param)`）。一个是函数名字，因为函数的返回值非常具有干扰性，而且我不想你们被它搞得晕头转向。另外一个高亮的部分是包含这段函数的本质的转换。正如你所见，`std::move`接受一个对象的引用（准确的说，一个通用引用（universal reference），见[Item24](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item24.md))，返回一个指向同对象的引用。
 
-该函数返回类型的`&&`部分表明`std::move`函数返回的是一个右值引用，但是，正如[Item28](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item28.md)所解释的那样，如果类型`T`恰好是一个左值引用，那么`T&&`将会成为一个左值引用。为了避免如此，类型萃取器（type trait，见[Item9](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item9.md)）`std::remove_reference`应用到了类型`T`上，因此确保了`&&`被正确的应用到了一个不是引用的类型上。这保证了`std::move`返回的真的是右值引用，这很重要，因为函数返回的右值引用是右值（rvalues）。因此，`std::move`将它的实参为一个右值，这就是它的全部作用。
+该函数返回类型的`&&`部分表明`std::move`函数返回的是一个右值引用，但是，正如[Item28](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item28.md)所解释的那样，如果类型`T`恰好是一个左值引用，那么`T&&`将会成为一个左值引用。为了避免如此，*type trait*（见[Item9](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item9.md)）`std::remove_reference`应用到了类型`T`上，因此确保了`&&`被正确的应用到了一个不是引用的类型上。这保证了`std::move`返回的真的是右值引用，这很重要，因为函数返回的右值引用是右值（rvalues）。因此，`std::move`将它的实参为一个右值，这就是它的全部作用。
 
 此外，`std::move`在C++14中可以被更简单地实现。多亏了函数返回值类型推导（见[Item3](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item3.md)）和标准库的模板别名`std::remove_reference_t`（见[Item9](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item9.md)），`std::move`可以这样写：
 
@@ -191,8 +191,3 @@ public:
 + `std::move`执行到右值的无条件的转换，但就自身而言，它不移动任何东西。
 + `std::forward`只有当它的参数被绑定到一个右值时，才将参数转换为右值。
 + `std::move`和`std::forward`在运行期什么也不做。
-
-### 译者推荐：参考问题（非书籍内容）
-
-关于move语义的解释
-https://stackoverflow.com/questions/36827900/what-makes-moving-objects-faster-than-copying
