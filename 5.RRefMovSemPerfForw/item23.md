@@ -24,7 +24,7 @@ void f(Widget&& w);
 
 **Item 23: Understand `std::move` and `std::forward`**
 
-为了了解`std::move`和`std::forward`，一种有用的方式是从**它们不做什么**这个角度来了解它们。`std::move`不移动（move）任何东西，`std::forward`也不转发（forward）任何东西。在运行期里，它们不做任何事情。它们不产生任何可执行代码，一字节也没有。
+为了了解`std::move`和`std::forward`，一种有用的方式是从**它们不做什么**这个角度来了解它们。`std::move`不移动（move）任何东西，`std::forward`也不转发（forward）任何东西。在运行时，它们不做任何事情。它们不产生任何可执行代码，一字节也没有。
 
 `std::move`和`std::forward`仅仅是执行转换（cast）的函数（事实上是函数模板）。`std::move`无条件的将它的实参转换为右值，而`std::forward`只在特定情况满足时下进行转换。它们就是如此。这样的解释带来了一些新的问题，但是从根本上而言，这就是全部内容。
 
