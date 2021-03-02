@@ -26,20 +26,20 @@ IDE编辑器可以直接显示`x`推导的结果为`int`，`y`推导的结果为
 举个例子，假如我们想看到之前那段代码中`x`和`y`的类型，我们可以首先声明一个类模板但**不定义**。就像这样：
 
 ````cpp
-template<typename T>			//只对TD进行声明
-class TD;				//TD == "Type Displayer"
+template<typename T>                //只对TD进行声明
+class TD;                           //TD == "Type Displayer"
 ````
 如果尝试实例化这个类模板就会引出一个错误消息，因为这里没有用来实例化的类模板定义。为了查看`x`和`y`的类型，只需要使用它们的类型去实例化`TD`：
 ````cpp
-TD<decltype(x)> xType;			//引出包含x和y
-TD<decltype(y)> yType;			//的类型的错误消息
+TD<decltype(x)> xType;              //引出包含x和y
+TD<decltype(y)> yType;              //的类型的错误消息
 ````
 我使用***variableName*****Type**的结构来命名变量，因为这样它们产生的错误消息可以有助于我们查找。对于上面的代码，我的编译器产生了这样的错误信息，我取一部分贴到下面：
 ````cpp
 error: aggregate 'TD<int> xType' has incomplete type and 
-	cannot be defined
+        cannot be defined
 error: aggregate 'TD<const int *> yType' has incomplete type and
-	cannot be defined
+        cannot be defined
 ````
 另一个编译器也产生了一样的错误，只是格式稍微改变了一下：
 ````cpp
@@ -52,7 +52,7 @@ error: 'yType' uses undefined class 'TD<const int *>'
 
 使用`printf`的方法使类型信息只有在运行时才会显示出来（尽管我不是非常建议你使用`printf`），但是它提供了一种格式化输出的方法。现在唯一的问题是只需对于你关心的变量使用一种优雅的文本表示。“这有什么难的，“你这样想，”这正是`typeid`和`std::type_info::name`的价值所在”。为了实现我们我们想要查看`x`和`y`的类型的需求，你可能会这样写：
 ````cpp
-std::cout << typeid(x).name() << '\n';	//显示x和y的类型
+std::cout << typeid(x).name() << '\n';  //显示x和y的类型
 std::cout << typeid(y).name() << '\n';
 ````
 这种方法对一个对象如`x`或`y`调用`typeid`产生一个`std::type_info`的对象，然后`std::type_info`里面的成员函数`name()`来产生一个C风格的字符串（即一个`const char*`）表示变量的名字。
@@ -61,16 +61,16 @@ std::cout << typeid(y).name() << '\n';
 
 因为对于`x`和`y`来说这样的结果是正确的，你可能认为问题已经接近了，别急，考虑一个更复杂的例子：
 ````cpp
-template<typename T>			//要调用的模板函数
+template<typename T>                    //要调用的模板函数
 void f(const T& param);
 
-std::vector<Widget> createVec();	//工厂函数
+std::vector<Widget> createVec();        //工厂函数
 
-const auto vw = createVec();		//使用工厂函数返回值初始化vw
+const auto vw = createVec();            //使用工厂函数返回值初始化vw
 
 if (!vw.empty()){
-	f(&vw[0]);			//调用f
-	...
+    f(&vw[0]);                          //调用f
+    …
 }
 ````
 在这段代码中包含了一个用户定义的类型`Widget`，一个STL容器`std::vector`和一个`auto`变量`vw`，这个更现实的情况是你可能在会遇到的并且想获得他们类型推导的结果，比如模板类型形参`T`，比如函数`f`形参`param`。
@@ -80,16 +80,16 @@ if (!vw.empty()){
 template<typename T>
 void f(const T& param)
 {
-	using std::cout;
-	cout << "T =     " << typeid(T).name() << '\n';		//显示T
+    using std::cout;
+    cout << "T =     " << typeid(T).name() << '\n';             //显示T
 
-	cout << "param = " << typeid(param).name() << '\n';	//显示
-	...							//param
-}								//的类型
+    cout << "param = " << typeid(param).name() << '\n';         //显示
+    ...							        //param
+}                                                               //的类型
 ````
 GNU和Clang执行这段代码将会输出这样的结果
 ````cpp
-T =	    PK6Widget
+T =     PK6Widget
 param = PK6Widget
 ````
 我们早就知道在这些编译器中`PK`表示“pointer to `const`”，所以只有数字`6`对我们来说是神奇的。其实数字是类名称（`Widget`）的字符串长度，所以这些编译器告诉我们`T`和`param`都是`const Widget*`。
@@ -124,29 +124,29 @@ const std::_Simple_types<...>::value_type *const &
 template<typename T>
 void f(const T& param)
 {
-	using std::cout;
-	using boost::typeindex::type_id_with_cvr;
+    using std::cout;
+    using boost::typeindex::type_id_with_cvr;
 
-	//显示T
-	cout << "T =     "
-		<< type_id_with_cvr<T>().pretty_name()
-		<< '\n';
+    //显示T
+    cout << "T =     "
+         << type_id_with_cvr<T>().pretty_name()
+         << '\n';
     
-	//显示param类型
-	cout << "param = "
-		<< type_id_with_cvr<decltype(param)>().pretty_name()
-		<< '\n';
+    //显示param类型
+    cout << "param = "
+         << type_id_with_cvr<decltype(param)>().pretty_name()
+         << '\n';
 }
 ````
 `boost::typeindex::type_id_with_cvr`获取一个类型实参（我们想获得相应信息的那个类型），它不消除实参的`const`，`volatile`和引用修饰符（因此模板名中有“`with_cur`”）。结果是一个`boost::typeindex::type_index`对象，它的`pretty_name`成员函数输出一个`std::string`，包含我们能看懂的类型表示。
 基于这个`f`的实现版本，再次考虑那个使用`typeid`时获取`param`类型信息出错的调用：
 
 ````cpp
-std::vetor<Widget> createVec();		//工厂函数
-const auto vw = createVec();		//使用工厂函数返回值初始化vw
+std::vetor<Widget> createVec();         //工厂函数
+const auto vw = createVec();            //使用工厂函数返回值初始化vw
 if (!vw.empty()){
-	f(&vw[0]);			//调用f
-	...
+    f(&vw[0]);                          //调用f
+    …
 }
 ````
 在GNU和Clang的编译器环境下，使用Boost.TypeIndex版本的`f`最后会产生下面的（准确的）输出：
