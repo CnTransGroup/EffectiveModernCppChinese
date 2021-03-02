@@ -29,7 +29,7 @@ f(nullptr);         //调用重载函数f的f(void*)版本
 ````cpp
 auto result = findRecord( /* arguments */ );
 if (result == 0) {
-    ...
+    …
 } 
 ````
 如果你不知道`findRecord`返回了什么（或者不能轻易的找出），那么你就不太清楚到底`result`是一个指针类型还是一个整型。毕竟，`0`（用来测试`result`的值的那个）也可以像我们之前讨论的那样被解析。但是换一种假设如果你看到这样的代码：
@@ -37,7 +37,7 @@ if (result == 0) {
 auto result = findRecord( /* arguments */ );
 
 if (result == nullptr) {  
-    ...
+    …
 }
 ````
 这就没有任何歧义：`result`的结果一定是指针类型。
@@ -50,22 +50,22 @@ bool   f3(Widget* pw);                      //调用
 ````
 如果这样传递空指针：
 ````cpp
-std::mutex f1m, f2m, f3m;			//用于f1，f2，f3函数的互斥量
+std::mutex f1m, f2m, f3m;       //用于f1，f2，f3函数的互斥量
 
-using MuxGuard =                    //C++11的typedef，参见Item9
+using MuxGuard =                //C++11的typedef，参见Item9
     std::lock_guard<std::mutex>;
-...
+…
 
 {  
     MuxGuard g(f1m);            //为f1m上锁
     auto result = f1(0);        //向f1传递0作为空指针
 }                               //解锁 
-...
+…
 {  
     MuxGuard g(f2m);            //为f2m上锁
     auto result = f2(NULL);     //向f2传递NULL作为空指针
 }                               //解锁 
-...
+…
 {
     MuxGuard g(f3m);            //为f3m上锁
     auto result = f3(nullptr);  //向f3传递nullptr作为空指针
