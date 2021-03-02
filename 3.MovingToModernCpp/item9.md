@@ -21,7 +21,7 @@ using UPtrMapSS =
 ````cpp
 //FP是一个指向函数的指针的同义词，它指向的函数带有
 //int和const std::string&形参，不返回任何东西
-typedef void (*FP)(int, const std::string&);	//typedef
+typedef void (*FP)(int, const std::string&);    //typedef
 
 //含义同上
 using FP = void (*)(int, const std::string&);   //别名声明
@@ -52,8 +52,8 @@ MyAllocList<Widget>::type lw;                   //用户代码
 template<typename T>
 class Widget {                              //Widget<T>含有一个
 private:                                    //MyAllocLIst<T>对象
-    typename MyAllocList<T>::type list;    	//作为数据成员
-    ...
+    typename MyAllocList<T>::type list;     //作为数据成员
+    …
 }; 
 ````
 这里`MyAllocList<T>::type`使用了一个类型，这个类型依赖于模板参数`T`。因此`MyAllocList<T>::type`是一个依赖类型（*dependent type*），在C++很多讨人喜欢的规则中的一个提到必须要在依赖类型名前加上`typename`。
@@ -62,13 +62,13 @@ private:                                    //MyAllocLIst<T>对象
 
 ````cpp
 template<typename T> 
-using MyAllocList = std::list<T, MyAlloc<T>>;	//同之前一样
+using MyAllocList = std::list<T, MyAlloc<T>>;   //同之前一样
 
 template<typename T> 
 class Widget {
 private:
     MyAllocList<T> list;                        //没有“typename”
-    ...                                         //没有“::type”
+    …                                           //没有“::type”
 };
 ````
 对你来说，`MyAllocList<T>`（使用了模板别名声明的版本）可能看起来和`MyAllocList<T>::type`（使用`typedef`的版本）一样都应该依赖模板参数`T`，但是你不是编译器。当编译器处理`Widget`模板时遇到`MyAllocList<T>`（使用模板别名声明的版本），它们知道`MyAllocList<T>`是一个类型名，因为`MyAllocList`是一个别名模板：它**一定**是一个类型名。因此`MyAllocList<T>`就是一个**非依赖类型**（*non-dependent type*），就不需要也不允许使用`typename`修饰符。
@@ -78,7 +78,7 @@ private:
 举个例子，一个误入歧途的人可能写出这样的代码：
 
 ````cpp
-class Wine { ... };
+class Wine { … };
 
 template<>                          //当T是Wine
 class MyAllocList<Wine> {           //特化MyAllocList
@@ -87,7 +87,7 @@ private:
     { White, Red, Rose };           //"enum class"
 
     WineType type;                  //在这个类中，type是
-    ...                             //一个数据成员！
+    …                               //一个数据成员！
 };
 ````
 就像你看到的，`MyAllocList<Wine>::type`不是一个类型。如果`Widget`使用`Wine`实例化，在`Widget`模板中的`MyAllocList<Wine>::type`将会是一个数据成员，不是一个类型。在`Widget`模板内，`MyAllocList<T>::type`是否表示一个类型取决于`T`是什么，这就是为什么编译器会坚持要求你在前面加上`typename`。
@@ -108,7 +108,7 @@ std::add_lvalue_reference<T>::type  //从T中产出T&
 关于为什么这么实现是有历史原因的，但是我们跳过它（我认为太无聊了），因为标准委员会没有及时认识到别名声明是更好的选择，所以直到C++14它们才提供了使用别名声明的版本。这些别名声明有一个通用形式：对于C++11的类型转换`std::`transformation`<T>::type`在C++14中变成了`std::`transformation`_t`。举个例子或许更容易理解：
 
 ````cpp
-std::remove_const<T>::type			//C++11: const T → T 
+std::remove_const<T>::type          //C++11: const T → T 
 std::remove_const_t<T>              //C++14 等价形式
 
 std::remove_reference<T>::type      //C++11: T&/T&& → T 
