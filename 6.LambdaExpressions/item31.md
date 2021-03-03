@@ -46,9 +46,9 @@
 
 C++11中有两种默认的捕获模式：按引用捕获和按值捕获。但默认按引用捕获模式可能会带来悬空引用的问题，而默认按值捕获模式可能会诱骗你让你以为能解决悬空引用的问题（实际上并没有），还会让你以为你的闭包是独立的（事实上也不是独立的）。
 
-这就是本条目的一个总结。如果你偏向技术，渴望了解更多内容，就让我们从按引用捕获的危害谈起吧。
+这就是本条款的一个总结。如果你偏向技术，渴望了解更多内容，就让我们从按引用捕获的危害谈起吧。
 
-按引用捕获会导致闭包中包含了对局部变量或者某个形参的引用，变量或形参只在定义*lambda*的作用域中可用。如果该*lambda*创建的闭包生命周期超过了局部变量或者参数的生命周期，那么闭包中的引用将会变成悬空引用。举个例子，假如我们有元素是过滤函数（filter）的一个容器，该函数接受一个`int`作为参数，并返回一个`bool`，该`bool`的结果表示传入的值是否满足过滤条件：
+按引用捕获会导致闭包中包含了对某个局部变量或者形参的引用，变量或形参只在定义*lambda*的作用域中可用。如果该*lambda*创建的闭包生命周期超过了局部变量或者参数的生命周期，那么闭包中的引用将会变成悬空引用。举个例子，假如我们有元素是过滤函数（filtering function）的一个容器，该函数接受一个`int`作为参数，并返回一个`bool`，该`bool`的结果表示传入的值是否满足过滤条件：
 
 ```c++
 using FilterContainer =                     //“using”参见条款9，
@@ -171,7 +171,7 @@ void Widget::addFilter() const
 
 错误，完全错误。
 
-捕获只能应用于*lambda*被创建时所在作用域里的non-`static`局部变量（包括形参）。在`Widget::addFilter`的视线里，`divisor`并不是一个局部变量，而是`Widget`类的一个成员变量。它不能被捕获。如果默认捕获模式被删除，代码就不能编译了：
+捕获只能应用于*lambda*被创建时所在作用域里的non-`static`局部变量（包括形参）。在`Widget::addFilter`的视线里，`divisor`并不是一个局部变量，而是`Widget`类的一个成员变量。它不能被捕获。而如果默认捕获模式被删除，代码就不能编译了：
 
 ```c++
 void Widget::addFilter() const
@@ -194,7 +194,7 @@ void Widget::addFilter() const
 }
 ```
 
-所以如果默认按值捕获不能捕获`divisor`，而没有默认按值捕获代码就不能编译，这是怎么一回事呢？
+所以如果默认按值捕获不能捕获`divisor`，而不用默认按值捕获代码就不能编译，这是怎么一回事呢？
 
 解释就是这里隐式使用了一个原始指针：`this`。每一个non-`static`成员函数都有一个`this`指针，每次你使用一个类内的数据成员时都会使用到这个指针。例如，在任何`Widget`成员函数中，编译器会在内部将`divisor`替换成`this->divisor`。在默认按值捕获的`Widget::addFilter`版本中，
 
@@ -240,7 +240,7 @@ void doSomeWork()
 }                                           //销毁Widget；filters现在持有悬空指针！
 ```
 
-当调用`doSomeWork`时，就会创建一个过滤器，其生命周期依赖于由`std::make_unique`产生的Widget对象，即一个含有指向`Widget`的指针——`Widget`是`this`指针——的过滤器。这个过滤器被添加到`filters`中，但当`doSomeWork`结束时，`Widget`会由管理它的`std::unique_ptr`来销毁（见[Item18](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item18.md)）。从这时起，`filter`会含有一个存着悬空指针的条目。
+当调用`doSomeWork`时，就会创建一个过滤器，其生命周期依赖于由`std::make_unique`产生的`Widget`对象，即一个含有指向`Widget`的指针——`Widget`的`this`指针——的过滤器。这个过滤器被添加到`filters`中，但当`doSomeWork`结束时，`Widget`会由管理它的`std::unique_ptr`来销毁（见[Item18](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item18.md)）。从这时起，`filter`会含有一个存着悬空指针的条目。
 
 这个特定的问题可以通过给你想捕获的数据成员做一个局部副本，然后捕获这个副本去解决：
 
@@ -309,6 +309,6 @@ void addDivisorFilter()
 
 **请记住：**
 
-* 默认的按引用捕获可能会导致悬空引用。
-* 默认的按值捕获对于悬空指针很敏感（尤其是`this`指针），并且它会误导人产生*lambda*是独立的想法。
++ 默认的按引用捕获可能会导致悬空引用。
++ 默认的按值捕获对于悬空指针很敏感（尤其是`this`指针），并且它会误导人产生*lambda*是独立的想法。
 
