@@ -6,7 +6,7 @@ C++11中的`std::bind`是C++98的`std::bind1st`和`std::bind2nd`的后续，但�
 
 这个条款假设你熟悉`std::bind`。 如果不是这样，你将需要获得基本的了解，然后再继续。 无论如何，这样的理解都是值得的，因为你永远不知道何时会在阅读或维护的代码库中遇到`std::bind`。
 
-与[Item32](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/6.LambdaExpressions/item32.md)中一样，我们将从`std::bind`返回的函数对象称为**bind对象**（*bind objects*）。​
+与[Item32](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/6.LambdaExpressions/item32.md)中一样，我们将从`std::bind`返回的函数对象称为**bind对象**（*bind objects*）。
 
 优先*lambda*而不是`std::bind`的最重要原因是*lambda*更易读。 例如，假设我们有一个设置警报器的函数：
 
@@ -35,7 +35,7 @@ auto setSoundL =
         using namespace std::chrono;
 
         setAlarm(steady_clock::now() + hours(1),    //一小时后响30秒的闹钟
-                 s,
+                 s,                                 //译注：setAlarm三行高亮
                  seconds(30));
     };
 ```
@@ -71,7 +71,7 @@ auto setSoundB =                            //“B”代表“bind”
               30s);
 ```
 
-我想像在之前的*lambda*中一样高亮对`setAlarm`的调用，但是没法这么做。这段代码的读者只需知道，调用`setSoundB`会使用在对`std::bind`的调用中所指定的时间和持续时间来调用`setAlarm`。对于门外汉来说，占位符“`_1`”完全是一个魔法，但即使是知情的读者也必须从思维上将占位符中的数字映射到其在`std::bind`形参列表中的位置，以便明白调用`setSoundB`时的第一个实参会被传递进`setAlarm`，作为调用`setAlarm`的第二个实参。在对`std::bind`的调用中未标识此实参的类型，因此读者必须查阅`setAlarm`声明以确定将哪种实参传递给`setSoundB`。
+我想像在之前的*lambda*中一样高亮对`setAlarm`的调用，但是没这么个调用让我高亮。这段代码的读者只需知道，调用`setSoundB`会使用在对`std::bind`的调用中所指定的时间和持续时间来调用`setAlarm`。对于门外汉来说，占位符“`_1`”完全是一个魔法，但即使是知情的读者也必须从思维上将占位符中的数字映射到其在`std::bind`形参列表中的位置，以便明白调用`setSoundB`时的第一个实参会被传递进`setAlarm`，作为调用`setAlarm`的第二个实参。在对`std::bind`的调用中未标识此实参的类型，因此读者必须查阅`setAlarm`声明以确定将哪种实参传递给`setSoundB`。
 
 但正如我所说，代码并不完全正确。在*lambda*中，表达式`steady_clock::now() + 1h`显然是`setAlarm`的实参。调用`setAlarm`时将对其进行计算。可以理解：我们希望在调用`setAlarm`后一小时响铃。但是，在`std::bind`调用中，将`steady_clock::now() + 1h`作为实参传递给了`std::bind`，而不是`setAlarm`。这意味着将在调用`std::bind`时对表达式进行求值，并且该表达式产生的时间将存储在产生的bind对象中。结果，警报器将被设置为在**调用`std::bind`后一小时**发出声音，而不是在调用`setAlarm`一小时后发出。
 
@@ -85,7 +85,7 @@ auto setSoundB =
               30s);
 ```
 
-如果你熟悉C++98的`std::plus`模板，你可能会惊讶地发现在此代码中，尖括号之间未指定任何类型，即该代码包含“`std::plus<>`”，而不是“`std::plus<type>`”。 在C ++14中，通常可以省略标准运算符模板的模板类型实参，因此无需在此处提供。 C++11没有提供此类功能，因此等效于*lambda*的C++11 `std::bind`为：
+如果你熟悉C++98的`std::plus`模板，你可能会惊讶地发现在此代码中，尖括号之间未指定任何类型，即该代码包含“`std::plus<>`”，而不是“`std::plus<type>`”。 在C++14中，通常可以省略标准运算符模板的模板类型实参，因此无需在此处提供。 C++11没有提供此类功能，因此等效于*lambda*的C++11 `std::bind`为：
 
 ```c++
 using namespace std::chrono;                //同上
@@ -187,7 +187,7 @@ auto betweenB =
 
 ```c++
 auto betweenB =
-    std::bind(std::logical_and<bool>(),         //C++14版本
+    std::bind(std::logical_and<bool>(),         //C++11版本
               std::bind(std::less_equal<int>(), lowVal, _1),
               std::bind(std::less_equal<int>(), _1, highVal));
 ```
@@ -244,10 +244,10 @@ compressRateB(CompLevel::High);     //实参如何传递？
 
 同样，唯一的方法是记住`std::bind`的工作方式。（答案是传递给bind对象的所有实参都是通过引用传递的，因为此类对象的函数调用运算符使用完美转发。）
 
-与*lambda*相比，使用`std::bind`进行编码的代码可读性较低，表达能力较低，并且效率可能较低。 在C++14中，没有`std::bind`的合理用例。 但是，在C ++11中，可以在两个受约束的情况下证明使用`std::bind`是合理的：
+与*lambda*相比，使用`std::bind`进行编码的代码可读性较低，表达能力较低，并且效率可能较低。 在C++14中，没有`std::bind`的合理用例。 但是，在C++11中，可以在两个受约束的情况下证明使用`std::bind`是合理的：
 
-* **移动捕获。 **C++11的*lambda*不提供移动捕获，但是可以通过结合*lambda*和`std::bind`来模拟。 有关详细信息，请参阅[Item32](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/6.LambdaExpressions/item32.md)，该条款还解释了在C++14中，*lambda*对初始化捕获的支持消除了这个模拟的需求。
-* **多态函数对象。 **因为绑定对象上的函数调用运算符使用完全转发，所以它可以接受任何类型的参数（以[Item30](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item30.md)中描述的完全转发的限制为例子）。当你要绑定带有模板化函数调用运算符的对象时，此功能很有用。 例如这个类，
++ **移动捕获。**C++11的*lambda*不提供移动捕获，但是可以通过结合*lambda*和`std::bind`来模拟。 有关详细信息，请参阅[Item32](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/6.LambdaExpressions/item32.md)，该条款还解释了在C++14中，*lambda*对初始化捕获的支持消除了这个模拟的需求。
++ **多态函数对象。**因为bind对象上的函数调用运算符使用完美转发，所以它可以接受任何类型的参数（以[Item30](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item30.md)中描述的完美转发的限制为界限）。当你要绑定带有模板化函数调用运算符的对象时，此功能很有用。 例如这个类，
 
 ```c++
 class PolyWidget {
