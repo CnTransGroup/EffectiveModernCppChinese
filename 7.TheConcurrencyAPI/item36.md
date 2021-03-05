@@ -35,7 +35,7 @@ auto fut = std::async(f);   //f的TLS可能是为单独的线程建的，
                             //也可能是为在fut上调用get或者wait的线程建的
 ```
 
-这还会影响到基于`wait`的循环使用超时机制，因为在一个延时的*task*（参见[Item35](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.TheConcurrencyAPI/Item35.md)）上调用`wait_for`或者`wait_until`会产生`std::launch::deferred`值。意味着，以下循环看似应该最终会终止，但可能实际上永远运行：
+这还会影响到基于`wait`的循环使用超时机制，因为在一个延时的任务（参见[Item35](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.TheConcurrencyAPI/Item35.md)）上调用`wait_for`或者`wait_until`会产生`std::launch::deferred`值。意味着，以下循环看似应该最终会终止，但可能实际上永远运行：
 
 ```cpp
 using namespace std::literals;      //为了使用C++14中的时间段后缀；参见条款34
@@ -79,12 +79,12 @@ if (fut.wait_for(0s) ==                 //如果task是deferred（被延迟）�
 
 这些各种考虑的结果就是，只要满足以下条件，`std::async`的默认启动策略就可以使用：
 
-- *task*不需要和执行`get`或`wait`的线程并行执行。
+- 任务不需要和执行`get`或`wait`的线程并行执行。
 - 读写哪个线程的`thread_local`变量没什么问题。
 - 可以保证会在`std::async`返回的*future*上调用`get`或`wait`，或者该任务可能永远不会执行也可以接受。
 - 使用`wait_for`或`wait_until`编码时考虑到了延迟状态。
 
-如果上述条件任何一个都满足不了，你可能想要保证`std::async`会安排*task*进行真正的异步执行。进行此操作的方法是调用时，将`std::launch::async`作为第一个参数传递：
+如果上述条件任何一个都满足不了，你可能想要保证`std::async`会安排任务进行真正的异步执行。进行此操作的方法是调用时，将`std::launch::async`作为第一个参数传递：
 
 ```cpp
 auto fut = std::async(std::launch::async, f);   //异步启动f的执行
@@ -131,5 +131,5 @@ reallyAsync(F&& f, Ts&&... params)
 **请记住：**
 
 - `std::async`的默认启动策略是异步和同步执行兼有的。
-- 这个灵活性导致访问`thread_local`s的不确定性，隐含了*task*可能不会被执行的意思，会影响调用基于超时的`wait`的程序逻辑。
-- 如果异步执行*task*非常关键，则指定`std::launch::async`。
+- 这个灵活性导致访问`thread_local`s的不确定性，隐含了任务可能不会被执行的意思，会影响调用基于超时的`wait`的程序逻辑。
+- 如果异步执行任务非常关键，则指定`std::launch::async`。
