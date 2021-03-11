@@ -1,8 +1,8 @@
 ## 条款四十二：考虑使用置入代替插入
 
-**Item 42: Consider 置入 instead of 插入**
+**Item 42: Consider emplacement instead of insertion**
 
-如果你拥有一个容器，例如放着`std::string`，那么当你通过插入函数（例如`insert`，`push_front`，`push_back`，或者对于`std::forward_list`来说是`insert_after`）添加新元素时，你传入的元素类型应该是`std::string`。毕竟，这就是容器里的内容。
+如果你拥有一个容器，例如放着`std::string`，那么当你通过插入（insertion）函数（例如`insert`，`push_front`，`push_back`，或者对于`std::forward_list`来说是`insert_after`）添加新元素时，你传入的元素类型应该是`std::string`。毕竟，这就是容器里的内容。
 
 逻辑上看来如此，但是并非总是如此。考虑如下代码：
 
@@ -65,7 +65,7 @@ vs.emplace_back(50, 'x');           //插入由50个“x”组成的一个std::s
 
 `emplace_back`可以用于每个支持`push_back`的标准容器。类似的，每个支持`push_front`的标准容器都支持`emplace_front`。每个支持`insert`（除了`std::forward_list`和`std::array`）的标准容器支持`emplace`。关联容器提供`emplace_hint`来补充接受“hint”迭代器的`insert`函数，`std::forward_list`有`emplace_after`来匹配`insert_after`。
 
-使得置入函数功能优于插入函数的原因是它们有灵活的接口。插入函数接受**对象**去插入，而置入函数接受**对象的构造函数接受的实参**去插入。这种差异允许置入函数避免插入函数所必需的临时对象的创建和销毁。
+使得置入（emplacement）函数功能优于插入函数的原因是它们有灵活的接口。插入函数接受**对象**去插入，而置入函数接受**对象的构造函数接受的实参**去插入。这种差异允许置入函数避免插入函数所必需的临时对象的创建和销毁。
 
 因为可以传递容器内元素类型的实参给置入函数（因此该实参使函数执行复制或者移动构造函数），所以在插入函数不会构造临时对象的情况，也可以使用置入函数。在这种情况下，插入和置入函数做的是同一件事，比如：
 
