@@ -120,7 +120,7 @@ public:
 };
 ```
 
-这儿，类型形参`Args`是独立于`vector`的类型形参`T`之外的，所以`Args`会在每次`emplace_back`被调用的时候被推导。（好吧，`Args`实际上是一个参数包，而不是一个类型形参，但是为了讨论之利，我们可以把它当作是一个类型形参。）
+这儿，类型形参`Args`是独立于`vector`的类型形参`T`之外的，所以`Args`会在每次`emplace_back`被调用的时候被推导。（好吧，`Args`实际上是一个[*parameter pack*](https://en.cppreference.com/w/cpp/language/parameter_pack)，而不是一个类型形参，但是为了讨论之利，我们可以把它当作是一个类型形参。）
 
 虽然函数`emplace_back`的类型形参被命名为`Args`，但是它仍然是一个通用引用，这补充了我之前所说的，通用引用的格式必须是“`T&&`”。 没有任何规定必须使用名字`T`。举个例子，如下模板接受一个通用引用，因为格式（“`type&&`”）是正确的，并且`param`的类型将会被推导（重复一次，不考虑边缘情况，也即当调用者明确给定类型的时候）。
 
@@ -143,7 +143,7 @@ auto timeFuncInvocation =
     };
 ```
 
-如果你对lambda里的代码“`std::forward<decltype(blah blah blah)>`”反应是“这什么鬼..?!”，这只代表着你可能还没有读[Item33](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/6.LambdaExpressions/item33.md)。别担心。在本条款，重要的事是*lambda*表达式中声明的`auto&&`类型的形参。`func`是一个通用引用，可以被绑定到任何可调用对象，无论左值还是右值。`args`是0个或者多个通用引用（也就是说，它是个通用引用parameter pack），它可以绑定到任意数目、任意类型的对象上。多亏了`auto`类型的通用引用，函数`timeFuncInvocation`可以对**近乎任意**（pretty much any）函数进行计时。(如果你想知道任意（any）和近乎任意（pretty much any）的区别，往后翻到[Item30](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item30.md))。
+如果你对*lambda*里的代码“`std::forward<decltype(blah blah blah)>`”反应是“这什么鬼...?!”，这只代表着你可能还没有读[Item33](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/6.LambdaExpressions/item33.md)。别担心。在本条款，重要的事是*lambda*表达式中声明的`auto&&`类型的形参。`func`是一个通用引用，可以被绑定到任何可调用对象，无论左值还是右值。`args`是0个或者多个通用引用（也就是说，它是个通用引用*parameter pack*），它可以绑定到任意数目、任意类型的对象上。多亏了`auto`类型的通用引用，函数`timeFuncInvocation`可以对**近乎任意**（pretty much any）函数进行计时。(如果你想知道任意（any）和近乎任意（pretty much any）的区别，往后翻到[Item30](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item30.md))。
 
 牢记整个本条款——通用引用的基础——是一个谎言，啊，一个“抽象”。隐藏在其底下的真相被称为**引用折叠**（*reference collapsing*），[Item28](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item28.md)致力于讨论它。但是这个真相并不降低该抽象的有用程度。区分右值引用和通用引用将会帮助你更准确地阅读代码（“究竟我眼前的这个`T&&`是只绑定到右值还是可以绑定任意对象呢？”），并且，当你在和你的合作者交流时，它会帮助你避免歧义（“在这里我在用一个通用引用，而非右值引用……”）。它也可以帮助你弄懂[Item25](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item25.md)和[26](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item26.md)，它们依赖于右值引用和通用引用的区别。所以，拥抱这份抽象，陶醉于它吧。就像牛顿的力学定律（本质上不正确），比起爱因斯坦的广义相对论（这是真相）而言，往往更简单，更易用。所以这份通用引用的概念，相较于穷究引用折叠的细节而言，是更合意之选。
 
