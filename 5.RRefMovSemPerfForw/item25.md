@@ -262,5 +262,4 @@ Widget makeWidget(Widget w)
 
 - 最后一次使用时，在右值引用上使用`std::move`，在通用引用上使用`std::forward`。
 - 对按值返回的函数要返回的右值引用和通用引用，执行相同的操作。
-- 如果局部对象适合返回值优化，就不要使用`std::move`或者`std::forward`。
-
+- 如果局部对象可以被返回值优化消除，就绝不使用`std::move`或者`std::forward`。
