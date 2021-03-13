@@ -29,7 +29,7 @@ template<typename T>
 void f(T&& param);                  //param是一个通用引用
 ```
 
-第二种情况是`auto`声明符，包含从以上示例中取得的这个例子：
+第二种情况是`auto`声明符，它是从以上示例中拿出的：
 
 ```cpp
 auto&& val2 = var1;                 //var2是一个通用引用
