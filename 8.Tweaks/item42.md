@@ -11,7 +11,7 @@ std::vector<std::string> vs;        //std::string的容器
 vs.push_back("xyzzy");              //添加字符串字面量
 ```
 
-这里，容器里内容是`std::string`，但是你有的——你实际上试图通过`push_back`加入的——是字符串字面量，即引号内的字符序列。字符串字面量并不是`std::string`，这意味着你传递给`push_back`的参数并不是容器里的内容类型。
+这里，容器里内容是`std::string`，但是你有的——你实际上试图通过`push_back`加入的——是字符串字面量，即引号内的字符序列。字符串字面量并不是`std::string`，这意味着你传递给`push_back`的实参并不是容器里的内容类型。
 
 `std::vector`的`push_back`被按左值和右值分别重载：
 
@@ -33,7 +33,7 @@ public:
 vs.push_back("xyzzy");
 ```
 
-这个调用中，编译器看到实参类型（`const char[6]`）和`push_back`采用的参数类型（`std::string`的引用）之间不匹配。它们通过从字符串字面量创建一个`std::string`类型的临时对象来消除不匹配，然后传递临时变量给`push_back`。换句话说，编译器处理的这个调用应该像这样：
+这个调用中，编译器看到实参类型（`const char[6]`）和`push_back`采用的形参类型（`std::string`的引用）之间不匹配。它们通过从字符串字面量创建一个`std::string`类型的临时对象来消除不匹配，然后传递临时变量给`push_back`。换句话说，编译器处理的这个调用应该像这样：
 
 ```cpp
 vs.push_back(std::string("xyzzy")); //创建临时std::string，把它传给push_back
@@ -57,7 +57,7 @@ vs.push_back(std::string("xyzzy")); //创建临时std::string，把它传给push
 vs.emplace_back("xyzzy");           //直接用“xyzzy”在vs内构造std::string
 ```
 
-`emplace_back`使用完美转发，因此只要你没有遇到完美转发的限制（参见[Item30](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item30.md)），就可以传递任何参数以及组合到`emplace_back`。比如，如果你想通过接受一个字符和一个数量的`std::string`构造函数，在`vs`中创建一个`std::string`，代码如下：
+`emplace_back`使用完美转发，因此只要你没有遇到完美转发的限制（参见[Item30](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item30.md)），就可以传递任何实参以及组合到`emplace_back`。比如，如果你想通过接受一个字符和一个数量的`std::string`构造函数，在`vs`中创建一个`std::string`，代码如下：
 
 ```cpp
 vs.emplace_back(50, 'x');           //插入由50个“x”组成的一个std::string
@@ -241,7 +241,7 @@ regexes.emplace_back(nullptr);           //可编译。直接初始化允许使�
 regexes.push_back(nullptr);              //错误！拷贝初始化不允许用那个构造函数
 ```
 
-获得的经验是，当你使用置入函数时，请特别小心确保传递了正确的参数，因为即使是`explicit`的构造函数也会被编译器考虑，编译器会试图以有效方式解释你的代码。
+获得的经验是，当你使用置入函数时，请特别小心确保传递了正确的实参，因为即使是`explicit`的构造函数也会被编译器考虑，编译器会试图以有效方式解释你的代码。
 
 **请记住：**
 
