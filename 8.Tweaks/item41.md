@@ -41,9 +41,9 @@ public:
 };
 ```
 
-这减少了源代码的维护工作，但是通用引用会导致其他复杂性。作为模板，`addName`的实现必须放置在头文件中。在编译器展开的时候，可能会产生多个函数，因为不止为左值和右值实例化，也可能为`std::string`和可转换为`std::string`的类型分别实例化为多个函数（参考[Item25](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item25.md)）。同时有些参数类型不能通过通用引用传递（参考[Item30](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item30.md)），而且如果传递了不合法的实参类型，编译器错误会令人生畏（参考[Item27](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item27.md)）。
+这减少了源代码的维护工作，但是通用引用会导致其他复杂性。作为模板，`addName`的实现必须放置在头文件中。在编译器展开的时候，可能会产生多个函数，因为不止为左值和右值实例化，也可能为`std::string`和可转换为`std::string`的类型分别实例化为多个函数（参考[Item25](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item25.md)）。同时有些实参类型不能通过通用引用传递（参考[Item30](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item30.md)），而且如果传递了不合法的实参类型，编译器错误会令人生畏（参考[Item27](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item27.md)）。
 
-是否存在一种编写`addName`的方法，可以左值拷贝，右值移动，只用处理一个函数（源代码和目标代码中），且避免使用通用引用？答案是是的。你要做的就是放弃你学习C++编程的第一条规则。这条规则是避免在传递用户定义的对象时使用传值方式。像是`addName`函数中的`newName`参数，按值传递可能是一种完全合理的策略。
+是否存在一种编写`addName`的方法，可以左值拷贝，右值移动，只用处理一个函数（源代码和目标代码中），且避免使用通用引用？答案是是的。你要做的就是放弃你学习C++编程的第一条规则。这条规则是避免在传递用户定义的对象时使用传值方式。像是`addName`函数中的`newName`形参，按值传递可能是一种完全合理的策略。
 
 在我们讨论为什么对于`addName`中的`newName`按值传递非常合理之前，让我们来考虑该会怎样实现：
 
@@ -125,7 +125,7 @@ w.addName(name + "Jenne");                      //传右值
 - **使用通用引用**：同重载一样，调用也绑定到`addName`这个引用上，没有开销。由于使用了`std::forward`，左值`std::string`实参会拷贝到`Widget::names`，右值`std::string`实参移动进去。对`std::string`实参来说，开销同重载方式一样：左值一次拷贝，右值一次移动。
 
   Item25 解释了如果调用者传递的实参不是`std::string`类型，将会转发到`std::string`的构造函数，几乎也没有`std::string`拷贝或者移动操作。因此通用引用的方式有同样效率，所以这不影响本次分析，简单假定调用者总是传入`std::string`类型实参即可。
-- **按值传递**：无论传递左值还是右值，都必须构造`newName`形参。如果传递的是左值，需要拷贝的开销，如果传递的是右值，需要移动的开销。在函数的实现中，`newName`总是采用移动的方式到`Widget::names`。开销总结：左值参数，一次拷贝一次移动，右值参数两次移动。对比按引动传递的方法，对于左值或者右值，均多出一次移动操作。
+- **按值传递**：无论传递左值还是右值，都必须构造`newName`形参。如果传递的是左值，需要拷贝的开销，如果传递的是右值，需要移动的开销。在函数的实现中，`newName`总是采用移动的方式到`Widget::names`。开销总结：左值实参，一次拷贝一次移动，右值实参两次移动。对比按引用传递的方法，对于左值或者右值，均多出一次移动操作。
 
 再次回顾本Item的内容：
 
