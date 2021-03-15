@@ -19,14 +19,14 @@ int x;
 
 别介意，让我们转换一个话题， 对一个局部变量使用解引用迭代器的方式初始化：
 ````cpp
-template<typename It>			//对从b到e的所有元素使用
-void dwim(It b, It e)			//dwim（“do what I mean”）算法
+template<typename It>           //对从b到e的所有元素使用
+void dwim(It b, It e)           //dwim（“do what I mean”）算法
 {
-	while (b != e) {
-		typename std::iterator_traits<It>::value_type
-		currValue = *b;
-        ...
-	}
+    while (b != e) {
+        typename std::iterator_traits<It>::value_type
+        currValue = *b;
+        …
+    }
 }
 ````
 
@@ -38,45 +38,45 @@ void dwim(It b, It e)			//dwim（“do what I mean”）算法
 
 别担心，它只在过去是这样，到了C++11所有的这些问题都消失了，这都多亏了`auto`。`auto`变量从初始化表达式中推导出类型，所以我们必须初始化。这意味着当你在现代化C++的高速公路上飞奔的同时你不得不对只声明不初始化变量的老旧方法说拜拜：
 ````cpp
-int x1;				//潜在的未初始化的变量
+int x1;                         //潜在的未初始化的变量
 	
-auto x2;			//错误！必须要初始化
+auto x2;                        //错误！必须要初始化
 
-auto x3 = 0;			//没问题，x已经定义了
+auto x3 = 0;                    //没问题，x已经定义了
 ````
 而且即使使用解引用迭代器初始化局部变量也不会对你的高速驾驶有任何影响
 ````cpp
-template<typename It>		//如之前一样
+template<typename It>           //如之前一样
 void dwim(It b,It e)
 {
-	while (b != e) {
-		auto currValue = *b;
-		...
-	}
+    while (b != e) {
+        auto currValue = *b;
+        …
+    }
 }
 ````
 因为使用[Item2](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item2.md)所述的`auto`类型推导技术，它甚至能表示一些只有编译器才知道的类型：
 ````cpp
 auto derefUPLess = 
-	[](const std::unique_ptr<Widget> &p1,	//用于std::unique_ptr
-	   const std::unique_ptr<Widget> &p2)	//指向的Widget类型的
-	{ return *p1 < *p2; };			//比较函数
+    [](const std::unique_ptr<Widget> &p1,       //用于std::unique_ptr
+       const std::unique_ptr<Widget> &p2)       //指向的Widget类型的
+    { return *p1 < *p2; };                      //比较函数
 ````
 很酷对吧，如果使用C++14，将会变得更酷，因为*lambda*表达式中的形参也可以使用`auto`：
 ````cpp
-auto derefLess =				//C++14版本
-	[](const auto& p1,			//被任何像指针一样的东西
-	   const auto& p2)			//指向的值的比较函数
-	{ return *p1 < *p2; };
+auto derefLess =                                //C++14版本
+    [](const auto& p1,                          //被任何像指针一样的东西
+       const auto& p2)                          //指向的值的比较函数
+    { return *p1 < *p2; };
 ````
 尽管这很酷，但是你可能会想我们完全不需要使用`auto`声明局部变量来保存一个闭包，因为我们可以使用`std::function`对象。没错，我们的确可以那么做，但是事情可能不是完全如你想的那样。当然现在你可能会问，`std::function`对象到底是什么。让我来给你解释一下。
 
 `std::function`是一个C++11标准模板库中的一个模板，它泛化了函数指针的概念。与函数指针只能指向函数不同，`std::function`可以指向任何可调用对象，也就是那些像函数一样能进行调用的东西。当你声明函数指针时你必须指定函数类型（即函数签名），同样当你创建`std::function`对象时你也需要提供函数签名，由于它是一个模板所以你需要在它的模板参数里面提供。举个例子，假设你想声明一个`std::function`对象`func`使它指向一个可调用对象，比如一个具有这样函数签名的函数，
 
 ````cpp
-bool(const std::unique_ptr<Widget> &,		//C++11
-     const std::unique_ptr<Widget> &)		//std::unique_ptr<Widget>
-						//比较函数的签名
+bool(const std::unique_ptr<Widget> &,           //C++11
+     const std::unique_ptr<Widget> &)           //std::unique_ptr<Widget>
+                                                //比较函数的签名
 ````
 你就得这么写：
 ````cpp
@@ -87,32 +87,32 @@ std::function<bool(const std::unique_ptr<Widget> &,
 ````cpp
 std::function<bool(const std::unique_ptr<Widget> &,
                    const std::unique_ptr<Widget> &)>
-  derefUPLess = [](const std::unique_ptr<Widget> &p1,
-                   const std::unique_ptr<Widget> &p2)
-                  { return *p1 < *p2; };
+derefUPLess = [](const std::unique_ptr<Widget> &p1,
+                 const std::unique_ptr<Widget> &p2)
+                { return *p1 < *p2; };
 ````
 语法冗长不说，还需要重复写很多形参类型，使用`std::function`还不如使用`auto`。用`auto`声明的变量保存一个和闭包一样类型的（新）闭包，因此使用了与闭包相同大小存储空间。实例化`std::function`并声明一个对象这个对象将会有固定的大小。这个大小可能不足以存储一个闭包，这个时候`std::function`的构造函数将会在堆上面分配内存来存储，这就造成了使用`std::function`比`auto`声明变量会消耗更多的内存。并且通过具体实现我们得知通过`std::function`调用一个闭包几乎无疑比`auto`声明的对象调用要慢。换句话说，`std::function`方法比`auto`方法要更耗空间且更慢，还可能有*out-of-memory*异常。并且正如上面的例子，比起写`std::function`实例化的类型来，使用`auto`要方便得多。在这场存储闭包的比赛中，`auto`无疑取得了胜利（也可以使用`std::bind`来生成一个闭包，但在[Item34](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/6.LambdaExpressions/item34.md)我会尽我最大努力说服你使用*lambda*表达式代替`std::bind`)
 
 使用`auto`除了可以避免未初始化的无效变量，省略冗长的声明类型，直接保存闭包外，它还有一个好处是可以避免一个问题，我称之为与类型快捷方式（type shortcuts）有关的问题。你将看到这样的代码——甚至你会这么写：
 ````cpp
 std::vector<int> v;
-...
+…
 unsigned sz = v.size();
 ````
 `v.size()`的标准返回类型是`std::vector<int>::size_type`，但是只有少数开发者意识到这点。`std::vector<int>::size_type`实际上被指定为无符号整型，所以很多人都认为用`unsigned`就足够了，写下了上述的代码。这会造成一些有趣的结果。举个例子，在**Windows 32-bit**上`std::vector<int>::size_type`和`unsigned`是一样的大小，但是在**Windows 64-bit**上`std::vector<int>::size_type`是64位，`unsigned`是32位。这意味着这段代码在Windows 32-bit上正常工作，但是当把应用程序移植到Windows 64-bit上时就可能会出现一些问题。谁愿意花时间处理这些细枝末节的问题呢？
 
 所以使用`auto`可以确保你不需要浪费时间：
 ````cpp
-auto sz =v.size();			//sz的类型是std::vector<int>::size_type
+auto sz =v.size();                      //sz的类型是std::vector<int>::size_type
 ````
 你还是不相信使用`auto`是多么明智的选择？考虑下面的代码：
 ````cpp
 std::unordered_map<std::string, int> m;
-...
+…
 
 for(const std::pair<std::string, int>& p : m)
 {
-	...				//用p做一些事
+    …                                   //用p做一些事
 }
 ````
 看起来好像很合情合理的表达，但是这里有一个问题，你看到了吗？
@@ -123,7 +123,7 @@ for(const std::pair<std::string, int>& p : m)
 ````cpp
 for(const auto& p : m)
 {
-	...				//如之前一样
+    …                                   //如之前一样
 }
 ````
 这样无疑更具效率，且更容易书写。而且，这个代码有一个非常吸引人的特性，如果你获取`p`的地址，你确实会得到一个指向`m`中元素的指针。在没有`auto`的版本中`p`会指向一个临时变量，这个临时变量在每次迭代完成时会被销毁。

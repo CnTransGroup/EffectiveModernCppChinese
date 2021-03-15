@@ -16,7 +16,7 @@ std::unique_ptr<T> make_unique(Ts&&... params)
 
 `std::make_unique`和`std::make_shared`是三个**`make`函数**中的两个：接收任意的多参数集合，完美转发到构造函数去动态分配一个对象，然后返回这个指向这个对象的指针。第三个`make`函数是`std::allocate_shared`。它行为和`std::make_shared`一样，只不过第一个参数是用来动态分配内存的*allocator*对象。
 
-即使是对使用和不使用`make`函数创建智能指针的最简单比较，也揭示了为什么最好使用`make`函数的第一个原因。例如：
+即使通过用和不用`make`函数来创建智能指针的一个小小比较，也揭示了为何使用`make`函数更好的第一个原因。例如：
 
 ```c++
 auto upw1(std::make_unique<Widget>());      //使用make函数

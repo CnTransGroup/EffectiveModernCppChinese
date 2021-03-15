@@ -9,18 +9,18 @@ std::vector<bool> features(const Widget& w);
 更进一步假设第5个*bit*表示`Widget`是否具有高优先级，我们可以写这样的代码：
 ````cpp
 Widget w;
-...
-bool highPriority = features(w)[5];	//w高优先级吗？
-...
-processWidget(w, highPriority);		//根据它的优先级处理w
+…
+bool highPriority = features(w)[5];     //w高优先级吗？
+…
+processWidget(w, highPriority);         //根据它的优先级处理w
 ````
 这个代码没有任何问题。它会正常工作，但是如果我们使用`auto`代替`highPriority`的显式指定类型做一些看起来很无害的改变：
 ````cpp
-auto highPriority = features(w)[5];	//w高优先级吗？
+auto highPriority = features(w)[5];     //w高优先级吗？
 ````
 情况变了。所有代码仍然可编译，但是行为不再可预测：
 ````cpp
-processWidget(w,highPriority);		//未定义行为！
+processWidget(w,highPriority);          //未定义行为！
 ````
 就像注释说的，这个`processWidget`是一个未定义行为。为什么呢？答案有可能让你很惊讶，使用`auto`后`highPriority`不再是`bool`类型。虽然从概念上来说`std::vector<bool>`意味着存放`bool`，但是`std::vector<bool>`的`operator[]`不会返回容器中元素的引用（这就是`std::vector::operator[]`可返回**除了`bool`以外**的任何类型），取而代之它返回一个`std::vector<bool>::reference`的对象（一个嵌套于`std::vector<bool>`中的类）。
 
@@ -44,8 +44,8 @@ auto highPriority = features(w)[5];     //推导highPriority的类型
 调用`features`将返回一个`std::vector<bool>`临时对象，这个对象没有名字，为了方便我们的讨论，我这里叫他`temp`。`std::vector<bool>::reference`包含一个指向*word*的指针（`temp`管理这个*word*中的*bit*s），还有相应于第5个*bit*的偏移。`highPriority`是这个`std::vector<bool>::reference`的拷贝，所以`highPriority`也包含一个指针，指向`temp`中的这个*word*，加上相应于第5个*bit*的偏移。在这个语句结束的时候`temp`将会被销毁，因为它是一个临时变量。因此`highPriority`包含一个悬置的（*dangling*）指针，如果用于`processWidget`调用中将会造成未定义行为：
 
 ````cpp
-processWidget(w, highPriority);		//未定义行为！
-					//highPriority包含一个悬置指针！
+processWidget(w, highPriority);         //未定义行为！
+                                        //highPriority包含一个悬置指针！
 ````
 
 `std::vector<bool>::reference`是一个代理类（*proxy class*）的例子：所谓代理类就是以模仿和增强一些类型的行为为目的而存在的类。很多情况下都会使用代理类，`std::vector<bool>::reference`展示了对`std::vector<bool>`使用`operator[]`来实现引用*bit*这样的行为。另外，C++标准模板库中的智能指针（见[第4章](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item18.md)）也是用代理类实现了对原始指针的资源管理行为。代理类的功能已被大家广泛接受。事实上，“Proxy”设计模式是软件设计这座万神庙中一直都存在的高级会员。
@@ -70,15 +70,15 @@ auto someVar = expression of "invisible" proxy class type;
 
 当缺少文档的时候，可以去看看头文件。很少会出现源代码全都用代理对象，它们通常用于一些函数的返回类型，所以通常能从函数签名中看出它们的存在。这里有一份`std::vector<bool>::operator[]`的说明书：
 ````cpp
-namespace std{						//来自于C++标准库
+namespace std{                                  //来自于C++标准库
     template<class Allocator>
     class vector<bool, Allocator>{
-        public:
-        ...
-        class reference { ... };
+    public:
+        …
+        class reference { … };
 
         reference operator[](size_type n);
-        ...
+        …
     };
 }
 ````
@@ -98,12 +98,12 @@ auto sum = static_cast<Matrix>(m1 + m2 + m3 + m4);
 ````
 应用这个惯用法不限制初始化表达式产生一个代理类。它也可以用于强调你声明了一个变量类型，它的类型不同于初始化表达式的类型。举个例子，假设你有这样一个表达式计算公差值：
 ````cpp
-double calcEpsilon();				//返回公差值
+double calcEpsilon();                           //返回公差值
 ````
 `calcEpsilon`清楚的表明它返回一个`double`，但是假设你知道对于这个程序来说使用`float`的精度已经足够了，而且你很关心`double`和`float`的大小。你可以声明一个`float`变量储存`calEpsilon`的计算结果。
 
 ````cpp
-float ep = calcEpsilon();			//double到float隐式转换
+float ep = calcEpsilon();                       //double到float隐式转换
 ````
 但是这几乎没有表明“我确实要减少函数返回值的精度”。使用显式类型初始器惯用法我们可以这样：
 ````cpp

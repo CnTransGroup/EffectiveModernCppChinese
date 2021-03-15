@@ -1,4 +1,4 @@
-## 条款十一：优先考虑使用deleted函数而非使用未定义的私有声明
+## 条款十一：优先考虑使用*deleted*函数而非使用未定义的私有声明
 
 **Item 11: Prefer deleted functions to private undefined ones.**
 
@@ -13,7 +13,7 @@
 template <class charT, class traits = char_traits<charT> >
 class basic_ios : public ios_base {
 public:
-    ...
+    …
 
 private:
     basic_ios(const basic_ios& );           // not defined
@@ -27,11 +27,11 @@ private:
 template <class charT, class traits = char_traits<charT> >
 class basic_ios : public ios_base {
 public:
-    ...
+    …
 
     basic_ios(const basic_ios& ) = delete;
     basic_ios& operator=(const basic_ios&) = delete;
-    ...
+    …
 };
 ```
 删除这些函数（译注：添加"`= delete`"）和声明为私有成员可能看起来只是方式不同，别无其他区别。其实还有一些实质性意义。*deleted*函数不能以任何方式被调用，即使你在成员函数或者友元函数里面调用*deleted*函数也不能通过编译。这是较之C++98行为的一个改进，C++98中不正确的使用这些函数在链接时才被诊断出来。
@@ -45,9 +45,9 @@ bool isLucky(int number);
 ```
 C++有沉重的C包袱，使得含糊的、能被视作数值的任何类型都能隐式转换为`int`，但是有一些调用可能是没有意义的：
 ```cpp
-if (isLucky('a')) ...       //字符'a'是幸运数？
-if (isLucky(true)) ...      //"true"是?
-if (isLucky(3.5)) ...       //难道判断它的幸运之前还要先截尾成3？
+if (isLucky('a')) …         //字符'a'是幸运数？
+if (isLucky(true)) …        //"true"是?
+if (isLucky(3.5)) …         //难道判断它的幸运之前还要先截尾成3？
 ```
 如果幸运数必须真的是整型，我们该禁止这些调用通过编译。
 
@@ -63,9 +63,9 @@ bool isLucky(double) = delete;  //拒绝float和double
 
 虽然*deleted*函数不能被使用，但它们还是存在于你的程序中。也即是说，重载决议会考虑它们。这也是为什么上面的函数声明导致编译器拒绝一些不合适的函数调用。
 ```cpp
-if (isLucky('a')) ...   //错误！调用deleted函数
-if (isLucky(true)) ...  //错误！
-if (isLucky(3.5f)) ...  //错误！
+if (isLucky('a')) …     //错误！调用deleted函数
+if (isLucky(true)) …    //错误！
+if (isLucky(3.5f)) …    //错误！
 ```
 另一个*deleted*函数用武之地（`private`成员函数做不到的地方）是禁止一些模板的实例化。假如你要求一个模板仅支持原生指针（尽管[第四章](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item18.md)建议使用智能指针代替原生指针）：
 ```cpp
@@ -98,14 +98,14 @@ void processPointer<const char>(const char*) = delete;
 ```cpp
 class Widget {
 public:
-	...
-	template<typename T>
-	void processPointer(T* ptr)
-	{ ... }
+    …
+    template<typename T>
+    void processPointer(T* ptr)
+    { … }
 
 private:
-	template<>                          //错误！
-	void processPointer<void>(void*);
+    template<>                          //错误！
+    void processPointer<void>(void*);
     
 };
 ```
@@ -113,11 +113,11 @@ private:
 ```cpp
 class Widget {
 public:
-	...
-	template<typename T>
-	void processPointer(T* ptr)
-	{ ... }
-	...
+    …
+    template<typename T>
+    void processPointer(T* ptr)
+    { … }
+    …
 
 };
 

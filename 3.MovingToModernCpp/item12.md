@@ -46,7 +46,7 @@ public:
     void doWork() &&;   //只有*this为右值的时候才能被调用
 }; 
 …
-Widget makeWidget(); 	//工厂函数（返回右值）
+Widget makeWidget();    //工厂函数（返回右值）
 Widget w;               //普通对象（左值）
 …
 w.doWork();             //调用被左值引用限定修饰的Widget::doWork版本

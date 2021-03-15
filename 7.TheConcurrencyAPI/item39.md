@@ -104,7 +104,7 @@ cv.notify_one();                        //通知反应任务（第2部分）
 
 方案很简单。检测任务有一个`std::promise`对象（即通信信道的写入端），反应任务有对应的*future*。当检测任务看到事件已经发生，设置`std::promise`对象（即写入到通信信道）。同时，反应任务。`wait`会锁住反应任务直到`std::promise`被设置。
 
-现在，`std::promise`和*futures*（即`std::future`和`std::shared_future`）都是需要类型形参的模板。形参表明通过通信信道被传递的信息的类型。在这里，没有数据被传递，只需要让反应任务知道它的*future*已经被设置了。我们在`std::promise`和*future*模板中需要的东西是表明通信信道中没有数据被传递的一个类型。这个类型就是`void`。检测任务使用`std::promise<void>`，反应任务使用`std::future<void>`或者`std::shared_future<void>`。当感兴趣的事件发生时，检测任务设置`std::promise<void>`，反应任务在*future*上`wait`。尽管反应任务不从检测任务那里接收任何数据，通信信道也可以让反应任务知道，检测任务什么时候已经通过对`std::promise<void>`调用`set_value`“写入”了`void`数据。
+现在，`std::promise`和*futures*（即`std::future`和`std::shared_future`）都是需要类型参数的模板。形参表明通过通信信道被传递的信息的类型。在这里，没有数据被传递，只需要让反应任务知道它的*future*已经被设置了。我们在`std::promise`和*future*模板中需要的东西是表明通信信道中没有数据被传递的一个类型。这个类型就是`void`。检测任务使用`std::promise<void>`，反应任务使用`std::future<void>`或者`std::shared_future<void>`。当感兴趣的事件发生时，检测任务设置`std::promise<void>`，反应任务在*future*上`wait`。尽管反应任务不从检测任务那里接收任何数据，通信信道也可以让反应任务知道，检测任务什么时候已经通过对`std::promise<void>`调用`set_value`“写入”了`void`数据。
 
 所以，有
 
@@ -175,7 +175,7 @@ void detect()
 
 这样看起来安全多了。问题在于第一个“…”区域中（注释了“`tr`中的线程在这里被挂起”的那句），如果异常发生，`p`上的`set_value`永远不会调用，这意味着*lambda*中的`wait`永远不会返回。那意味着在*lambda*中运行的线程不会结束，这是个问题，因为RAII对象`tr`在析构函数中被设置为在（`tr`中创建的）那个线程上实行`join`。换句话说，如果在第一个“…”区域中发生了异常，函数挂起，因为`tr`的析构函数永远无法完成。
 
-有很多方案解决这个问题，但是我把这个经验留给读者。（一个开始研究这个问题的好地方是我的博客*[The View From Aristeia](http://scottmeyers.blogspot.com/)*中，2013年12月24日的文章“[ThreadRAII + Thread Suspension = Trouble?](http://scottmeyers.blogspot.com/2013/12/threadraii-thread-suspension-trouble.html)”）这里，我只想展示如何扩展原始代码（即不使用RAII类）使其挂起然后取消挂起不仅一个反应任务，而是多个任务。简单概括，关键就是在`react`的代码中使用`std::shared_future`代替`std::future`。一旦你知道`std::future`的`share`成员函数将共享状态所有权转移到`share`产生的`std::shared_future`中，代码自然就写出来了。唯一需要注意的是，每个反应线程都需要自己的`std::shared_future`副本，该副本引用共享状态，因此通过`share`获得的`shared_future`要被在反应线程中运行的*lambda*按值捕获：
+有很多方案解决这个问题，但是我把这个经验留给读者。（一个开始研究这个问题的好地方是我的博客[*The View From Aristeia*](http://scottmeyers.blogspot.com/)中，2013年12月24日的文章“[ThreadRAII + Thread Suspension = Trouble?](http://scottmeyers.blogspot.com/2013/12/threadraii-thread-suspension-trouble.html)”）这里，我只想展示如何扩展原始代码（即不使用RAII类）使其挂起然后取消挂起不仅一个反应任务，而是多个任务。简单概括，关键就是在`react`的代码中使用`std::shared_future`代替`std::future`。一旦你知道`std::future`的`share`成员函数将共享状态所有权转移到`share`产生的`std::shared_future`中，代码自然就写出来了。唯一需要注意的是，每个反应线程都需要自己的`std::shared_future`副本，该副本引用共享状态，因此通过`share`获得的`shared_future`要被在反应线程中运行的*lambda*按值捕获：
 
 ```cpp
 std::promise<void> p;                   //跟之前一样

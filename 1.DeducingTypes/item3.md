@@ -6,30 +6,30 @@
 
 我们将从一个简单的情况开始，没有任何令人惊讶的情况。相比模板类型推导和`auto`类型推导（参见[Item1](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item1.md)和[Item2](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item2.md)），`decltype`只是简单的返回名字或者表达式的类型：
 ````cpp
-const int i=0;				//decltype(i)是const int
+const int i = 0;                //decltype(i)是const int
 
-bool f(const Widget& w);		//decltype(w)是const Widget&
-					//decltype(f)是bool(const Widget&)
+bool f(const Widget& w);        //decltype(w)是const Widget&
+                                //decltype(f)是bool(const Widget&)
 
 struct Point{
-	int x,y;			//decltype(Point::x)是int
-};					//decltype(Point::y)是int
+    int x,y;                    //decltype(Point::x)是int
+};                              //decltype(Point::y)是int
 
-Widget w;				//decltype(w)是Widget
+Widget w;                       //decltype(w)是Widget
 
-if (f(w))...				//decltype(f(w))是bool
+if (f(w))…                      //decltype(f(w))是bool
 
-template<typename T>			//std::vector的简化版本
+template<typename T>            //std::vector的简化版本
 class vector{
 public:
-	...
-	T& operator[](std::size_t index);
-	...
-}
+    …
+    T& operator[](std::size_t index);
+    …
+};
 
-vector<int> v;				//decltype(v)是vector<int>
-...
-if (v[0] == 0)...			//decltype(v[0])是int&
+vector<int> v;                  //decltype(v)是vector<int>
+…
+if (v[0] == 0)…                 //decltype(v[0])是int&
 ````
 看见了吧？没有任何奇怪的东西。
 
@@ -39,9 +39,9 @@ if (v[0] == 0)...			//decltype(v[0])是int&
 
 使用`decltype`使得我们很容易去实现它，这是我们写的第一个版本，使用`decltype`计算返回类型，这个模板需要改良，我们把这个推迟到后面：
 ````cpp
-template<typename Container, typename Index>	//可以工作，
-auto authAndAccess(Container& c, Index i)	//但是需要改良
-  ->decltype(c[i])
+template<typename Container, typename Index>    //可以工作，
+auto authAndAccess(Container& c, Index i)       //但是需要改良
+    ->decltype(c[i])
 {
     authenticateUser();
     return c[i];
@@ -54,30 +54,30 @@ auto authAndAccess(Container& c, Index i)	//但是需要改良
 
 C++11允许自动推导单一语句的*lambda*表达式的返回类型， C++14扩展到允许自动推导所有的*lambda*表达式和函数，甚至它们内含多条语句。对于`authAndAccess`来说这意味着在C++14标准下我们可以忽略尾置返回类型，只留下一个`auto`。在这种形式下`auto`不再进行`auto`类型推导，取而代之的是它意味着编译器将会从函数实现中推导出函数的返回类型。
 ````cpp
-template<typename Container, typename Index>	//C++14版本，
-auto authAndAccess(Container& c, Index i)	//不那么正确
+template<typename Container, typename Index>    //C++14版本，
+auto authAndAccess(Container& c, Index i)       //不那么正确
 {
     authenticateUser();
-    return c[i];				//从c[i]中推导返回类型
+    return c[i];                                //从c[i]中推导返回类型
 }
 ````
 [Item2](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item2.md)解释了函数返回类型中使用`auto`，编译器实际上是使用的模板类型推导的那套规则。如果那样的话就会这里就会有一些问题。正如我们之前讨论的，`operator[]`对于大多数`T`类型的容器会返回一个`T&`，但是[Item1](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item1.md)解释了在模板类型推导期间，表达式的引用性（reference-ness）会被忽略。基于这样的规则，考虑它会对下面用户的代码有哪些影响：
 
 ````cpp
 std::deque<int> d;
-...
-authAndAccess(d, 5) = 10;		//认证用户，返回d[5]，
-					//然后把10赋值给它
-					//无法通过编译器！
+…
+authAndAccess(d, 5) = 10;               //认证用户，返回d[5]，
+                                        //然后把10赋值给它
+                                        //无法通过编译器！
 ````
 在这里`d[5]`本该返回一个`int&`，但是模板类型推导会剥去引用的部分，因此产生了`int`返回类型。函数返回的那个`int`是一个右值，上面的代码尝试把10赋值给右值`int`，C++11禁止这样做，所以代码无法编译。
 
 要想让`authAndAccess`像我们期待的那样工作，我们需要使用`decltype`类型推导来推导它的返回值，即指定`authAndAccess`应该返回一个和`c[i]`表达式类型一样的类型。C++期望在某些情况下当类型被暗示时需要使用`decltype`类型推导的规则，C++14通过使用`decltype(auto)`说明符使得这成为可能。我们第一次看见`decltype(auto)`可能觉得非常的矛盾（到底是`decltype`还是`auto`？），实际上我们可以这样解释它的意义：`auto`说明符表示这个类型将会被推导，`decltype`说明`decltype`的规则将会被用到这个推导过程中。因此我们可以这样写`authAndAccess`：
 ````cpp
-template<typename Container, typename Index>	//C++14版本，
-decltype(auto)					//可以工作，
-authAndAccess(Container& c, Index i)		//但是还需要
-{						//改良
+template<typename Container, typename Index>    //C++14版本，
+decltype(auto)                                  //可以工作，
+authAndAccess(Container& c, Index i)            //但是还需要
+{                                               //改良
     authenticateUser();
     return c[i];
 }
@@ -91,10 +91,10 @@ Widget w;
 
 const Widget& cw = w;
 
-auto myWidget1 = cw;			//auto类型推导
-					//myWidget1的类型为Widget
-decltype(auto) myWidget2 = cw;		//decltype类型推导
-					//myWidget2的类型是const Widget&
+auto myWidget1 = cw;                    //auto类型推导
+                                        //myWidget1的类型为Widget
+decltype(auto) myWidget2 = cw;          //decltype类型推导
+                                        //myWidget2的类型是const Widget&
 ````
 
 但是这里有两个问题困惑着你。一个是我之前提到的`authAndAccess`的改良至今都没有描述。让我们现在加上它。
@@ -115,14 +115,14 @@ auto s = authAndAccess(makeStringDeque(), 5);
 ````
 要想支持这样使用`authAndAccess`我们就得修改一下当前的声明使得它支持左值和右值。重载是一个不错的选择（一个函数重载声明为左值引用，另一个声明为右值引用），但是我们就不得不维护两个重载函数。另一个方法是使`authAndAccess`的引用可以绑定左值和右值，[Item24]()解释了那正是通用引用能做的，所以我们这里可以使用通用引用进行声明：
 ````cpp
-template<typename Containter, typename Index>	//现在c是通用引用
+template<typename Containter, typename Index>   //现在c是通用引用
 decltype(auto) authAndAccess(Container&& c, Index i);
 ````
 在这个模板中，我们不知道我们操纵的容器的类型是什么，那意味着我们同样不知道它使用的索引对象（index objects）的类型，对一个未知类型的对象使用传值通常会造成不必要的拷贝，对程序的性能有极大的影响，还会造成对象切片行为（参见[item41](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/8.Tweaks/item41.md)），以及给同事落下笑柄。但是就容器索引来说，我们遵照标准模板库对于对于索引的处理是有理由的（比如`std::string`，`std::vector`和`std::deque`的`operator[]`），所以我们坚持传值调用。
 
 然而，我们还需要更新一下模板的实现，让它能听从[Item25](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item25.md)的告诫应用`std::forward`实现通用引用：
 ````cpp
-template<typename Container, typename Index>	//最终的C++14版本
+template<typename Container, typename Index>    //最终的C++14版本
 decltype(auto)
 authAndAccess(Container&& c, Index i)
 {
@@ -132,7 +132,7 @@ authAndAccess(Container&& c, Index i)
 ````
 这样就能对我们的期望交上一份满意的答卷，但是这要求编译器支持C++14。如果你没有这样的编译器，你还需要使用C++11版本的模板，它看起来和C++14版本的极为相似，除了你不得不指定函数返回类型之外：
 ````cpp
-template<typename Container, typename Index>	//最终的C++11版本
+template<typename Container, typename Index>    //最终的C++11版本
 auto
 authAndAccess(Container&& c, Index i)
 ->decltype(std::forward<Container>(c)[i])
@@ -158,15 +158,15 @@ int x = 0;
 ````cpp
 decltype(auto) f1()
 {
-	int x = 0;
-	...
-	return x;			//decltype(x）是int，所以f1返回int
+    int x = 0;
+    …
+    return x;                            //decltype(x）是int，所以f1返回int
 }
 
 decltype(auto) f2()
 {
-	int x =0l;
-	return (x);			//decltype((x))是int&，所以f2返回int&
+    int x = 0;
+    return (x);                          //decltype((x))是int&，所以f2返回int&
 }
 ````
 注意不仅`f2`的返回类型不同于`f1`，而且它还引用了一个局部变量！这样的代码将会把你送上未定义行为的特快列车，一辆你绝对不想上第二次的车。

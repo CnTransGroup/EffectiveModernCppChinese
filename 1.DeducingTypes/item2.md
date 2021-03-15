@@ -14,7 +14,7 @@ void f(ParmaType param);
 和这个调用来解释：
 
 ```cpp
-f(expr);			//使用一些表达式调用f
+f(expr);                        //使用一些表达式调用f
 ```
 
 在`f`的调用中，编译器使用`expr`推导`T`和`ParamType`的类型。
@@ -34,23 +34,23 @@ const auto & rx=cx;
 ````
 类型说明符是`const auto&`。在这里例子中要推导`x`，`rx`和`cx`的类型，编译器的行为看起来就像是认为这里每个声明都有一个模板，然后使用合适的初始化表达式进行调用：
 ````cpp
-template<typename T>		//概念化的模板用来推导x的类型
+template<typename T>            //概念化的模板用来推导x的类型
 void func_for_x(T param);
 
-func_for_x(27);			//概念化调用：
-				//param的推导类型是x的类型
+func_for_x(27);                 //概念化调用：
+                                //param的推导类型是x的类型
 
-template<typename T>		//概念化的模板用来推导cx的类型
+template<typename T>            //概念化的模板用来推导cx的类型
 void func_for_cx(const T param);
 
-func_for_cx(x);			//概念化调用：
-				//param的推导类型是cx的类型
+func_for_cx(x);                 //概念化调用：
+                                //param的推导类型是cx的类型
 
-template<typename T>		//概念化的模板用来推导rx的类型
+template<typename T>            //概念化的模板用来推导rx的类型
 void func_for_rx(const T & param);
 
-func_for_rx(x);			//概念化调用：
-				//param的推导类型是rx的类型
+func_for_rx(x);                 //概念化调用：
+                                //param的推导类型是rx的类型
 ````
 正如我说的，`auto`类型推导除了一个例外（我们很快就会讨论），其他情况都和模板类型推导一样。
 
@@ -62,35 +62,35 @@ func_for_rx(x);			//概念化调用：
 
 我们早已看过情景一和情景三的例子：
 ````cpp
-auto x = 27;            	//情景三（x既不是指针也不是引用）
-const auto cx = x;      	//情景三（cx也一样）
-const auto & rx=cx;     	//情景一（rx是非通用引用）
+auto x = 27;                    //情景三（x既不是指针也不是引用）
+const auto cx = x;              //情景三（cx也一样）
+const auto & rx=cx;             //情景一（rx是非通用引用）
 ````
 情景二像你期待的一样运作：
 
 ```cpp
-auto&& uref1 = x;		//x是int左值，
-				//所以uref1类型为int&
-auto&& uref2 = cx;		//cx是const int左值，
-				//所以uref2类型为const int&
-auto&& uref3 = 27;		//27是int右值，
-				//所以uref3类型为int&&
+auto&& uref1 = x;               //x是int左值，
+                                //所以uref1类型为int&
+auto&& uref2 = cx;              //cx是const int左值，
+                                //所以uref2类型为const int&
+auto&& uref3 = 27;              //27是int右值，
+                                //所以uref3类型为int&&
 ```
 
 [Item1](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item1.md)讨论并总结了对于non-reference类型说明符，数组和函数名如何退化为指针。那些内容也同样适用于`auto`类型推导：
 
 ````cpp
-const char name[] =		//name的类型是const char[13]
+const char name[] =             //name的类型是const char[13]
  "R. N. Briggs";
 
-auto arr1 = name;		//arr1的类型是const char*
-auto& arr2 = name;		//arr2的类型是const char (&)[13]
+auto arr1 = name;               //arr1的类型是const char*
+auto& arr2 = name;              //arr2的类型是const char (&)[13]
 
-void someFunc(int, double);	//someFunc是一个函数，
-				//类型为void(int, double)
+void someFunc(int, double);     //someFunc是一个函数，
+                                //类型为void(int, double)
 
-auto func1 = someFunc;		//func1的类型是void (*)(int, double)
-auto& func2 = someFunc;		//func2的类型是void (&)(int, double)
+auto func1 = someFunc;          //func1的类型是void (*)(int, double)
+auto& func2 = someFunc;         //func2的类型是void (&)(int, double)
 ````
 就像你看到的那样，`auto`类型推导和模板类型推导几乎一样的工作，它们就像一个硬币的两面。
 
@@ -117,34 +117,34 @@ auto x4{ 27 };
 ````
 这些声明都能通过编译，但是他们不像替换之前那样有相同的意义。前面两个语句确实声明了一个类型为`int`值为27的变量，但是后面两个声明了一个存储一个元素27的 `std::initializer_list<int>`类型的变量。
 ````cpp
-auto x1 = 27;			//类型是int，值是27
-auto x2(27);			//同上
-auto x3 = { 27 };		//类型是std::initializer_list<int>，
-				//值是{ 27 }
-auto x4{ 27 };        		//同上
+auto x1 = 27;                   //类型是int，值是27
+auto x2(27);                    //同上
+auto x3 = { 27 };               //类型是std::initializer_list<int>，
+                                //值是{ 27 }
+auto x4{ 27 };                  //同上
 ````
 这就造成了auto类型推导不同于模板类型推导的特殊情况。当用`auto`声明的变量使用花括号进行初始化，auto类型推导推出的类型则为`std::initializer_list`。如果这样的一个类型不能被成功推导（比如花括号里面包含的是不同类型的变量），编译器会拒绝这样的代码：
 ````cpp
-auto x5 = { 1, 2, 3.0 };	//错误！无法推导std::initializer_list<T>中的T
+auto x5 = { 1, 2, 3.0 };        //错误！无法推导std::initializer_list<T>中的T
 ````
 就像注释说的那样，在这种情况下类型推导将会失败，但是对我们来说认识到这里确实发生了两种类型推导是很重要的。一种是由于`auto`的使用：`x5`的类型不得不被推导。因为`x5`使用花括号的方式进行初始化，`x5`必须被推导为`std::initializer_list`。但是`std::initializer_list`是一个模板。`std::initializer_list<T>`会被某种类型`T`实例化，所以这意味着`T`也会被推导。 推导落入了这里发生的第二种类型推导——模板类型推导的范围。在这个例子中推导之所以失败，是因为在花括号中的值并不是同一种类型。
 
 对于花括号的处理是`auto`类型推导和模板类型推导唯一不同的地方。当使用`auto`声明的变量使用花括号的语法进行初始化的时候，会推导出`std::initializer_list<T>`的实例化，但是对于模板类型推导这样就行不通：
 ````cpp
-auto x = { 11, 23, 9 };		//x的类型是std::initializer_list<int>
+auto x = { 11, 23, 9 };         //x的类型是std::initializer_list<int>
 
-template<typename T>		//带有与x的声明等价的
-void f(T param);		//形参声明的模板
+template<typename T>            //带有与x的声明等价的
+void f(T param);                //形参声明的模板
 
-f({ 11, 23, 9 });		//错误！不能推导出T
+f({ 11, 23, 9 });               //错误！不能推导出T
 ````
 然而如果在模板中指定`T`是`std::initializer_list<T>`而留下未知`T`,模板类型推导就能正常工作：
 ````cpp
 template<typename T>
 void f(std::initializer_list<T> initList);
 
-f({ 11, 23, 9 });		//T被推导为int，initList的类型为
-				//std::initializer_list<int>
+f({ 11, 23, 9 });               //T被推导为int，initList的类型为
+                                //std::initializer_list<int>
 ````
 因此`auto`类型推导和模板类型推导的真正区别在于，`auto`类型推导假定花括号表示`std::initializer_list`而模板类型推导不会这样（确切的说是不知道怎么办）。
 
@@ -154,17 +154,17 @@ f({ 11, 23, 9 });		//T被推导为int，initList的类型为
 ````cpp
 auto createInitList()
 {
-    return { 1, 2, 3 };		//错误！不能推导{ 1, 2, 3 }的类型
+    return { 1, 2, 3 };         //错误！不能推导{ 1, 2, 3 }的类型
 }
 ````
 同样在C++14的lambda函数中这样使用auto也不能通过编译：
 ````cpp
 std::vector<int> v;
-...
+…
 auto resetV = 
-    [&v](const auto& newValue){ v = newValue; };	//C++14
-...
-resetV({ 1, 2, 3 });		//错误！不能推导{ 1, 2, 3 }的类型
+    [&v](const auto& newValue){ v = newValue; };        //C++14
+…
+resetV({ 1, 2, 3 });            //错误！不能推导{ 1, 2, 3 }的类型
 ````
 
 **请记住：**

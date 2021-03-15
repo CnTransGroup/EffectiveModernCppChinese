@@ -30,12 +30,12 @@ std::vector<std::size_t>                //func返回x的质因子
   primeFactors(std::size_t x);
 
 Color c = red;
-...
+…
 
 if (c < 14.5) {                         // Color与double比较 (!)
     auto factors =                      // 计算一个Color的质因子(!)
       primeFactors(c);                    
-…
+    …
 }
 ```
 在`enum`后面写一个`class`就可以将非限域`enum`转换为限域`enum`，接下来就是完全不同的故事展开了。现在不存在任何隐式转换可以将限域`enum`中的枚举名转化为任何其他类型：
@@ -49,7 +49,7 @@ if (c < 14.5) {                         //错误！不能比较
                                         //Color和double
     auto factors =                      //错误！不能向参数为std::size_t
       primeFactors(c);                  //的函数传递Color参数
-    ...
+    …
 }
 ```
 如果你真的很想执行`Color`到其他类型的转换，和平常一样，使用正确的类型转换运算符扭曲类型系统：
@@ -58,7 +58,7 @@ if (static_cast<double>(c) < 14.5) {    //奇怪的代码，
                                         //但是有效
     auto factors =                                  //有问题，但是
       primeFactors(static_cast<std::size_t>(c));    //能通过编译
-    ...
+    …
 }
 ```
 似乎比起非限域`enum`而言，限域`enum`有第三个好处，因为限域`enum`可以被前置声明。也就是说，它们可以不指定枚举名直接声明：
@@ -152,7 +152,7 @@ using UserInfo =                //类型别名，参见Item9
 虽然注释说明了tuple各个字段对应的意思，但当你在另一文件遇到下面的代码那之前的注释就不是那么有用了：
 ```cpp
 UserInfo uInfo;                 //tuple对象
-...
+…
 auto val = std::get<1>(uInfo);	//获取第一个字段
 ```
 作为一个程序员，你有很多工作要持续跟进。你应该记住第一个字段代表用户的email地址吗？我认为不。可以使用非限域`enum`将名字和字段编号关联起来以避免上述需求：
@@ -160,7 +160,7 @@ auto val = std::get<1>(uInfo);	//获取第一个字段
 enum UserInfoFields { uiName, uiEmail, uiReputation };
 
 UserInfo uInfo;                         //同之前一样
-...
+…
 auto val = std::get<uiEmail>(uInfo);    //啊，获取用户email字段的值
 ```
 之所以它能正常工作是因为`UserInfoFields`中的枚举名隐式转换成`std::size_t`了，其中`std::size_t`是`std::get`模板实参所需的。
@@ -171,10 +171,10 @@ auto val = std::get<uiEmail>(uInfo);    //啊，获取用户email字段的值
 enum class UserInfoFields { uiName, uiEmail, uiReputation };
 
 UserInfo uInfo;                         //同之前一样
-...
+…
 auto val =
-  std::get<static_cast<std::size_t>(UserInfoFields::uiEmail)>
-    (uInfo);
+    std::get<static_cast<std::size_t>(UserInfoFields::uiEmail)>
+        (uInfo);
 ```
 为避免这种冗长的表示，我们可以写一个函数传入枚举名并返回对应的`std::size_t`值，但这有一点技巧性。`std::get`是一个模板（函数），需要你给出一个`std::size_t`值的模板实参（注意使用`<>`而不是`()`），因此将枚举名变换为`std::size_t`值的函数必须**在编译期**产生这个结果。如[Item15](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item15.md)提到的，那必须是一个`constexpr`函数。
 
@@ -183,11 +183,11 @@ auto val =
 ```cpp
 template<typename E>
 constexpr typename std::underlying_type<E>::type
-  toUType(E enumerator) noexcept
+    toUType(E enumerator) noexcept
 {
-  return
-    static_cast<typename
-                std::underlying_type<E>::type>(enumerator);
+    return
+        static_cast<typename
+                    std::underlying_type<E>::type>(enumerator);
 }
 ```
 在C++14中，`toUType`还可以进一步用`std::underlying_type_t`（参见[Item9](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item9.md)）代替`typename std::underlying_type<E>::type`打磨：
@@ -195,18 +195,18 @@ constexpr typename std::underlying_type<E>::type
 ```cpp
 template<typename E>                //C++14
 constexpr std::underlying_type_t<E>
-  toUType(E enumerator) noexcept
+    toUType(E enumerator) noexcept
 {
-  return static_cast<std::underlying_type_t<E>>(enumerator);
+    return static_cast<std::underlying_type_t<E>>(enumerator);
 }
 ```
 还可以再用C++14 `auto`（参见[Item3](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item3.md)）打磨一下代码：
 ```cpp
 template<typename E>                //C++14
 constexpr auto
-  toUType(E enumerator) noexcept
+    toUType(E enumerator) noexcept
 {
-  return static_cast<std::underlying_type_t<E>>(enumerator);
+    return static_cast<std::underlying_type_t<E>>(enumerator);
 }
 ```
 不管它怎么写，`toUType`现在允许这样访问tuple的字段了：

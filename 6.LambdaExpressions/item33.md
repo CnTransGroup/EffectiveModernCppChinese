@@ -29,7 +29,7 @@ auto f = [](auto&& x)
          { return func(normalize(std::forward<???>(x))); };
 ```
 
-在理论和实际之间存在一个问题：你传递给`std::forward`的参数是什么类型，即确定我在上面写的`???`该是什么。
+在理论和实际之间存在一个问题：你应该传递给`std::forward`的什么类型，即确定我在上面写的`???`该是什么。
 
 一般来说，当你在使用完美转发时，你是在一个接受类型参数为`T`的模版函数里，所以你可以写`std::forward<T>`。但在泛型*lambda*中，没有可用的类型参数`T`。在*lambda*生成的闭包里，模版化的`operator()`函数中的确有一个`T`，但在*lambda*里却无法直接使用它，所以也没什么用。
 
@@ -56,7 +56,7 @@ Widget&& forward(Widget& param)             //当T是Widget时的std::forward实
 }
 ```
 
-思考一下如果用户代码想要完美转发一个`Widget`类型的右值，但没有遵守规则将`T`指定为非引用类型，而是将`T`指定为右值引用，这会发生什么。也就是，思考将`T`换成`Widget`会如何。在`std::forward`实例化、应用了`std::remove_reference_t`后，引用折叠之前，`std::forward`看起来像这样：
+思考一下如果用户代码想要完美转发一个`Widget`类型的右值，但没有遵守规则将`T`指定为非引用类型，而是将`T`指定为右值引用，这会发生什么。也就是，思考将`T`换成`Widget&&`会如何。在`std::forward`实例化、应用了`std::remove_reference_t`后，引用折叠之前，`std::forward`看起来像这样：
 
 ```c++
 Widget&& && forward(Widget& param)          //当T是Widget&&时的std::forward实例
@@ -87,7 +87,7 @@ auto f =
     };
 ```
 
-再加上6个点，就可以让我们的*lambda*完美转发接受多个参数了，因为C++14中的*lambda*也可以是可变参数的：
+再加上6个点，就可以让我们的*lambda*完美转发接受多个形参了，因为C++14中的*lambda*也可以是可变形参的：
 
 ```c++
 auto f =
