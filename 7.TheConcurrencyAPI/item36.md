@@ -84,7 +84,7 @@ if (fut.wait_for(0s) ==                 //如果task是deferred（被延迟）�
 - 可以保证会在`std::async`返回的*future*上调用`get`或`wait`，或者该任务可能永远不会执行也可以接受。
 - 使用`wait_for`或`wait_until`编码时考虑到了延迟状态。
 
-如果上述条件任何一个都满足不了，你可能想要保证`std::async`会安排任务进行真正的异步执行。进行此操作的方法是调用时，将`std::launch::async`作为第一个参数传递：
+如果上述条件任何一个都满足不了，你可能想要保证`std::async`会安排任务进行真正的异步执行。进行此操作的方法是调用时，将`std::launch::async`作为第一个实参传递：
 
 ```cpp
 auto fut = std::async(std::launch::async, f);   //异步启动f的执行
@@ -104,7 +104,7 @@ reallyAsync(F&& f, Ts&&... params)          //返回异步调用f(params...)得�
 }
 ```
 
-这个函数接受一个可调用对象`f`和0或多个参数`params`，然后完美转发（参见[Item25](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item25.md)）给`std::async`，使用`std::launch::async`作为启动策略。就像`std::async`一样，返回`std::future`作为用`params`调用`f`得到的结果。确定结果的类型很容易，因为*type trait* `std::result_of`可以提供给你。（参见[Item9](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item9.md)关于*type trait*的详细表述。）
+这个函数接受一个可调用对象`f`和0或多个形参`params`，然后完美转发（参见[Item25](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item25.md)）给`std::async`，使用`std::launch::async`作为启动策略。就像`std::async`一样，返回`std::future`作为用`params`调用`f`得到的结果。确定结果的类型很容易，因为*type trait* `std::result_of`可以提供给你。（参见[Item9](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item9.md)关于*type trait*的详细表述。）
 
 `reallyAsync`就像`std::async`一样使用：
 
