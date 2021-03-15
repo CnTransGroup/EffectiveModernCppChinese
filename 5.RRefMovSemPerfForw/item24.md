@@ -120,9 +120,9 @@ public:
 };
 ```
 
-这儿，类型形参`Args`是独立于`vector`的类型形参`T`之外的，所以`Args`会在每次`emplace_back`被调用的时候被推导。（好吧，`Args`实际上是一个[*parameter pack*](https://en.cppreference.com/w/cpp/language/parameter_pack)，而不是一个类型形参，但是为了讨论之利，我们可以把它当作是一个类型形参。）
+这儿，类型参数（*type parameter*）`Args`是独立于`vector`的类型参数`T`之外的，所以`Args`会在每次`emplace_back`被调用的时候被推导。（好吧，`Args`实际上是一个[*parameter pack*](https://en.cppreference.com/w/cpp/language/parameter_pack)，而不是一个类型参数，但是为了讨论之利，我们可以把它当作是一个类型参数。）
 
-虽然函数`emplace_back`的类型形参被命名为`Args`，但是它仍然是一个通用引用，这补充了我之前所说的，通用引用的格式必须是“`T&&`”。 没有任何规定必须使用名字`T`。举个例子，如下模板接受一个通用引用，因为格式（“`type&&`”）是正确的，并且`param`的类型将会被推导（重复一次，不考虑边缘情况，也即当调用者明确给定类型的时候）。
+虽然函数`emplace_back`的类型参数被命名为`Args`，但是它仍然是一个通用引用，这补充了我之前所说的，通用引用的格式必须是“`T&&`”。 没有任何规定必须使用名字`T`。举个例子，如下模板接受一个通用引用，因为格式（“`type&&`”）是正确的，并且`param`的类型将会被推导（重复一次，不考虑边缘情况，也即当调用者明确给定类型的时候）。
 
 ```cpp
 template<typename MyTemplateType>           //param是通用引用
