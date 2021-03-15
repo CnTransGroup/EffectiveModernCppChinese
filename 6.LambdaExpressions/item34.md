@@ -192,7 +192,7 @@ auto betweenB =
               std::bind(std::less_equal<int>(), _1, highVal));
 ```
 
-当然，在C++11中，*lambda*也不能采用`auto`参数，因此它也必须指定一个类型：
+当然，在C++11中，*lambda*也不能采用`auto`形参，因此它也必须指定一个类型：
 
 ```c++
 auto betweenL =                                 //C++11版本
@@ -247,7 +247,7 @@ compressRateB(CompLevel::High);     //实参如何传递？
 与*lambda*相比，使用`std::bind`进行编码的代码可读性较低，表达能力较低，并且效率可能较低。 在C++14中，没有`std::bind`的合理用例。 但是，在C++11中，可以在两个受约束的情况下证明使用`std::bind`是合理的：
 
 + **移动捕获**。C++11的*lambda*不提供移动捕获，但是可以通过结合*lambda*和`std::bind`来模拟。 有关详细信息，请参阅[Item32](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/6.LambdaExpressions/item32.md)，该条款还解释了在C++14中，*lambda*对初始化捕获的支持消除了这个模拟的需求。
-+ **多态函数对象**。因为bind对象上的函数调用运算符使用完美转发，所以它可以接受任何类型的参数（以[Item30](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item30.md)中描述的完美转发的限制为界限）。当你要绑定带有模板化函数调用运算符的对象时，此功能很有用。 例如这个类，
++ **多态函数对象**。因为bind对象上的函数调用运算符使用完美转发，所以它可以接受任何类型的实参（以[Item30](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item30.md)中描述的完美转发的限制为界限）。当你要绑定带有模板化函数调用运算符的对象时，此功能很有用。 例如这个类，
 
 ```c++
 class PolyWidget {
@@ -273,7 +273,7 @@ boundPW(nullptr);           //传nullptr给PolyWidget::operator()
 boundPW("Rosebud"); 		//传字面值给PolyWidget::operator()
 ```
 
-这一点无法使用C++11的*lambda*做到。 但是，在C++14中，可以通过带有`auto`参数的*lambda*轻松实现：
+这一点无法使用C++11的*lambda*做到。 但是，在C++14中，可以通过带有`auto`形参的*lambda*轻松实现：
 
 ```c++
 auto boundPW = [pw](const auto& param)  //C++14 
