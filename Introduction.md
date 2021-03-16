@@ -42,19 +42,15 @@ public:
 
 + 类的名字是`Widget`。每当我想指代任意的用户定义的类型时，我用`Widget`来代表。除非我需要展示类中的特定细节，否则我都直接使用`Widget`而不声明它。
 
-+ 我使用形参名`rhs`（“right-hand side”）。这是我喜欢的**移动操作**（即移动构造函数和移动赋值运算符）和**拷贝操作**（拷贝构造函数和拷贝构造运算符）的形参名。我也在双目运算符的右侧形参用它：
++ 我使用形参名`rhs`（“right-hand side”）。这是我喜欢的**移动操作**（即移动构造函数和移动赋值运算符）和**拷贝操作**（拷贝构造函数和拷贝赋值运算符）的形参名。我也在双目运算符的右侧形参用它：
 
 	```cpp
-	class Widget {
-	public:
-	  Widget(Widget&& rhs);   //rhs是个左值，
-	  …                       //尽管它有个右值引用的类型
-	};
+	Matrix operator+(const Matrix& lhs, const Matrix& rhs);
 	```
 
 	我希望你并不奇怪，我用`lhs`表示“left-hand side”。
 
-+ 我在部分代码或者部分注释用特殊格式来吸引你的注意。（译者注：但是因为markdown没法在代码块中表明特殊格式，即原书使用的颜色改变和斜体注释，所以大部分情况下只能作罢，少部分地方会有额外说明。）在上面`Widget`移动构造函数中，我高亮了`rhs`的声明和“`rhs`是一个左值”这部分注释。高亮代码不代表写的好坏。只是来提醒你需要额外的注意。
++ 我在部分代码或者部分注释用特殊格式来吸引你的注意。（译者注：但是因为markdown没法在代码块中表明特殊格式，即原书使用的颜色改变和斜体注释，所以大部分情况下只能作罢，少部分地方会有额外说明。）在上面`Widget`移动构造函数中，我高亮了`rhs`的声明和“`rhs`是个左值”这部分注释。高亮代码不代表写的好坏。只是来提醒你需要额外的注意。
 
 + 我使用“`…`”来表示“这里有一些别的代码”。这种窄省略号不同于C++11可变参数模板源代码中的宽省略号（“`...`”）。这听起来不太清楚，但实际并不。比如：
 
@@ -68,7 +64,7 @@ public:
 
 	`processVals`的声明表明在声明模板的类型形参时我使用`typename`，但这只是我的个人偏好；关键字`class`可以做同样的事情。在我展示从C++标准中摘录的代码的情况下，我使用`class`声明类型形参，因为那就是标准中的做法。
 
-当使用另一个同类型的对象来初始化一个对象时，新的对象被称为是来初始化的对象（译者注：initializing object，即源对象）的一个**副本**（*copy*），尽管这个副本是通过移动构造函数创建的。很抱歉地说，C++中没有术语来区别一个对象是拷贝构造的副本还是移动构造的副本（译者注：此处为了区别拷贝这个“动作”与拷贝得到的“东西”，将*copy*按语境译为拷贝（动作）和副本（东西），此处及接下来几段按此方式翻译。在后面的条款中可能会不加区别地全部翻译为“拷贝”。）：
+当使用另一个同类型的对象来初始化一个对象时，新的对象被称为是用来初始化的对象（译者注：initializing object，即源对象）的一个**副本**（*copy*），尽管这个副本是通过移动构造函数创建的。很抱歉地说，C++中没有术语来区别一个对象是拷贝构造的副本还是移动构造的副本（译者注：此处为了区别拷贝这个“动作”与拷贝得到的“东西”，将*copy*按语境译为拷贝（动作）和副本（东西），此处及接下来几段按此方式翻译。在后面的条款中可能会不加区别地全部翻译为“拷贝”。）：
 
 ```cpp
 void someFunc(Widget w);        //someFunc的形参w是传值过来
@@ -122,11 +118,11 @@ enum class Color
 
 定义也有资格称为声明，所以我倾向于只有声明，除非这个东西有个定义非常重要。
 
-我定义一个函数的**签名**（*signature*）为它声明的一部分，这个声明指定了形参类型和返回类型。函数名和形参名不是签名的一部分。在上面的例子中，`func`的签名是`bool(const Widget&)`。函数声明中除了形参类型和返回类型之外的元素（比如`noexcept`或者`constexpr`，如果存在的话）都被排除在外。（`noexcept`和`constexpr`在[Item14](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item14.md)和[15](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item15.md)叙述。）“签名”的官方定义和我的有点不一样，但是对本书来捉，我的定义更有用。（官方定义有时排除返回类型。）
+我定义一个函数的**签名**（*signature*）为它声明的一部分，这个声明指定了形参类型和返回类型。函数名和形参名不是签名的一部分。在上面的例子中，`func`的签名是`bool(const Widget&)`。函数声明中除了形参类型和返回类型之外的元素（比如`noexcept`或者`constexpr`，如果存在的话）都被排除在外。（`noexcept`和`constexpr`在[Item14](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item14.md)和[15](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item15.md)叙述。）“签名”的官方定义和我的有点不一样，但是对本书来说，我的定义更有用。（官方定义有时排除返回类型。）
 
 新的C++标准保持了旧标准写的代码的有效性，但是偶尔标准化委员会**废弃**（*deprecate*）一些特性。这些特性在标准化的“死囚区”中，可能在未来的标准中被移除。编译器可能警告也可能不警告这些废弃特性的使用，但是你应当尽量避免使用它们。它们不仅可能导致将来对移植的头痛，也通常不如来替代它们的新特性。例如，`std::auto_ptr`在C++11中被废弃，因为`std::unique_ptr`可以做同样的工作，而且只会做的更好。
 
-有时标准说一个操作的结果有**未定义的表现**（*undefined behavior*）。这意味着运行时表现是不可预测的，不用说你也想避开这种不确定性。有未定义表现的行动的例子是，在`std::vector`范围外使用方括号（“`[]`”），解引用未初始化的迭代器，或者引入数据竞争（即有两个或以上线程，至少一个是writer，同时访问相同的内存位置）。
+有时标准说一个操作的结果有**未定义的行为**（*undefined behavior*）。这意味着运行时表现是不可预测的，不用说你也想避开这种不确定性。有未定义行为的行动的例子是，在`std::vector`范围外使用方括号（“`[]`”），解引用未初始化的迭代器，或者引入数据竞争（即有两个或以上线程，至少一个是writer，同时访问相同的内存位置）。
 
 我将那些比如从`new`返回的内置指针（*build-in pointers*）称为**原始指针**（*raw pointers*）。原始指针的“反义词”是**智能指针**（*smart pointers*）。智能指针通常重载指针解引用运算符（`operator->`和`operator*`），但在[Item20](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item20.md)中解释看`std::weak_ptr`是个例外。
 
