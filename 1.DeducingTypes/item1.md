@@ -38,7 +38,7 @@ f(x);                           //用一个int类型的变量调用f
 ````
 `T`被推导为`int`，`ParamType`却被推导为`const int&`
 
-我们可能很自然的期望T和传递进函数的实参是相同的类型，也就是，`T`为`expr`的类型。在上面的例子中，事实就是那样：`x`是`int`，T被推导为`int`。但有时情况并非总是如此，`T`的类型推导不仅取决于`expr`的类型，也取决于`ParamType`的类型。这里有三种情况：
+我们可能很自然的期望`T`和传递进函数的实参是相同的类型，也就是，`T`为`expr`的类型。在上面的例子中，事实就是那样：`x`是`int`，`T`被推导为`int`。但有时情况并非总是如此，`T`的类型推导不仅取决于`expr`的类型，也取决于`ParamType`的类型。这里有三种情况：
 
 + `ParamType`是一个指针或引用，但不是通用引用（关于通用引用请参见[Item24](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item24.md)。在这里你只需要知道它存在，而且不同于左值引用和右值引用）
 + `ParamType`一个通用引用
@@ -166,9 +166,9 @@ f(x);                           //T和param的类型都是int
 f(cx);                          //T和param的类型都是int
 f(rx);                          //T和param的类型都是int
 ````
-注意即使`cx`和`rx`表示`const`值，`param`也不是`const`。这是有意义的。`param`是一个完全独立于`cx`和`rx`的对象——是`cx`或`rx`的一个拷贝。具有常量性的`cx`和`rx`不可修改并不代表`param`也是一样。这就是为什么`expr`的常量性`const`ness（或易变性`volatile`ness)在推导`param`类型时会被忽略：因为`expr`不可修改并不意味着他的拷贝也不能被修改。
+注意即使`cx`和`rx`表示`const`值，`param`也不是`const`。这是有意义的。`param`是一个完全独立于`cx`和`rx`的对象——是`cx`或`rx`的一个拷贝。具有常量性的`cx`和`rx`不可修改并不代表`param`也是一样。这就是为什么`expr`的常量性`const`ness（或易变性`volatile`ness)在推导`param`类型时会被忽略：因为`expr`不可修改并不意味着它的拷贝也不能被修改。
 
-认识到只有在传值给形参时才会忽略`const`（和`volatile`）这一点很重要，正如我们看到的，对于reference-to-`const`和pointer-to-`const`形参来说，`expr`的常量性`const`ness在推导时会被保留。但是考虑这样的情况，expr是一个`const`指针，指向`const`对象，`expr`通过传值传递给`param`：
+认识到只有在传值给形参时才会忽略`const`（和`volatile`）这一点很重要，正如我们看到的，对于reference-to-`const`和pointer-to-`const`形参来说，`expr`的常量性`const`ness在推导时会被保留。但是考虑这样的情况，`expr`是一个`const`指针，指向`const`对象，`expr`通过传值传递给`param`：
 ````cpp
 template<typename T>
 void f(T param);                //仍然以传值的方式处理param
@@ -221,13 +221,12 @@ void f(T& param);                       //传引用形参的模板
 ````cpp
 f(name);                                //传数组给f
 ````
-`T`被推导为了真正的数组！这个类型包括了数组的大小，在这个例子中`T`被推导为`const char[13]`，`param`则被推导为`const char (&)[13]`。是的，这种语法看起来简直有毒，但是知道它将会让你在关心这些问题的人的提问中获得大神的称号。
+`T`被推导为了真正的数组！这个类型包括了数组的大小，在这个例子中`T`被推导为`const char[13]`，`f`的形参（对这个数组的引用）的类型则为`const char (&)[13]`。是的，这种语法看起来简直有毒，但是知道它将会让你在关心这些问题的人的提问中获得大神的称号。
 
 有趣的是，可声明指向数组的引用的能力，使得我们可以创建一个模板函数来推导出数组的大小：
 ````cpp
-//在编译期间返回一个数组大小的常量值（
-//数组形参没有名字，因为我们只关心数组
-//的大小）
+//在编译期间返回一个数组大小的常量值（//数组形参没有名字，
+//因为我们只关心数组的大小）
 template<typename T, std::size_t N>                     //关于
 constexpr std::size_t arraySize(T (&)[N]) noexcept      //constexpr
 {                                                       //和noexcept
@@ -248,10 +247,10 @@ std::array<int, arraySize(keyVals)> mappedVals;         //mappedVals的大小为
 
 ### 函数实参
 
-在C++中不止是数组会退化为指针，函数类型也会退化为一个函数指针，我们对于数组类型推导的全部讨论都可以应用到函数类型推导和退化为函数指针上来。结果是：
+在C++中不只是数组会退化为指针，函数类型也会退化为一个函数指针，我们对于数组类型推导的全部讨论都可以应用到函数类型推导和退化为函数指针上来。结果是：
 ````cpp
 void someFunc(int, double);         //someFunc是一个函数，
-                                    //类型是void(int,double)
+                                    //类型是void(int, double)
 
 template<typename T>
 void f1(T param);                   //传值给f1
