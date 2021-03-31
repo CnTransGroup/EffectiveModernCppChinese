@@ -84,7 +84,7 @@ void f(const T& param)
     cout << "T =     " << typeid(T).name() << '\n';             //显示T
 
     cout << "param = " << typeid(param).name() << '\n';         //显示
-    ...							        //param
+    …                                                           //param
 }                                                               //的类型
 ````
 GNU和Clang执行这段代码将会输出这样的结果
