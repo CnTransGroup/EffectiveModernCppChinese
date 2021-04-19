@@ -34,7 +34,7 @@ Color c = red;
 
 if (c < 14.5) {                         // Color与double比较 (!)
     auto factors =                      // 计算一个Color的质因子(!)
-      primeFactors(c);                    
+      primeFactors(c);
     …
 }
 ```
@@ -66,11 +66,11 @@ if (static_cast<double>(c) < 14.5) {    //奇怪的代码，
 enum Color;         //错误！
 enum class Color;   //没问题
 ```
-其实这是一个误导。在C++11中，非限域`enum`也可以被前置声明，但是只有在做一些其他工作后才能实现。这些工作来源于一个事实：在C++中所有的`enum`都有一个由编译器决定的整型的基础类型。对于非限域`enum`比如`Color`，
+其实这是一个误导。在C++11中，非限域`enum`也可以被前置声明，但是只有在做一些其他工作后才能实现。这些工作来源于一个事实：在C++中所有的`enum`都有一个由编译器决定的整型的底层类型。对于非限域`enum`比如`Color`，
 ```cpp
 enum Color { black, white, red };
 ```
-编译器可能选择`char`作为基础类型，因为这里只需要表示三个值。然而，有些`enum`中的枚举值范围可能会大些，比如：
+编译器可能选择`char`作为底层类型，因为这里只需要表示三个值。然而，有些`enum`中的枚举值范围可能会大些，比如：
 ```cpp
 enum Status { good = 0,
               failed = 1,
@@ -81,7 +81,7 @@ enum Status { good = 0,
 ```
 这里值的范围从`0`到`0xFFFFFFFF`。除了在不寻常的机器上（比如一个`char`至少有32bits的那种），编译器都会选择一个比`char`大的整型类型来表示`Status`。
 
-为了高效使用内存，编译器通常在确保能包含所有枚举值的前提下为`enum`选择一个最小的基础类型。在一些情况下，编译器将会优化速度，舍弃大小，这种情况下它可能不会选择最小的基础类型，而是选择对优化大小有帮助的类型。为此，C++98只支持`enum`定义（所有枚举名全部列出来）；`enum`声明是不被允许的。这使得编译器能在使用之前为每一个`enum`选择一个基础类型。
+为了高效使用内存，编译器通常在确保能包含所有枚举值的前提下为`enum`选择一个最小的底层类型。在一些情况下，编译器将会优化速度，舍弃大小，这种情况下它可能不会选择最小的底层类型，而是选择对优化大小有帮助的类型。为此，C++98只支持`enum`定义（所有枚举名全部列出来）；`enum`声明是不被允许的。这使得编译器能在使用之前为每一个`enum`选择一个底层类型。
 
 但是不能前置声明`enum`也是有缺点的。最大的缺点莫过于它可能增加编译依赖。再次考虑`Status` `enum`：
 ```cpp
@@ -110,29 +110,29 @@ void continueProcessing(Status s);  //使用前置声明enum
 ```
 即使`Status`的定义发生改变，包含这些声明的头文件也不需要重新编译。而且如果`Status`有改动（比如添加一个`audited`枚举名），`continueProcessing`的行为不受影响（比如因为`continueProcessing`没有使用这个新添加的`audited`），`continueProcessing`也不需要重新编译。
 
-但是如果编译器在使用它之前需要知晓该`enum`的大小，该怎么声明才能让C++11做到C++98不能做到的事情呢？答案很简单：限域`enum`的基础类型总是已知的，而对于非限域`enum`，你可以指定它。
+但是如果编译器在使用它之前需要知晓该`enum`的大小，该怎么声明才能让C++11做到C++98不能做到的事情呢？答案很简单：限域`enum`的底层类型总是已知的，而对于非限域`enum`，你可以指定它。
 
-默认情况下，限域枚举的基础类型是`int`：
+默认情况下，限域枚举的底层类型是`int`：
 
 ```cpp
-enum class Status;                  //基础类型是int
+enum class Status;                  //底层类型是int
 ```
 如果默认的`int`不适用，你可以重写它：
 ```cpp
-enum class Status: std::uint32_t;   //Status的基础类型
+enum class Status: std::uint32_t;   //Status的底层类型
                                     //是std::uint32_t
                                     //（需要包含 <cstdint>）
 ```
 不管怎样，编译器都知道限域`enum`中的枚举名占用多少字节。
 
-要为非限域`enum`指定基础类型，你可以同上，结果就可以前向声明：
+要为非限域`enum`指定底层类型，你可以同上，结果就可以前向声明：
 
 ```cpp
 enum Color: std::uint8_t;   //非限域enum前向声明
-                            //基础类型为
+                            //底层类型为
                             //std::uint8_t
 ```
-基础类型说明也可以放到`enum`定义处：
+底层类型说明也可以放到`enum`定义处：
 ```cpp
 enum class Status: std::uint32_t { good = 0,
                                    failed = 1,
@@ -178,7 +178,7 @@ auto val =
 ```
 为避免这种冗长的表示，我们可以写一个函数传入枚举名并返回对应的`std::size_t`值，但这有一点技巧性。`std::get`是一个模板（函数），需要你给出一个`std::size_t`值的模板实参（注意使用`<>`而不是`()`），因此将枚举名变换为`std::size_t`值的函数必须**在编译期**产生这个结果。如[Item15](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item15.md)提到的，那必须是一个`constexpr`函数。
 
-事实上，它也的确该是一个`constexpr`函数模板，因为它应该能用于任何`enum`。如果我们想让它更一般化，我们还要泛化它的返回类型。较之于返回`std::size_t`，我们更应该返回枚举的基础类型。这可以通过`std::underlying_type`这个*type trait*获得。（参见[Item9](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item9.md)关于*type trait*的内容）。最终我们还要再加上`noexcept`修饰（参见[Item14](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item14.md)），因为我们知道它肯定不会产生异常。根据上述分析最终得到的`toUType`函数模板在编译期接受任意枚举名并返回它的值：
+事实上，它也的确该是一个`constexpr`函数模板，因为它应该能用于任何`enum`。如果我们想让它更一般化，我们还要泛化它的返回类型。较之于返回`std::size_t`，我们更应该返回枚举的底层类型。这可以通过`std::underlying_type`这个*type trait*获得。（参见[Item9](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item9.md)关于*type trait*的内容）。最终我们还要再加上`noexcept`修饰（参见[Item14](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item14.md)），因为我们知道它肯定不会产生异常。根据上述分析最终得到的`toUType`函数模板在编译期接受任意枚举名并返回它的值：
 
 ```cpp
 template<typename E>
@@ -219,5 +219,5 @@ auto val = std::get<toUType(UserInfoFields::uiEmail)>(uInfo);
 **记住**
 + C++98的`enum`即非限域`enum`。
 + 限域`enum`的枚举名仅在`enum`内可见。要转换为其它类型只能使用*cast*。
-+ 非限域/限域`enum`都支持基础类型说明语法，限域`enum`基础类型默认是`int`。非限域`enum`没有默认基础类型。
-+ 限域`enum`总是可以前置声明。非限域`enum`仅当指定它们的基础类型时才能前置。
++ 非限域/限域`enum`都支持底层类型说明语法，限域`enum`底层类型默认是`int`。非限域`enum`没有默认底层类型。
++ 限域`enum`总是可以前置声明。非限域`enum`仅当指定它们的底层类型时才能前置。
