@@ -113,7 +113,7 @@ std::deque<std::string> makeStringDeque();      //工厂函数
 //从makeStringDeque中获得第五个元素的拷贝并返回
 auto s = authAndAccess(makeStringDeque(), 5);
 ````
-要想支持这样使用`authAndAccess`我们就得修改一下当前的声明使得它支持左值和右值。重载是一个不错的选择（一个函数重载声明为左值引用，另一个声明为右值引用），但是我们就不得不维护两个重载函数。另一个方法是使`authAndAccess`的引用可以绑定左值和右值，[Item24]()解释了那正是通用引用能做的，所以我们这里可以使用通用引用进行声明：
+要想支持这样使用`authAndAccess`我们就得修改一下当前的声明使得它支持左值和右值。重载是一个不错的选择（一个函数重载声明为左值引用，另一个声明为右值引用），但是我们就不得不维护两个重载函数。另一个方法是使`authAndAccess`的引用可以绑定左值和右值，[Item24](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item24.md)解释了那正是通用引用能做的，所以我们这里可以使用通用引用进行声明：
 ````cpp
 template<typename Containter, typename Index>   //现在c是通用引用
 decltype(auto) authAndAccess(Container&& c, Index i);
