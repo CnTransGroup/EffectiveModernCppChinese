@@ -1,4 +1,4 @@
-# 第5章 右值引用，移动语意，完美转发
+# 第5章 右值引用，移动语义，完美转发
 
 **CHAPTER 5 RValue References, Move Semantics and Perfect Forwarding**
 

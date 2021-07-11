@@ -39,7 +39,7 @@
 	3. [Item 20:当std::shard_ptr可能悬空时使用std::weak_ptr](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item20.md) 更新完成
 	4. [Item 21:优先考虑使用std::make_unique和std::make_shared而非new](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item21.md) 由 @pusidun贡献
 	5. [Item 22:当使用Pimpl惯用法，请在实现文件中定义特殊成员函数](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item22.md) 由 @BlurryLight贡献
-5. __右值引用，移动语意，完美转发__
+5. __右值引用，移动语义，完美转发__
 	1. [Item 23:理解std::move和std::forward](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item23.md) 由 @BlurryLight贡献
 	2. [Item 24:区别通用引用和右值引用](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item24.md) 由 @BlurryLight贡献
 	3. [Item 25:对于右值引用使用std::move，对于通用引用使用std::forward](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item25.md)由 @wendajiang贡献
