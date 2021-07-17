@@ -80,7 +80,7 @@ auto setSoundB =                            //“B”代表“bind”
 ```c++
 auto setSoundB =
     std::bind(setAlarm,
-              std::bind(std::plus<>(), steady_clock::now(), 1h),
+              std::bind(std::plus<>(), std::bind(steady_clock::now), 1h),
               _1,
               30s);
 ```
@@ -93,7 +93,7 @@ using namespace std::placeholders;
 auto setSoundB =
     std::bind(setAlarm,
               std::bind(std::plus<steady_clock::time_point>(),
-                        steady_clock::now(),
+                        std::bind(steady_clock::now),
                         hours(1)),
               _1,
               seconds(30));
