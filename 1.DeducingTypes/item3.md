@@ -52,7 +52,7 @@ auto authAndAccess(Container& c, Index i)       //但是需要改良
 
 在这种声明中，`authAndAccess`函数返回`operator[]`应用到容器中返回的对象的类型，这也正是我们期望的结果。
 
-C++11允许自动推导单一语句的*lambda*表达式的返回类型， C++14扩展到允许自动推导所有的*lambda*表达式和函数，甚至它们内含多条语句。对于`authAndAccess`来说这意味着在C++14标准下我们可以忽略尾置返回类型，只留下一个`auto`。在这种形式下`auto`不再进行`auto`类型推导，取而代之的是它意味着编译器将会从函数实现中推导出函数的返回类型。
+C++11允许自动推导单一语句的*lambda*表达式的返回类型， C++14扩展到允许自动推导所有的*lambda*表达式和函数，甚至它们内含多条语句。对于`authAndAccess`来说这意味着在C++14标准下我们可以忽略尾置返回类型，只留下一个`auto`。使用这种声明形式，auto标示这里会发生类型推导。更准确的说，编译器将会从函数实现中推导出函数的返回类型。
 ````cpp
 template<typename Container, typename Index>    //C++14版本，
 auto authAndAccess(Container& c, Index i)       //不那么正确
