@@ -185,7 +185,7 @@ public:
     DataType& data() &              //对于左值Widgets,
     { return values; }              //返回左值
     
-    DataType data() &&              //对于右值Widgets,
+    DataType&& data() &&              //对于右值Widgets,
     { return std::move(values); }   //返回右值
     …
 
