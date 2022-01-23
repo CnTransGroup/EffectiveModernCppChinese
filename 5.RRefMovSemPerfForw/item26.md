@@ -42,7 +42,7 @@ void logAndAdd(T&& name)
 }
 
 std::string petName("Darla");           //跟之前一样
-logAndAdd(petName);                     //跟之前一样，拷贝右值到multiset
+logAndAdd(petName);                     //跟之前一样，拷贝左值到multiset
 logAndAdd(std::string("Persephone"));	//移动右值而不是拷贝它
 logAndAdd("Patty Dog");                 //在multiset直接创建std::string
                                         //而不是拷贝一个临时std::string
