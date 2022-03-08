@@ -101,7 +101,7 @@ auto setSoundB =
 
 如果此时*lambda*看起来还没有吸引力，那么应该检查一下视力了。
 
-当`setAlarm`重载时，会出现一个新问题。 假设有一个重载函数，其中第四个形参了音量：
+当`setAlarm`重载时，会出现一个新问题。 假设有一个重载函数，其中第四个形参指定了音量：
 
 ```c++
 enum class Volume { Normal, Loud, LoudPlusPlus };

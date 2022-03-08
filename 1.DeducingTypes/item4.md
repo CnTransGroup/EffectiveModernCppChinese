@@ -115,7 +115,7 @@ const std::_Simple_types<...>::value_type *const &
 ````
 这个比起`T`来说要简单一些，但是如果你不知道“`...`”表示编译器忽略`T`的部分类型那么可能你还是会产生困惑。如果你运气好点你的IDE可能表现得比这个要好一些。
 
-比起运气如果你更倾向于依赖库，那么你乐意被告知`std::type_info::name`和IDE不怎么好，Boost TypeIndex库（通常写作**Boost.TypeIndex**）是更好的选择。这个库不是标准C++的一部分，也不是IDE或者`TD`这样的模板。Boost库（可在[boost.com](http://boost.com)获得）是跨平台，开源，有良好的开源协议的库，这意味着使用Boost和STL一样具有高度可移植性。
+比起运气如果你更倾向于依赖库，那么你乐意被告知`std::type_info::name`和IDE不怎么好，Boost TypeIndex库（通常写作**Boost.TypeIndex**）是更好的选择。这个库不是标准C++的一部分，也不是IDE或者`TD`这样的模板。Boost库（可在[boost.com](http://boost.org)获得）是跨平台，开源，有良好的开源协议的库，这意味着使用Boost和STL一样具有高度可移植性。
 
 这里是如何使用Boost.TypeIndex得到`f`的类型的代码
 ````cpp

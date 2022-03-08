@@ -127,7 +127,7 @@ Widget w3(10, 5.0);     //使用小括号初始化，同之前一样
 
 Widget w4{10, 5.0};     //使用花括号初始化，但是现在
                         //调用std::initializer_list版本构造函数
-                        //(10 和 true 转化为long double)
+                        //(10 和 5.0 转化为long double)
 ````
 甚至普通的构造函数和移动构造函数都会被`std::initializer_list`构造函数劫持：
 ````cpp
