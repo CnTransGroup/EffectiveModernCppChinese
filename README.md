@@ -13,6 +13,7 @@
 > ! [PDF格式英文版下载](0.Public/EffectiveModernCpp.pdf),仅供翻译参考<br>
 
 ## 目录
+0. [__简介__](Introduction.md)
 1. __类型推导__
 	1. [Item 1:理解模板类型推导](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item1.md) 已修订
 	2. [Item 2:理解auto类型推导](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item2.md)
