@@ -30,11 +30,11 @@ void fwd(Ts&&... params)            //接受任何实参
 
 这种形式你会在标准化容器置入函数（emplace functions）中（参见[Item42](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/8.Tweaks/item42.md)）和智能指针的工厂函数`std::make_unique`和`std::make_shared`中（参见[Item21](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item21.md)）看到，当然还有其他一些地方。
 
-给定我们的目标函数`f`和转发函数`fwd`，如果`f`使用某特定实参做一件事，但是`fwd`使用相同的实参做另一件事，完美转发就会失败：
+给定我们的目标函数`f`和转发函数`fwd`，如果`f`使用某特定实参会执行某个操作，但是`fwd`使用相同的实参会执行不同的操作，完美转发就会失败
 
 ```cpp
-f( expression );        //如果这个做某件事，
-fwd( expression );		//但是这个做另外的某件事，fwd完美转发expression给f会失败
+f( expression );        //调用f执行某个操作
+fwd( expression );		//但调用fwd执行另一个操作，则fwd不能完美转发expression给f
 ```
 
 导致这种失败的实参种类有很多。知道它们是什么以及如何解决它们很重要，因此让我们来看看无法做到完美转发的实参类型。
