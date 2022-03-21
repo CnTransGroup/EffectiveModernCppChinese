@@ -17,7 +17,7 @@ void func(T&& param);
 Widget widgetFactory();     //返回右值的函数
 Widget w;                   //一个变量（左值）
 func(w);                    //用左值调用func；T被推导为Widget&
-func(widgetFactory());      //用又值调用func；T被推导为Widget
+func(widgetFactory());      //用右值调用func；T被推导为Widget
 ```
 
 上面的两种`func`调用中，`Widget`被传入，因为一个是左值，一个是右值，模板形参`T`被推导为不同的类型。正如我们很快看到的，这决定了通用引用成为左值还是右值，也是`std::forward`的工作基础。
