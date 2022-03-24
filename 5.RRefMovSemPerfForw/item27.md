@@ -80,14 +80,14 @@ void logAndAdd(T&& name)
 {
     logAndAddImpl(
         std::forward<T>(name),
-        std::is_instegral<typename std::remove_reference<T>::type>()
+        std::is_integral<typename std::remove_reference<T>::type>()
     );
 }
 ```
 
 这个代码很巧妙。（在C++14中，你可以通过`std::remove_reference_t<T>`来简化写法，参看[Item9](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item9.md)）
 
-处理完之后，我们可以将注意力转移到名为`logAndAddImpl`的函数上了。有两个重载函数，第一个仅用于非整型类型（即`std::is_instegral<typename std::remove_reference<T>::type>`是false）：
+处理完之后，我们可以将注意力转移到名为`logAndAddImpl`的函数上了。有两个重载函数，第一个仅用于非整型类型（即`std::is_integral<typename std::remove_reference<T>::type>`是false）：
 
 ```cpp
 template<typename T>                            //非整型实参：添加到全局数据结构中
