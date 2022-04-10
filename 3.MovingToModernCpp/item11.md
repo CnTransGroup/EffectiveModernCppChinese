@@ -83,7 +83,7 @@ void processPointer<void>(void*) = delete;
 template<>
 void processPointer<char>(char*) = delete;
 ```
-现在如果使用`void*`和`char*`调用`processPointer`就是无效的，按常理说`const void*`和`const void*`也应该无效，所以这些实例也应该标注`delete`:
+现在如果使用`void*`和`char*`调用`processPointer`就是无效的，按常理说`const void*`和`const char*`也应该无效，所以这些实例也应该标注`delete`:
 ```cpp
 template<>
 void processPointer<const void>(const void*) = delete;
