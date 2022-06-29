@@ -1,0 +1,10 @@
+[book]
+authors = ["wendajiang"]
+language = "zh"
+multilingual = false
+src = "src"
+title = "Effective Modern C++"
+
+[output.html]
+mathjax-support = true
+no-section-label = true
