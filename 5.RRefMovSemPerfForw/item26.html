@@ -1,0 +1,328 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Item 26: Avoid overloading on universal references - Effective Modern C++</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <!-- MathJax -->
+        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../Introduction.html">Introduction</a></li><li class="chapter-item expanded "><div>Chapter 1. Deducing Types</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../1.DeducingTypes/item1.html">Item 1: Understanding template type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item2.html">Item 2: Understand auto type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item3.html">Item 3: Understand decltype</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item4.html">Item 4: Know how to view deduced types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 2. auto</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../2.Auto/item5.html">Item 5: Prefer auto to explicit type declarations</a></li><li class="chapter-item expanded "><a href="../2.Auto/item6.html">Item 6: Use the explicitly typed initializer idiom when auto deduces undesired types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 3. Moving to Modern C++</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item7.html">Item 7: Distinguish between () and {} when creating objects</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item8.html">Item 8: Prefer nullptr to 0 or NULL</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item9.html">Item 9: Prefer alias declarations to typedefs</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item10.html">Item 10: Prefer scoped enums to unscoped enums</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item11.html">Item 11: Prefer deleted functions to private undefined ones</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item12.html">Item 12: Declare overriding functions override</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item13.html">Item 13: Prefer const_iterators to iterators</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item14.html">Item 14: Declare functions noexcept if they won't emit exceptions</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item15.html">Item 15: Use constexpr whenever possible</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item16.html">Item 16: Make const member functions thread safe</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item17.html">Item 17: Understand special member funciton generation</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 4. Smart Pointer</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../4.SmartPointers/item18.html">Item 18: Use std::unique_ptr for exclusive-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item19.html">Item 19: Use std::shared_ptr for shared-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item20.html">Item 20: Use std::weak_ptr for std::shared_ptr like pointers that can dangle</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item21.html">Item 21: Prefer std::make_unique and std::make_shared to direct use of new</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item22.html">Item 22: When using the Pimpl Idiom, define special member functions in the implementation file</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 5. Rvalue References, Move Semantics, and Perfect Forwarding</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item23.html">Item 23: Understand std::move and std::forward</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item24.html">Item 24: Distinguish universal references from rvalue references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item25.html">Item 25: Use std::move on rvalue references, std::forward on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item26.html" class="active">Item 26: Avoid overloading on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item27.html">Item 27: Familiarize yourself with alternatives to overaloading on univeral references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item28.html">Item 28: Understand reference collapsing</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item29.html">Item 29: Assume that move operations are not present not cheap, and not used</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item30.html">Item 30: Familiarize yourself with perfect forwarding failure cases</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 6. Lambda Expressions</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item31.html">Item 31: Avoid default capture modes</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item32.html">Item 32: Use init capture to move objects into closures</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item33.html">Item 33: Use decltype on auto&&parameters to std::forward them</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item34.html">Item 34: Prefer lambdas to std::bind</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 7. The Concurrency API</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/Item35.html">Item 35: Prefer task-based programming to thread-based</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item36.html">Item 36: Specify std::launch::async if asynchronicity is essential</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item37.html">Item 37: Make std::threads unjionable on all paths</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item38.html">Item 38: Be aware of varying thread handle destructor behavior</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item39.html">Item 39: Consider void futures for one-shot event communication</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item40.html">Item 40: Use std::atomic for concurrency, volatile for special memory</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 8. Tweaks</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../8.Tweaks/item41.html">Item 41: Consider pass by value for copyable parameters that are cheap to move and always copied</a></li><li class="chapter-item expanded "><a href="../8.Tweaks/item42.html">Item 42: Consider emplacement instead of insertion</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Effective Modern C++</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h2 id="条款二十六避免在通用引用上重载"><a class="header" href="#条款二十六避免在通用引用上重载">条款二十六：避免在通用引用上重载</a></h2>
+<p><strong>Item 26: Avoid overloading on universal references</strong></p>
+<p>假定你需要写一个函数，它使用名字作为形参，打印当前日期和时间到日志中，然后将名字加入到一个全局数据结构中。你可能写出来这样的代码：</p>
+<pre><code class="language-cpp">std::multiset&lt;std::string&gt; names;           //全局数据结构
+void logAndAdd(const std::string&amp; name)
+{
+    auto now =                              //获取当前时间
+        std::chrono::system_clock::now();
+    log(now, &quot;logAndAdd&quot;);                  //志记信息
+    names.emplace(name);                    //把name加到全局数据结构中；
+}                                           //emplace的信息见条款42
+</code></pre>
+<p>这份代码没有问题，但是同样的也没有效率。考虑这三个调用：</p>
+<pre><code class="language-cpp">std::string petName(&quot;Darla&quot;);
+logAndAdd(petName);                     //传递左值std::string
+logAndAdd(std::string(&quot;Persephone&quot;));	//传递右值std::string
+logAndAdd(&quot;Patty Dog&quot;);                 //传递字符串字面值
+</code></pre>
+<p>在第一个调用中，<code>logAndAdd</code>的形参<code>name</code>绑定到变量<code>petName</code>。在<code>logAndAdd</code>中<code>name</code>最终传给<code>names.emplace</code>。因为<code>name</code>是左值，会拷贝到<code>names</code>中。没有方法避免拷贝，因为是左值（<code>petName</code>）传递给<code>logAndAdd</code>的。</p>
+<p>在第二个调用中，形参<code>name</code>绑定到右值（显式从“<code>Persephone</code>”创建的临时<code>std::string</code>）。<code>name</code>本身是个左值，所以它被拷贝到<code>names</code>中，但是我们意识到，原则上，它的值可以被移动到<code>names</code>中。本次调用中，我们有个拷贝代价，但是我们应该能用移动勉强应付。</p>
+<p>在第三个调用中，形参<code>name</code>也绑定一个右值，但是这次是通过“<code>Patty Dog</code>”隐式创建的临时<code>std::string</code>变量。就像第二个调用中，<code>name</code>被拷贝到<code>names</code>，但是这里，传递给<code>logAndAdd</code>的实参是一个字符串字面量。如果直接将字符串字面量传递给<code>emplace</code>，就不会创建<code>std::string</code>的临时变量，而是直接在<code>std::multiset</code>中通过字面量构建<code>std::string</code>。在第三个调用中，我们有个<code>std::string</code>拷贝开销，但是我们连移动开销都不想要，更别说拷贝的。</p>
+<p>我们可以通过使用通用引用（参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item24.md">Item24</a>）重写<code>logAndAdd</code>来使第二个和第三个调用效率提升，按照<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item25.md">Item25</a>的说法，<code>std::forward</code>转发这个引用到<code>emplace</code>。代码如下：</p>
+<pre><code class="language-cpp">template&lt;typename T&gt;
+void logAndAdd(T&amp;&amp; name)
+{
+    auto now = std::chrono::system_lock::now();
+    log(now, &quot;logAndAdd&quot;);
+    names.emplace(std::forward&lt;T&gt;(name));
+}
+
+std::string petName(&quot;Darla&quot;);           //跟之前一样
+logAndAdd(petName);                     //跟之前一样，拷贝左值到multiset
+logAndAdd(std::string(&quot;Persephone&quot;));	//移动右值而不是拷贝它
+logAndAdd(&quot;Patty Dog&quot;);                 //在multiset直接创建std::string
+                                        //而不是拷贝一个临时std::string
+</code></pre>
+<p>非常好，效率优化了！</p>
+<p>在故事的最后，我们可以骄傲的交付这个代码，但是我还没有告诉你客户不总是有直接访问<code>logAndAdd</code>要求的名字的权限。有些客户只有索引，<code>logAndAdd</code>拿着索引在表中查找相应的名字。为了支持这些客户，<code>logAndAdd</code>需要重载为：</p>
+<pre><code class="language-cpp">std::string nameFromIdx(int idx);   //返回idx对应的名字
+
+void logAndAdd(int idx)             //新的重载
+{
+    auto now = std::chrono::system_lock::now();
+    log(now, &quot;logAndAdd&quot;);
+    names.emplace(nameFromIdx(idx));
+}
+</code></pre>
+<p>之后的两个调用按照预期工作：</p>
+<pre><code class="language-cpp">std::string petName(&quot;Darla&quot;);           //跟之前一样
+
+logAndAdd(petName);                     //跟之前一样，
+logAndAdd(std::string(&quot;Persephone&quot;)); 	//这些调用都去调用
+logAndAdd(&quot;Patty Dog&quot;);                 //T&amp;&amp;重载版本
+
+logAndAdd(22);                          //调用int重载版本
+</code></pre>
+<p>事实上，这只能基本按照预期工作，假定一个客户将<code>short</code>类型索引传递给<code>logAndAdd</code>：</p>
+<pre><code class="language-cpp">short nameIdx;
+…                                       //给nameIdx一个值
+logAndAdd(nameIdx);                     //错误！
+</code></pre>
+<p>最后一行的注释并不清楚明白，下面让我来说明发生了什么。</p>
+<p>有两个重载的<code>logAndAdd</code>。使用通用引用的那个推导出<code>T</code>的类型是<code>short</code>，因此可以精确匹配。对于<code>int</code>类型参数的重载也可以在<code>short</code>类型提升后匹配成功。根据正常的重载解决规则，精确匹配优先于类型提升的匹配，所以被调用的是通用引用的重载。</p>
+<p>在通用引用那个重载中，<code>name</code>形参绑定到要传入的<code>short</code>上，然后<code>name</code>被<code>std::forward</code>给<code>names</code>（一个<code>std::multiset&lt;std::string&gt;</code>）的<code>emplace</code>成员函数，然后又被转发给<code>std::string</code>构造函数。<code>std::string</code>没有接受<code>short</code>的构造函数，所以<code>logAndAdd</code>调用里的<code>multiset::emplace</code>调用里的<code>std::string</code>构造函数调用失败。（译者注：这句话比较绕，实际上就是调用链。）所有这一切的原因就是对于<code>short</code>类型通用引用重载优先于<code>int</code>类型的重载。</p>
+<p>使用通用引用的函数在C++中是最贪婪的函数。它们几乎可以精确匹配任何类型的实参（极少不适用的实参在<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item30.md">Item30</a>中介绍）。这也是把重载和通用引用组合在一块是糟糕主意的原因：通用引用的实现会匹配比开发者预期要多得多的实参类型。</p>
+<p>一个更容易掉入这种陷阱的例子是写一个完美转发构造函数。简单对<code>logAndAdd</code>例子进行改造就可以说明这个问题。不用写接受<code>std::string</code>或者用索引查找<code>std::string</code>的自由函数，只是想一个构造函数有着相同操作的<code>Person</code>类：</p>
+<pre><code class="language-cpp">class Person {
+public:
+    template&lt;typename T&gt;
+    explicit Person(T&amp;&amp; n)              //完美转发的构造函数，初始化数据成员
+    : name(std::forward&lt;T&gt;(n)) {}
+
+    explicit Person(int idx)            //int的构造函数
+    : name(nameFromIdx(idx)) {}
+    …
+
+private:
+    std::string name;
+};
+</code></pre>
+<p>就像在<code>logAndAdd</code>的例子中，传递一个不是<code>int</code>的整型变量（比如<code>std::size_t</code>，<code>short</code>，<code>long</code>等）会调用通用引用的构造函数而不是<code>int</code>的构造函数，这会导致编译错误。这里这个问题甚至更糟糕，因为<code>Person</code>中存在的重载比肉眼看到的更多。在<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item17.md">Item17</a>中说明，在适当的条件下，C++会生成拷贝和移动构造函数，即使类包含了模板化的构造函数，模板函数能实例化产生与拷贝和移动构造函数一样的签名，也在合适的条件范围内。如果拷贝和移动构造被生成，<code>Person</code>类看起来就像这样：</p>
+<pre><code class="language-cpp">class Person {
+public:
+    template&lt;typename T&gt;            //完美转发的构造函数
+    explicit Person(T&amp;&amp; n)
+    : name(std::forward&lt;T&gt;(n)) {}
+
+    explicit Person(int idx);       //int的构造函数
+
+    Person(const Person&amp; rhs);      //拷贝构造函数（编译器生成）
+    Person(Person&amp;&amp; rhs);           //移动构造函数（编译器生成）
+    …
+};
+</code></pre>
+<p>只有你在花了很多时间在编译器领域时，下面的行为才变得直观（译者注：这里意思就是这种实现会导致不符合人类直觉的结果，下面就解释了这种现象的原因）：</p>
+<pre><code class="language-cpp">Person p(&quot;Nancy&quot;); 
+auto cloneOfP(p);                   //从p创建新Person；这通不过编译！
+</code></pre>
+<p>这里我们试图通过一个<code>Person</code>实例创建另一个<code>Person</code>，显然应该调用拷贝构造即可。（<code>p</code>是左值，我们可以把通过移动操作来完成“拷贝”的想法请出去了。）但是这份代码不是调用拷贝构造函数，而是调用完美转发构造函数。然后，完美转发的函数将尝试使用<code>Person</code>对象<code>p</code>初始化<code>Person</code>的<code>std::string</code>数据成员，编译器就会报错。</p>
+<p>“为什么？”你可能会疑问，“为什么拷贝构造会被完美转发构造替代？我们显然想拷贝<code>Person</code>到另一个<code>Person</code>”。确实我们是这样想的，但是编译器严格遵循C++的规则，这里的相关规则就是控制对重载函数调用的解析规则。</p>
+<p>编译器的理由如下：<code>cloneOfP</code>被non-<code>const</code>左值<code>p</code>初始化，这意味着模板化构造函数可被实例化为采用<code>Person</code>类型的non-<code>const</code>左值。实例化之后，<code>Person</code>类看起来是这样的：</p>
+<pre><code class="language-cpp">class Person {
+public:
+    explicit Person(Person&amp; n)          //由完美转发模板初始化
+    : name(std::forward&lt;Person&amp;&gt;(n)) {}
+
+    explicit Person(int idx);           //同之前一样
+
+    Person(const Person&amp; rhs);          //拷贝构造函数（编译器生成的）
+    …
+};
+</code></pre>
+<p>在这个语句中，</p>
+<pre><code class="language-cpp">auto cloneOfP(p);
+</code></pre>
+<p>其中<code>p</code>被传递给拷贝构造函数或者完美转发构造函数。调用拷贝构造函数要求在<code>p</code>前加上<code>const</code>的约束来满足函数形参的类型，而调用完美转发构造不需要加这些东西。从模板产生的重载函数是更好的匹配，所以编译器按照规则：调用最佳匹配的函数。“拷贝”non-<code>const</code>左值类型的<code>Person</code>交由完美转发构造函数处理，而不是拷贝构造函数。</p>
+<p>如果我们将本例中的传递的对象改为<code>const</code>的，会得到完全不同的结果：</p>
+<pre><code class="language-cpp">const Person cp(&quot;Nancy&quot;);   //现在对象是const的
+auto cloneOfP(cp);          //调用拷贝构造函数！
+</code></pre>
+<p>因为被拷贝的对象是<code>const</code>，是拷贝构造函数的精确匹配。虽然模板化的构造函数可以被实例化为有完全一样的函数签名，</p>
+<pre><code class="language-cpp">class Person {
+public:
+    explicit Person(const Person&amp; n);   //从模板实例化而来
+  
+    Person(const Person&amp; rhs);          //拷贝构造函数（编译器生成的）
+    …
+};
+</code></pre>
+<p>但是没啥影响，因为重载规则规定当模板实例化函数和非模板函数（或者称为“正常”函数）匹配优先级相当时，优先使用“正常”函数。拷贝构造函数（正常函数）因此胜过具有相同签名的模板实例化函数。</p>
+<p>（如果你想知道为什么编译器在生成一个拷贝构造函数时还会模板实例化一个相同签名的函数，参考<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item17.md">Item17</a>。）</p>
+<p>当继承纳入考虑范围时，完美转发的构造函数与编译器生成的拷贝、移动操作之间的交互会更加复杂。尤其是，派生类的拷贝和移动操作的传统实现会表现得非常奇怪。来看一下：</p>
+<pre><code class="language-cpp">class SpecialPerson: public Person {
+public:
+    SpecialPerson(const SpecialPerson&amp; rhs) //拷贝构造函数，调用基类的
+    : Person(rhs)                           //完美转发构造函数！
+    { … }
+
+    SpecialPerson(SpecialPerson&amp;&amp; rhs)      //移动构造函数，调用基类的
+    : Person(std::move(rhs))                //完美转发构造函数！
+    { … }
+};
+</code></pre>
+<p>如同注释表示的，派生类的拷贝和移动构造函数没有调用基类的拷贝和移动构造函数，而是调用了基类的完美转发构造函数！为了理解原因，要知道派生类将<code>SpecialPerson</code>类型的实参传递给其基类，然后通过模板实例化和重载解析规则作用于基类<code>Person</code>。最终，代码无法编译，因为<code>std::string</code>没有接受一个<code>SpecialPerson</code>的构造函数。</p>
+<p>我希望到目前为止，已经说服了你，如果可能的话，避免对通用引用形参的函数进行重载。但是，如果在通用引用上重载是糟糕的主意，那么如果需要可转发大多数实参类型的函数，但是对于某些实参类型又要特殊处理应该怎么办？存在多种办法。实际上，下一个条款，<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item27.md">Item27</a>专门来讨论这个问题，敬请阅读。</p>
+<p><strong>请记住：</strong></p>
+<ul>
+<li>对通用引用形参的函数进行重载，通用引用函数的调用机会几乎总会比你期望的多得多。</li>
+<li>完美转发构造函数是糟糕的实现，因为对于non-<code>const</code>左值，它们比拷贝构造函数而更匹配，而且会劫持派生类对于基类的拷贝和移动构造函数的调用。</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../5.RRefMovSemPerfForw/item25.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="../5.RRefMovSemPerfForw/item27.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../5.RRefMovSemPerfForw/item25.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../5.RRefMovSemPerfForw/item27.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>

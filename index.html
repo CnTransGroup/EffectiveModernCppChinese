@@ -1,0 +1,268 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Introduction - Effective Modern C++</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <!-- MathJax -->
+        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="Introduction.html">Introduction</a></li><li class="chapter-item expanded "><div>Chapter 1. Deducing Types</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="1.DeducingTypes/item1.html">Item 1: Understanding template type deduction</a></li><li class="chapter-item expanded "><a href="1.DeducingTypes/item2.html">Item 2: Understand auto type deduction</a></li><li class="chapter-item expanded "><a href="1.DeducingTypes/item3.html">Item 3: Understand decltype</a></li><li class="chapter-item expanded "><a href="1.DeducingTypes/item4.html">Item 4: Know how to view deduced types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 2. auto</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="2.Auto/item5.html">Item 5: Prefer auto to explicit type declarations</a></li><li class="chapter-item expanded "><a href="2.Auto/item6.html">Item 6: Use the explicitly typed initializer idiom when auto deduces undesired types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 3. Moving to Modern C++</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="3.MovingToModernCpp/item7.html">Item 7: Distinguish between () and {} when creating objects</a></li><li class="chapter-item expanded "><a href="3.MovingToModernCpp/item8.html">Item 8: Prefer nullptr to 0 or NULL</a></li><li class="chapter-item expanded "><a href="3.MovingToModernCpp/item9.html">Item 9: Prefer alias declarations to typedefs</a></li><li class="chapter-item expanded "><a href="3.MovingToModernCpp/item10.html">Item 10: Prefer scoped enums to unscoped enums</a></li><li class="chapter-item expanded "><a href="3.MovingToModernCpp/item11.html">Item 11: Prefer deleted functions to private undefined ones</a></li><li class="chapter-item expanded "><a href="3.MovingToModernCpp/item12.html">Item 12: Declare overriding functions override</a></li><li class="chapter-item expanded "><a href="3.MovingToModernCpp/item13.html">Item 13: Prefer const_iterators to iterators</a></li><li class="chapter-item expanded "><a href="3.MovingToModernCpp/item14.html">Item 14: Declare functions noexcept if they won't emit exceptions</a></li><li class="chapter-item expanded "><a href="3.MovingToModernCpp/item15.html">Item 15: Use constexpr whenever possible</a></li><li class="chapter-item expanded "><a href="3.MovingToModernCpp/item16.html">Item 16: Make const member functions thread safe</a></li><li class="chapter-item expanded "><a href="3.MovingToModernCpp/item17.html">Item 17: Understand special member funciton generation</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 4. Smart Pointer</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="4.SmartPointers/item18.html">Item 18: Use std::unique_ptr for exclusive-ownership resource management</a></li><li class="chapter-item expanded "><a href="4.SmartPointers/item19.html">Item 19: Use std::shared_ptr for shared-ownership resource management</a></li><li class="chapter-item expanded "><a href="4.SmartPointers/item20.html">Item 20: Use std::weak_ptr for std::shared_ptr like pointers that can dangle</a></li><li class="chapter-item expanded "><a href="4.SmartPointers/item21.html">Item 21: Prefer std::make_unique and std::make_shared to direct use of new</a></li><li class="chapter-item expanded "><a href="4.SmartPointers/item22.html">Item 22: When using the Pimpl Idiom, define special member functions in the implementation file</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 5. Rvalue References, Move Semantics, and Perfect Forwarding</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="5.RRefMovSemPerfForw/item23.html">Item 23: Understand std::move and std::forward</a></li><li class="chapter-item expanded "><a href="5.RRefMovSemPerfForw/item24.html">Item 24: Distinguish universal references from rvalue references</a></li><li class="chapter-item expanded "><a href="5.RRefMovSemPerfForw/item25.html">Item 25: Use std::move on rvalue references, std::forward on universal references</a></li><li class="chapter-item expanded "><a href="5.RRefMovSemPerfForw/item26.html">Item 26: Avoid overloading on universal references</a></li><li class="chapter-item expanded "><a href="5.RRefMovSemPerfForw/item27.html">Item 27: Familiarize yourself with alternatives to overaloading on univeral references</a></li><li class="chapter-item expanded "><a href="5.RRefMovSemPerfForw/item28.html">Item 28: Understand reference collapsing</a></li><li class="chapter-item expanded "><a href="5.RRefMovSemPerfForw/item29.html">Item 29: Assume that move operations are not present not cheap, and not used</a></li><li class="chapter-item expanded "><a href="5.RRefMovSemPerfForw/item30.html">Item 30: Familiarize yourself with perfect forwarding failure cases</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 6. Lambda Expressions</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="6.LambdaExpressions/item31.html">Item 31: Avoid default capture modes</a></li><li class="chapter-item expanded "><a href="6.LambdaExpressions/item32.html">Item 32: Use init capture to move objects into closures</a></li><li class="chapter-item expanded "><a href="6.LambdaExpressions/item33.html">Item 33: Use decltype on auto&&parameters to std::forward them</a></li><li class="chapter-item expanded "><a href="6.LambdaExpressions/item34.html">Item 34: Prefer lambdas to std::bind</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 7. The Concurrency API</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="7.TheConcurrencyAPI/Item35.html">Item 35: Prefer task-based programming to thread-based</a></li><li class="chapter-item expanded "><a href="7.TheConcurrencyAPI/item36.html">Item 36: Specify std::launch::async if asynchronicity is essential</a></li><li class="chapter-item expanded "><a href="7.TheConcurrencyAPI/item37.html">Item 37: Make std::threads unjionable on all paths</a></li><li class="chapter-item expanded "><a href="7.TheConcurrencyAPI/item38.html">Item 38: Be aware of varying thread handle destructor behavior</a></li><li class="chapter-item expanded "><a href="7.TheConcurrencyAPI/item39.html">Item 39: Consider void futures for one-shot event communication</a></li><li class="chapter-item expanded "><a href="7.TheConcurrencyAPI/item40.html">Item 40: Use std::atomic for concurrency, volatile for special memory</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 8. Tweaks</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="8.Tweaks/item41.html">Item 41: Consider pass by value for copyable parameters that are cheap to move and always copied</a></li><li class="chapter-item expanded "><a href="8.Tweaks/item42.html">Item 42: Consider emplacement instead of insertion</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Effective Modern C++</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h2 id="简介"><a class="header" href="#简介">简介</a></h2>
+<p>如果你是一个有经验的C++程序员，像我一样，你在初次接触C++11时候会想：“是啊是啊，我明白了。这也是C++，就多了点东西罢了。”但是你接触越多，你会惊讶于改变如此之多。<code>auto</code>声明，范围<code>for</code>循环，<em>lambda</em>表达式，还有右值引用都改变了C++的面貌，不过没有新的并发特性。还有一些地道的表达方式的改变。<code>0</code>和<code>typedef</code>被请出去了，<code>nullptr</code>和别名声明加进来了。枚举现在应该是限域的了。应该更倾向于智能指针而不是原始指针了。移动对象通常比拷贝它们要好了。</p>
+<p>有很多C++11的东西要学，先不提C++14了。</p>
+<p>更重要的是，要学习怎样<strong>高效地</strong>使用新机能。如果你需要关于”现代“C++的特性的基础信息，学习资源有很多，但是你想找一些指南，教你怎样应用这些特性来写出正确、高效、可维护、可移植的程序，那就相当有挑战性了。这就是这本书的切入点。它不致力于介绍C++11和C++14的特性，而致力于它们的高效应用。</p>
+<p>书中这些信息被打碎成不同指导方针，称为<strong>条款</strong>。想理解类型推导的不同形式？或者想知道什么时候该用（或者不该用）<code>auto</code>声明？你对为什么<code>const</code>成员函数应当线程安全，怎样使用<code>std::unique_ptr</code>实现Pimpl惯用法，为何要避免<em>lambda</em>表达式用默认捕获模式，或者<code>std::atomic</code>与<code>volatile</code>的区别感兴趣吗？答案都在这里。而且，答案无关于平台，顺应于标准。这本书是关于<strong>可移植</strong>C++的。</p>
+<p>本书的条款是<strong>指导方针</strong>，而不是<strong>规则</strong>，因为指导方针也有例外。每个条款中最关键的部分不是提出的建议，而是建议背后的基本原理。一旦你阅读了它，你就明白你的程序的情况是否违反了条款的指导意见。本书的真正目的不是告诉你应该做什么不应该做什么，而是帮你深入理解C++11和C++14中各种东西是如何工作的。</p>
+<h3 id="术语和惯例"><a class="header" href="#术语和惯例">术语和惯例</a></h3>
+<p>为了保证我们互相理解，对一些术语达成共识非常重要，首先有点讽刺的是，“C++”。有四个C++官方版本，每个版本名字后面带有相应ISO标准被采纳时的年份：C++98，C++03，C++11和C++14。C++98和C++03只有技术细节上的区别，所以本书统称为C++98。当我提到C++11时，我的意思是C++11和C++14，因为C++14是C++11的超集，当我写下C++14，我只意味着C++14。如果我仅仅提到C++，说明适用于所有的语言版本。</p>
+<table><thead><tr><th>我使用的词</th><th>我意思中的语言版本</th></tr></thead><tbody>
+<tr><td>C++</td><td>所有版本</td></tr>
+<tr><td>C++98</td><td>C++98和C++03</td></tr>
+<tr><td>C++11</td><td>C++11和C++14</td></tr>
+<tr><td>C++14</td><td>C++14</td></tr>
+</tbody></table>
+<p>因此，我可能会说C++重视效率（对所有版本正确），C++98缺少并发的支持（只对C++98和C++03正确），C++11支持<em>lambda</em>表达式（对C++11和C++14正确），C++14提供了普遍的函数返回类型推导（只对C++14正确）。</p>
+<p>最遍布C++11各处的特性可能是移动语义了，移动语义的基础是区分右值和左值表达式。那是因为右值表明这个对象适合移动操作，而左值一般不适合。概念上（尽管不经常在实际上用），右值对应于从函数返回的临时对象，而左值对应于你可以引用的（can refer to）对象，或者通过名字，或者通过指针或左值引用。</p>
+<p>对于判断一个表达式是否是左值的一个有用的启发就是，看看能否取得它的地址。如果能取地址，那么通常就是左值。如果不能，则通常是右值。这个启发的好处就是帮你记住，一个表达式的类型与它是左值还是右值无关。也就是说，有个类型<code>T</code>，你可以有类型<code>T</code>的左值和右值。当你碰到右值引用类型的形参时，记住这一点非常重要，因为形参本身是个左值：</p>
+<pre><code class="language-cpp">class Widget {
+public:
+    Widget(Widget&amp;&amp; rhs);   //rhs是个左值，
+    …                       //尽管它有个右值引用的类型
+};
+</code></pre>
+<p>在这里，在<code>Widget</code>移动构造函数里取<code>rhs</code>的地址非常合理，所以<code>rhs</code>是左值，尽管它的类型是右值引用。（由于相似的原因，所有形参都是左值。）</p>
+<p>那一小段代码揭示了我通常遵循的惯用法：</p>
+<ul>
+<li>
+<p>类的名字是<code>Widget</code>。每当我想指代任意的用户定义的类型时，我用<code>Widget</code>来代表。除非我需要展示类中的特定细节，否则我都直接使用<code>Widget</code>而不声明它。</p>
+</li>
+<li>
+<p>我使用形参名<code>rhs</code>（“right-hand side”）。这是我喜欢的<strong>移动操作</strong>（即移动构造函数和移动赋值运算符）和<strong>拷贝操作</strong>（拷贝构造函数和拷贝赋值运算符）的形参名。我也在双目运算符的右侧形参用它：</p>
+<pre><code class="language-cpp">Matrix operator+(const Matrix&amp; lhs, const Matrix&amp; rhs);
+</code></pre>
+<p>我希望你并不奇怪，我用<code>lhs</code>表示“left-hand side”。</p>
+</li>
+<li>
+<p>我在部分代码或者部分注释用特殊格式来吸引你的注意。（译者注：但是因为markdown没法在代码块中表明特殊格式，即原书使用的颜色改变和斜体注释，所以大部分情况下只能作罢，少部分地方会有额外说明。）在上面<code>Widget</code>移动构造函数中，我高亮了<code>rhs</code>的声明和“<code>rhs</code>是个左值”这部分注释。高亮代码不代表写的好坏。只是来提醒你需要额外的注意。</p>
+</li>
+<li>
+<p>我使用“<code>…</code>”来表示“这里有一些别的代码”。这种窄省略号不同于C++11可变参数模板源代码中的宽省略号（“<code>...</code>”）。这听起来不太清楚，但实际并不。比如：</p>
+<pre><code class="language-cpp">template&lt;typename... Ts&gt;                //这些是C++源代码的
+void processVals(const Ts&amp;... params)   //省略号
+{
+    …                                   //这里意思是“这有一些别的代码”
+}
+</code></pre>
+<p><code>processVals</code>的声明表明在声明模板的类型形参时我使用<code>typename</code>，但这只是我的个人偏好；关键字<code>class</code>可以做同样的事情。在我展示从C++标准中摘录的代码的情况下，我使用<code>class</code>声明类型形参，因为那就是标准中的做法。</p>
+</li>
+</ul>
+<p>当使用另一个同类型的对象来初始化一个对象时，新的对象被称为是用来初始化的对象（译者注：initializing object，即源对象）的一个<strong>副本</strong>（<em>copy</em>），尽管这个副本是通过移动构造函数创建的。很抱歉地说，C++中没有术语来区别一个对象是拷贝构造的副本还是移动构造的副本（译者注：此处为了区别拷贝这个“动作”与拷贝得到的“东西”，将<em>copy</em>按语境译为拷贝（动作）和副本（东西），此处及接下来几段按此方式翻译。在后面的条款中可能会不加区别地全部翻译为“拷贝”。）：</p>
+<pre><code class="language-cpp">void someFunc(Widget w);        //someFunc的形参w是传值过来
+
+Widget wid;                     //wid是个Widget
+
+someFunc(wid);                  //在这个someFunc调用中，w是通过拷贝构造函数
+                                //创建的副本
+
+someFunc(std::move(wid));       //在这个someFunc调用中，w是通过移动构造函数
+                                //创建的副本
+</code></pre>
+<p>右值副本通常由移动构造产生，左值副本通常由拷贝构造产生。如果你仅仅知道一个对象是其他对象的副本，构造这个副本需要花费多大代价是没法说的。比如在上面的代码中，在不知道是用左值还是右值传给<code>someFunc</code>情况下，没法说来创建形参<code>w</code>花费代价有多大。（你必须还要知道移动和拷贝<code>Widget</code>的代价。）</p>
+<p>在函数调用中，调用地传入的表达式称为函数的<strong>实参</strong>（<em>argument</em>）。实参被用来初始化函数的<strong>形参</strong>（<em>parameter</em>）。在上面第一次调用<code>someFunc</code>中，实参为<code>wid</code>。在第二次调用中，实参是<code>std::move(wid)</code>。两个调用中，形参都是<code>w</code>。实参和形参的区别非常重要，因为形参是左值，而用来初始化形参的实参可能是左值或者右值。这一点尤其与<strong>完美转发</strong>（<em>perfect forwarding</em>）过程有关，被传给函数的实参以原实参的右值性（<em>rvalueness</em>）或左值性（<em>lvalueness</em>），再被传给第二个函数。（完美转发讨论细节在<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item30.md">Item30</a>。）</p>
+<p>设计优良的函数是<strong>异常安全</strong>（<em>exception safe</em>）的，意味着他们至少提供基本的异常安全保证（即基本保证<em>basic guarantee</em>）。这样的函数保证调用者在异常抛出时，程序不变量保持完整（即没有数据结构是毁坏的），且没有资源泄漏。有强异常安全保证的函数确保调用者在异常产生时，程序保持在调用前的状态。</p>
+<p>当我提到“<strong>函数对象</strong>”时，我通常指的是某个支持<code>operator()</code>成员函数的类型的对象。换句话说，这个对象的行为像函数一样。偶尔我用稍微更普遍一些的术语，表示可以用非成员函数语法调用的任何东西（即“<code>fuctionName(arguments)</code>”）。这个广泛定义包括的不仅有支持<code>operator()</code>的对象，还有函数和类似C的函数指针。（较窄的定义来自于C++98，广泛点的定义来自于C++11。）将成员函数指针加进来的更深的普遍化产生了我们所知的<strong>可调用对象</strong>（<em>callable objects</em>）。你通常可以忽略其中的微小区别，简单地认为函数对象和可调用对象为C++中可以用函数调用语法调用的东西。</p>
+<p>通过<em>lambda</em>表达式创建的函数对象称为<strong>闭包</strong>（<em>closures</em>）。没什么必要去区别<em>lambda</em>表达式和它们创建的闭包，所以我经常把它们统称<em>lambdas</em>。类似地，我几乎不区分<strong>函数模板</strong>（<em>function templates</em>）（即产生函数的模板）和<strong>模板函数</strong>（<em>template functions</em>）（即从函数模板产生的函数）。<strong>类模板</strong>（<em>class templates</em>）和<strong>模板类</strong>（<em>template classes</em>）同上。</p>
+<p>C++中的许多东西都可被声明和定义。<strong>声明</strong>（<em>declarations</em>）引入名字和类型，并不给出比如存放在哪或者怎样实现等的细节：</p>
+<pre><code class="language-cpp">extern int x;                       //对象声明
+
+class Widget;                       //类声明
+
+bool func(const Widget&amp; w);         //函数声明
+
+enum class Color;                   //限域enum声明（见条款10）
+</code></pre>
+<p><strong>定义</strong>（<em>definitions</em>）提供存储位置或者实现细节：</p>
+<pre><code class="language-cpp">int x;                              //对象定义
+
+class Widget {                      //类定义
+    …
+};
+
+bool func(const Widget&amp; w)
+{ return w.size() &lt; 10; }           //函数定义
+
+enum class Color
+{ Yellow, Red, Blue };              //限域enum定义
+</code></pre>
+<p>定义也有资格称为声明，所以我倾向于只有声明，除非这个东西有个定义非常重要。</p>
+<p>我定义一个函数的<strong>签名</strong>（<em>signature</em>）为它声明的一部分，这个声明指定了形参类型和返回类型。函数名和形参名不是签名的一部分。在上面的例子中，<code>func</code>的签名是<code>bool(const Widget&amp;)</code>。函数声明中除了形参类型和返回类型之外的元素（比如<code>noexcept</code>或者<code>constexpr</code>，如果存在的话）都被排除在外。（<code>noexcept</code>和<code>constexpr</code>在<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item14.md">Item14</a>和<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item15.md">15</a>叙述。）“签名”的官方定义和我的有点不一样，但是对本书来说，我的定义更有用。（官方定义有时排除返回类型。）</p>
+<p>新的C++标准保持了旧标准写的代码的有效性，但是偶尔标准化委员会<strong>废弃</strong>（<em>deprecate</em>）一些特性。这些特性在标准化的“死囚区”中，可能在未来的标准中被移除。编译器可能警告也可能不警告这些废弃特性的使用，但是你应当尽量避免使用它们。它们不仅可能导致将来对移植的头痛，也通常不如来替代它们的新特性。例如，<code>std::auto_ptr</code>在C++11中被废弃，因为<code>std::unique_ptr</code>可以做同样的工作，而且只会做的更好。</p>
+<p>有时标准说一个操作的结果有<strong>未定义的行为</strong>（<em>undefined behavior</em>）。这意味着运行时表现是不可预测的，不用说你也想避开这种不确定性。有未定义行为的行动的例子是，在<code>std::vector</code>范围外使用方括号（“<code>[]</code>”），解引用未初始化的迭代器，或者引入数据竞争（即有两个或以上线程，至少一个是writer，同时访问相同的内存位置）。</p>
+<p>我将那些比如从<code>new</code>返回的内置指针（<em>build-in pointers</em>）称为<strong>原始指针</strong>（<em>raw pointers</em>）。原始指针的“反义词”是<strong>智能指针</strong>（<em>smart pointers</em>）。智能指针通常重载指针解引用运算符（<code>operator-&gt;</code>和<code>operator*</code>），但在<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item20.md">Item20</a>中解释看<code>std::weak_ptr</code>是个例外。</p>
+<p>在源代码注释中，我有时将“constructor”（构造函数）缩写为<code>ctor</code>，将“destructor”（析构函数）缩写为<code>dtor</code>。（译者注：但译文中基本都完整翻译了而没使用缩写。）</p>
+<h3 id="报告bug提出改进意见"><a class="header" href="#报告bug提出改进意见">报告bug，提出改进意见</a></h3>
+<p>我尽力将本书写的清晰、准确、富含有用的信息，但是当然还有些去做得更好的办法。如果你找到了任何类型的错误（技术上的，叙述上的，语法上的，印刷上的等），或者有些建议如何改进本书，请给我发电子邮件到emc++@aristeia.com。新的印刷给了我改进《Modern Effective C++》的机会，但我也不能解决我不知道的问题！</p>
+<p>要查看我所知道的事情，参见本书勘误表页，http://www.aristeia.com/BookErrata/emc++-errata.html 。</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="next" href="1.DeducingTypes/item1.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="next" href="1.DeducingTypes/item1.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>

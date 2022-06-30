@@ -1,0 +1,393 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Item 1: Understanding template type deduction - Effective Modern C++</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <!-- MathJax -->
+        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../Introduction.html">Introduction</a></li><li class="chapter-item expanded "><div>Chapter 1. Deducing Types</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../1.DeducingTypes/item1.html" class="active">Item 1: Understanding template type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item2.html">Item 2: Understand auto type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item3.html">Item 3: Understand decltype</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item4.html">Item 4: Know how to view deduced types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 2. auto</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../2.Auto/item5.html">Item 5: Prefer auto to explicit type declarations</a></li><li class="chapter-item expanded "><a href="../2.Auto/item6.html">Item 6: Use the explicitly typed initializer idiom when auto deduces undesired types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 3. Moving to Modern C++</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item7.html">Item 7: Distinguish between () and {} when creating objects</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item8.html">Item 8: Prefer nullptr to 0 or NULL</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item9.html">Item 9: Prefer alias declarations to typedefs</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item10.html">Item 10: Prefer scoped enums to unscoped enums</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item11.html">Item 11: Prefer deleted functions to private undefined ones</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item12.html">Item 12: Declare overriding functions override</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item13.html">Item 13: Prefer const_iterators to iterators</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item14.html">Item 14: Declare functions noexcept if they won't emit exceptions</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item15.html">Item 15: Use constexpr whenever possible</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item16.html">Item 16: Make const member functions thread safe</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item17.html">Item 17: Understand special member funciton generation</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 4. Smart Pointer</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../4.SmartPointers/item18.html">Item 18: Use std::unique_ptr for exclusive-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item19.html">Item 19: Use std::shared_ptr for shared-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item20.html">Item 20: Use std::weak_ptr for std::shared_ptr like pointers that can dangle</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item21.html">Item 21: Prefer std::make_unique and std::make_shared to direct use of new</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item22.html">Item 22: When using the Pimpl Idiom, define special member functions in the implementation file</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 5. Rvalue References, Move Semantics, and Perfect Forwarding</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item23.html">Item 23: Understand std::move and std::forward</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item24.html">Item 24: Distinguish universal references from rvalue references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item25.html">Item 25: Use std::move on rvalue references, std::forward on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item26.html">Item 26: Avoid overloading on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item27.html">Item 27: Familiarize yourself with alternatives to overaloading on univeral references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item28.html">Item 28: Understand reference collapsing</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item29.html">Item 29: Assume that move operations are not present not cheap, and not used</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item30.html">Item 30: Familiarize yourself with perfect forwarding failure cases</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 6. Lambda Expressions</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item31.html">Item 31: Avoid default capture modes</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item32.html">Item 32: Use init capture to move objects into closures</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item33.html">Item 33: Use decltype on auto&&parameters to std::forward them</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item34.html">Item 34: Prefer lambdas to std::bind</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 7. The Concurrency API</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/Item35.html">Item 35: Prefer task-based programming to thread-based</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item36.html">Item 36: Specify std::launch::async if asynchronicity is essential</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item37.html">Item 37: Make std::threads unjionable on all paths</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item38.html">Item 38: Be aware of varying thread handle destructor behavior</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item39.html">Item 39: Consider void futures for one-shot event communication</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item40.html">Item 40: Use std::atomic for concurrency, volatile for special memory</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 8. Tweaks</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../8.Tweaks/item41.html">Item 41: Consider pass by value for copyable parameters that are cheap to move and always copied</a></li><li class="chapter-item expanded "><a href="../8.Tweaks/item42.html">Item 42: Consider emplacement instead of insertion</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Effective Modern C++</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="第1章-类型推导"><a class="header" href="#第1章-类型推导">第1章 类型推导</a></h1>
+<p><strong>CHAPTER 1 Deducing Types</strong></p>
+<p>C++98有一套类型推导的规则：用于函数模板的规则。C++11修改了其中的一些规则并增加了两套规则，一套用于<code>auto</code>，一套用于<code>decltype</code>。C++14扩展了<code>auto</code>和<code>decltype</code>可能使用的范围。类型推导的广泛应用，让你从拼写那些或明显或冗杂的类型名的暴行中脱离出来。它让C++程序更具适应性，因为在源代码某处修改类型会通过类型推导自动传播到其它地方。但是类型推导也会让代码更复杂，因为由编译器进行的类型推导并不总是如我们期望的那样进行。</p>
+<p>如果对于类型推导操作没有一个扎实的理解，要想写出有现代感的C++程序是不可能的。类型推导随处可见：在函数模板调用中，在大多数<code>auto</code>出现的地方，在<code>decltype</code>表达式出现的地方，以及C++14中令人费解的应用<code>decltype(auto)</code>的地方。</p>
+<p>这一章是每个C++程序员都应该掌握的知识。它解释了模板类型推导是如何工作的，<code>auto</code>是如何依赖类型推导的，以及<code>decltype</code>是如何按照它自己那套独特的规则工作的。它甚至解释了你该如何强制编译器使类型推导的结果可视，这能让你确认编译器的类型推导是否按照你期望的那样进行。</p>
+<h2 id="条款一理解模板类型推导"><a class="header" href="#条款一理解模板类型推导">条款一：理解模板类型推导</a></h2>
+<p><strong>Item 1: Understand template type deduction</strong></p>
+<p>对于一个复杂系统的用户来说，很多时候他们最关心的是它做了什么而不是它怎么做的。在这一点上，C++中的模板类型推导表现得非常出色。数百万的程序员只需要向模板函数传递实参，就能通过编译器的类型推导获得令人满意的结果，尽管他们中的大多数在被逼无奈的情况下，对于传递给函数的那些实参是如何引导编译器进行类型推导的，也只能给出非常模糊的描述。</p>
+<p>如果那些人中包括你，我有一个好消息和一个坏消息。好消息是现在C++最重要最吸引人的特性<code>auto</code>是建立在模板类型推导的基础上的。如果你满意C++98的模板类型推导，那么你也会满意C++11的<code>auto</code>类型推导。坏消息是当模板类型推导规则应用于<code>auto</code>环境时，有时不如应用于template时那么直观。由于这个原因，真正理解<code>auto</code>基于的模板类型推导的方方面面非常重要。这项条款便包含了你需要知道的东西。</p>
+<p>如果你不介意浏览少许伪代码，我们可以考虑像这样一个函数模板：</p>
+<pre><code class="language-cpp">template&lt;typename T&gt;
+void f(ParamType param);
+</code></pre>
+<p>它的调用看起来像这样</p>
+<pre><code class="language-cpp">f(expr);                        //使用表达式调用f
+</code></pre>
+<p>在编译期间，编译器使用<code>expr</code>进行两个类型推导：一个是针对<code>T</code>的，另一个是针对<code>ParamType</code>的。这两个类型通常是不同的，因为<code>ParamType</code>包含一些修饰，比如<code>const</code>和引用修饰符。举个例子，如果模板这样声明：</p>
+<pre><code class="language-cpp">template&lt;typename T&gt;
+void f(const T&amp; param);         //ParamType是const T&amp;
+</code></pre>
+<p>然后这样进行调用</p>
+<pre><code class="language-cpp">int x = 0;
+f(x);                           //用一个int类型的变量调用f
+</code></pre>
+<p><code>T</code>被推导为<code>int</code>，<code>ParamType</code>却被推导为<code>const int&amp;</code></p>
+<p>我们可能很自然的期望<code>T</code>和传递进函数的实参是相同的类型，也就是，<code>T</code>为<code>expr</code>的类型。在上面的例子中，事实就是那样：<code>x</code>是<code>int</code>，<code>T</code>被推导为<code>int</code>。但有时情况并非总是如此，<code>T</code>的类型推导不仅取决于<code>expr</code>的类型，也取决于<code>ParamType</code>的类型。这里有三种情况：</p>
+<ul>
+<li><code>ParamType</code>是一个指针或引用，但不是通用引用（关于通用引用请参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item24.md">Item24</a>。在这里你只需要知道它存在，而且不同于左值引用和右值引用）</li>
+<li><code>ParamType</code>一个通用引用</li>
+<li><code>ParamType</code>既不是指针也不是引用</li>
+</ul>
+<p>我们下面将分成三个情景来讨论这三种情况，每个情景的都基于我们之前给出的模板：</p>
+<pre><code class="language-cpp">template&lt;typename T&gt;
+void f(ParamType param);
+
+f(expr);                        //从expr中推导T和ParamType
+</code></pre>
+<h3 id="情景一paramtype是一个指针或引用但不是通用引用"><a class="header" href="#情景一paramtype是一个指针或引用但不是通用引用">情景一：<code>ParamType</code>是一个指针或引用，但不是通用引用</a></h3>
+<p>最简单的情况是<code>ParamType</code>是一个指针或者引用，但非通用引用。在这种情况下，类型推导会这样进行：</p>
+<ol>
+<li>如果<code>expr</code>的类型是一个引用，忽略引用部分</li>
+<li>然后<code>expr</code>的类型与<code>ParamType</code>进行模式匹配来决定<code>T</code></li>
+</ol>
+<p>举个例子，如果这是我们的模板，</p>
+<pre><code class="language-cpp">template&lt;typename T&gt;
+void f(T&amp; param);               //param是一个引用
+</code></pre>
+<p>我们声明这些变量，</p>
+<pre><code class="language-cpp">int x=27;                       //x是int
+const int cx=x;                 //cx是const int
+const int&amp; rx=x;                //rx是指向作为const int的x的引用
+</code></pre>
+<p>在不同的调用中，对<code>param</code>和<code>T</code>推导的类型会是这样：</p>
+<pre><code class="language-cpp">f(x);                           //T是int，param的类型是int&amp;
+f(cx);                          //T是const int，param的类型是const int&amp;
+f(rx);                          //T是const int，param的类型是const int&amp;
+</code></pre>
+<p>在第二个和第三个调用中，注意因为<code>cx</code>和<code>rx</code>被指定为<code>const</code>值，所以<code>T</code>被推导为<code>const int</code>，从而产生了<code>const int&amp;</code>的形参类型。这对于调用者来说很重要。当他们传递一个<code>const</code>对象给一个引用类型的形参时，他们期望对象保持不可改变性，也就是说，形参是reference-to-<code>const</code>的。这也是为什么将一个<code>const</code>对象传递给以<code>T&amp;</code>类型为形参的模板安全的：对象的常量性<code>const</code>ness会被保留为<code>T</code>的一部分。</p>
+<p>在第三个例子中，注意即使<code>rx</code>的类型是一个引用，<code>T</code>也会被推导为一个非引用 ，这是因为<code>rx</code>的引用性（reference-ness）在类型推导中会被忽略。</p>
+<p>这些例子只展示了左值引用，但是类型推导会如左值引用一样对待右值引用。当然，右值只能传递给右值引用，但是在类型推导中这种限制将不复存在。</p>
+<p>如果我们将<code>f</code>的形参类型<code>T&amp;</code>改为<code>const T&amp;</code>，情况有所变化，但不会变得那么出人意料。<code>cx</code>和<code>rx</code>的<code>const</code>ness依然被遵守，但是因为现在我们假设<code>param</code>是reference-to-<code>const</code>，<code>const</code>不再被推导为<code>T</code>的一部分：</p>
+<pre><code class="language-cpp">template&lt;typename T&gt;
+void f(const T&amp; param);         //param现在是reference-to-const
+
+int x = 27;                     //如之前一样
+const int cx = x;               //如之前一样
+const int&amp; rx = x;              //如之前一样
+
+f(x);                           //T是int，param的类型是const int&amp;
+f(cx);                          //T是int，param的类型是const int&amp;
+f(rx);                          //T是int，param的类型是const int&amp;
+</code></pre>
+<p>同之前一样，<code>rx</code>的reference-ness在类型推导中被忽略了。</p>
+<p>如果<code>param</code>是一个指针（或者指向<code>const</code>的指针）而不是引用，情况本质上也一样：</p>
+<pre><code class="language-cpp">template&lt;typename T&gt;
+void f(T* param);               //param现在是指针
+
+int x = 27;                     //同之前一样
+const int *px = &amp;x;             //px是指向作为const int的x的指针
+
+f(&amp;x);                          //T是int，param的类型是int*
+f(px);                          //T是const int，param的类型是const int*
+</code></pre>
+<p>到现在为止，你会发现你自己打哈欠犯困，因为C++的类型推导规则对引用和指针形参如此自然，书面形式来看这些非常枯燥。所有事情都那么理所当然！那正是在类型推导系统中你所想要的。</p>
+<h3 id="情景二paramtype是一个通用引用"><a class="header" href="#情景二paramtype是一个通用引用">情景二：<code>ParamType</code>是一个通用引用</a></h3>
+<p>模板使用通用引用形参的话，那事情就不那么明显了。这样的形参被声明为像右值引用一样（也就是，在函数模板中假设有一个类型形参<code>T</code>，那么通用引用声明形式就是<code>T&amp;&amp;</code>)，它们的行为在传入左值实参时大不相同。完整的叙述请参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item24.md">Item24</a>，在这有些最必要的你还是需要知道：</p>
+<ul>
+<li>如果<code>expr</code>是左值，<code>T</code>和<code>ParamType</code>都会被推导为左值引用。这非常不寻常，第一，这是模板类型推导中唯一一种<code>T</code>被推导为引用的情况。第二，虽然<code>ParamType</code>被声明为右值引用类型，但是最后推导的结果是左值引用。</li>
+<li>如果<code>expr</code>是右值，就使用正常的（也就是<strong>情景一</strong>）推导规则</li>
+</ul>
+<p>举个例子：</p>
+<pre><code class="language-cpp">template&lt;typename T&gt;
+void f(T&amp;&amp; param);              //param现在是一个通用引用类型
+		
+int x=27;                       //如之前一样
+const int cx=x;                 //如之前一样
+const int &amp; rx=cx;              //如之前一样
+
+f(x);                           //x是左值，所以T是int&amp;，
+                                //param类型也是int&amp;
+
+f(cx);                          //cx是左值，所以T是const int&amp;，
+                                //param类型也是const int&amp;
+
+f(rx);                          //rx是左值，所以T是const int&amp;，
+                                //param类型也是const int&amp;
+
+f(27);                          //27是右值，所以T是int，
+                                //param类型就是int&amp;&amp;
+</code></pre>
+<p><a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item24.md">Item24</a>详细解释了为什么这些例子是像这样发生的。这里关键在于通用引用的类型推导规则是不同于普通的左值或者右值引用的。尤其是，当通用引用被使用时，类型推导会区分左值实参和右值实参，但是对非通用引用时不会区分。</p>
+<h3 id="情景三paramtype既不是指针也不是引用"><a class="header" href="#情景三paramtype既不是指针也不是引用">情景三：<code>ParamType</code>既不是指针也不是引用</a></h3>
+<p>当<code>ParamType</code>既不是指针也不是引用时，我们通过传值（pass-by-value）的方式处理：</p>
+<pre><code class="language-cpp">template&lt;typename T&gt;
+void f(T param);                //以传值的方式处理param
+</code></pre>
+<p>这意味着无论传递什么<code>param</code>都会成为它的一份拷贝——一个完整的新对象。事实上<code>param</code>成为一个新对象这一行为会影响<code>T</code>如何从<code>expr</code>中推导出结果。</p>
+<ol>
+<li>和之前一样，如果<code>expr</code>的类型是一个引用，忽略这个引用部分</li>
+<li>如果忽略<code>expr</code>的引用性（reference-ness）之后，<code>expr</code>是一个<code>const</code>，那就再忽略<code>const</code>。如果它是<code>volatile</code>，也忽略<code>volatile</code>（<code>volatile</code>对象不常见，它通常用于驱动程序的开发中。关于<code>volatile</code>的细节请参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.TheConcurrencyAPI/item40.md">Item40</a>）</li>
+</ol>
+<p>因此</p>
+<pre><code class="language-cpp">int x=27;                       //如之前一样
+const int cx=x;                 //如之前一样
+const int &amp; rx=cx;              //如之前一样
+
+f(x);                           //T和param的类型都是int
+f(cx);                          //T和param的类型都是int
+f(rx);                          //T和param的类型都是int
+</code></pre>
+<p>注意即使<code>cx</code>和<code>rx</code>表示<code>const</code>值，<code>param</code>也不是<code>const</code>。这是有意义的。<code>param</code>是一个完全独立于<code>cx</code>和<code>rx</code>的对象——是<code>cx</code>或<code>rx</code>的一个拷贝。具有常量性的<code>cx</code>和<code>rx</code>不可修改并不代表<code>param</code>也是一样。这就是为什么<code>expr</code>的常量性<code>const</code>ness（或易变性<code>volatile</code>ness)在推导<code>param</code>类型时会被忽略：因为<code>expr</code>不可修改并不意味着它的拷贝也不能被修改。</p>
+<p>认识到只有在传值给形参时才会忽略<code>const</code>（和<code>volatile</code>）这一点很重要，正如我们看到的，对于reference-to-<code>const</code>和pointer-to-<code>const</code>形参来说，<code>expr</code>的常量性<code>const</code>ness在推导时会被保留。但是考虑这样的情况，<code>expr</code>是一个<code>const</code>指针，指向<code>const</code>对象，<code>expr</code>通过传值传递给<code>param</code>：</p>
+<pre><code class="language-cpp">template&lt;typename T&gt;
+void f(T param);                //仍然以传值的方式处理param
+
+const char* const ptr =         //ptr是一个常量指针，指向常量对象 
+    &quot;Fun with pointers&quot;;
+
+f(ptr);                         //传递const char * const类型的实参
+</code></pre>
+<p>在这里，解引用符号（*）的右边的<code>const</code>表示<code>ptr</code>本身是一个<code>const</code>：<code>ptr</code>不能被修改为指向其它地址，也不能被设置为null（解引用符号左边的<code>const</code>表示<code>ptr</code>指向一个字符串，这个字符串是<code>const</code>，因此字符串不能被修改）。当<code>ptr</code>作为实参传给<code>f</code>，组成这个指针的每一比特都被拷贝进<code>param</code>。像这种情况，<code>ptr</code><strong>自身的值会被传给形参</strong>，根据类型推导的第三条规则，<code>ptr</code>自身的常量性<code>const</code>ness将会被省略，所以<code>param</code>是<code>const char*</code>，也就是一个可变指针指向<code>const</code>字符串。在类型推导中，这个指针指向的数据的常量性<code>const</code>ness将会被保留，但是当拷贝<code>ptr</code>来创造一个新指针<code>param</code>时，<code>ptr</code>自身的常量性<code>const</code>ness将会被忽略。</p>
+<h3 id="数组实参"><a class="header" href="#数组实参">数组实参</a></h3>
+<p>上面的内容几乎覆盖了模板类型推导的大部分内容，但这里还有一些小细节值得注意，比如数组类型不同于指针类型，虽然它们两个有时候是可互换的。关于这个错觉最常见的例子是，在很多上下文中数组会退化为指向它的第一个元素的指针。这样的退化允许像这样的代码可以被编译：</p>
+<pre><code class="language-cpp">const char name[] = &quot;J. P. Briggs&quot;;     //name的类型是const char[13]
+
+const char * ptrToName = name;          //数组退化为指针
+</code></pre>
+<p>在这里<code>const char*</code>指针<code>ptrToName</code>会由<code>name</code>初始化，而<code>name</code>的类型为<code>const char[13]</code>，这两种类型（<code>const char*</code>和<code>const char[13]</code>）是不一样的，但是由于数组退化为指针的规则，编译器允许这样的代码。</p>
+<p>但要是一个数组传值给一个模板会怎样？会发生什么？</p>
+<pre><code class="language-cpp">template&lt;typename T&gt;
+void f(T param);                        //传值形参的模板
+
+f(name);                                //T和param会推导成什么类型?
+</code></pre>
+<p>我们从一个简单的例子开始，这里有一个函数的形参是数组，是的，这样的语法是合法的，</p>
+<pre><code class="language-cpp">void myFunc(int param[]);
+</code></pre>
+<p>但是数组声明会被视作指针声明，这意味着<code>myFunc</code>的声明和下面声明是等价的：</p>
+<pre><code class="language-cpp">void myFunc(int* param);                //与上面相同的函数
+</code></pre>
+<p>数组与指针形参这样的等价是C语言的产物，C++又是建立在C语言的基础上，它让人产生了一种数组和指针是等价的的错觉。</p>
+<p>因为数组形参会视作指针形参，所以传值给模板的一个数组类型会被推导为一个指针类型。这意味着在模板函数<code>f</code>的调用中，它的类型形参<code>T</code>会被推导为<code>const char*</code>：</p>
+<pre><code class="language-cpp">f(name);                        //name是一个数组，但是T被推导为const char*
+</code></pre>
+<p>但是现在难题来了，虽然函数不能声明形参为真正的数组，但是<strong>可以</strong>接受指向数组的<strong>引用</strong>！所以我们修改<code>f</code>为传引用：</p>
+<pre><code class="language-cpp">template&lt;typename T&gt;
+void f(T&amp; param);                       //传引用形参的模板
+</code></pre>
+<p>我们这样进行调用，</p>
+<pre><code class="language-cpp">f(name);                                //传数组给f
+</code></pre>
+<p><code>T</code>被推导为了真正的数组！这个类型包括了数组的大小，在这个例子中<code>T</code>被推导为<code>const char[13]</code>，<code>f</code>的形参（对这个数组的引用）的类型则为<code>const char (&amp;)[13]</code>。是的，这种语法看起来简直有毒，但是知道它将会让你在关心这些问题的人的提问中获得大神的称号。</p>
+<p>有趣的是，可声明指向数组的引用的能力，使得我们可以创建一个模板函数来推导出数组的大小：</p>
+<pre><code class="language-cpp">//在编译期间返回一个数组大小的常量值（//数组形参没有名字，
+//因为我们只关心数组的大小）
+template&lt;typename T, std::size_t N&gt;                     //关于
+constexpr std::size_t arraySize(T (&amp;)[N]) noexcept      //constexpr
+{                                                       //和noexcept
+    return N;                                           //的信息
+}                                                       //请看下面
+</code></pre>
+<p>在<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item15.md">Item15</a>提到将一个函数声明为<code>constexpr</code>使得结果在编译期间可用。这使得我们可以用一个花括号声明一个数组，然后第二个数组可以使用第一个数组的大小作为它的大小，就像这样：</p>
+<pre><code class="language-cpp">int keyVals[] = { 1, 3, 7, 9, 11, 22, 35 };             //keyVals有七个元素
+
+int mappedVals[arraySize(keyVals)];                     //mappedVals也有七个
+</code></pre>
+<p>当然作为一个现代C++程序员，你自然应该想到使用<code>std::array</code>而不是内置的数组：</p>
+<pre><code class="language-cpp">std::array&lt;int, arraySize(keyVals)&gt; mappedVals;         //mappedVals的大小为7
+</code></pre>
+<p>至于<code>arraySize</code>被声明为<code>noexcept</code>，会使得编译器生成更好的代码，具体的细节请参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item14.md">Item14</a>。</p>
+<h3 id="函数实参"><a class="header" href="#函数实参">函数实参</a></h3>
+<p>在C++中不只是数组会退化为指针，函数类型也会退化为一个函数指针，我们对于数组类型推导的全部讨论都可以应用到函数类型推导和退化为函数指针上来。结果是：</p>
+<pre><code class="language-cpp">void someFunc(int, double);         //someFunc是一个函数，
+                                    //类型是void(int, double)
+
+template&lt;typename T&gt;
+void f1(T param);                   //传值给f1
+
+template&lt;typename T&gt;
+void f2(T &amp; param);                 //传引用给f2
+
+f1(someFunc);                       //param被推导为指向函数的指针，
+                                    //类型是void(*)(int, double)
+f2(someFunc);                       //param被推导为指向函数的引用，
+                                    //类型是void(&amp;)(int, double)
+</code></pre>
+<p>这个实际上没有什么不同，但是如果你知道数组退化为指针，你也会知道函数退化为指针。</p>
+<p>这里你需要知道：<code>auto</code>依赖于模板类型推导。正如我在开始谈论的，在大多数情况下它们的行为很直接。在通用引用中对于左值的特殊处理使得本来很直接的行为变得有些污点，然而，数组和函数退化为指针把这团水搅得更浑浊。有时你只需要编译器告诉你推导出的类型是什么。这种情况下，翻到<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item4.md">item4</a>,它会告诉你如何让编译器这么做。</p>
+<p><strong>请记住：</strong></p>
+<ul>
+<li>在模板类型推导时，有引用的实参会被视为无引用，他们的引用会被忽略</li>
+<li>对于通用引用的推导，左值实参会被特殊对待</li>
+<li>对于传值类型推导，<code>const</code>和/或<code>volatile</code>实参会被认为是non-<code>const</code>的和non-<code>volatile</code>的</li>
+<li>在模板类型推导时，数组名或者函数名实参会退化为指针，除非它们被用于初始化引用 </li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../Introduction.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="../1.DeducingTypes/item2.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../Introduction.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../1.DeducingTypes/item2.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>

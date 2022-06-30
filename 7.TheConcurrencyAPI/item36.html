@@ -1,0 +1,281 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Item 36: Specify std::launch::async if asynchronicity is essential - Effective Modern C++</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <!-- MathJax -->
+        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../Introduction.html">Introduction</a></li><li class="chapter-item expanded "><div>Chapter 1. Deducing Types</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../1.DeducingTypes/item1.html">Item 1: Understanding template type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item2.html">Item 2: Understand auto type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item3.html">Item 3: Understand decltype</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item4.html">Item 4: Know how to view deduced types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 2. auto</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../2.Auto/item5.html">Item 5: Prefer auto to explicit type declarations</a></li><li class="chapter-item expanded "><a href="../2.Auto/item6.html">Item 6: Use the explicitly typed initializer idiom when auto deduces undesired types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 3. Moving to Modern C++</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item7.html">Item 7: Distinguish between () and {} when creating objects</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item8.html">Item 8: Prefer nullptr to 0 or NULL</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item9.html">Item 9: Prefer alias declarations to typedefs</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item10.html">Item 10: Prefer scoped enums to unscoped enums</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item11.html">Item 11: Prefer deleted functions to private undefined ones</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item12.html">Item 12: Declare overriding functions override</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item13.html">Item 13: Prefer const_iterators to iterators</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item14.html">Item 14: Declare functions noexcept if they won't emit exceptions</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item15.html">Item 15: Use constexpr whenever possible</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item16.html">Item 16: Make const member functions thread safe</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item17.html">Item 17: Understand special member funciton generation</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 4. Smart Pointer</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../4.SmartPointers/item18.html">Item 18: Use std::unique_ptr for exclusive-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item19.html">Item 19: Use std::shared_ptr for shared-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item20.html">Item 20: Use std::weak_ptr for std::shared_ptr like pointers that can dangle</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item21.html">Item 21: Prefer std::make_unique and std::make_shared to direct use of new</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item22.html">Item 22: When using the Pimpl Idiom, define special member functions in the implementation file</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 5. Rvalue References, Move Semantics, and Perfect Forwarding</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item23.html">Item 23: Understand std::move and std::forward</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item24.html">Item 24: Distinguish universal references from rvalue references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item25.html">Item 25: Use std::move on rvalue references, std::forward on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item26.html">Item 26: Avoid overloading on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item27.html">Item 27: Familiarize yourself with alternatives to overaloading on univeral references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item28.html">Item 28: Understand reference collapsing</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item29.html">Item 29: Assume that move operations are not present not cheap, and not used</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item30.html">Item 30: Familiarize yourself with perfect forwarding failure cases</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 6. Lambda Expressions</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item31.html">Item 31: Avoid default capture modes</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item32.html">Item 32: Use init capture to move objects into closures</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item33.html">Item 33: Use decltype on auto&&parameters to std::forward them</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item34.html">Item 34: Prefer lambdas to std::bind</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 7. The Concurrency API</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/Item35.html">Item 35: Prefer task-based programming to thread-based</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item36.html" class="active">Item 36: Specify std::launch::async if asynchronicity is essential</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item37.html">Item 37: Make std::threads unjionable on all paths</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item38.html">Item 38: Be aware of varying thread handle destructor behavior</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item39.html">Item 39: Consider void futures for one-shot event communication</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item40.html">Item 40: Use std::atomic for concurrency, volatile for special memory</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 8. Tweaks</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../8.Tweaks/item41.html">Item 41: Consider pass by value for copyable parameters that are cheap to move and always copied</a></li><li class="chapter-item expanded "><a href="../8.Tweaks/item42.html">Item 42: Consider emplacement instead of insertion</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Effective Modern C++</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h2 id="条款三十六如果有异步的必要请指定stdlaunchasync"><a class="header" href="#条款三十六如果有异步的必要请指定stdlaunchasync">条款三十六：如果有异步的必要请指定<code>std::launch::async</code></a></h2>
+<p><strong>Item 36: Specify <code>std::launch::async</code> if asynchronicity is essential.</strong></p>
+<p>当你调用<code>std::async</code>执行函数时（或者其他可调用对象），你通常希望异步执行函数。但是这并不一定是你要求<code>std::async</code>执行的操作。你事实上要求这个函数按照<code>std::async</code>启动策略来执行。有两种标准策略，每种都通过<code>std::launch</code>这个限域<code>enum</code>的一个枚举名表示（关于枚举的更多细节参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item10.md">Item10</a>）。假定一个函数<code>f</code>传给<code>std::async</code>来执行：</p>
+<ul>
+<li><strong><code>std::launch::async</code>启动策略</strong>意味着<code>f</code>必须异步执行，即在不同的线程。</li>
+<li><strong><code>std::launch::deferred</code>启动策略</strong>意味着<code>f</code>仅当在<code>std::async</code>返回的<em>future</em>上调用<code>get</code>或者<code>wait</code>时才执行。这表示<code>f</code><strong>推迟</strong>到存在这样的调用时才执行（译者注：异步与并发是两个不同概念，这里侧重于惰性求值）。当<code>get</code>或<code>wait</code>被调用，<code>f</code>会同步执行，即调用方被阻塞，直到<code>f</code>运行结束。如果<code>get</code>和<code>wait</code>都没有被调用，<code>f</code>将不会被执行。（这是个简化说法。关键点不是要在其上调用<code>get</code>或<code>wait</code>的那个<em>future</em>，而是<em>future</em>引用的那个共享状态。（<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.TheConcurrencyAPI/item38.md">Item38</a>讨论了<em>future</em>与共享状态的关系。）因为<code>std::future</code>支持移动，也可以用来构造<code>std::shared_future</code>，并且因为<code>std::shared_future</code>可以被拷贝，对共享状态——对<code>f</code>传到的那个<code>std::async</code>进行调用产生的——进行引用的<em>future</em>对象，有可能与<code>std::async</code>返回的那个<em>future</em>对象不同。这非常绕口，所以经常回避这个事实，简称为在<code>std::async</code>返回的<em>future</em>上调用<code>get</code>或<code>wait</code>。）</li>
+</ul>
+<p>可能让人惊奇的是，<code>std::async</code>的默认启动策略——你不显式指定一个策略时它使用的那个——不是上面中任意一个。相反，是求或在一起的。下面的两种调用含义相同：</p>
+<pre><code class="language-cpp">auto fut1 = std::async(f);                      //使用默认启动策略运行f
+auto fut2 = std::async(std::launch::async |     //使用async或者deferred运行f
+                       std::launch::deferred,
+                       f);
+</code></pre>
+<p>因此默认策略允许<code>f</code>异步或者同步执行。如同<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.TheConcurrencyAPI/Item35.md">Item35</a>中指出，这种灵活性允许<code>std::async</code>和标准库的线程管理组件承担线程创建和销毁的责任，避免资源超额，以及平衡负载。这就是使用<code>std::async</code>并发编程如此方便的原因。</p>
+<p>但是，使用默认启动策略的<code>std::async</code>也有一些有趣的影响。给定一个线程<code>t</code>执行此语句：</p>
+<pre><code class="language-cpp">auto fut = std::async(f);   //使用默认启动策略运行f
+</code></pre>
+<ul>
+<li><strong>无法预测<code>f</code>是否会与<code>t</code>并发运行</strong>，因为<code>f</code>可能被安排延迟运行。</li>
+<li><strong>无法预测<code>f</code>是否会在与某线程相异的另一线程上执行，这个某线程在<code>fut</code>上调用<code>get</code>或<code>wait</code></strong>。如果对<code>fut</code>调用函数的线程是<code>t</code>，含义就是无法预测<code>f</code>是否在异于<code>t</code>的另一线程上执行。</li>
+<li><strong>无法预测<code>f</code>是否执行</strong>，因为不能确保在程序每条路径上，都会不会在<code>fut</code>上调用<code>get</code>或者<code>wait</code>。</li>
+</ul>
+<p>默认启动策略的调度灵活性导致使用<code>thread_local</code>变量比较麻烦，因为这意味着如果<code>f</code>读写了<strong>线程本地存储</strong>（<em>thread-local storage</em>，TLS），不可能预测到哪个线程的变量被访问：</p>
+<pre><code class="language-cpp">auto fut = std::async(f);   //f的TLS可能是为单独的线程建的，
+                            //也可能是为在fut上调用get或者wait的线程建的
+</code></pre>
+<p>这还会影响到基于<code>wait</code>的循环使用超时机制，因为在一个延时的任务（参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.TheConcurrencyAPI/Item35.md">Item35</a>）上调用<code>wait_for</code>或者<code>wait_until</code>会产生<code>std::launch::deferred</code>值。意味着，以下循环看似应该最终会终止，但可能实际上永远运行：</p>
+<pre><code class="language-cpp">using namespace std::literals;      //为了使用C++14中的时间段后缀；参见条款34
+
+void f()                            //f休眠1秒，然后返回
+{
+    std::this_thread::sleep_for(1s);
+}
+
+auto fut = std::async(f);           //异步运行f（理论上）
+
+while (fut.wait_for(100ms) !=       //循环，直到f完成运行时停止...
+       std::future_status::ready)   //但是有可能永远不会发生！
+{
+    …
+}
+</code></pre>
+<p>如果<code>f</code>与调用<code>std::async</code>的线程并发运行（即，如果为<code>f</code>选择的启动策略是<code>std::launch::async</code>），这里没有问题（假定<code>f</code>最终会执行完毕），但是如果<code>f</code>是延迟执行，<code>fut.wait_for</code>将总是返回<code>std::future_status::deferred</code>。这永远不等于<code>std::future_status::ready</code>，循环会永远执行下去。</p>
+<p>这种错误很容易在开发和单元测试中忽略，因为它可能在负载过高时才能显现出来。那些是使机器资源超额或者线程耗尽的条件，此时任务推迟执行才最有可能发生。毕竟，如果硬件没有资源耗尽，没有理由不安排任务并发执行。</p>
+<p>修复也是很简单的：只需要检查与<code>std::async</code>对应的<code>future</code>是否被延迟执行即可，那样就会避免进入无限循环。不幸的是，没有直接的方法来查看<code>future</code>是否被延迟执行。相反，你必须调用一个超时函数——比如<code>wait_for</code>这种函数。在这个情况中，你不想等待任何事，只想查看返回值是否是<code>std::future_status::deferred</code>，所以无须怀疑，使用0调用<code>wait_for</code>：</p>
+<pre><code class="language-cpp">auto fut = std::async(f);               //同上
+
+if (fut.wait_for(0s) ==                 //如果task是deferred（被延迟）状态
+    std::future_status::deferred)
+{
+    …                                   //在fut上调用wait或get来异步调用f
+} else {                                //task没有deferred（被延迟）
+    while (fut.wait_for(100ms) !=       //不可能无限循环（假设f完成）
+           std::future_status::ready) {
+        …                               //task没deferred（被延迟），也没ready（已准备）
+                                        //做并行工作直到已准备
+    }
+    …                                   //fut是ready（已准备）状态
+}
+</code></pre>
+<p>这些各种考虑的结果就是，只要满足以下条件，<code>std::async</code>的默认启动策略就可以使用：</p>
+<ul>
+<li>任务不需要和执行<code>get</code>或<code>wait</code>的线程并行执行。</li>
+<li>读写哪个线程的<code>thread_local</code>变量没什么问题。</li>
+<li>可以保证会在<code>std::async</code>返回的<em>future</em>上调用<code>get</code>或<code>wait</code>，或者该任务可能永远不会执行也可以接受。</li>
+<li>使用<code>wait_for</code>或<code>wait_until</code>编码时考虑到了延迟状态。</li>
+</ul>
+<p>如果上述条件任何一个都满足不了，你可能想要保证<code>std::async</code>会安排任务进行真正的异步执行。进行此操作的方法是调用时，将<code>std::launch::async</code>作为第一个实参传递：</p>
+<pre><code class="language-cpp">auto fut = std::async(std::launch::async, f);   //异步启动f的执行
+</code></pre>
+<p>事实上，对于一个类似<code>std::async</code>行为的函数，但是会自动使用<code>std::launch::async</code>作为启动策略的工具，拥有它会非常方便，而且编写起来很容易也使它看起来很棒。C++11版本如下：</p>
+<pre><code class="language-cpp">template&lt;typename F, typename... Ts&gt;
+inline
+std::future&lt;typename std::result_of&lt;F(Ts...)&gt;::type&gt;
+reallyAsync(F&amp;&amp; f, Ts&amp;&amp;... params)          //返回异步调用f(params...)得来的future
+{
+    return std::async(std::launch::async,
+                      std::forward&lt;F&gt;(f),
+                      std::forward&lt;Ts&gt;(params)...);
+}
+</code></pre>
+<p>这个函数接受一个可调用对象<code>f</code>和0或多个形参<code>params</code>，然后完美转发（参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item25.md">Item25</a>）给<code>std::async</code>，使用<code>std::launch::async</code>作为启动策略。就像<code>std::async</code>一样，返回<code>std::future</code>作为用<code>params</code>调用<code>f</code>得到的结果。确定结果的类型很容易，因为<em>type trait</em> <code>std::result_of</code>可以提供给你。（参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item9.md">Item9</a>关于<em>type trait</em>的详细表述。）</p>
+<p><code>reallyAsync</code>就像<code>std::async</code>一样使用：</p>
+<pre><code class="language-cpp">auto fut = reallyAsync(f); //异步运行f，如果std::async抛出异常它也会抛出
+</code></pre>
+<p>在C++14中，<code>reallyAsync</code>返回类型的推导能力可以简化函数的声明：</p>
+<pre><code class="language-cpp">template&lt;typename F, typename... Ts&gt;
+inline
+auto                                        // C++14
+reallyAsync(F&amp;&amp; f, Ts&amp;&amp;... params)
+{
+    return std::async(std::launch::async,
+                      std::forward&lt;F&gt;(f),
+                      std::forward&lt;Ts&gt;(params)...);
+}
+</code></pre>
+<p>这个版本清楚表明，<code>reallyAsync</code>除了使用<code>std::launch::async</code>启动策略之外什么也没有做。</p>
+<p><strong>请记住：</strong></p>
+<ul>
+<li><code>std::async</code>的默认启动策略是异步和同步执行兼有的。</li>
+<li>这个灵活性导致访问<code>thread_local</code>s的不确定性，隐含了任务可能不会被执行的意思，会影响调用基于超时的<code>wait</code>的程序逻辑。</li>
+<li>如果异步执行任务非常关键，则指定<code>std::launch::async</code>。</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../7.TheConcurrencyAPI/Item35.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="../7.TheConcurrencyAPI/item37.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../7.TheConcurrencyAPI/Item35.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../7.TheConcurrencyAPI/item37.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>

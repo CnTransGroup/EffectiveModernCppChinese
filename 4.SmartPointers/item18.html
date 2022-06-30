@@ -1,0 +1,339 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Item 18: Use std::unique_ptr for exclusive-ownership resource management - Effective Modern C++</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <!-- MathJax -->
+        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../Introduction.html">Introduction</a></li><li class="chapter-item expanded "><div>Chapter 1. Deducing Types</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../1.DeducingTypes/item1.html">Item 1: Understanding template type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item2.html">Item 2: Understand auto type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item3.html">Item 3: Understand decltype</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item4.html">Item 4: Know how to view deduced types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 2. auto</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../2.Auto/item5.html">Item 5: Prefer auto to explicit type declarations</a></li><li class="chapter-item expanded "><a href="../2.Auto/item6.html">Item 6: Use the explicitly typed initializer idiom when auto deduces undesired types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 3. Moving to Modern C++</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item7.html">Item 7: Distinguish between () and {} when creating objects</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item8.html">Item 8: Prefer nullptr to 0 or NULL</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item9.html">Item 9: Prefer alias declarations to typedefs</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item10.html">Item 10: Prefer scoped enums to unscoped enums</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item11.html">Item 11: Prefer deleted functions to private undefined ones</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item12.html">Item 12: Declare overriding functions override</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item13.html">Item 13: Prefer const_iterators to iterators</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item14.html">Item 14: Declare functions noexcept if they won't emit exceptions</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item15.html">Item 15: Use constexpr whenever possible</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item16.html">Item 16: Make const member functions thread safe</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item17.html">Item 17: Understand special member funciton generation</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 4. Smart Pointer</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../4.SmartPointers/item18.html" class="active">Item 18: Use std::unique_ptr for exclusive-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item19.html">Item 19: Use std::shared_ptr for shared-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item20.html">Item 20: Use std::weak_ptr for std::shared_ptr like pointers that can dangle</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item21.html">Item 21: Prefer std::make_unique and std::make_shared to direct use of new</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item22.html">Item 22: When using the Pimpl Idiom, define special member functions in the implementation file</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 5. Rvalue References, Move Semantics, and Perfect Forwarding</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item23.html">Item 23: Understand std::move and std::forward</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item24.html">Item 24: Distinguish universal references from rvalue references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item25.html">Item 25: Use std::move on rvalue references, std::forward on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item26.html">Item 26: Avoid overloading on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item27.html">Item 27: Familiarize yourself with alternatives to overaloading on univeral references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item28.html">Item 28: Understand reference collapsing</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item29.html">Item 29: Assume that move operations are not present not cheap, and not used</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item30.html">Item 30: Familiarize yourself with perfect forwarding failure cases</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 6. Lambda Expressions</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item31.html">Item 31: Avoid default capture modes</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item32.html">Item 32: Use init capture to move objects into closures</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item33.html">Item 33: Use decltype on auto&&parameters to std::forward them</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item34.html">Item 34: Prefer lambdas to std::bind</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 7. The Concurrency API</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/Item35.html">Item 35: Prefer task-based programming to thread-based</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item36.html">Item 36: Specify std::launch::async if asynchronicity is essential</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item37.html">Item 37: Make std::threads unjionable on all paths</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item38.html">Item 38: Be aware of varying thread handle destructor behavior</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item39.html">Item 39: Consider void futures for one-shot event communication</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item40.html">Item 40: Use std::atomic for concurrency, volatile for special memory</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 8. Tweaks</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../8.Tweaks/item41.html">Item 41: Consider pass by value for copyable parameters that are cheap to move and always copied</a></li><li class="chapter-item expanded "><a href="../8.Tweaks/item42.html">Item 42: Consider emplacement instead of insertion</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Effective Modern C++</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="第4章-智能指针"><a class="header" href="#第4章-智能指针">第4章 智能指针</a></h1>
+<p><strong>CHAPTER 4 Smart Pointers</strong></p>
+<p>诗人和歌曲作家喜欢爱。有时候喜欢计数。很少情况下两者兼有。受伊丽莎白·巴雷特·勃朗宁（Elizabeth Barrett Browning）对爱和数的不同看法的启发（“我怎么爱你？让我数一数。”）和保罗·西蒙（Paul Simon）（“离开你的爱人必须有50种方法。”），我们可以试着枚举一些为什么原始指针很难被爱的原因：</p>
+<ol>
+<li>它的声明不能指示所指到底是单个对象还是数组。</li>
+<li>它的声明没有告诉你用完后是否应该销毁它，即指针是否拥有所指之物。</li>
+<li>如果你决定你应该销毁指针所指对象，没人告诉你该用<code>delete</code>还是其他析构机制（比如将指针传给专门的销毁函数）。</li>
+<li>如果你发现该用<code>delete</code>。 原因1说了可能不知道该用单个对象形式（“<code>delete</code>”）还是数组形式（“<code>delete[]</code>”）。如果用错了结果是未定义的。</li>
+<li>假设你确定了指针所指，知道销毁机制，也很难确定你在所有执行路径上都执行了<strong>恰为一次</strong>销毁操作（包括异常产生后的路径）。少一条路径就会产生资源泄漏，销毁多次还会导致未定义行为。</li>
+<li>一般来说没有办法告诉你指针是否变成了悬空指针（dangling pointers），即内存中不再存在指针所指之物。在对象销毁后指针仍指向它们就会产生悬空指针。</li>
+</ol>
+<p>原始指针是强大的工具，当然，另一方面几十年的经验证明，只要注意力稍有疏忽，这个强大的工具就会攻击它的主人。</p>
+<p><strong>智能指针</strong>（<em>smart pointers</em>）是解决这些问题的一种办法。智能指针包裹原始指针，它们的行为看起来像被包裹的原始指针，但避免了原始指针的很多陷阱。你应该更倾向于智能指针而不是原始指针。几乎原始指针能做的所有事情智能指针都能做，而且出错的机会更少。</p>
+<p>在C++11中存在四种智能指针：<code>std::auto_ptr</code>，<code>std::unique_ptr</code>，<code>std::shared_ptr</code>，<code> std::weak_ptr</code>。都是被设计用来帮助管理动态对象的生命周期，在适当的时间通过适当的方式来销毁对象，以避免出现资源泄露或者异常行为。</p>
+<p><code>std::auto_ptr</code>是来自C++98的已废弃遗留物，它是一次标准化的尝试，后来变成了C++11的<code>std::unique_ptr</code>。要正确的模拟原生指针需要移动语义，但是C++98没有这个东西。取而代之，<code>std::auto_ptr</code>拉拢拷贝操作来达到自己的移动意图。这导致了令人奇怪的代码（拷贝一个<code>std::auto_ptr</code>会将它本身设置为null！）和令人沮丧的使用限制（比如不能将<code>std::auto_ptr</code>放入容器）。</p>
+<p><code>std::unique_ptr</code>能做<code>std::auto_ptr</code>可以做的所有事情以及更多。它能高效完成任务，而且不会扭曲自己的原本含义而变成拷贝对象。在所有方面它都比<code>std::auto_ptr</code>好。现在<code>std::auto_ptr</code>唯一合法的使用场景就是代码使用C++98编译器编译。除非你有上述限制，否则你就该把<code>std::auto_ptr</code>替换为<code>std::unique_ptr</code>而且绝不回头。</p>
+<p>各种智能指针的API有极大的不同。唯一功能性相似的可能就是默认构造函数。因为有很多关于这些API的详细手册，所以我将只关注那些API概览没有提及的内容，比如值得注意的使用场景，运行时性能分析等，掌握这些信息可以更高效的使用智能指针。</p>
+<h2 id="条款十八对于独占资源使用stdunique_ptr"><a class="header" href="#条款十八对于独占资源使用stdunique_ptr">条款十八：对于独占资源使用<code>std::unique_ptr</code></a></h2>
+<p><strong>Item 18: Use <code>std::unique_ptr</code> for exclusive-ownership resource management</strong></p>
+<p>当你需要一个智能指针时，<code>std::unique_ptr</code>通常是最合适的。可以合理假设，默认情况下，<code>std::unique_ptr</code>大小等同于原始指针，而且对于大多数操作（包括取消引用），他们执行的指令完全相同。这意味着你甚至可以在内存和时间都比较紧张的情况下使用它。如果原始指针够小够快，那么<code>std::unique_ptr</code>一样可以。</p>
+<p><code>std::unique_ptr</code>体现了专有所有权（<em>exclusive ownership</em>）语义。一个non-null <code>std::unique_ptr</code>始终拥有其指向的内容。移动一个<code>std::unique_ptr</code>将所有权从源指针转移到目的指针。（源指针被设为null。）拷贝一个<code>std::unique_ptr</code>是不允许的，因为如果你能拷贝一个<code>std::unique_ptr</code>，你会得到指向相同内容的两个<code>std::unique_ptr</code>，每个都认为自己拥有（并且应当最后销毁）资源，销毁时就会出现重复销毁。因此，<code>std::unique_ptr</code>是一种只可移动类型（<em>move-only type</em>）。当析构时，一个non-null <code>std::unique_ptr</code>销毁它指向的资源。默认情况下，资源析构通过对<code>std::unique_ptr</code>里原始指针调用<code>delete</code>来实现。</p>
+<p><code>std::unique_ptr</code>的常见用法是作为继承层次结构中对象的工厂函数返回类型。假设我们有一个投资类型（比如股票、债券、房地产等）的继承结构，使用基类<code>Investment</code>。</p>
+<pre><code class="language-cpp">class Investment { … };
+class Stock: public Investment { … };
+class Bond: public Investment { … };
+class RealEstate: public Investment { … };
+</code></pre>
+<p><img src="media/item18_fig1.png" alt="item18_fig1" /></p>
+<p>这种继承关系的工厂函数在堆上分配一个对象然后返回指针，调用方在不需要的时候有责任销毁对象。这使用场景完美匹配<code>std::unique_ptr</code>，因为调用者对工厂返回的资源负责（即对该资源的专有所有权），并且<code>std::unique_ptr</code>在自己被销毁时会自动销毁指向的内容。<code>Investment</code>继承关系的工厂函数可以这样声明：</p>
+<pre><code class="language-cpp">template&lt;typename... Ts&gt;            //返回指向对象的std::unique_ptr，
+std::unique_ptr&lt;Investment&gt;         //对象使用给定实参创建
+makeInvestment(Ts&amp;&amp;... params);
+</code></pre>
+<p>调用者应该在单独的作用域中使用返回的<code>std::unique_ptr</code>智能指针：</p>
+<pre><code class="language-cpp">{
+    …
+    auto pInvestment =                  //pInvestment是
+        makeInvestment( arguments );    //std::unique_ptr&lt;Investment&gt;类型
+    …
+}                                       //销毁 *pInvestment
+</code></pre>
+<p>但是也可以在所有权转移的场景中使用它，比如将工厂返回的<code>std::unique_ptr</code>移入容器中，然后将容器元素移入一个对象的数据成员中，然后对象过后被销毁。发生这种情况时，这个对象的<code>std::unique_ptr</code>数据成员也被销毁，并且智能指针数据成员的析构将导致从工厂返回的资源被销毁。如果所有权链由于异常或者其他非典型控制流出现中断（比如提前从函数return或者循环中的<code>break</code>），则拥有托管资源的<code>std::unique_ptr</code>将保证指向内容的析构函数被调用，销毁对应资源。（这个规则也有些例外。大多数情况发生于不正常的程序终止。如果一个异常传播到线程的基本函数（比如程序初始线程的<code>main</code>函数）外，或者违反<code>noexcept</code>说明（见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item14.md">Item14</a>），局部变量可能不会被销毁；如果<code>std::abort</code>或者退出函数（如<code>std::_Exit</code>，<code>std::exit</code>，或<code>std::quick_exit</code>）被调用，局部变量一定没被销毁。）</p>
+<p>默认情况下，销毁将通过<code>delete</code>进行，但是在构造过程中，<code>std::unique_ptr</code>对象可以被设置为使用（对资源的）<strong>自定义删除器</strong>：当资源需要销毁时可调用的任意函数（或者函数对象，包括<em>lambda</em>表达式）。如果通过<code>makeInvestment</code>创建的对象不应仅仅被<code>delete</code>，而应该先写一条日志，<code>makeInvestment</code>可以以如下方式实现。（代码后有说明，别担心有些东西的动机不那么明显。）</p>
+<pre><code class="language-cpp">auto delInvmt = [](Investment* pInvestment)         //自定义删除器
+                {                                   //（lambda表达式）
+                    makeLogEntry(pInvestment);
+                    delete pInvestment; 
+                };
+
+template&lt;typename... Ts&gt;
+std::unique_ptr&lt;Investment, decltype(delInvmt)&gt;     //更改后的返回类型
+makeInvestment(Ts&amp;&amp;... params)
+{
+    std::unique_ptr&lt;Investment, decltype(delInvmt)&gt; //应返回的指针
+        pInv(nullptr, delInvmt);
+    if (/*一个Stock对象应被创建*/)
+    {
+        pInv.reset(new Stock(std::forward&lt;Ts&gt;(params)...));
+    }
+    else if ( /*一个Bond对象应被创建*/ )   
+    {     
+        pInv.reset(new Bond(std::forward&lt;Ts&gt;(params)...));   
+    }   
+    else if ( /*一个RealEstate对象应被创建*/ )   
+    {     
+        pInv.reset(new RealEstate(std::forward&lt;Ts&gt;(params)...));   
+    }   
+    return pInv;
+}
+</code></pre>
+<p>稍后，我将解释其工作原理，但首先请考虑如果你是调用者，情况如何。假设你存储<code>makeInvestment</code>调用结果到<code>auto</code>变量中，那么你将在愉快中忽略在删除过程中需要特殊处理的事实。当然，你确实幸福，因为使用了<code>unique_ptr</code>意味着你不需要关心什么时候资源应被释放，不需要考虑在资源释放时的路径，以及确保只释放一次，<code>std::unique_ptr</code>自动解决了这些问题。从使用者角度，<code>makeInvestment</code>接口很棒。</p>
+<p>这个实现确实相当棒，如果你理解了：</p>
+<ul>
+<li>
+<p><code>delInvmt</code>是从<code>makeInvestment</code>返回的对象的自定义的删除器。所有的自定义的删除行为接受要销毁对象的原始指针，然后执行所有必要行为实现销毁操作。在上面情况中，操作包括调用<code>makeLogEntry</code>然后应用<code>delete</code>。使用<em>lambda</em>创建<code>delInvmt</code>是方便的，而且，正如稍后看到的，比编写常规的函数更有效。</p>
+</li>
+<li>
+<p>当使用自定义删除器时，删除器类型必须作为第二个类型实参传给<code>std::unique_ptr</code>。在上面情况中，就是<code>delInvmt</code>的类型，这就是为什么<code>makeInvestment</code>返回类型是<code>std::unique_ptr&lt;Investment, decltype(delInvmt)&gt;</code>。（对于<code>decltype</code>，更多信息查看<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item3.md">Item3</a>）</p>
+</li>
+<li>
+<p><code>makeInvestment</code>的基本策略是创建一个空的<code>std::unique_ptr</code>，然后指向一个合适类型的对象，然后返回。为了将自定义删除器<code>delInvmt</code>与<code>pInv</code>关联，我们把<code>delInvmt</code>作为<code>pInv</code>构造函数的第二个实参。</p>
+</li>
+<li>
+<p>尝试将原始指针（比如<code>new</code>创建）赋值给<code>std::unique_ptr</code>通不过编译，因为是一种从原始指针到智能指针的隐式转换。这种隐式转换会出问题，所以C++11的智能指针禁止这个行为。这就是通过<code>reset</code>来让<code>pInv</code>接管通过<code>new</code>创建的对象的所有权的原因。</p>
+</li>
+<li>
+<p>使用<code>new</code>时，我们使用<code>std::forward</code>把传给<code>makeInvestment</code>的实参完美转发出去（查看<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item25.md">Item25</a>）。这使调用者提供的所有信息可用于正在创建的对象的构造函数。</p>
+</li>
+<li>
+<p>自定义删除器的一个形参，类型是<code>Investment*</code>，不管在<code>makeInvestment</code>内部创建的对象的真实类型（如<code>Stock</code>，<code>Bond</code>，或<code>RealEstate</code>）是什么，它最终在<em>lambda</em>表达式中，作为<code>Investment*</code>对象被删除。这意味着我们通过基类指针删除派生类实例，为此，基类<code>Investment</code>必须有虚析构函数：</p>
+<pre><code class="language-cpp">class Investment {
+public:
+    …
+    virtual ~Investment();          //关键设计部分！
+    …
+};
+</code></pre>
+</li>
+</ul>
+<p>在C++14中，函数的返回类型推导存在（参阅<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item3.md">Item3</a>），意味着<code>makeInvestment</code>可以以更简单，更封装的方式实现：</p>
+<pre><code class="language-cpp">template&lt;typename... Ts&gt;
+auto makeInvestment(Ts&amp;&amp;... params)                 //C++14
+{
+    auto delInvmt = [](Investment* pInvestment)     //现在在
+                    {                               //makeInvestment里
+                        makeLogEntry(pInvestment);
+                        delete pInvestment; 
+                    };
+
+    std::unique_ptr&lt;Investment, decltype(delInvmt)&gt; //同之前一样
+        pInv(nullptr, delInvmt);
+    if ( … )                                        //同之前一样
+    {
+        pInv.reset(new Stock(std::forward&lt;Ts&gt;(params)...));
+    }
+    else if ( … )                                   //同之前一样
+    {     
+        pInv.reset(new Bond(std::forward&lt;Ts&gt;(params)...));   
+    }   
+    else if ( … )                                   //同之前一样
+    {     
+        pInv.reset(new RealEstate(std::forward&lt;Ts&gt;(params)...));   
+    }   
+    return pInv;                                    //同之前一样
+}
+</code></pre>
+<p>我之前说过，当使用默认删除器时（如<code>delete</code>），你可以合理假设<code>std::unique_ptr</code>对象和原始指针大小相同。当自定义删除器时，情况可能不再如此。函数指针形式的删除器，通常会使<code>std::unique_ptr</code>的从一个字（<em>word</em>）大小增加到两个。对于函数对象形式的删除器来说，变化的大小取决于函数对象中存储的状态多少，无状态函数（stateless function）对象（比如不捕获变量的<em>lambda</em>表达式）对大小没有影响，这意味当自定义删除器可以实现为函数或者<em>lambda</em>时，尽量使用<em>lambda</em>：</p>
+<pre><code class="language-cpp">auto delInvmt1 = [](Investment* pInvestment)        //无状态lambda的
+                 {                                  //自定义删除器
+                     makeLogEntry(pInvestment);
+                     delete pInvestment; 
+                 };
+
+template&lt;typename... Ts&gt;                            //返回类型大小是
+std::unique_ptr&lt;Investment, decltype(delInvmt1)&gt;    //Investment*的大小
+makeInvestment(Ts&amp;&amp;... args);
+
+void delInvmt2(Investment* pInvestment)             //函数形式的
+{                                                   //自定义删除器
+    makeLogEntry(pInvestment);
+    delete pInvestment;
+}
+template&lt;typename... Ts&gt;                            //返回类型大小是
+std::unique_ptr&lt;Investment, void (*)(Investment*)&gt;  //Investment*的指针
+makeInvestment(Ts&amp;&amp;... params);                     //加至少一个函数指针的大小
+</code></pre>
+<p>具有很多状态的自定义删除器会产生大尺寸<code>std::unique_ptr</code>对象。如果你发现自定义删除器使得你的<code>std::unique_ptr</code>变得过大，你需要审视修改你的设计。</p>
+<p>工厂函数不是<code>std::unique_ptr</code>的唯一常见用法。作为实现<strong>Pimpl Idiom</strong>（译注：<em>pointer to implementation</em>，一种隐藏实际实现而减弱编译依赖性的设计思想，《Effective C++》条款31对此有过叙述）的一种机制，它更为流行。代码并不复杂，但是在某些情况下并不直观，所以这安排在<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item22.md">Item22</a>的专门主题中。</p>
+<p><code>std::unique_ptr</code>有两种形式，一种用于单个对象（<code>std::unique_ptr&lt;T&gt;</code>），一种用于数组（<code>std::unique_ptr&lt;T[]&gt;</code>）。结果就是，指向哪种形式没有歧义。<code>std::unique_ptr</code>的API设计会自动匹配你的用法，比如<code>operator[]</code>就是数组对象，解引用操作符（<code>operator*</code>和<code>operator-&gt;</code>）就是单个对象专有。</p>
+<p>你应该对数组的<code>std::unique_ptr</code>的存在兴趣泛泛，因为<code>std::array</code>，<code>std::vector</code>，<code>std::string</code>这些更好用的数据容器应该取代原始数组。<code>std::unique_ptr&lt;T[]&gt;</code>有用的唯一情况是你使用类似C的API返回一个指向堆数组的原始指针，而你想接管这个数组的所有权。</p>
+<p><code>std::unique_ptr</code>是C++11中表示专有所有权的方法，但是其最吸引人的功能之一是它可以轻松高效的转换为<code>std::shared_ptr</code>：</p>
+<pre><code class="language-cpp">std::shared_ptr&lt;Investment&gt; sp =            //将std::unique_ptr
+    makeInvestment(arguments);              //转为std::shared_ptr
+</code></pre>
+<p>这就是<code>std::unique_ptr</code>非常适合用作工厂函数返回类型的原因的关键部分。 工厂函数无法知道调用者是否要对它们返回的对象使用专有所有权语义，或者共享所有权（即<code>std::shared_ptr</code>）是否更合适。 通过返回<code>std::unique_ptr</code>，工厂为调用者提供了最有效的智能指针，但它们并不妨碍调用者用其更灵活的兄弟替换它。（有关<code>std::shared_ptr</code>的信息，请转到<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item19.md">Item19</a>。)</p>
+<p><strong>请记住：</strong></p>
+<ul>
+<li><code>std::unique_ptr</code>是轻量级、快速的、只可移动（<em>move-only</em>）的管理专有所有权语义资源的智能指针</li>
+<li>默认情况，资源销毁通过<code>delete</code>实现，但是支持自定义删除器。有状态的删除器和函数指针会增加<code>std::unique_ptr</code>对象的大小</li>
+<li>将<code>std::unique_ptr</code>转化为<code>std::shared_ptr</code>非常简单</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../3.MovingToModernCpp/item17.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="../4.SmartPointers/item19.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../3.MovingToModernCpp/item17.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../4.SmartPointers/item19.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>

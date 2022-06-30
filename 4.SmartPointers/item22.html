@@ -1,0 +1,400 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Item 22: When using the Pimpl Idiom, define special member functions in the implementation file - Effective Modern C++</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <!-- MathJax -->
+        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../Introduction.html">Introduction</a></li><li class="chapter-item expanded "><div>Chapter 1. Deducing Types</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../1.DeducingTypes/item1.html">Item 1: Understanding template type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item2.html">Item 2: Understand auto type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item3.html">Item 3: Understand decltype</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item4.html">Item 4: Know how to view deduced types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 2. auto</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../2.Auto/item5.html">Item 5: Prefer auto to explicit type declarations</a></li><li class="chapter-item expanded "><a href="../2.Auto/item6.html">Item 6: Use the explicitly typed initializer idiom when auto deduces undesired types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 3. Moving to Modern C++</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item7.html">Item 7: Distinguish between () and {} when creating objects</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item8.html">Item 8: Prefer nullptr to 0 or NULL</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item9.html">Item 9: Prefer alias declarations to typedefs</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item10.html">Item 10: Prefer scoped enums to unscoped enums</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item11.html">Item 11: Prefer deleted functions to private undefined ones</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item12.html">Item 12: Declare overriding functions override</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item13.html">Item 13: Prefer const_iterators to iterators</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item14.html">Item 14: Declare functions noexcept if they won't emit exceptions</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item15.html">Item 15: Use constexpr whenever possible</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item16.html">Item 16: Make const member functions thread safe</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item17.html">Item 17: Understand special member funciton generation</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 4. Smart Pointer</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../4.SmartPointers/item18.html">Item 18: Use std::unique_ptr for exclusive-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item19.html">Item 19: Use std::shared_ptr for shared-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item20.html">Item 20: Use std::weak_ptr for std::shared_ptr like pointers that can dangle</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item21.html">Item 21: Prefer std::make_unique and std::make_shared to direct use of new</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item22.html" class="active">Item 22: When using the Pimpl Idiom, define special member functions in the implementation file</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 5. Rvalue References, Move Semantics, and Perfect Forwarding</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item23.html">Item 23: Understand std::move and std::forward</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item24.html">Item 24: Distinguish universal references from rvalue references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item25.html">Item 25: Use std::move on rvalue references, std::forward on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item26.html">Item 26: Avoid overloading on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item27.html">Item 27: Familiarize yourself with alternatives to overaloading on univeral references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item28.html">Item 28: Understand reference collapsing</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item29.html">Item 29: Assume that move operations are not present not cheap, and not used</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item30.html">Item 30: Familiarize yourself with perfect forwarding failure cases</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 6. Lambda Expressions</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item31.html">Item 31: Avoid default capture modes</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item32.html">Item 32: Use init capture to move objects into closures</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item33.html">Item 33: Use decltype on auto&&parameters to std::forward them</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item34.html">Item 34: Prefer lambdas to std::bind</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 7. The Concurrency API</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/Item35.html">Item 35: Prefer task-based programming to thread-based</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item36.html">Item 36: Specify std::launch::async if asynchronicity is essential</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item37.html">Item 37: Make std::threads unjionable on all paths</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item38.html">Item 38: Be aware of varying thread handle destructor behavior</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item39.html">Item 39: Consider void futures for one-shot event communication</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item40.html">Item 40: Use std::atomic for concurrency, volatile for special memory</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 8. Tweaks</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../8.Tweaks/item41.html">Item 41: Consider pass by value for copyable parameters that are cheap to move and always copied</a></li><li class="chapter-item expanded "><a href="../8.Tweaks/item42.html">Item 42: Consider emplacement instead of insertion</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Effective Modern C++</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h2 id="条款二十二当使用pimpl惯用法请在实现文件中定义特殊成员函数"><a class="header" href="#条款二十二当使用pimpl惯用法请在实现文件中定义特殊成员函数">条款二十二：当使用Pimpl惯用法，请在实现文件中定义特殊成员函数</a></h2>
+<p><strong>Item 22: When using the Pimpl Idiom, define special member functions in the implementation file</strong></p>
+<p>如果你曾经与过多的编译次数斗争过，你会对<strong>Pimpl</strong>（<em>pointer to implementation</em>）<strong>惯用法</strong>很熟悉。 凭借这样一种技巧，你可以将类数据成员替换成一个指向包含具体实现的类（或结构体）的指针，并将放在主类（primary class）的数据成员们移动到实现类（implementation class）去，而这些数据成员的访问将通过指针间接访问。 举个例子，假如有一个类<code>Widget</code>看起来如下：</p>
+<pre><code class="language-cpp">class Widget() {                    //定义在头文件“widget.h”
+public:
+    Widget();
+    …
+private:
+    std::string name;
+    std::vector&lt;double&gt; data;
+    Gadget g1, g2, g3;              //Gadget是用户自定义的类型
+};
+</code></pre>
+<p>因为类<code>Widget</code>的数据成员包含有类型<code>std::string</code>，<code>std::vector</code>和<code>Gadget</code>， 定义有这些类型的头文件在类<code>Widget</code>编译的时候，必须被包含进来，这意味着类<code>Widget</code>的使用者必须要<code>#include &lt;string&gt;</code>，<code>&lt;vector&gt;</code>以及<code>gadget.h</code>。 这些头文件将会增加类<code>Widget</code>使用者的编译时间，并且让这些使用者依赖于这些头文件。 如果一个头文件的内容变了，类<code>Widget</code>使用者也必须要重新编译。 标准库文件<code>&lt;string&gt;</code>和<code>&lt;vector&gt;</code>不是很常变，但是<code>gadget.h</code>可能会经常修订。</p>
+<p>在C++98中使用Pimpl惯用法，可以把<code>Widget</code>的数据成员替换成一个原始指针，指向一个已经被声明过却还未被定义的结构体，如下:</p>
+<pre><code class="language-cpp">class Widget                        //仍然在“widget.h”中
+{
+public:
+    Widget();
+    ~Widget();                      //析构函数在后面会分析
+    …
+
+private:
+    struct Impl;                    //声明一个 实现结构体
+    Impl *pImpl;                    //以及指向它的指针
+};
+</code></pre>
+<p>因为类<code>Widget</code>不再提到类型<code>std::string</code>，<code>std::vector</code>以及<code>Gadget</code>，<code>Widget</code>的使用者不再需要为了这些类型而引入头文件。 这可以加速编译，并且意味着，如果这些头文件中有所变动，<code>Widget</code>的使用者不会受到影响。</p>
+<p>一个已经被声明，却还未被实现的类型，被称为<strong>未完成类型</strong>（<em>incomplete type</em>）。 <code>Widget::Impl</code>就是这种类型。 你能对一个未完成类型做的事很少，但是声明一个指向它的指针是可以的。Pimpl惯用法利用了这一点。</p>
+<p>Pimpl惯用法的第一步，是声明一个数据成员，它是个指针，指向一个未完成类型。 第二步是动态分配和回收一个对象，该对象包含那些以前在原来的类中的数据成员。 内存分配和回收的代码都写在实现文件里，比如，对于类<code>Widget</code>而言，写在<code>Widget.cpp</code>里:</p>
+<pre><code class="language-cpp">#include &quot;widget.h&quot;             //以下代码均在实现文件“widget.cpp”里
+#include &quot;gadget.h&quot;
+#include &lt;string&gt;
+#include &lt;vector&gt;
+
+struct Widget::Impl {           //含有之前在Widget中的数据成员的
+    std::string name;           //Widget::Impl类型的定义
+    std::vector&lt;double&gt; data;
+    Gadget g1,g2,g3;
+};
+
+Widget::Widget()                //为此Widget对象分配数据成员
+: pImpl(new Impl)
+{}
+
+Widget::~Widget()               //销毁数据成员
+{ delete pImpl; }
+</code></pre>
+<p>在这里我把<code>#include</code>命令写出来是为了明确一点，对于<code>std::string</code>，<code>std::vector</code>和<code>Gadget</code>的头文件的整体依赖依然存在。 然而，这些依赖从头文件<code>widget.h</code>（它被所有<code>Widget</code>类的使用者包含，并且对他们可见）移动到了<code>widget.cpp</code>（该文件只被<code>Widget</code>类的实现者包含，并只对他可见）。 我高亮了其中动态分配和回收<code>Impl</code>对象的部分（译者注：markdown高亮不了，实际高亮的是<code>new Impl</code>和<code>delete pImpl;</code>两个语句）。这就是为什么我们需要<code>Widget</code>的析构函数——我们需要<code>Widget</code>被销毁时回收该对象。</p>
+<p>但是，我展示给你们看的是一段C++98的代码，散发着一股已经过去了几千年的腐朽气息。 它使用了原始指针，原始的<code>new</code>和原始的<code>delete</code>，一切都让它如此的...原始。这一章建立在“智能指针比原始指针更好”的主题上，并且，如果我们想要的只是在类<code>Widget</code>的构造函数动态分配<code>Widget::impl</code>对象，在<code>Widget</code>对象销毁时一并销毁它， <code>std::unique_ptr</code>（见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item18.md">Item18</a>）是最合适的工具。在头文件中用<code>std::unique_ptr</code>替代原始指针，就有了头文件中如下代码:</p>
+<pre><code class="language-cpp">class Widget {                      //在“widget.h”中
+public:
+    Widget();
+    …
+
+private:
+    struct Impl;
+    std::unique_ptr&lt;Impl&gt; pImpl;    //使用智能指针而不是原始指针
+};
+</code></pre>
+<p>实现文件也可以改成如下：</p>
+<pre><code class="language-cpp">#include &quot;widget.h&quot;                 //在“widget.cpp”中
+#include &quot;gadget.h&quot;
+#include &lt;string&gt;
+#include &lt;vector&gt;
+
+struct Widget::Impl {               //跟之前一样
+    std::string name;
+    std::vector&lt;double&gt; data;
+    Gadget g1,g2,g3;
+};
+
+Widget::Widget()                    //根据条款21，通过std::make_unique
+: pImpl(std::make_unique&lt;Impl&gt;())   //来创建std::unique_ptr
+{}
+</code></pre>
+<p>你会注意到，<code>Widget</code>的析构函数不存在了。这是因为我们没有代码加在里面了。 <code>std::unique_ptr</code>在自身析构时，会自动销毁它所指向的对象，所以我们自己无需手动销毁任何东西。这就是智能指针的众多优点之一：它使我们从手动资源释放中解放出来。</p>
+<p>以上的代码能编译，但是，最普通的<code>Widget</code>用法却会导致编译出错：</p>
+<pre><code class="language-cpp">#include &quot;widget.h&quot;
+
+Widget w;                           //错误！
+</code></pre>
+<p>你所看到的错误信息根据编译器不同会有所不同，但是其文本一般会提到一些有关于“把<code>sizeof</code>或<code>delete</code>应用到未完成类型上”的信息。对于未完成类型，使用以上操作是禁止的。</p>
+<p>在Pimpl惯用法中使用<code>std::unique_ptr</code>会抛出错误，有点惊悚，因为第一<code>std::unique_ptr</code>宣称它支持未完成类型，第二Pimpl惯用法是<code>std::unique_ptr</code>的最常见的使用情况之一。 幸运的是，让这段代码能正常运行很简单。 只需要对上面出现的问题的原因有一个基础的认识就可以了。</p>
+<p>在对象<code>w</code>被析构时（例如离开了作用域），问题出现了。在这个时候，它的析构函数被调用。我们在类的定义里使用了<code>std::unique_ptr</code>，所以我们没有声明一个析构函数，因为我们并没有任何代码需要写在里面。根据编译器自动生成的特殊成员函数的规则（见 <a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item17.md">Item17</a>），编译器会自动为我们生成一个析构函数。 在这个析构函数里，编译器会插入一些代码来调用类<code>Widget</code>的数据成员<code>pImpl</code>的析构函数。 <code>pImpl</code>是一个<code>std::unique_ptr&lt;Widget::Impl&gt;</code>，也就是说，一个使用默认删除器的<code>std::unique_ptr</code>。 默认删除器是一个函数，它使用<code>delete</code>来销毁内置于<code>std::unique_ptr</code>的原始指针。然而，在使用<code>delete</code>之前，通常会使默认删除器使用C++11的特性<code>static_assert</code>来确保原始指针指向的类型不是一个未完成类型。 当编译器为<code>Widget w</code>的析构生成代码时，它会遇到<code>static_assert</code>检查并且失败，这通常是错误信息的来源。 这些错误信息只在对象<code>w</code>销毁的地方出现，因为类<code>Widget</code>的析构函数，正如其他的编译器生成的特殊成员函数一样，是暗含<code>inline</code>属性的。 错误信息自身往往指向对象<code>w</code>被创建的那行，因为这行代码明确地构造了这个对象，导致了后面潜在的析构。</p>
+<p>为了解决这个问题，你只需要确保在编译器生成销毁<code>std::unique_ptr&lt;Widget::Impl&gt;</code>的代码之前， <code>Widget::Impl</code>已经是一个完成类型（<em>complete type</em>）。 当编译器“看到”它的定义的时候，该类型就成为完成类型了。 但是 <code>Widget::Impl</code>的定义在<code>widget.cpp</code>里。成功编译的关键，就是在<code>widget.cpp</code>文件内，让编译器在“看到” <code>Widget</code>的析构函数实现之前（也即编译器插入的，用来销毁<code>std::unique_ptr</code>这个数据成员的代码的，那个位置），先定义<code>Widget::Impl</code>。</p>
+<p>做出这样的调整很容易。只需要在先在<code>widget.h</code>里，只声明类<code>Widget</code>的析构函数，却不要在这里定义它：</p>
+<pre><code class="language-cpp">class Widget {                  //跟之前一样，在“widget.h”中
+public:
+    Widget();
+    ~Widget();                  //只有声明语句
+    …
+
+private:                        //跟之前一样
+    struct Impl;
+    std::unique_ptr&lt;Impl&gt; pImpl;
+};
+</code></pre>
+<p>在<code>widget.cpp</code>文件中，在结构体<code>Widget::Impl</code>被定义之后，再定义析构函数：</p>
+<pre><code class="language-cpp">#include &quot;widget.h&quot;                 //跟之前一样，在“widget.cpp”中
+#include &quot;gadget.h&quot;
+#include &lt;string&gt;
+#include &lt;vector&gt;
+
+struct Widget::Impl {               //跟之前一样，定义Widget::Impl
+    std::string name;
+    std::vector&lt;double&gt; data;
+    Gadget g1,g2,g3;
+}
+
+Widget::Widget()                    //跟之前一样
+: pImpl(std::make_unique&lt;Impl&gt;())
+{}
+
+Widget::~Widget()                   //析构函数的定义（译者注：这里高亮）
+{}
+</code></pre>
+<p>这样就可以了，并且这样增加的代码也最少，但是，如果你想要强调编译器自动生成的析构函数做的没错——你声明<code>Widget</code>的析构函数的唯一原因，是确保它会在<code>Widget</code>的实现文件内（译者注：指<code>widget.cpp</code>）被自动生成，你可以把析构函数体直接定义为“<code>= default</code>”：</p>
+<pre><code class="language-cpp">Widget::~Widget() = default;        //同上述代码效果一致
+</code></pre>
+<p>使用了Pimpl惯用法的类自然适合支持移动操作，因为编译器自动生成的移动操作正合我们所意：对其中的<code>std::unique_ptr</code>进行移动。 正如<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item17.md">Item17</a>所解释的那样，声明一个类<code>Widget</code>的析构函数会阻止编译器生成移动操作，所以如果你想要支持移动操作，你必须自己声明相关的函数。考虑到编译器自动生成的版本能够正常功能，你可能会被诱使着来这样实现:</p>
+<pre><code class="language-cpp">class Widget {                                  //仍然在“widget.h”中
+public:
+    Widget();
+    ~Widget();
+
+    Widget(Widget&amp;&amp; rhs) = default;             //思路正确，
+    Widget&amp; operator=(Widget&amp;&amp; rhs) = default;  //但代码错误
+    …
+
+private:                                        //跟之前一样
+    struct Impl;
+    std::unique_ptr&lt;Impl&gt; pImpl;
+};
+</code></pre>
+<p>这样的做法会导致同样的错误，和之前的声明一个不带析构函数的类的错误一样，并且是因为同样的原因。 编译器生成的移动赋值操作符，在重新赋值之前，需要先销毁指针<code>pImpl</code>指向的对象。然而在<code>Widget</code>的头文件里，<code>pImpl</code>指针指向的是一个未完成类型。移动构造函数的情况有所不同。 移动构造函数的问题是编译器自动生成的代码里，包含有抛出异常的事件，在这个事件里会生成销毁<code>pImpl</code>的代码。然而，销毁<code>pImpl</code>需要<code>Impl</code>是一个完成类型。</p>
+<p>因为这个问题同上面一致，所以解决方案也一样——把移动操作的定义移动到实现文件里：</p>
+<pre><code class="language-cpp">class Widget {                          //仍然在“widget.h”中
+public:
+    Widget();
+    ~Widget();
+
+    Widget(Widget&amp;&amp; rhs);               //只有声明
+    Widget&amp; operator=(Widget&amp;&amp; rhs);
+    …
+
+private:                                //跟之前一样
+    struct Impl;
+    std::unique_ptr&lt;Impl&gt; pImpl;
+};
+</code></pre>
+<pre><code class="language-cpp">#include &lt;string&gt;                   //跟之前一样，仍然在“widget.cpp”中
+…
+    
+struct Widget::Impl { … };          //跟之前一样
+
+Widget::Widget()                    //跟之前一样
+: pImpl(std::make_unique&lt;Impl&gt;())
+{}
+
+Widget::~Widget() = default;        //跟之前一样
+
+Widget::Widget(Widget&amp;&amp; rhs) = default;             //这里定义
+Widget&amp; Widget::operator=(Widget&amp;&amp; rhs) = default;
+</code></pre>
+<p>Pimpl惯用法是用来减少类的实现和类使用者之间的编译依赖的一种方法，但是，从概念而言，使用这种惯用法并不改变这个类的表现。 原来的类<code>Widget</code>包含有<code>std::string</code>，<code>std::vector</code>和<code>Gadget</code>数据成员，并且，假设类型<code>Gadget</code>，如同<code>std::string</code>和<code>std::vector</code>一样，允许复制操作，所以类<code>Widget</code>支持复制操作也很合理。 我们必须要自己来写这些函数，因为第一，对包含有只可移动（<em>move-only</em>）类型，如<code>std::unique_ptr</code>的类，编译器不会生成复制操作；第二，即使编译器帮我们生成了，生成的复制操作也只会复制<code>std::unique_ptr</code>（也即浅复制（<em>shallow copy</em>））,而实际上我们需要复制指针所指向的对象（也即深复制（<em>deep copy</em>））。</p>
+<p>使用我们已经熟悉的方法，我们在头文件里声明函数，而在实现文件里去实现他们:</p>
+<pre><code class="language-cpp">class Widget {                          //仍然在“widget.h”中
+public:
+    …
+
+    Widget(const Widget&amp; rhs);          //只有声明
+    Widget&amp; operator=(const Widget&amp; rhs);
+
+private:                                //跟之前一样
+    struct Impl;
+    std::unique_ptr&lt;Impl&gt; pImpl;
+};
+</code></pre>
+<pre><code class="language-cpp">#include &lt;string&gt;                   //跟之前一样，仍然在“widget.cpp”中
+…
+    
+struct Widget::Impl { … };          //跟之前一样
+
+Widget::~Widget() = default;		//其他函数，跟之前一样
+
+Widget::Widget(const Widget&amp; rhs)   //拷贝构造函数
+: pImpl(std::make_unique&lt;Impl&gt;(*rhs.pImpl))
+{}
+
+Widget&amp; Widget::operator=(const Widget&amp; rhs)    //拷贝operator=
+{
+    *pImpl = *rhs.pImpl;
+    return *this;
+}
+</code></pre>
+<p>两个函数的实现都比较中规中矩。 在每个情况中，我们都只从源对象（<code>rhs</code>）中，复制了结构体<code>Impl</code>的内容到目标对象中（<code>*this</code>）。我们利用了编译器会为我们自动生成结构体<code>Impl</code>的复制操作函数的机制，而不是逐一复制结构体<code>Impl</code>的成员，自动生成的复制操作能自动复制每一个成员。 因此我们通过调用编译器生成的<code>Widget::Impl</code>的复制操作函数来实现了类<code>Widget</code>的复制操作。 在复制构造函数中，注意，我们仍然遵从了<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item21.md">Item21</a>的建议，使用<code>std::make_unique</code>而非直接使用<code>new</code>。</p>
+<p>为了实现Pimpl惯用法，<code>std::unique_ptr</code>是我们使用的智能指针，因为位于对象内部的<code>pImpl</code>指针（例如，在类<code>Widget</code>内部），对所指向的对应实现的对象的享有独占所有权。然而，有趣的是，如果我们使用<code>std::shared_ptr</code>而不是<code>std::unique_ptr</code>来做<code>pImpl</code>指针， 我们会发现本条款的建议不再适用。 我们不需要在类<code>Widget</code>里声明析构函数，没有了用户定义析构函数，编译器将会愉快地生成移动操作，并且将会如我们所期望般工作。<code>widget.h</code>里的代码如下，</p>
+<pre><code class="language-cpp">class Widget {                      //在“widget.h”中
+public:
+    Widget();
+    …                               //没有析构函数和移动操作的声明
+
+private:
+    struct Impl;
+    std::shared_ptr&lt;Impl&gt; pImpl;    //用std::shared_ptr
+};                                  //而不是std::unique_ptr
+</code></pre>
+<p>这是<code>#include</code>了<code>widget.h</code>的客户代码，</p>
+<pre><code class="language-cpp">Widget w1;
+auto w2(std::move(w1));     //移动构造w2
+w1 = std::move(w2);         //移动赋值w1
+</code></pre>
+<p>这些都能编译，并且工作地如我们所望：<code>w1</code>将会被默认构造，它的值会被移动进<code>w2</code>，随后值将会被移动回<code>w1</code>，然后两者都会被销毁（因此导致指向的<code>Widget::Impl</code>对象一并也被销毁）。</p>
+<p><code>std::unique_ptr</code>和<code>std::shared_ptr</code>在<code>pImpl</code>指针上的表现上的区别的深层原因在于，他们支持自定义删除器的方式不同。 对<code>std::unique_ptr</code>而言，删除器的类型是这个智能指针的一部分，这让编译器有可能生成更小的运行时数据结构和更快的运行代码。 这种更高效率的后果之一就是<code>std::unique_ptr</code>指向的类型，在编译器的生成特殊成员函数（如析构函数，移动操作）被调用时，必须已经是一个完成类型。 而对<code>std::shared_ptr</code>而言，删除器的类型不是该智能指针的一部分，这让它会生成更大的运行时数据结构和稍微慢点的代码，但是当编译器生成的特殊成员函数被使用的时候，指向的对象不必是一个完成类型。（译者注：知道<code>std::unique_ptr</code>和<code>std::shared_ptr</code>的实现，这一段才比较容易理解。）</p>
+<p>对于Pimpl惯用法而言，在<code>std::unique_ptr</code>和<code>std::shared_ptr</code>的特性之间，没有一个比较好的折中。 因为对于像<code>Widget</code>的类以及像<code>Widget::Impl</code>的类之间的关系而言，他们是独享占有权关系，这让<code>std::unique_ptr</code>使用起来很合适。 然而，有必要知道，在其他情况中，当共享所有权存在时，<code>std::shared_ptr</code>是很适用的选择的时候，就没有<code>std::unique_ptr</code>所必需的声明——定义（function-definition）这样的麻烦事了。</p>
+<p><strong>请记住：</strong></p>
+<ul>
+<li>Pimpl惯用法通过减少在类实现和类使用者之间的编译依赖来减少编译时间。</li>
+<li>对于<code>std::unique_ptr</code>类型的<code>pImpl</code>指针，需要在头文件的类里声明特殊的成员函数，但是在实现文件里面来实现他们。即使是编译器自动生成的代码可以工作，也要这么做。</li>
+<li>以上的建议只适用于<code>std::unique_ptr</code>，不适用于<code>std::shared_ptr</code>。</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../4.SmartPointers/item21.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="../5.RRefMovSemPerfForw/item23.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../4.SmartPointers/item21.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../5.RRefMovSemPerfForw/item23.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>

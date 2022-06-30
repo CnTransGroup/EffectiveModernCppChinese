@@ -1,0 +1,423 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Item 27: Familiarize yourself with alternatives to overaloading on univeral references - Effective Modern C++</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <!-- MathJax -->
+        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../Introduction.html">Introduction</a></li><li class="chapter-item expanded "><div>Chapter 1. Deducing Types</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../1.DeducingTypes/item1.html">Item 1: Understanding template type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item2.html">Item 2: Understand auto type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item3.html">Item 3: Understand decltype</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item4.html">Item 4: Know how to view deduced types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 2. auto</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../2.Auto/item5.html">Item 5: Prefer auto to explicit type declarations</a></li><li class="chapter-item expanded "><a href="../2.Auto/item6.html">Item 6: Use the explicitly typed initializer idiom when auto deduces undesired types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 3. Moving to Modern C++</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item7.html">Item 7: Distinguish between () and {} when creating objects</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item8.html">Item 8: Prefer nullptr to 0 or NULL</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item9.html">Item 9: Prefer alias declarations to typedefs</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item10.html">Item 10: Prefer scoped enums to unscoped enums</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item11.html">Item 11: Prefer deleted functions to private undefined ones</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item12.html">Item 12: Declare overriding functions override</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item13.html">Item 13: Prefer const_iterators to iterators</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item14.html">Item 14: Declare functions noexcept if they won't emit exceptions</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item15.html">Item 15: Use constexpr whenever possible</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item16.html">Item 16: Make const member functions thread safe</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item17.html">Item 17: Understand special member funciton generation</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 4. Smart Pointer</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../4.SmartPointers/item18.html">Item 18: Use std::unique_ptr for exclusive-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item19.html">Item 19: Use std::shared_ptr for shared-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item20.html">Item 20: Use std::weak_ptr for std::shared_ptr like pointers that can dangle</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item21.html">Item 21: Prefer std::make_unique and std::make_shared to direct use of new</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item22.html">Item 22: When using the Pimpl Idiom, define special member functions in the implementation file</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 5. Rvalue References, Move Semantics, and Perfect Forwarding</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item23.html">Item 23: Understand std::move and std::forward</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item24.html">Item 24: Distinguish universal references from rvalue references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item25.html">Item 25: Use std::move on rvalue references, std::forward on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item26.html">Item 26: Avoid overloading on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item27.html" class="active">Item 27: Familiarize yourself with alternatives to overaloading on univeral references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item28.html">Item 28: Understand reference collapsing</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item29.html">Item 29: Assume that move operations are not present not cheap, and not used</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item30.html">Item 30: Familiarize yourself with perfect forwarding failure cases</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 6. Lambda Expressions</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item31.html">Item 31: Avoid default capture modes</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item32.html">Item 32: Use init capture to move objects into closures</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item33.html">Item 33: Use decltype on auto&&parameters to std::forward them</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item34.html">Item 34: Prefer lambdas to std::bind</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 7. The Concurrency API</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/Item35.html">Item 35: Prefer task-based programming to thread-based</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item36.html">Item 36: Specify std::launch::async if asynchronicity is essential</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item37.html">Item 37: Make std::threads unjionable on all paths</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item38.html">Item 38: Be aware of varying thread handle destructor behavior</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item39.html">Item 39: Consider void futures for one-shot event communication</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item40.html">Item 40: Use std::atomic for concurrency, volatile for special memory</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 8. Tweaks</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../8.Tweaks/item41.html">Item 41: Consider pass by value for copyable parameters that are cheap to move and always copied</a></li><li class="chapter-item expanded "><a href="../8.Tweaks/item42.html">Item 42: Consider emplacement instead of insertion</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Effective Modern C++</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h2 id="条款二十七熟悉通用引用重载的替代方法"><a class="header" href="#条款二十七熟悉通用引用重载的替代方法">条款二十七：熟悉通用引用重载的替代方法</a></h2>
+<p><strong>Item 27: Familiarize yourself with alternatives to overloading on universal references</strong></p>
+<p><a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item26.md">Item26</a>中说明了对使用通用引用形参的函数，无论是独立函数还是成员函数（尤其是构造函数），进行重载都会导致一系列问题。但是也提供了一些示例，如果能够按照我们期望的方式运行，重载可能也是有用的。这个条款探讨了几种，通过避免在通用引用上重载的设计，或者通过限制通用引用可以匹配的参数类型，来实现所期望行为的方法。</p>
+<p>讨论基于<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item26.md">Item26</a>中的示例，如果你还没有阅读那个条款，请先阅读那个条款再继续。</p>
+<h3 id="放弃重载"><a class="header" href="#放弃重载">放弃重载</a></h3>
+<p>在<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item26.md">Item26</a>中的第一个例子中，<code>logAndAdd</code>是许多函数的代表，这些函数可以使用不同的名字来避免在通用引用上的重载的弊端。例如两个重载的<code>logAndAdd</code>函数，可以分别改名为<code>logAndAddName</code>和<code>logAndAddNameIdx</code>。但是，这种方式不能用在第二个例子，<code>Person</code>构造函数中，因为构造函数的名字被语言固定了（译者注：即构造函数名与类名相同）。此外谁愿意放弃重载呢？</p>
+<h3 id="传递const-t"><a class="header" href="#传递const-t">传递const T&amp;</a></h3>
+<p>一种替代方案是退回到C++98，然后将传递通用引用替换为传递lvalue-refrence-to-<code>const</code>。事实上，这是<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item26.md">Item26</a>中首先考虑的方法。缺点是效率不高。现在我们知道了通用引用和重载的相互关系，所以放弃一些效率来确保行为正确简单可能也是一种不错的折中。</p>
+<h3 id="传值"><a class="header" href="#传值">传值</a></h3>
+<p>通常在不增加复杂性的情况下提高性能的一种方法是，将按传引用形参替换为按值传递，这是违反直觉的。该设计遵循<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/8.Tweaks/item41.md">Item41</a>中给出的建议，即在你知道要拷贝时就按值传递，因此会参考那个条款来详细讨论如何设计与工作，效率如何。这里，在<code>Person</code>的例子中展示：</p>
+<pre><code class="language-cpp">class Person {
+public:
+    explicit Person(std::string n)  //代替T&amp;&amp;构造函数，
+    : name(std::move(n)) {}         //std::move的使用见条款41
+  
+    explicit Person(int idx)        //同之前一样
+    : name(nameFromIdx(idx)) {}
+    …
+
+private:
+    std::string name;
+};
+</code></pre>
+<p>因为没有<code>std::string</code>构造函数可以接受整型参数，所有<code>int</code>或者其他整型变量（比如<code>std::size_t</code>、<code>short</code>、<code>long</code>等）都会使用<code>int</code>类型重载的构造函数。相似的，所有<code>std::string</code>类似的实参（还有可以用来创建<code>std::string</code>的东西，比如字面量“<code>Ruth</code>”等）都会使用<code>std::string</code>类型的重载构造函数。没有意外情况。我想你可能会说有些人使用<code>0</code>或者<code>NULL</code>指代空指针会调用<code>int</code>重载的构造函数让他们很吃惊，但是这些人应该参考<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item8.md">Item8</a>反复阅读直到使用<code>0</code>或者<code>NULL</code>作为空指针让他们恶心。</p>
+<h3 id="使用tag-dispatch"><a class="header" href="#使用tag-dispatch">使用<em>tag dispatch</em></a></h3>
+<p>传递lvalue-reference-to-<code>const</code>以及按值传递都不支持完美转发。如果使用通用引用的动机是完美转发，我们就只能使用通用引用了，没有其他选择。但是又不想放弃重载。所以如果不放弃重载又不放弃通用引用，如何避免在通用引用上重载呢？</p>
+<p>实际上并不难。通过查看所有重载的所有形参以及调用点的所有传入实参，然后选择最优匹配的函数——考虑所有形参/实参的组合。通用引用通常提供了最优匹配，但是如果通用引用是包含其他<strong>非</strong>通用引用的形参列表的一部分，则非通用引用形参的较差匹配会使有一个通用引用的重载版本不被运行。这就是<em>tag dispatch</em>方法的基础，下面的示例会使这段话更容易理解。</p>
+<p>我们将标签分派应用于<code>logAndAdd</code>例子，下面是原来的代码，以免你再分心回去查看：</p>
+<pre><code class="language-cpp">std::multiset&lt;std::string&gt; names;       //全局数据结构
+
+template&lt;typename T&gt;                    //志记信息，将name添加到数据结构
+void logAndAdd(T&amp;&amp; name)
+{
+    auto now = std::chrono::system_clokc::now();
+    log(now, &quot;logAndAdd&quot;);
+    names.emplace(std::forward&lt;T&gt;(name));
+}
+</code></pre>
+<p>就其本身而言，功能执行没有问题，但是如果引入一个<code>int</code>类型的重载来用索引查找对象，就会重新陷入<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item26.md">Item26</a>中描述的麻烦。这个条款的目标是避免它。不通过重载，我们重新实现<code>logAndAdd</code>函数分拆为两个函数，一个针对整型值，一个针对其他。<code>logAndAdd</code>本身接受所有实参类型，包括整型和非整型。</p>
+<p>这两个真正执行逻辑的函数命名为<code>logAndAddImpl</code>，即我们使用重载。其中一个函数接受通用引用。所以我们同时使用了重载和通用引用。但是每个函数接受第二个形参，表征传入的实参是否为整型。这第二个形参可以帮助我们避免陷入到<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item26.md">Item26</a>中提到的麻烦中，因为我们将其安排为第二个实参决定选择哪个重载函数。</p>
+<p>是的，我知道，“不要在啰嗦了，赶紧亮出代码”。没有问题，代码如下，这是最接近正确版本的：</p>
+<pre><code class="language-cpp">template&lt;typename T&gt;
+void logAndAdd(T&amp;&amp; name) 
+{
+    logAndAddImpl(std::forward&lt;T&gt;(name),
+                  std::is_integral&lt;T&gt;());   //不那么正确
+}
+</code></pre>
+<p>这个函数转发它的形参给<code>logAndAddImpl</code>函数，但是多传递了一个表示形参<code>T</code>是否为整型的实参。至少，这就是应该做的。对于右值的整型实参来说，这也是正确的。但是如同<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item28.md">Item28</a>中说明，如果左值实参传递给通用引用<code>name</code>，对<code>T</code>类型推断会得到左值引用。所以如果左值<code>int</code>被传入<code>logAndAdd</code>，<code>T</code>将被推断为<code>int&amp;</code>。这不是一个整型类型，因为引用不是整型类型。这意味着<code>std::is_integral&lt;T&gt;</code>对于任何左值实参返回false，即使确实传入了整型值。</p>
+<p>意识到这个问题基本相当于解决了它，因为C++标准库有一个<em>type trait</em>（参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item9.md">Item9</a>），<code>std::remove_reference</code>，函数名字就说明做了我们希望的：移除类型的引用说明符。所以正确实现的代码应该是这样：</p>
+<pre><code class="language-cpp">template&lt;typename T&gt;
+void logAndAdd(T&amp;&amp; name)
+{
+    logAndAddImpl(
+        std::forward&lt;T&gt;(name),
+        std::is_integral&lt;typename std::remove_reference&lt;T&gt;::type&gt;()
+    );
+}
+</code></pre>
+<p>这个代码很巧妙。（在C++14中，你可以通过<code>std::remove_reference_t&lt;T&gt;</code>来简化写法，参看<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item9.md">Item9</a>）</p>
+<p>处理完之后，我们可以将注意力转移到名为<code>logAndAddImpl</code>的函数上了。有两个重载函数，第一个仅用于非整型类型（即<code>std::is_integral&lt;typename std::remove_reference&lt;T&gt;::type&gt;</code>是false）：</p>
+<pre><code class="language-cpp">template&lt;typename T&gt;                            //非整型实参：添加到全局数据结构中
+void logAndAddImpl(T&amp;&amp; name, std::false_type)	//译者注：高亮std::false_type
+{
+    auto now = std::chrono::system_clock::now();
+    log(now, &quot;logAndAdd&quot;);
+    names.emplace(std::forward&lt;T&gt;(name));
+}
+</code></pre>
+<p>一旦你理解了高亮参数的含义，代码就很直观。概念上，<code>logAndAdd</code>传递一个布尔值给<code>logAndAddImpl</code>表明是否传入了一个整型类型，但是<code>true</code>和<code>false</code>是<strong>运行时</strong>值，我们需要使用重载决议——<strong>编译时</strong>决策——来选择正确的<code>logAndAddImpl</code>重载。这意味着我们需要一个<strong>类型</strong>对应<code>true</code>，另一个不同的类型对应<code>false</code>。这个需要是经常出现的，所以标准库提供了这样两个命名<code>std::true_type</code>和<code>std::false_type</code>。<code>logAndAdd</code>传递给<code>logAndAddImpl</code>的实参是个对象，如果<code>T</code>是整型，对象的类型就继承自<code>std::true_type</code>，反之继承自<code>std::false_type</code>。最终的结果就是，当<code>T</code>不是整型类型时，这个<code>logAndAddImpl</code>重载是个可供调用的候选者。</p>
+<p>第二个重载覆盖了相反的场景：当<code>T</code>是整型类型。在这个场景中，<code>logAndAddImpl</code>简单找到对应传入索引的名字，然后传递给<code>logAndAdd</code>：</p>
+<pre><code class="language-cpp">std::string nameFromIdx(int idx);           //与条款26一样，整型实参：查找名字并用它调用logAndAdd
+void logAndAddImpl(int idx, std::true_type) //译者注：高亮std::true_type
+{
+  logAndAdd(nameFromIdx(idx)); 
+}
+</code></pre>
+<p>通过索引找到对应的<code>name</code>，然后让<code>logAndAddImpl</code>传递给<code>logAndAdd</code>（名字会被再<code>std::forward</code>给另一个<code>logAndAddImpl</code>重载），我们避免了将日志代码放入这个<code>logAndAddImpl</code>重载中。</p>
+<p>在这个设计中，类型<code>std::true_type</code>和<code>std::false_type</code>是“标签”（tag），其唯一目的就是强制重载解析按照我们的想法来执行。注意到我们甚至没有对这些参数进行命名。他们在运行时毫无用处，事实上我们希望编译器可以意识到这些标签形参没被使用，然后在程序执行时优化掉它们。（至少某些时候有些编译器会这样做。）通过创建标签对象，在<code>logAndAdd</code>内部将重载实现函数的调用“分发”（<em>dispatch</em>）给正确的重载。因此这个设计名称为：<em>tag dispatch</em>。这是模板元编程的标准构建模块，你对现代C++库中的代码了解越多，你就会越多遇到这种设计。</p>
+<p>就我们的目的而言，<em>tag dispatch</em>的重要之处在于它可以允许我们组合重载和通用引用使用，而没有<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item26.md">Item26</a>中提到的问题。分发函数——<code>logAndAdd</code>——接受一个没有约束的通用引用参数，但是这个函数没有重载。实现函数——<code>logAndAddImpl</code>——是重载的，一个接受通用引用参数，但是重载规则不仅依赖通用引用形参，还依赖新引入的标签形参，标签值设计来保证有不超过一个的重载是合适的匹配。结果是标签来决定采用哪个重载函数。通用引用参数可以生成精确匹配的事实在这里并不重要。（译者注：这里确实比较啰嗦，如果理解了上面的内容，这段完全可以没有。）</p>
+<h3 id="约束使用通用引用的模板"><a class="header" href="#约束使用通用引用的模板">约束使用通用引用的模板</a></h3>
+<p><em>tag dispatch</em>的关键是存在单独一个函数（没有重载）给客户端API。这个单独的函数分发给具体的实现函数。创建一个没有重载的分发函数通常是容易的，但是<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item26.md">Item26</a>中所述第二个问题案例是<code>Person</code>类的完美转发构造函数，是个例外。编译器可能会自行生成拷贝和移动构造函数，所以即使你只写了一个构造函数并在其中使用<em>tag dispatch</em>，有一些对构造函数的调用也被编译器生成的函数处理，绕过了分发机制。</p>
+<p>实际上，真正的问题不是编译器生成的函数会绕过<em>tag dispatch</em>设计，而是不<strong>总</strong>会绕过去。你希望类的拷贝构造函数总是处理该类型的左值拷贝请求，但是如同<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item26.md">Item26</a>中所述，提供具有通用引用的构造函数，会使通用引用构造函数在拷贝non-<code>const</code>左值时被调用（而不是拷贝构造函数）。那个条款还说明了当一个基类声明了完美转发构造函数，派生类实现自己的拷贝和移动构造函数时会调用那个完美转发构造函数，尽管正确的行为是调用基类的拷贝或者移动构造。</p>
+<p>这种情况，采用通用引用的重载函数通常比期望的更加贪心，虽然不像单个分派函数一样那么贪心，而又不满足使用<em>tag dispatch</em>的条件。你需要另外的技术，可以让你确定允许使用通用引用模板的条件。朋友，你需要的就是<code>std::enable_if</code>。</p>
+<p><code>std::enable_if</code>可以给你提供一种强制编译器执行行为的方法，像是特定模板不存在一样。这种模板被称为被<strong>禁止</strong>（disabled）。默认情况下，所有模板是<strong>启用</strong>的（enabled），但是使用<code>std::enable_if</code>可以使得仅在<code>std::enable_if</code>指定的条件满足时模板才启用。在这个例子中，我们只在传递的类型不是<code>Person</code>时使用<code>Person</code>的完美转发构造函数。如果传递的类型是<code>Person</code>，我们要禁止完美转发构造函数（即让编译器忽略它），因为这会让拷贝或者移动构造函数处理调用，这是我们想要使用<code>Person</code>初始化另一个<code>Person</code>的初衷。</p>
+<p>这个主意听起来并不难，但是语法比较繁杂，尤其是之前没有接触过的话，让我慢慢引导你。有一些<code>std::enbale_if</code>的contidion（条件）部分的样板，让我们从这里开始。下面的代码是<code>Person</code>完美转发构造函数的声明，多展示<code>std::enable_if</code>的部分来简化使用难度。我仅展示构造函数的声明，因为<code>std::enable_if</code>的使用对函数实现没影响。实现部分跟<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item26.md">Item26</a>中没有区别。</p>
+<pre><code class="language-cpp">class Person {
+public:
+    template&lt;typename T,
+             typename = typename std::enable_if&lt;condition&gt;::type&gt;   //译者注：本行高亮，condition为某其他特定条件
+    explicit Person(T&amp;&amp; n);
+    …
+};
+</code></pre>
+<p>为了理解高亮部分发生了什么，我很遗憾的表示你要自行参考其他代码，因为详细解释需要花费一定空间和时间，而本书并没有足够的空间（在你自行学习过程中，请研究“SFINAE”以及<code>std::enable_if</code>，因为“SFINAE”就是使<code>std::enable_if</code>起作用的技术）。这里我想要集中讨论条件的表示，该条件表示此构造函数是否启用。</p>
+<p>这里我们想表示的条件是确认<code>T</code>不是<code>Person</code>类型，即模板构造函数应该在<code>T</code>不是<code>Person</code>类型的时候启用。多亏了<em>type trait</em>可以确定两个对象类型是否相同（<code>std::is_same</code>），看起来我们需要的就是<code>!std::is_same&lt;Person, T&gt;::value</code>（注意语句开始的<code>!</code>，我们想要的是<strong>不</strong>相同）。这很接近我们想要的了，但是不完全正确，因为如同<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item28.md">Item28</a>中所述，使用左值来初始化通用引用的话会推导成左值引用，比如这个代码:</p>
+<pre><code class="language-cpp">Person p(&quot;Nancy&quot;);
+auto cloneOfP(p);       //用左值初始化
+</code></pre>
+<p><code>T</code>的类型在通用引用的构造函数中被推导为<code>Person&amp;</code>。<code>Person</code>和<code>Person&amp;</code>类型是不同的，<code>std::is_same</code>的结果也反映了：<code>std::is_same&lt;Person, Person&amp;&gt;::value</code>是false。</p>
+<p>如果我们更精细考虑仅当<code>T</code>不是<code>Person</code>类型才启用模板构造函数，我们会意识到当我们查看<code>T</code>时，应该忽略：</p>
+<ul>
+<li><strong>是否是个引用</strong>。对于决定是否通用引用构造函数启用的目的来说，<code>Person</code>，<code>Person&amp;</code>，<code>Person&amp;&amp;</code>都是跟<code>Person</code>一样的。</li>
+<li><strong>是不是<code>const</code>或者<code>volatile</code></strong>。如上所述，<code>const Person</code>，<code>volatile Person</code> ，<code>const volatile Person</code>也是跟<code>Person</code>一样的。</li>
+</ul>
+<p>这意味着我们需要一种方法消除对于<code>T</code>的引用，<code>const</code>，<code>volatile</code>修饰。再次，标准库提供了这样功能的<em>type trait</em>，就是<code>std::decay</code>。<code>std::decay&lt;T&gt;::value</code>与<code>T</code>是相同的，只不过会移除引用和cv限定符（<em>cv-qualifiers</em>，即<code>const</code>或<code>volatile</code>标识符）的修饰。（这里我没有说出另外的真相，<code>std::decay</code>如同其名一样，可以将数组或者函数退化成指针，参考<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item1.md">Item1</a>，但是在这里讨论的问题中，它刚好合适）。我们想要控制构造函数是否启用的条件可以写成：</p>
+<pre><code class="language-cpp">!std::is_same&lt;Person, typename std::decay&lt;T&gt;::type&gt;::value
+</code></pre>
+<p>即<code>Person</code>和<code>T</code>的类型不同，忽略了所有引用和cv限定符。（如<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item9.md">Item9</a>所述，<code>std::decay</code>前的“<code>typename</code>”是必需的，因为<code>std::decay&lt;T&gt;::type</code>的类型取决于模板形参<code>T</code>。）</p>
+<p>将其带回上面<code>std::enable_if</code>样板的代码中，加上调整一下格式，让各部分如何组合在一起看起来更容易，<code>Person</code>的完美转发构造函数的声明如下：</p>
+<pre><code class="language-cpp">class Person {
+public:
+    template&lt;
+        typename T,
+        typename = typename std::enable_if&lt;
+                       !std::is_same&lt;Person, 
+                                     typename std::decay&lt;T&gt;::type
+                                    &gt;::value
+                   &gt;::type
+    &gt;
+    explicit Person(T&amp;&amp; n);
+    …
+};
+</code></pre>
+<p>如果你之前从没有看到过这种类型的代码，那你可太幸福了。最后才放出这种设计是有原因的。当你有其他机制来避免同时使用重载和通用引用时（你总会这样做），确实应该那样做。不过，一旦你习惯了使用函数语法和尖括号的使用，也不坏。此外，这可以提供你一直想要的行为表现。在上面的声明中，使用<code>Person</code>初始化一个<code>Person</code>——无论是左值还是右值，<code>const</code>还是non-<code>const</code>，<code>volatile</code>还是non-<code>volatile</code>——都不会调用到通用引用构造函数。</p>
+<p>成功了，对吗？确实！</p>
+<p>啊，不对。等会再庆祝。<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item26.md">Item26</a>还有一个情景需要解决，我们需要继续探讨下去。</p>
+<p>假定从<code>Person</code>派生的类以常规方式实现拷贝和移动操作：</p>
+<pre><code class="language-cpp">class SpecialPerson: public Person {
+public:
+    SpecialPerson(const SpecialPerson&amp; rhs) //拷贝构造函数，调用基类的
+    : Person(rhs)                           //完美转发构造函数！
+    { … }
+    
+    SpecialPerson(SpecialPerson&amp;&amp; rhs)      //移动构造函数，调用基类的
+    : Person(std::move(rhs))                //完美转发构造函数！
+    { … }
+    
+    …
+};
+</code></pre>
+<p>这和<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item26.md">Item26</a>中的代码是一样的，包括注释也是一样。当我们拷贝或者移动一个<code>SpecialPerson</code>对象时，我们希望调用基类对应的拷贝和移动构造函数，来拷贝或者移动基类部分，但是这里，我们将<code>SpecialPerson</code>传递给基类的构造函数，因为<code>SpecialPerson</code>和<code>Person</code>类型不同（在应用<code>std::decay</code>后也不同），所以完美转发构造函数是启用的，会实例化为精确匹配<code>SpecialPerson</code>实参的构造函数。相比于派生类到基类的转化——这个转化对于在<code>Person</code>拷贝和移动构造函数中把<code>SpecialPerson</code>对象绑定到<code>Person</code>形参非常重要，生成的精确匹配是更优的，所以这里的代码，拷贝或者移动<code>SpecialPerson</code>对象就会调用<code>Person</code>类的完美转发构造函数来执行基类的部分。跟<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item26.md">Item26</a>的困境一样。</p>
+<p>派生类仅仅是按照常规的规则生成了自己的移动和拷贝构造函数，所以这个问题的解决还要落实在基类，尤其是控制是否使用<code>Person</code>通用引用构造函数启用的条件。现在我们意识到不只是禁止<code>Person</code>类型启用模板构造函数，而是禁止<code>Person</code>**以及任何派生自<code>Person</code>**的类型启用模板构造函数。讨厌的继承！</p>
+<p>你应该不意外在这里看到标准库中也有<em>type trait</em>判断一个类型是否继承自另一个类型，就是<code>std::is_base_of</code>。如果<code>std::is_base_of&lt;T1, T2&gt;</code>是true就表示<code>T2</code>派生自<code>T1</code>。类型也可被认为是从他们自己派生，所以<code>std::is_base_of&lt;T, T&gt;::value</code>总是true。这就很方便了，我们想要修正控制<code>Person</code>完美转发构造函数的启用条件，只有当<code>T</code>在消除引用和cv限定符之后，并且既不是<code>Person</code>又不是<code>Person</code>的派生类时，才满足条件。所以使用<code>std::is_base_of</code>代替<code>std::is_same</code>就可以了：</p>
+<pre><code class="language-cpp">class Person {
+public:
+    template&lt;
+        typename T,
+        typename = typename std::enable_if&lt;
+                       !std::is_base_of&lt;Person, 
+                                        typename std::decay&lt;T&gt;::type
+                                       &gt;::value
+                   &gt;::type
+    &gt;
+    explicit Person(T&amp;&amp; n);
+    …
+};
+</code></pre>
+<p>现在我们终于完成了最终版本。这是C++11版本的代码，如果我们使用C++14，这份代码也可以工作，但是可以使用<code>std::enable_if</code>和<code>std::decay</code>的别名模板来少写“<code>typename</code>”和“<code>::type</code>”这样的麻烦东西，产生了下面这样看起来舒爽的代码：</p>
+<pre><code class="language-cpp">class Person  {                                         //C++14
+public:
+    template&lt;
+        typename T,
+        typename = std::enable_if_t&lt;                    //这儿更少的代码
+                       !std::is_base_of&lt;Person,
+                                        std::decay_t&lt;T&gt; //还有这儿
+                                       &gt;::value
+                   &gt;                                    //还有这儿
+    &gt;
+    explicit Person(T&amp;&amp; n);
+    …
+};
+</code></pre>
+<p>好了，我承认，我又撒谎了。我们还没有完成，但是越发接近最终版本了。非常接近，我保证。</p>
+<p>我们已经知道如何使用<code>std::enable_if</code>来选择性禁止<code>Person</code>通用引用构造函数，来使得一些实参类型确保使用到拷贝或者移动构造函数，但是我们还没将其应用于区分整型参数和非整型参数。毕竟，我们的原始目标是解决构造函数模糊性问题。</p>
+<p>我们需要的所有东西——我确实意思是所有——是（1）加入一个<code>Person</code>构造函数重载来处理整型参数；（2）约束模板构造函数使其对于某些实参禁用。使用这些我们讨论过的技术组合起来，就能解决这个问题了：</p>
+<pre><code class="language-cpp">class Person {
+public:
+    template&lt;
+        typename T,
+        typename = std::enable_if_t&lt;
+            !std::is_base_of&lt;Person, std::decay_t&lt;T&gt;&gt;::value
+            &amp;&amp;
+            !std::is_integral&lt;std::remove_reference_t&lt;T&gt;&gt;::value
+        &gt;
+    &gt;
+    explicit Person(T&amp;&amp; n)          //对于std::strings和可转化为
+    : name(std::forward&lt;T&gt;(n))      //std::strings的实参的构造函数
+    { … }
+
+    explicit Person(int idx)        //对于整型实参的构造函数
+    : name(nameFromIdx(idx))
+    { … }
+
+    …                               //拷贝、移动构造函数等
+
+private:
+    std::string name;
+};
+</code></pre>
+<p>看！多么优美！好吧，优美之处只是对于那些迷信模板元编程之人，但是确实提出了不仅能工作的方法，而且极具技巧。因为使用了完美转发，所以具有最大效率，因为控制了通用引用与重载的结合而不是禁止它，这种技术可以被用于不可避免要用重载的情况（比如构造函数）。</p>
+<h3 id="折中"><a class="header" href="#折中">折中</a></h3>
+<p>本条款提到的前三个技术——放弃重载、传递const T&amp;、传值——在函数调用中指定每个形参的类型。后两个技术——<em>tag dispatch</em>和限制模板适用范围——使用完美转发，因此不需要指定形参类型。这一基本决定（是否指定类型）有一定后果。</p>
+<p>通常，完美转发更有效率，因为它避免了仅仅去为了符合形参声明的类型而创建临时对象。在<code>Person</code>构造函数的例子中，完美转发允许将“<code>Nancy</code>”这种字符串字面量转发到<code>Person</code>内部的<code>std::string</code>的构造函数，不使用完美转发的技术则会从字符串字面值创建一个临时<code>std::string</code>对象，来满足<code>Person</code>构造函数指定的形参要求。</p>
+<p>但是完美转发也有缺点。即使某些类型的实参可以传递给接受特定类型的函数，也无法完美转发。<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item30.md">Item30</a>中探索了完美转发失败的例子。</p>
+<p>第二个问题是当客户传递无效参数时错误消息的可理解性。例如假如客户传递了一个由<code>char16_t</code>（一种C++11引入的类型表示16位字符）而不是<code>char</code>（<code>std::string</code>包含的）组成的字符串字面值来创建一个<code>Person</code>对象：</p>
+<pre><code class="language-cpp">Person p(u&quot;Konrad Zuse&quot;);   //“Konrad Zuse”由const char16_t类型字符组成
+</code></pre>
+<p>使用本条款中讨论的前三种方法，编译器将看到可用的采用<code>int</code>或者<code>std::string</code>的构造函数，它们或多或少会产生错误消息，表示没有可以从<code>const char16_t[12]</code>转换为<code>int</code>或者<code>std::string</code>的方法。</p>
+<p>但是，基于完美转发的方法，<code>const char16_t</code>不受约束地绑定到构造函数的形参。从那里将转发到<code>Person</code>的<code>std::string</code>数据成员的构造函数，在这里，调用者传入的内容（<code>const char16_t</code>数组）与所需内容（<code>std::string</code>构造函数可接受的类型）发生的不匹配会被发现。由此产生的错误消息会让人更印象深刻，在我使用的编译器上，会产生超过160行错误信息。</p>
+<p>在这个例子中，通用引用仅被转发一次（从<code>Person</code>构造函数到<code>std::string</code>构造函数），但是更复杂的系统中，在最终到达判断实参类型是否可接受的地方之前，通用引用会被多层函数调用转发。通用引用被转发的次数越多，产生的错误消息偏差就越大。许多开发者发现，这种特殊问题是发生在留有通用引用形参的接口上，这些接口以性能作为首要考虑点。</p>
+<p>在<code>Person</code>这个例子中，我们知道完美转发函数的通用引用形参要作为<code>std::string</code>的初始化器，所以我们可以用<code>static_assert</code>来确认它可以起这个作用。<code>std::is_constructible</code>这个<em>type trait</em>执行编译时测试，确定一个类型的对象是否可以用另一个不同类型（或多个类型）的对象（或多个对象）来构造，所以代码可以这样：</p>
+<pre><code class="language-cpp">class Person {
+public:
+    template&lt;                       //同之前一样
+        typename T,
+        typename = std::enable_if_t&lt;
+            !std::is_base_of&lt;Person, std::decay_t&lt;T&gt;&gt;::value
+            &amp;&amp;
+            !std::is_integral&lt;std::remove_reference_t&lt;T&gt;&gt;::value
+        &gt;
+    &gt;
+    explicit Person(T&amp;&amp; n)
+    : name(std::forward&lt;T&gt;(n))
+    {
+        //断言可以用T对象创建std::string
+        static_assert(
+        std::is_constructible&lt;std::string, T&gt;::value,
+        &quot;Parameter n can't be used to construct a std::string&quot;
+        );
+
+        …               //通常的构造函数的工作写在这
+
+    }
+    
+    …                   //Person类的其他东西（同之前一样）
+};
+</code></pre>
+<p>如果客户代码尝试使用无法构造<code>std::string</code>的类型创建<code>Person</code>，会导致指定的错误消息。不幸的是，在这个例子中，<code>static_assert</code>在构造函数体中，但是转发的代码作为成员初始化列表的部分在检查之前。所以我使用的编译器，结果是由<code>static_assert</code>产生的清晰的错误消息在常规错误消息（多达160行以上那个）后出现。</p>
+<p><strong>请记住：</strong></p>
+<ul>
+<li>通用引用和重载的组合替代方案包括使用不同的函数名，通过lvalue-reference-to-<code>const</code>传递形参，按值传递形参，使用<em>tag dispatch</em>。</li>
+<li>通过<code>std::enable_if</code>约束模板，允许组合通用引用和重载使用，但它也控制了编译器在哪种条件下才使用通用引用重载。</li>
+<li>通用引用参数通常具有高效率的优势，但是可用性就值得斟酌。</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../5.RRefMovSemPerfForw/item26.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="../5.RRefMovSemPerfForw/item28.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../5.RRefMovSemPerfForw/item26.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../5.RRefMovSemPerfForw/item28.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>

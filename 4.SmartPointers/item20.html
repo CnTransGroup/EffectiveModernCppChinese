@@ -1,0 +1,246 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Item 20: Use std::weak_ptr for std::shared_ptr like pointers that can dangle - Effective Modern C++</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <!-- MathJax -->
+        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../Introduction.html">Introduction</a></li><li class="chapter-item expanded "><div>Chapter 1. Deducing Types</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../1.DeducingTypes/item1.html">Item 1: Understanding template type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item2.html">Item 2: Understand auto type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item3.html">Item 3: Understand decltype</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item4.html">Item 4: Know how to view deduced types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 2. auto</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../2.Auto/item5.html">Item 5: Prefer auto to explicit type declarations</a></li><li class="chapter-item expanded "><a href="../2.Auto/item6.html">Item 6: Use the explicitly typed initializer idiom when auto deduces undesired types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 3. Moving to Modern C++</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item7.html">Item 7: Distinguish between () and {} when creating objects</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item8.html">Item 8: Prefer nullptr to 0 or NULL</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item9.html">Item 9: Prefer alias declarations to typedefs</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item10.html">Item 10: Prefer scoped enums to unscoped enums</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item11.html">Item 11: Prefer deleted functions to private undefined ones</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item12.html">Item 12: Declare overriding functions override</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item13.html">Item 13: Prefer const_iterators to iterators</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item14.html">Item 14: Declare functions noexcept if they won't emit exceptions</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item15.html">Item 15: Use constexpr whenever possible</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item16.html">Item 16: Make const member functions thread safe</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item17.html">Item 17: Understand special member funciton generation</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 4. Smart Pointer</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../4.SmartPointers/item18.html">Item 18: Use std::unique_ptr for exclusive-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item19.html">Item 19: Use std::shared_ptr for shared-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item20.html" class="active">Item 20: Use std::weak_ptr for std::shared_ptr like pointers that can dangle</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item21.html">Item 21: Prefer std::make_unique and std::make_shared to direct use of new</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item22.html">Item 22: When using the Pimpl Idiom, define special member functions in the implementation file</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 5. Rvalue References, Move Semantics, and Perfect Forwarding</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item23.html">Item 23: Understand std::move and std::forward</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item24.html">Item 24: Distinguish universal references from rvalue references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item25.html">Item 25: Use std::move on rvalue references, std::forward on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item26.html">Item 26: Avoid overloading on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item27.html">Item 27: Familiarize yourself with alternatives to overaloading on univeral references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item28.html">Item 28: Understand reference collapsing</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item29.html">Item 29: Assume that move operations are not present not cheap, and not used</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item30.html">Item 30: Familiarize yourself with perfect forwarding failure cases</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 6. Lambda Expressions</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item31.html">Item 31: Avoid default capture modes</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item32.html">Item 32: Use init capture to move objects into closures</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item33.html">Item 33: Use decltype on auto&&parameters to std::forward them</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item34.html">Item 34: Prefer lambdas to std::bind</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 7. The Concurrency API</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/Item35.html">Item 35: Prefer task-based programming to thread-based</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item36.html">Item 36: Specify std::launch::async if asynchronicity is essential</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item37.html">Item 37: Make std::threads unjionable on all paths</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item38.html">Item 38: Be aware of varying thread handle destructor behavior</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item39.html">Item 39: Consider void futures for one-shot event communication</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item40.html">Item 40: Use std::atomic for concurrency, volatile for special memory</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 8. Tweaks</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../8.Tweaks/item41.html">Item 41: Consider pass by value for copyable parameters that are cheap to move and always copied</a></li><li class="chapter-item expanded "><a href="../8.Tweaks/item42.html">Item 42: Consider emplacement instead of insertion</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Effective Modern C++</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h2 id="条款二十当stdshard_ptr可能悬空时使用stdweak_ptr"><a class="header" href="#条款二十当stdshard_ptr可能悬空时使用stdweak_ptr">条款二十：当<code>std::shard_ptr</code>可能悬空时使用<code>std::weak_ptr</code></a></h2>
+<p><strong>Item 20: Use <code>std::weak_ptr</code> for <code>std::shared_ptr</code>-like pointers that can dangle</strong></p>
+<p>自相矛盾的是，如果有一个像<code>std::shared_ptr</code>（见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item19.md">Item19</a>）的但是不参与资源所有权共享的指针是很方便的。换句话说，是一个类似<code>std::shared_ptr</code>但不影响对象引用计数的指针。这种类型的智能指针必须要解决一个<code>std::shared_ptr</code>不存在的问题：可能指向已经销毁的对象。一个真正的智能指针应该跟踪所指对象，在悬空时知晓，悬空（<em>dangle</em>）就是指针指向的对象不再存在。这就是对<code>std::weak_ptr</code>最精确的描述。</p>
+<p>你可能想知道什么时候该用<code>std::weak_ptr</code>。你可能想知道关于<code>std::weak_ptr</code> API的更多。它什么都好除了不太智能。<code>std::weak_ptr</code>不能解引用，也不能测试是否为空值。因为<code>std::weak_ptr</code>不是一个独立的智能指针。它是<code>std::shared_ptr</code>的增强。</p>
+<p>这种关系在它创建之时就建立了。<code>std::weak_ptr</code>通常从<code>std::shared_ptr</code>上创建。当从<code>std::shared_ptr</code>上创建<code>std::weak_ptr</code>时两者指向相同的对象，但是<code>std::weak_ptr</code>不会影响所指对象的引用计数：</p>
+<pre><code class="language-cpp">auto spw =                      //spw创建之后，指向的Widget的
+    std::make_shared&lt;Widget&gt;(); //引用计数（ref count，RC）为1。
+                                //std::make_shared的信息参见条款21
+…
+std::weak_ptr&lt;Widget&gt; wpw(spw); //wpw指向与spw所指相同的Widget。RC仍为1
+…
+spw = nullptr;                  //RC变为0，Widget被销毁。
+                                //wpw现在悬空
+</code></pre>
+<p>悬空的<code>std::weak_ptr</code>被称作已经<strong>expired</strong>（过期）。你可以用它直接做测试：</p>
+<pre><code class="language-CPP">if (wpw.expired()) …            //如果wpw没有指向对象…
+</code></pre>
+<p>但是通常你期望的是检查<code>std::weak_ptr</code>是否已经过期，如果没有过期则访问其指向的对象。这做起来可不是想着那么简单。因为缺少解引用操作，没有办法写这样的代码。即使有，将检查和解引用分开会引入竞态条件：在调用<code>expired</code>和解引用操作之间，另一个线程可能对指向这对象的<code>std::shared_ptr</code>重新赋值或者析构，并由此造成对象已析构。这种情况下，你的解引用将会产生未定义行为。</p>
+<p>你需要的是一个原子操作检查<code>std::weak_ptr</code>是否已经过期，如果没有过期就访问所指对象。这可以通过从<code>std::weak_ptr</code>创建<code>std::shared_ptr</code>来实现，具体有两种形式可以从<code>std::weak_ptr</code>上创建<code>std::shared_ptr</code>，具体用哪种取决于<code>std::weak_ptr</code>过期时你希望<code>std::shared_ptr</code>表现出什么行为。一种形式是<code>std::weak_ptr::lock</code>，它返回一个<code>std::shared_ptr</code>，如果<code>std::weak_ptr</code>过期这个<code>std::shared_ptr</code>为空：</p>
+<pre><code class="language-cpp">std::shared_ptr&lt;Widget&gt; spw1 = wpw.lock();  //如果wpw过期，spw1就为空
+ 											
+auto spw2 = wpw.lock();                     //同上，但是使用auto
+</code></pre>
+<p>另一种形式是以<code>std::weak_ptr</code>为实参构造<code>std::shared_ptr</code>。这种情况中，如果<code>std::weak_ptr</code>过期，会抛出一个异常：</p>
+<pre><code class="language-cpp">std::shared_ptr&lt;Widget&gt; spw3(wpw);          //如果wpw过期，抛出std::bad_weak_ptr异常
+</code></pre>
+<p>但是你可能还想知道为什么<code>std::weak_ptr</code>就有用了。考虑一个工厂函数，它基于一个唯一ID从只读对象上产出智能指针。根据<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item19.md">Item18</a>的描述，工厂函数会返回一个该对象类型的<code>std::unique_ptr</code>：</p>
+<pre><code class="language-cpp">std::unique_ptr&lt;const Widget&gt; loadWidget(WidgetID id);
+</code></pre>
+<p>如果调用<code>loadWidget</code>是一个昂贵的操作（比如它操作文件或者数据库I/O）并且重复使用ID很常见，一个合理的优化是再写一个函数除了完成<code>loadWidget</code>做的事情之外再缓存它的结果。当每个请求获取的<code>Widget</code>阻塞了缓存也会导致本身性能问题，所以另一个合理的优化可以是当<code>Widget</code>不再使用的时候销毁它的缓存。</p>
+<p>对于可缓存的工厂函数，返回<code>std::unique_ptr</code>不是好的选择。调用者应该接收缓存对象的智能指针，调用者也应该确定这些对象的生命周期，但是缓存本身也需要一个指针指向它所缓存的对象。缓存对象的指针需要知道它是否已经悬空，因为当工厂客户端使用完工厂产生的对象后，对象将被销毁，关联的缓存条目会悬空。所以缓存应该使用<code>std::weak_ptr</code>，这可以知道是否已经悬空。这意味着工厂函数返回值类型应该是<code>std::shared_ptr</code>，因为只有当对象的生命周期由<code>std::shared_ptr</code>管理时，<code>std::weak_ptr</code>才能检测到悬空。</p>
+<p>下面是一个临时凑合的<code>loadWidget</code>的缓存版本的实现：</p>
+<pre><code class="language-cpp">std::shared_ptr&lt;const Widget&gt; fastLoadWidget(WidgetID id)
+{
+    static std::unordered_map&lt;WidgetID,
+                              std::weak_ptr&lt;const Widget&gt;&gt; cache;
+                                        //译者注：这里std::weak_ptr&lt;const Widget&gt;是高亮
+    auto objPtr = cache[id].lock();     //objPtr是去缓存对象的
+                                        //std::shared_ptr（或
+                                        //当对象不在缓存中时为null）
+
+    if (!objPtr) {                      //如果不在缓存中
+        objPtr = loadWidget(id);        //加载它
+        cache[id] = objPtr;             //缓存它
+    }
+    return objPtr;
+}
+</code></pre>
+<p>这个实现使用了C++11的hash表容器<code>std::unordered_map</code>，但是需要的<code>WidgetID</code>哈希和相等性比较函数在这里没有展示。</p>
+<p><code>fastLoadWidget</code>的实现忽略了以下事实：缓存可能会累积过期的<code>std::weak_ptr</code>，这些指针对应了不再使用的<code>Widget</code>（也已经被销毁了）。其实可以改进实现方式，但是花时间在这个问题上不会让我们对<code>std::weak_ptr</code>有更深入的理解，让我们考虑第二个用例：观察者设计模式（Observer design pattern）。此模式的主要组件是subjects（状态可能会更改的对象）和observers（状态发生更改时要通知的对象）。在大多数实现中，每个subject都包含一个数据成员，该成员持有指向其observers的指针。这使subjects很容易发布状态更改通知。subjects对控制observers的生命周期（即它们什么时候被销毁）没有兴趣，但是subjects对确保另一件事具有极大的兴趣，那事就是一个observer被销毁时，不再尝试访问它。一个合理的设计是每个subject持有一个<code>std::weak_ptr</code>s容器指向observers，因此可以在使用前检查是否已经悬空。</p>
+<p>作为最后一个使用<code>std::weak_ptr</code>的例子，考虑一个持有三个对象<code>A</code>、<code>B</code>、<code>C</code>的数据结构，<code>A</code>和<code>C</code>共享<code>B</code>的所有权，因此持有<code>std::shared_ptr</code>：</p>
+<p><img src="media/item20_fig1.png" alt="item20_fig1" /></p>
+<p>假定从B指向A的指针也很有用。应该使用哪种指针？</p>
+<p><img src="media/item20_fig2.png" alt="item20_fig2" /></p>
+<p>有三种选择：</p>
+<ul>
+<li><strong>原始指针</strong>。使用这种方法，如果<code>A</code>被销毁，但是<code>C</code>继续指向<code>B</code>，<code>B</code>就会有一个指向<code>A</code>的悬空指针。而且<code>B</code>不知道指针已经悬空，所以<code>B</code>可能会继续访问，就会导致未定义行为。</li>
+<li><strong><code>std::shared_ptr</code></strong>。这种设计，<code>A</code>和<code>B</code>都互相持有对方的<code>std::shared_ptr</code>，导致的<code>std::shared_ptr</code>环状结构（<code>A</code>指向<code>B</code>，<code>B</code>指向<code>A</code>）阻止<code>A</code>和<code>B</code>的销毁。甚至<code>A</code>和<code>B</code>无法从其他数据结构访问了（比如，<code>C</code>不再指向<code>B</code>），每个的引用计数都还是1。如果发生了这种情况，<code>A</code>和<code>B</code>都被泄漏：程序无法访问它们，但是资源并没有被回收。</li>
+<li><strong><code>std::weak_ptr</code></strong>。这避免了上述两个问题。如果<code>A</code>被销毁，<code>B</code>指向它的指针悬空，但是<code>B</code>可以检测到这件事。尤其是，尽管<code>A</code>和<code>B</code>互相指向对方，<code>B</code>的指针不会影响<code>A</code>的引用计数，因此在没有<code>std::shared_ptr</code>指向<code>A</code>时不会导致<code>A</code>无法被销毁。</li>
+</ul>
+<p>使用<code>std::weak_ptr</code>显然是这些选择中最好的。但是，需要注意使用<code>std::weak_ptr</code>打破<code>std::shared_ptr</code>循环并不常见。在严格分层的数据结构比如树中，子节点只被父节点持有。当父节点被销毁时，子节点就被销毁。从父到子的链接关系可以使用<code>std::unique_ptr</code>很好的表征。从子到父的反向连接可以使用原始指针安全实现，因为子节点的生命周期肯定短于父节点。因此没有子节点解引用一个悬垂的父节点指针这样的风险。</p>
+<p>当然，不是所有的使用指针的数据结构都是严格分层的，所以当发生这种情况时，比如上面所述缓存和观察者列表的实现之类的，知道<code>std::weak_ptr</code>随时待命也是不错的。</p>
+<p>从效率角度来看，<code>std::weak_ptr</code>与<code>std::shared_ptr</code>基本相同。两者的大小是相同的，使用相同的控制块（参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item19.md">Item19</a>），构造、析构、赋值操作涉及引用计数的原子操作。这可能让你感到惊讶，因为本条款开篇就提到<code>std::weak_ptr</code>不影响引用计数。我写的是<code>std::weak_ptr</code>不参与对象的<strong>共享所有权</strong>，因此不影响<strong>指向对象的引用计数</strong>。实际上在控制块中还是有第二个引用计数，<code>std::weak_ptr</code>操作的是第二个引用计数。想了解细节的话，继续看<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item21.md">Item21</a>吧。</p>
+<p><strong>请记住：</strong></p>
+<ul>
+<li>用<code>std::weak_ptr</code>替代可能会悬空的<code>std::shared_ptr</code>。</li>
+<li><code>std::weak_ptr</code>的潜在使用场景包括：缓存、观察者列表、打破<code>std::shared_ptr</code>环状结构。</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../4.SmartPointers/item19.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="../4.SmartPointers/item21.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../4.SmartPointers/item19.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../4.SmartPointers/item21.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>

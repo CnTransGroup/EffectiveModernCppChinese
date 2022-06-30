@@ -1,0 +1,265 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Item 6: Use the explicitly typed initializer idiom when auto deduces undesired types - Effective Modern C++</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <!-- MathJax -->
+        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../Introduction.html">Introduction</a></li><li class="chapter-item expanded "><div>Chapter 1. Deducing Types</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../1.DeducingTypes/item1.html">Item 1: Understanding template type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item2.html">Item 2: Understand auto type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item3.html">Item 3: Understand decltype</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item4.html">Item 4: Know how to view deduced types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 2. auto</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../2.Auto/item5.html">Item 5: Prefer auto to explicit type declarations</a></li><li class="chapter-item expanded "><a href="../2.Auto/item6.html" class="active">Item 6: Use the explicitly typed initializer idiom when auto deduces undesired types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 3. Moving to Modern C++</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item7.html">Item 7: Distinguish between () and {} when creating objects</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item8.html">Item 8: Prefer nullptr to 0 or NULL</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item9.html">Item 9: Prefer alias declarations to typedefs</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item10.html">Item 10: Prefer scoped enums to unscoped enums</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item11.html">Item 11: Prefer deleted functions to private undefined ones</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item12.html">Item 12: Declare overriding functions override</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item13.html">Item 13: Prefer const_iterators to iterators</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item14.html">Item 14: Declare functions noexcept if they won't emit exceptions</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item15.html">Item 15: Use constexpr whenever possible</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item16.html">Item 16: Make const member functions thread safe</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item17.html">Item 17: Understand special member funciton generation</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 4. Smart Pointer</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../4.SmartPointers/item18.html">Item 18: Use std::unique_ptr for exclusive-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item19.html">Item 19: Use std::shared_ptr for shared-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item20.html">Item 20: Use std::weak_ptr for std::shared_ptr like pointers that can dangle</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item21.html">Item 21: Prefer std::make_unique and std::make_shared to direct use of new</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item22.html">Item 22: When using the Pimpl Idiom, define special member functions in the implementation file</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 5. Rvalue References, Move Semantics, and Perfect Forwarding</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item23.html">Item 23: Understand std::move and std::forward</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item24.html">Item 24: Distinguish universal references from rvalue references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item25.html">Item 25: Use std::move on rvalue references, std::forward on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item26.html">Item 26: Avoid overloading on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item27.html">Item 27: Familiarize yourself with alternatives to overaloading on univeral references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item28.html">Item 28: Understand reference collapsing</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item29.html">Item 29: Assume that move operations are not present not cheap, and not used</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item30.html">Item 30: Familiarize yourself with perfect forwarding failure cases</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 6. Lambda Expressions</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item31.html">Item 31: Avoid default capture modes</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item32.html">Item 32: Use init capture to move objects into closures</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item33.html">Item 33: Use decltype on auto&&parameters to std::forward them</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item34.html">Item 34: Prefer lambdas to std::bind</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 7. The Concurrency API</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/Item35.html">Item 35: Prefer task-based programming to thread-based</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item36.html">Item 36: Specify std::launch::async if asynchronicity is essential</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item37.html">Item 37: Make std::threads unjionable on all paths</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item38.html">Item 38: Be aware of varying thread handle destructor behavior</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item39.html">Item 39: Consider void futures for one-shot event communication</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item40.html">Item 40: Use std::atomic for concurrency, volatile for special memory</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 8. Tweaks</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../8.Tweaks/item41.html">Item 41: Consider pass by value for copyable parameters that are cheap to move and always copied</a></li><li class="chapter-item expanded "><a href="../8.Tweaks/item42.html">Item 42: Consider emplacement instead of insertion</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Effective Modern C++</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h2 id="条款六auto推导若非己愿使用显式类型初始化惯用法"><a class="header" href="#条款六auto推导若非己愿使用显式类型初始化惯用法">条款六：<code>auto</code>推导若非己愿，使用显式类型初始化惯用法</a></h2>
+<p><strong>Item 6: Use the explicitly typed initializer idiom when <code>auto</code> deduces undesired types</strong></p>
+<p>在<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/2.Auto/item5.md">Item5</a>中解释了比起显式指定类型使用<code>auto</code>声明变量有若干技术优势，但是有时当你想向左转<code>auto</code>却向右转。举个例子，假如我有一个函数，参数为<code>Widget</code>，返回一个<code>std::vector&lt;bool&gt;</code>，这里的<code>bool</code>表示<code>Widget</code>是否提供一个独有的特性。</p>
+<pre><code class="language-cpp">std::vector&lt;bool&gt; features(const Widget&amp; w);
+</code></pre>
+<p>更进一步假设第5个<em>bit</em>表示<code>Widget</code>是否具有高优先级，我们可以写这样的代码：</p>
+<pre><code class="language-cpp">Widget w;
+…
+bool highPriority = features(w)[5];     //w高优先级吗？
+…
+processWidget(w, highPriority);         //根据它的优先级处理w
+</code></pre>
+<p>这个代码没有任何问题。它会正常工作，但是如果我们使用<code>auto</code>代替<code>highPriority</code>的显式指定类型做一些看起来很无害的改变：</p>
+<pre><code class="language-cpp">auto highPriority = features(w)[5];     //w高优先级吗？
+</code></pre>
+<p>情况变了。所有代码仍然可编译，但是行为不再可预测：</p>
+<pre><code class="language-cpp">processWidget(w,highPriority);          //未定义行为！
+</code></pre>
+<p>就像注释说的，这个<code>processWidget</code>是一个未定义行为。为什么呢？答案有可能让你很惊讶，使用<code>auto</code>后<code>highPriority</code>不再是<code>bool</code>类型。虽然从概念上来说<code>std::vector&lt;bool&gt;</code>意味着存放<code>bool</code>，但是<code>std::vector&lt;bool&gt;</code>的<code>operator[]</code>不会返回容器中元素的引用（这就是<code>std::vector::operator[]</code>可返回<strong>除了<code>bool</code>以外</strong>的任何类型），取而代之它返回一个<code>std::vector&lt;bool&gt;::reference</code>的对象（一个嵌套于<code>std::vector&lt;bool&gt;</code>中的类）。</p>
+<p><code>std::vector&lt;bool&gt;::reference</code>之所以存在是因为<code>std::vector&lt;bool&gt;</code>规定了使用一个打包形式（packed form）表示它的<code>bool</code>，每个<code>bool</code>占一个<em>bit</em>。那给<code>std::vector</code>的<code>operator[]</code>带来了问题，因为<code>std::vector&lt;T&gt;</code>的<code>operator[]</code>应当返回一个<code>T&amp;</code>，但是C++禁止对<code>bit</code>s的引用。无法返回一个<code>bool&amp;</code>，<code>std::vector&lt;bool&gt;</code>的<code>operator[]</code>返回一个<strong>行为类似于</strong><code>bool&amp;</code>的对象。要想成功扮演这个角色，<code>bool&amp;</code>适用的上下文<code>std::vector&lt;bool&gt;::reference</code>也必须一样能适用。在<code>std::vector&lt;bool&gt;::reference</code>的特性中，使这个原则可行的特性是一个可以向<code>bool</code>的隐式转化。（不是<code>bool&amp;</code>，是**<code>bool</code>**。要想完整的解释<code>std::vector&lt;bool&gt;::reference</code>能模拟<code>bool&amp;</code>的行为所使用的一堆技术可能扯得太远了，所以这里简单地说隐式类型转换只是这个大型马赛克的一小块）</p>
+<p>有了这些信息，我们再来看看原始代码的一部分：</p>
+<pre><code class="language-cpp">bool highPriority = features(w)[5];     //显式的声明highPriority的类型
+</code></pre>
+<p>这里，<code>features</code>返回一个<code>std::vector&lt;bool&gt;</code>对象后再调用<code>operator[]</code>，<code>operator[]</code>将会返回一个<code>std::vector&lt;bool&gt;::reference</code>对象，然后再通过隐式转换赋值给<code>bool</code>变量<code>highPriority</code>。<code>highPriority</code>因此表示的是<code>features</code>返回的<code>std::vector&lt;bool&gt;</code>中的第五个<em>bit</em>，这也正如我们所期待的那样。</p>
+<p>然后再对照一下当使用<code>auto</code>时发生了什么：</p>
+<pre><code class="language-cpp">auto highPriority = features(w)[5];     //推导highPriority的类型
+</code></pre>
+<p>同样的，<code>features</code>返回一个<code>std::vector&lt;bool&gt;</code>对象，再调用<code>operator[]</code>，<code>operator[]</code>将会返回一个<code>std::vector&lt;bool&gt;::reference</code>对象，但是现在这里有一点变化了，<code>auto</code>推导<code>highPriority</code>的类型为<code>std::vector&lt;bool&gt;::reference</code>，但是<code>highPriority</code>对象没有第五<em>bit</em>的值。</p>
+<p>这个值取决于<code>std::vector&lt;bool&gt;::reference</code>的具体实现。其中的一种实现是这样的（<code>std::vector&lt;bool&gt;::reference</code>）对象包含一个指向机器字（<em>word</em>）的指针，然后加上方括号中的偏移实现被引用<em>bit</em>这样的行为。然后再来考虑<code>highPriority</code>初始化表达的意思，注意这里假设<code>std::vector&lt;bool&gt;::reference</code>就是刚提到的实现方式。</p>
+<p>调用<code>features</code>将返回一个<code>std::vector&lt;bool&gt;</code>临时对象，这个对象没有名字，为了方便我们的讨论，我这里叫他<code>temp</code>。<code>operator[]</code>在<code>temp</code>上调用，它返回的<code>std::vector&lt;bool&gt;::reference</code>包含一个指向存着这些<em>bit</em>s的一个数据结构中的一个<em>word</em>的指针（<code>temp</code>管理这些<em>bit</em>s），还有相应于第5个<em>bit</em>的偏移。<code>highPriority</code>是这个<code>std::vector&lt;bool&gt;::reference</code>的拷贝，所以<code>highPriority</code>也包含一个指针，指向<code>temp</code>中的这个<em>word</em>，加上相应于第5个<em>bit</em>的偏移。在这个语句结束的时候<code>temp</code>将会被销毁，因为它是一个临时变量。因此<code>highPriority</code>包含一个悬置的（<em>dangling</em>）指针，如果用于<code>processWidget</code>调用中将会造成未定义行为：</p>
+<pre><code class="language-cpp">processWidget(w, highPriority);         //未定义行为！
+                                        //highPriority包含一个悬置指针！
+</code></pre>
+<p><code>std::vector&lt;bool&gt;::reference</code>是一个代理类（<em>proxy class</em>）的例子：所谓代理类就是以模仿和增强一些类型的行为为目的而存在的类。很多情况下都会使用代理类，<code>std::vector&lt;bool&gt;::reference</code>展示了对<code>std::vector&lt;bool&gt;</code>使用<code>operator[]</code>来实现引用<em>bit</em>这样的行为。另外，C++标准模板库中的智能指针（见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item18.md">第4章</a>）也是用代理类实现了对原始指针的资源管理行为。代理类的功能已被大家广泛接受。事实上，“Proxy”设计模式是软件设计这座万神庙中一直都存在的高级会员。</p>
+<p>一些代理类被设计于用以对客户可见。比如<code>std::shared_ptr</code>和<code>std::unique_ptr</code>。其他的代理类则或多或少不可见，比如<code>std::vector&lt;bool&gt;::reference</code>就是不可见代理类的一个例子，还有它在<code>std::bitset</code>的胞弟<code>std::bitset::reference</code>。</p>
+<p>在后者的阵营（注：指不可见代理类）里一些C++库也是用了表达式模板（<em>expression templates</em>）的黑科技。这些库通常被用于提高数值运算的效率。给出一个矩阵类<code>Matrix</code>和矩阵对象<code>m1</code>，<code>m2</code>，<code>m3</code>，<code>m4</code>，举个例子，这个表达式</p>
+<pre><code class="language-cpp">Matrix sum = m1 + m2 + m3 + m4;
+</code></pre>
+<p>可以使计算更加高效，只需要使让<code>operator+</code>返回一个代理类代理结果而不是返回结果本身。也就是说，对两个<code>Matrix</code>对象使用<code>operator+</code>将会返回如<code>Sum&lt;Matrix, Matrix&gt;</code>这样的代理类作为结果而不是直接返回一个<code>Matrix</code>对象。在<code>std::vector&lt;bool&gt;::reference</code>和<code>bool</code>中存在一个隐式转换，同样对于<code>Matrix</code>来说也可以存在一个隐式转换允许<code>Matrix</code>的代理类转换为<code>Matrix</code>，这让表达式等号“<code>=</code>”右边能产生代理对象来初始化<code>sum</code>。（这个对象应当编码整个初始化表达式，即类似于<code>Sum&lt;Sum&lt;Sum&lt;Matrix, Matrix&gt;, Matrix&gt;, Matrix&gt;</code>的东西。客户应该避免看到这个实际的类型。）</p>
+<p>作为一个通则，不可见的代理类通常不适用于<code>auto</code>。这样类型的对象的生命期通常不会设计为能活过一条语句，所以创建那样的对象你基本上就走向了违反程序库设计基本假设的道路。<code>std::vector&lt;bool&gt;::reference</code>就是这种情况，我们看到违反这个基本假设将导致未定义行为。</p>
+<p>因此你想避开这种形式的代码：</p>
+<pre><code class="language-cpp">auto someVar = expression of &quot;invisible&quot; proxy class type;
+</code></pre>
+<p>但是你怎么能意识到你正在使用代理类？应用他们的软件不可能宣告它们的存在。它们被设计为<strong>不可见</strong>，至少概念上说是这样！每当你发现它们，你真的应该舍弃<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/2.Auto/item5.md">Item5</a>演示的<code>auto</code>所具有的诸多好处吗？</p>
+<p>让我们首先回到如何找到它们的问题上。虽然“不可见”代理类都在程序员日常使用的雷达下方飞行，但是很多库都证明它们可以上方飞行。当你越熟悉你使用的库的基本设计理念，你的思维就会越活跃，不至于思维僵化认为代理类只能在这些库中使用。</p>
+<p>当缺少文档的时候，可以去看看头文件。很少会出现源代码全都用代理对象，它们通常用于一些函数的返回类型，所以通常能从函数签名中看出它们的存在。这里有一份<code>std::vector&lt;bool&gt;::operator[]</code>的说明书：</p>
+<pre><code class="language-cpp">namespace std{                                  //来自于C++标准库
+    template&lt;class Allocator&gt;
+    class vector&lt;bool, Allocator&gt;{
+    public:
+        …
+        class reference { … };
+
+        reference operator[](size_type n);
+        …
+    };
+}
+</code></pre>
+<p>假设你知道对<code>std::vector&lt;T&gt;</code>使用<code>operator[]</code>通常会返回一个<code>T&amp;</code>，在这里<code>operator[]</code>不寻常的返回类型提示你它使用了代理类。多关注你使用的接口可以暴露代理类的存在。</p>
+<p>实际上， 很多开发者都是在跟踪一些令人困惑的复杂问题或在单元测试出错进行调试时才看到代理类的使用。不管你怎么发现它们的，一旦看到<code>auto</code>推导了代理类的类型而不是被代理的类型，解决方案并不需要抛弃<code>auto</code>。<code>auto</code>本身没什么问题，问题是<code>auto</code>不会推导出你想要的类型。解决方案是强制使用一个不同的类型推导形式，这种方法我通常称之为显式类型初始器惯用法（<em>the explicitly typed initialized idiom</em>)。</p>
+<p>显式类型初始器惯用法使用<code>auto</code>声明一个变量，然后对表达式强制类型转换（<em>cast</em>）得出你期望的推导结果。举个例子，我们该怎么将这个惯用法施加到<code>highPriority</code>上？</p>
+<pre><code class="language-cpp">auto highPriority = static_cast&lt;bool&gt;(features(w)[5]);
+</code></pre>
+<p>这里，<code>features(w)[5]</code>还是返回一个<code>std::vector&lt;bool&gt;::reference</code>对象，就像之前那样，但是这个转型使得表达式类型为<code>bool</code>，然后<code>auto</code>才被用于推导<code>highPriority</code>。在运行时，对<code>std::vector&lt;bool&gt;::operator[]</code>返回的<code>std::vector&lt;bool&gt;::reference</code>执行它支持的向<code>bool</code>的转型，在这个过程中指向<code>std::vector&lt;bool&gt;</code>的指针已经被解引用。这就避开了我们之前的未定义行为。然后5将被用于指向<em>bit</em>的指针，<code>bool</code>值被用于初始化<code>highPriority</code>。</p>
+<p>对于<code>Matrix</code>来说，显式类型初始器惯用法是这样的：</p>
+<pre><code class="language-cpp">auto sum = static_cast&lt;Matrix&gt;(m1 + m2 + m3 + m4);
+</code></pre>
+<p>应用这个惯用法不限制初始化表达式产生一个代理类。它也可以用于强调你声明了一个变量类型，它的类型不同于初始化表达式的类型。举个例子，假设你有这样一个表达式计算公差值：</p>
+<pre><code class="language-cpp">double calcEpsilon();                           //返回公差值
+</code></pre>
+<p><code>calcEpsilon</code>清楚的表明它返回一个<code>double</code>，但是假设你知道对于这个程序来说使用<code>float</code>的精度已经足够了，而且你很关心<code>double</code>和<code>float</code>的大小。你可以声明一个<code>float</code>变量储存<code>calEpsilon</code>的计算结果。</p>
+<pre><code class="language-cpp">float ep = calcEpsilon();                       //double到float隐式转换
+</code></pre>
+<p>但是这几乎没有表明“我确实要减少函数返回值的精度”。使用显式类型初始器惯用法我们可以这样：</p>
+<pre><code class="language-cpp">auto ep = static_cast&lt;float&gt;(calcEpsilon());
+</code></pre>
+<p>出于同样的原因，如果你故意想用整数类型存储一个表达式返回的浮点数类型的结果，你也可以使用这个方法。假如你需要计算一个随机访问迭代器（比如<code>std::vector</code>，<code>std::deque</code>或者<code>std::array</code>）中某元素的下标，你被提供一个<code>0.0</code>到<code>1.0</code>的<code>double</code>值表明这个元素离容器的头部有多远（<code>0.5</code>意味着位于容器中间）。进一步假设你很自信结果下标是<code>int</code>。如果容器是<code>c</code>，<code>d</code>是<code>double</code>类型变量，你可以用这样的方法计算容器下标：</p>
+<pre><code class="language-cpp">int index = d * c.size();
+</code></pre>
+<p>但是这种写法并没有明确表明你想将右侧的<code>double</code>类型转换成<code>int</code>类型，显式类型初始器可以帮助你正确表意：</p>
+<pre><code class="language-cpp">auto index = static_cast&lt;int&gt;(d * size());
+</code></pre>
+<p><strong>请记住：</strong></p>
+<ul>
+<li>不可见的代理类可能会使<code>auto</code>从表达式中推导出“错误的”类型</li>
+<li>显式类型初始器惯用法强制<code>auto</code>推导出你想要的结果</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../2.Auto/item5.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="../3.MovingToModernCpp/item7.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../2.Auto/item5.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../3.MovingToModernCpp/item7.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>

@@ -1,0 +1,287 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Item 9: Prefer alias declarations to typedefs - Effective Modern C++</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <!-- MathJax -->
+        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../Introduction.html">Introduction</a></li><li class="chapter-item expanded "><div>Chapter 1. Deducing Types</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../1.DeducingTypes/item1.html">Item 1: Understanding template type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item2.html">Item 2: Understand auto type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item3.html">Item 3: Understand decltype</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item4.html">Item 4: Know how to view deduced types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 2. auto</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../2.Auto/item5.html">Item 5: Prefer auto to explicit type declarations</a></li><li class="chapter-item expanded "><a href="../2.Auto/item6.html">Item 6: Use the explicitly typed initializer idiom when auto deduces undesired types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 3. Moving to Modern C++</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item7.html">Item 7: Distinguish between () and {} when creating objects</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item8.html">Item 8: Prefer nullptr to 0 or NULL</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item9.html" class="active">Item 9: Prefer alias declarations to typedefs</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item10.html">Item 10: Prefer scoped enums to unscoped enums</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item11.html">Item 11: Prefer deleted functions to private undefined ones</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item12.html">Item 12: Declare overriding functions override</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item13.html">Item 13: Prefer const_iterators to iterators</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item14.html">Item 14: Declare functions noexcept if they won't emit exceptions</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item15.html">Item 15: Use constexpr whenever possible</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item16.html">Item 16: Make const member functions thread safe</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item17.html">Item 17: Understand special member funciton generation</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 4. Smart Pointer</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../4.SmartPointers/item18.html">Item 18: Use std::unique_ptr for exclusive-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item19.html">Item 19: Use std::shared_ptr for shared-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item20.html">Item 20: Use std::weak_ptr for std::shared_ptr like pointers that can dangle</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item21.html">Item 21: Prefer std::make_unique and std::make_shared to direct use of new</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item22.html">Item 22: When using the Pimpl Idiom, define special member functions in the implementation file</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 5. Rvalue References, Move Semantics, and Perfect Forwarding</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item23.html">Item 23: Understand std::move and std::forward</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item24.html">Item 24: Distinguish universal references from rvalue references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item25.html">Item 25: Use std::move on rvalue references, std::forward on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item26.html">Item 26: Avoid overloading on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item27.html">Item 27: Familiarize yourself with alternatives to overaloading on univeral references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item28.html">Item 28: Understand reference collapsing</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item29.html">Item 29: Assume that move operations are not present not cheap, and not used</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item30.html">Item 30: Familiarize yourself with perfect forwarding failure cases</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 6. Lambda Expressions</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item31.html">Item 31: Avoid default capture modes</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item32.html">Item 32: Use init capture to move objects into closures</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item33.html">Item 33: Use decltype on auto&&parameters to std::forward them</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item34.html">Item 34: Prefer lambdas to std::bind</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 7. The Concurrency API</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/Item35.html">Item 35: Prefer task-based programming to thread-based</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item36.html">Item 36: Specify std::launch::async if asynchronicity is essential</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item37.html">Item 37: Make std::threads unjionable on all paths</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item38.html">Item 38: Be aware of varying thread handle destructor behavior</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item39.html">Item 39: Consider void futures for one-shot event communication</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item40.html">Item 40: Use std::atomic for concurrency, volatile for special memory</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 8. Tweaks</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../8.Tweaks/item41.html">Item 41: Consider pass by value for copyable parameters that are cheap to move and always copied</a></li><li class="chapter-item expanded "><a href="../8.Tweaks/item42.html">Item 42: Consider emplacement instead of insertion</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Effective Modern C++</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h2 id="条款九优先考虑别名声明而非typedefs"><a class="header" href="#条款九优先考虑别名声明而非typedefs">条款九：优先考虑别名声明而非<code>typedef</code>s</a></h2>
+<p><strong>Item 9: Prefer alias declarations to <code>typedef</code>s</strong></p>
+<p>我相信每个人都同意使用STL容器是个好主意，并且我希望<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item18.md">Item18</a>能说服你让你觉得使用<code>std:unique_ptr</code>也是个好主意，但我猜没有人喜欢写上几次 <code>std::unique_ptr&lt;std::unordered_map&lt;std::string, std::string&gt;&gt;</code>这样的类型，它可能会让你患上腕管综合征的风险大大增加。</p>
+<p>避免上述医疗悲剧也很简单，引入<code>typedef</code>即可：</p>
+<pre><code class="language-cpp">typedef
+    std::unique_ptr&lt;std::unordered_map&lt;std::string, std::string&gt;&gt;
+    UPtrMapSS; 
+</code></pre>
+<p>但<code>typedef</code>是C++98的东西。虽然它可以在C++11中工作，但是C++11也提供了一个别名声明（<em>alias declaration</em>）：</p>
+<pre><code class="language-cpp">using UPtrMapSS =
+    std::unique_ptr&lt;std::unordered_map&lt;std::string, std::string&gt;&gt;;
+</code></pre>
+<p>由于这里给出的<code>typedef</code>和别名声明做的都是完全一样的事情，我们有理由想知道会不会出于一些技术上的原因两者有一个更好。</p>
+<p>这里，在说它们之前我想提醒一下很多人都发现当声明一个函数指针时别名声明更容易理解：</p>
+<pre><code class="language-cpp">//FP是一个指向函数的指针的同义词，它指向的函数带有
+//int和const std::string&amp;形参，不返回任何东西
+typedef void (*FP)(int, const std::string&amp;);    //typedef
+
+//含义同上
+using FP = void (*)(int, const std::string&amp;);   //别名声明
+</code></pre>
+<p>当然，两个结构都不是非常让人满意，没有人喜欢花大量的时间处理函数指针类型的别名（译注：指<code>FP</code>），所以至少在这里，没有一个吸引人的理由让你觉得别名声明比<code>typedef</code>好。</p>
+<p>不过有一个地方使用别名声明吸引人的理由是存在的：模板。特别地，别名声明可以被模板化（这种情况下称为别名模板<em>alias template</em>s）但是<code>typedef</code>不能。这使得C++11程序员可以很直接的表达一些C++98中只能把<code>typedef</code>嵌套进模板化的<code>struct</code>才能表达的东西。考虑一个链表的别名，链表使用自定义的内存分配器，<code>MyAlloc</code>。使用别名模板，这真是太容易了：</p>
+<pre><code class="language-cpp">template&lt;typename T&gt;                            //MyAllocList&lt;T&gt;是
+using MyAllocList = std::list&lt;T, MyAlloc&lt;T&gt;&gt;;   //std::list&lt;T, MyAlloc&lt;T&gt;&gt;
+                                                //的同义词
+
+MyAllocList&lt;Widget&gt; lw;                         //用户代码
+</code></pre>
+<p>使用<code>typedef</code>，你就只能从头开始：</p>
+<pre><code class="language-cpp">template&lt;typename T&gt;                            //MyAllocList&lt;T&gt;是
+struct MyAllocList {                            //std::list&lt;T, MyAlloc&lt;T&gt;&gt;
+    typedef std::list&lt;T, MyAlloc&lt;T&gt;&gt; type;      //的同义词  
+};
+
+MyAllocList&lt;Widget&gt;::type lw;                   //用户代码
+</code></pre>
+<p>更糟糕的是，如果你想使用在一个模板内使用<code>typedef</code>声明一个链表对象，而这个对象又使用了模板形参，你就不得不在<code>typedef</code>前面加上<code>typename</code>：</p>
+<pre><code class="language-cpp">template&lt;typename T&gt;
+class Widget {                              //Widget&lt;T&gt;含有一个
+private:                                    //MyAllocLIst&lt;T&gt;对象
+    typename MyAllocList&lt;T&gt;::type list;     //作为数据成员
+    …
+}; 
+</code></pre>
+<p>这里<code>MyAllocList&lt;T&gt;::type</code>使用了一个类型，这个类型依赖于模板参数<code>T</code>。因此<code>MyAllocList&lt;T&gt;::type</code>是一个依赖类型（<em>dependent type</em>），在C++很多讨人喜欢的规则中的一个提到必须要在依赖类型名前加上<code>typename</code>。</p>
+<p>如果使用别名声明定义一个<code>MyAllocList</code>，就不需要使用<code>typename</code>（同时省略麻烦的“<code>::type</code>”后缀）：</p>
+<pre><code class="language-cpp">template&lt;typename T&gt; 
+using MyAllocList = std::list&lt;T, MyAlloc&lt;T&gt;&gt;;   //同之前一样
+
+template&lt;typename T&gt; 
+class Widget {
+private:
+    MyAllocList&lt;T&gt; list;                        //没有“typename”
+    …                                           //没有“::type”
+};
+</code></pre>
+<p>对你来说，<code>MyAllocList&lt;T&gt;</code>（使用了模板别名声明的版本）可能看起来和<code>MyAllocList&lt;T&gt;::type</code>（使用<code>typedef</code>的版本）一样都应该依赖模板参数<code>T</code>，但是你不是编译器。当编译器处理<code>Widget</code>模板时遇到<code>MyAllocList&lt;T&gt;</code>（使用模板别名声明的版本），它们知道<code>MyAllocList&lt;T&gt;</code>是一个类型名，因为<code>MyAllocList</code>是一个别名模板：它<strong>一定</strong>是一个类型名。因此<code>MyAllocList&lt;T&gt;</code>就是一个<strong>非依赖类型</strong>（<em>non-dependent type</em>），就不需要也不允许使用<code>typename</code>修饰符。</p>
+<p>当编译器在<code>Widget</code>的模板中看到<code>MyAllocList&lt;T&gt;::type</code>（使用<code>typedef</code>的版本），它不能确定那是一个类型的名称。因为可能存在一个<code>MyAllocList</code>的它们没见到的特化版本，那个版本的<code>MyAllocList&lt;T&gt;::type</code>指代了一种不是类型的东西。那听起来很不可思议，但不要责备编译器穷尽考虑所有可能。因为人确实能写出这样的代码。</p>
+<p>举个例子，一个误入歧途的人可能写出这样的代码：</p>
+<pre><code class="language-cpp">class Wine { … };
+
+template&lt;&gt;                          //当T是Wine
+class MyAllocList&lt;Wine&gt; {           //特化MyAllocList
+private:  
+    enum class WineType             //参见Item10了解  
+    { White, Red, Rose };           //&quot;enum class&quot;
+
+    WineType type;                  //在这个类中，type是
+    …                               //一个数据成员！
+};
+</code></pre>
+<p>就像你看到的，<code>MyAllocList&lt;Wine&gt;::type</code>不是一个类型。如果<code>Widget</code>使用<code>Wine</code>实例化，在<code>Widget</code>模板中的<code>MyAllocList&lt;Wine&gt;::type</code>将会是一个数据成员，不是一个类型。在<code>Widget</code>模板内，<code>MyAllocList&lt;T&gt;::type</code>是否表示一个类型取决于<code>T</code>是什么，这就是为什么编译器会坚持要求你在前面加上<code>typename</code>。</p>
+<p>如果你尝试过模板元编程（<em>template metaprogramming</em>，TMP）， 你一定会碰到取模板类型参数然后基于它创建另一种类型的情况。举个例子，给一个类型<code>T</code>，如果你想去掉<code>T</code>的常量修饰和引用修饰（<code>const</code>- or reference qualifiers），比如你想把<code>const std::string&amp;</code>变成<code>std::string</code>。又或者你想给一个类型加上<code>const</code>或变为左值引用，比如把<code>Widget</code>变成<code>const Widget</code>或<code>Widget&amp;</code>。（如果你没有用过模板元编程，太遗憾了，因为如果你真的想成为一个高效C++程序员，你需要至少熟悉C++在这方面的基本知识。你可以看看在<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item23.md">Item23</a>，<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item27.md">27</a>里的TMP的应用实例，包括我提到的类型转换）。</p>
+<p>C++11在<em>type traits</em>（类型特性）中给了你一系列工具去实现类型转换，如果要使用这些模板请包含头文件<code>&lt;type_traits&gt;</code>。里面有许许多多<em>type traits</em>，也不全是类型转换的工具，也包含一些可预测接口的工具。给一个你想施加转换的类型<code>T</code>，结果类型就是<code>std::</code>transformation<code>&lt;T&gt;::type</code>，比如：</p>
+<pre><code class="language-cpp">std::remove_const&lt;T&gt;::type          //从const T中产出T
+std::remove_reference&lt;T&gt;::type      //从T&amp;和T&amp;&amp;中产出T
+std::add_lvalue_reference&lt;T&gt;::type  //从T中产出T&amp;
+</code></pre>
+<p>注释仅仅简单的总结了类型转换做了什么，所以不要太随便的使用。在你的项目使用它们之前，你最好看看它们的详细说明书。</p>
+<p>尽管写了一些，但我这里不是想给你一个关于<em>type traits</em>使用的教程。注意类型转换尾部的<code>::type</code>。如果你在一个模板内部将他们施加到类型形参上（实际代码中你也总是这么用），你也需要在它们前面加上<code>typename</code>。至于为什么要这么做是因为这些C++11的<em>type traits</em>是通过在<code>struct</code>内嵌套<code>typedef</code>来实现的。是的，它们使用类型同义词（译注：根据上下文指的是使用<code>typedef</code>的做法）技术实现，而正如我之前所说这比别名声明要差。</p>
+<p>关于为什么这么实现是有历史原因的，但是我们跳过它（我认为太无聊了），因为标准委员会没有及时认识到别名声明是更好的选择，所以直到C++14它们才提供了使用别名声明的版本。这些别名声明有一个通用形式：对于C++11的类型转换<code>std::</code>transformation<code>&lt;T&gt;::type</code>在C++14中变成了<code>std::</code>transformation<code>_t</code>。举个例子或许更容易理解：</p>
+<pre><code class="language-cpp">std::remove_const&lt;T&gt;::type          //C++11: const T → T 
+std::remove_const_t&lt;T&gt;              //C++14 等价形式
+
+std::remove_reference&lt;T&gt;::type      //C++11: T&amp;/T&amp;&amp; → T 
+std::remove_reference_t&lt;T&gt;          //C++14 等价形式
+
+std::add_lvalue_reference&lt;T&gt;::type  //C++11: T → T&amp; 
+std::add_lvalue_reference_t&lt;T&gt;      //C++14 等价形式
+</code></pre>
+<p>C++11的的形式在C++14中也有效，但是我不能理解为什么你要去用它们。就算你没办法使用C++14，使用别名模板也是小儿科。只需要C++11的语言特性，甚至每个小孩都能仿写，对吧？如果你有一份C++14标准，就更简单了，只需要复制粘贴：</p>
+<pre><code class="language-cpp">template &lt;class T&gt; 
+using remove_const_t = typename remove_const&lt;T&gt;::type;
+
+template &lt;class T&gt; 
+using remove_reference_t = typename remove_reference&lt;T&gt;::type;
+
+template &lt;class T&gt; 
+using add_lvalue_reference_t =
+  typename add_lvalue_reference&lt;T&gt;::type; 
+</code></pre>
+<p>看见了吧？不能再简单了。</p>
+<p><strong>请记住：</strong></p>
+<ul>
+<li><code>typedef</code>不支持模板化，但是别名声明支持。</li>
+<li>别名模板避免了使用“<code>::type</code>”后缀，而且在模板中使用<code>typedef</code>还需要在前面加上<code>typename</code></li>
+<li>C++14提供了C++11所有<em>type traits</em>转换的别名声明版本</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../3.MovingToModernCpp/item8.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="../3.MovingToModernCpp/item10.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../3.MovingToModernCpp/item8.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../3.MovingToModernCpp/item10.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>

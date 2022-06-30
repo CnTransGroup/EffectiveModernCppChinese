@@ -1,0 +1,283 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Item 24: Distinguish universal references from rvalue references - Effective Modern C++</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <!-- MathJax -->
+        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../Introduction.html">Introduction</a></li><li class="chapter-item expanded "><div>Chapter 1. Deducing Types</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../1.DeducingTypes/item1.html">Item 1: Understanding template type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item2.html">Item 2: Understand auto type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item3.html">Item 3: Understand decltype</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item4.html">Item 4: Know how to view deduced types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 2. auto</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../2.Auto/item5.html">Item 5: Prefer auto to explicit type declarations</a></li><li class="chapter-item expanded "><a href="../2.Auto/item6.html">Item 6: Use the explicitly typed initializer idiom when auto deduces undesired types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 3. Moving to Modern C++</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item7.html">Item 7: Distinguish between () and {} when creating objects</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item8.html">Item 8: Prefer nullptr to 0 or NULL</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item9.html">Item 9: Prefer alias declarations to typedefs</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item10.html">Item 10: Prefer scoped enums to unscoped enums</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item11.html">Item 11: Prefer deleted functions to private undefined ones</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item12.html">Item 12: Declare overriding functions override</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item13.html">Item 13: Prefer const_iterators to iterators</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item14.html">Item 14: Declare functions noexcept if they won't emit exceptions</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item15.html">Item 15: Use constexpr whenever possible</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item16.html">Item 16: Make const member functions thread safe</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item17.html">Item 17: Understand special member funciton generation</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 4. Smart Pointer</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../4.SmartPointers/item18.html">Item 18: Use std::unique_ptr for exclusive-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item19.html">Item 19: Use std::shared_ptr for shared-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item20.html">Item 20: Use std::weak_ptr for std::shared_ptr like pointers that can dangle</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item21.html">Item 21: Prefer std::make_unique and std::make_shared to direct use of new</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item22.html">Item 22: When using the Pimpl Idiom, define special member functions in the implementation file</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 5. Rvalue References, Move Semantics, and Perfect Forwarding</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item23.html">Item 23: Understand std::move and std::forward</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item24.html" class="active">Item 24: Distinguish universal references from rvalue references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item25.html">Item 25: Use std::move on rvalue references, std::forward on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item26.html">Item 26: Avoid overloading on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item27.html">Item 27: Familiarize yourself with alternatives to overaloading on univeral references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item28.html">Item 28: Understand reference collapsing</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item29.html">Item 29: Assume that move operations are not present not cheap, and not used</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item30.html">Item 30: Familiarize yourself with perfect forwarding failure cases</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 6. Lambda Expressions</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item31.html">Item 31: Avoid default capture modes</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item32.html">Item 32: Use init capture to move objects into closures</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item33.html">Item 33: Use decltype on auto&&parameters to std::forward them</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item34.html">Item 34: Prefer lambdas to std::bind</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 7. The Concurrency API</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/Item35.html">Item 35: Prefer task-based programming to thread-based</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item36.html">Item 36: Specify std::launch::async if asynchronicity is essential</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item37.html">Item 37: Make std::threads unjionable on all paths</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item38.html">Item 38: Be aware of varying thread handle destructor behavior</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item39.html">Item 39: Consider void futures for one-shot event communication</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item40.html">Item 40: Use std::atomic for concurrency, volatile for special memory</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 8. Tweaks</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../8.Tweaks/item41.html">Item 41: Consider pass by value for copyable parameters that are cheap to move and always copied</a></li><li class="chapter-item expanded "><a href="../8.Tweaks/item42.html">Item 42: Consider emplacement instead of insertion</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Effective Modern C++</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h2 id="条款二十四区分通用引用与右值引用"><a class="header" href="#条款二十四区分通用引用与右值引用">条款二十四：区分通用引用与右值引用</a></h2>
+<p><strong>Item 24: Distinguish universal references from rvalue references</strong></p>
+<p>据说，真相使人自由，然而在特定的环境下，一个精心挑选的谎言也同样使人解放。这一条款就是这样一个谎言。因为我们在和软件打交道，然而，让我们避开“谎言（lie）”这个词，不妨说，本条款包含了一种“抽象（abstraction）”。</p>
+<p>为了声明一个指向某个类型<code>T</code>的右值引用，你写下了<code>T&amp;&amp;</code>。由此，一个合理的假设是，当你看到一个“<code>T&amp;&amp;</code>”出现在源码中，你看到的是一个右值引用。唉，事情并不如此简单:</p>
+<pre><code class="language-cpp">void f(Widget&amp;&amp; param);             //右值引用
+Widget&amp;&amp; var1 = Widget();           //右值引用
+auto&amp;&amp; var2 = var1;                 //不是右值引用
+
+template&lt;typename T&gt;
+void f(std::vector&lt;T&gt;&amp;&amp; param);     //右值引用
+
+template&lt;typename T&gt;
+void f(T&amp;&amp; param);                  //不是右值引用
+</code></pre>
+<p>事实上，“<code>T&amp;&amp;</code>”有两种不同的意思。第一种，当然是右值引用。这种引用表现得正如你所期待的那样：它们只绑定到右值上，并且它们主要的存在原因就是为了识别可以移动操作的对象。</p>
+<p>“<code>T&amp;&amp;</code>”的另一种意思是，它既可以是右值引用，也可以是左值引用。这种引用在源码里看起来像右值引用（即“<code>T&amp;&amp;</code>”），但是它们可以表现得像是左值引用（即“<code>T&amp;</code>”）。它们的二重性使它们既可以绑定到右值上（就像右值引用），也可以绑定到左值上（就像左值引用）。 此外，它们还可以绑定到<code>const</code>或者non-<code>const</code>的对象上，也可以绑定到<code>volatile</code>或者non-<code>volatile</code>的对象上，甚至可以绑定到既<code>const</code>又<code>volatile</code>的对象上。它们可以绑定到几乎任何东西。这种空前灵活的引用值得拥有自己的名字。我把它叫做<strong>通用引用</strong>（<em>universal references</em>）。（<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item25.md">Item25</a>解释了<code>std::forward</code>几乎总是可以应用到通用引用上，并且在这本书即将出版之际，一些C++社区的成员已经开始将这种通用引用称之为<strong>转发引用</strong>（<em>forwarding references</em>））。</p>
+<p>在两种情况下会出现通用引用。最常见的一种是函数模板形参，正如在之前的示例代码中所出现的例子：</p>
+<pre><code class="language-cpp">template&lt;typename T&gt;
+void f(T&amp;&amp; param);                  //param是一个通用引用
+</code></pre>
+<p>第二种情况是<code>auto</code>声明符，它是从以上示例中拿出的：</p>
+<pre><code class="language-cpp">auto&amp;&amp; var2 = var1;                 //var2是一个通用引用
+</code></pre>
+<p>这两种情况的共同之处就是都存在<strong>类型推导</strong>（<em>type deduction</em>）。在模板<code>f</code>的内部，<code>param</code>的类型需要被推导，而在变量<code>var2</code>的声明中，<code>var2</code>的类型也需要被推导。同以下的例子相比较（同样来自于上面的示例代码），下面的例子不带有类型推导。如果你看见“<code>T&amp;&amp;</code>”不带有类型推导，那么你看到的就是一个右值引用：</p>
+<pre><code class="language-cpp">void f(Widget&amp;&amp; param);         //没有类型推导，
+                                //param是一个右值引用
+Widget&amp;&amp; var1 = Widget();       //没有类型推导，
+                                //var1是一个右值引用
+</code></pre>
+<p>因为通用引用是引用，所以它们必须被初始化。一个通用引用的初始值决定了它是代表了右值引用还是左值引用。如果初始值是一个右值，那么通用引用就会是对应的右值引用，如果初始值是一个左值，那么通用引用就会是一个左值引用。对那些是函数形参的通用引用来说，初始值在调用函数的时候被提供：</p>
+<pre><code class="language-cpp">template&lt;typename T&gt;
+void f(T&amp;&amp; param);              //param是一个通用引用
+
+Widget w;
+f(w);                           //传递给函数f一个左值；param的类型
+                                //将会是Widget&amp;，也即左值引用
+
+f(std::move(w));                //传递给f一个右值；param的类型会是
+                                //Widget&amp;&amp;，即右值引用
+</code></pre>
+<p>对一个通用引用而言，类型推导是必要的，但是它还不够。引用声明的<strong>形式</strong>必须正确，并且该形式是被限制的。它必须恰好为“<code>T&amp;&amp;</code>”。再看看之前我们已经看过的代码示例：</p>
+<pre><code class="language-cpp">template &lt;typename T&gt;
+void f(std::vector&lt;T&gt;&amp;&amp; param);     //param是一个右值引用
+</code></pre>
+<p>当函数<code>f</code>被调用的时候，类型<code>T</code>会被推导（除非调用者显式地指定它，这种边缘情况我们不考虑）。但是<code>param</code>的类型声明并不是<code>T&amp;&amp;</code>，而是一个<code>std::vector&lt;T&gt;&amp;&amp;</code>。这排除了<code>param</code>是一个通用引用的可能性。<code>param</code>因此是一个右值引用——当你向函数<code>f</code>传递一个左值时，你的编译器将会乐于帮你确认这一点:</p>
+<pre><code class="language-cpp">std::vector&lt;int&gt; v;
+f(v);                           //错误！不能将左值绑定到右值引用
+</code></pre>
+<p>即使一个简单的<code>const</code>修饰符的出现，也足以使一个引用失去成为通用引用的资格:</p>
+<pre><code class="language-cpp">template &lt;typename T&gt;
+void f(const T&amp;&amp; param);        //param是一个右值引用
+</code></pre>
+<p>如果你在一个模板里面看见了一个函数形参类型为“<code>T&amp;&amp;</code>”，你也许觉得你可以假定它是一个通用引用。错！这是由于在模板内部并不保证一定会发生类型推导。考虑如下<code>push_back</code>成员函数，来自<code>std::vector</code>：</p>
+<pre><code class="language-cpp">template&lt;class T, class Allocator = allocator&lt;T&gt;&gt;   //来自C++标准
+class vector
+{
+public:
+    void push_back(T&amp;&amp; x);
+    …
+}
+</code></pre>
+<p><code>push_back</code>函数的形参当然有一个通用引用的正确形式，然而，在这里并没有发生类型推导。因为<code>push_back</code>在有一个特定的<code>vector</code>实例之前不可能存在，而实例化<code>vector</code>时的类型已经决定了<code>push_back</code>的声明。也就是说，</p>
+<pre><code class="language-cpp">std::vector&lt;Widget&gt; v;
+</code></pre>
+<p>将会导致<code>std::vector</code>模板被实例化为以下代码：</p>
+<pre><code class="language-cpp">class vector&lt;Widget, allocator&lt;Widget&gt;&gt; {
+public:
+    void push_back(Widget&amp;&amp; x);             //右值引用
+    …
+};
+</code></pre>
+<p>现在你可以清楚地看到，函数<code>push_back</code>不包含任何类型推导。<code>push_back</code>对于<code>vector&lt;T&gt;</code>而言（有两个函数——它被重载了）总是声明了一个类型为rvalue-reference-to-<code>T</code>的形参。</p>
+<p>作为对比，<code>std::vector</code>内的概念上相似的成员函数<code>emplace_back</code>，却确实包含类型推导:</p>
+<pre><code class="language-cpp">template&lt;class T, class Allocator = allocator&lt;T&gt;&gt;   //依旧来自C++标准
+class vector {
+public:
+    template &lt;class... Args&gt;
+    void emplace_back(Args&amp;&amp;... args);
+    …
+};
+</code></pre>
+<p>这儿，类型参数（<em>type parameter</em>）<code>Args</code>是独立于<code>vector</code>的类型参数<code>T</code>的，所以<code>Args</code>会在每次<code>emplace_back</code>被调用的时候被推导。（好吧，<code>Args</code>实际上是一个<a href="https://en.cppreference.com/w/cpp/language/parameter_pack"><em>parameter pack</em></a>，而不是一个类型参数，但是为了方便讨论，我们可以把它当作是一个类型参数。）</p>
+<p>虽然函数<code>emplace_back</code>的类型参数被命名为<code>Args</code>，但是它仍然是一个通用引用，这补充了我之前所说的，通用引用的格式必须是“<code>T&amp;&amp;</code>”。你使用的名字<code>T</code>并不是必要的。举个例子，如下模板接受一个通用引用，因为形式（“<code>type&amp;&amp;</code>”）是正确的，并且<code>param</code>的类型将会被推导（重复一次，不考虑边缘情况，即当调用者明确给定类型的时候）。</p>
+<pre><code class="language-cpp">template&lt;typename MyTemplateType&gt;           //param是通用引用
+void someFunc(MyTemplateType&amp;&amp; param);
+</code></pre>
+<p>我之前提到，类型为<code>auto</code>的变量可以是通用引用。更准确地说，类型声明为<code>auto&amp;&amp;</code>的变量是通用引用，因为会发生类型推导，并且它们具有正确形式(<code>T&amp;&amp;</code>)。<code>auto</code>类型的通用引用不如函数模板形参中的通用引用常见，但是它们在C++11中常常突然出现。而它们在C++14中出现得更多，因为C++14的<em>lambda</em>表达式可以声明<code>auto&amp;&amp;</code>类型的形参。举个例子，如果你想写一个C++14标准的<em>lambda</em>表达式，来记录任意函数调用的时间开销，你可以这样写：</p>
+<pre><code class="language-cpp">auto timeFuncInvocation =
+    [](auto&amp;&amp; func, auto&amp;&amp;... params)           //C++14
+    {
+        start timer;
+        std::forward&lt;decltype(func)&gt;(func)(     //对params调用func
+            std::forward&lt;delctype(params)&gt;(params)...
+        );
+        stop timer and record elapsed time;
+    };
+</code></pre>
+<p>如果你对<em>lambda</em>里的代码“<code>std::forward&lt;decltype(blah blah blah)&gt;</code>”反应是“这是什么鬼...?!”，只能说你可能还没有读<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/6.LambdaExpressions/item33.md">Item33</a>。别担心。在本条款，重要的事是<em>lambda</em>表达式中声明的<code>auto&amp;&amp;</code>类型的形参。<code>func</code>是一个通用引用，可以被绑定到任何可调用对象，无论左值还是右值。<code>args</code>是0个或者多个通用引用（即它是个通用引用<em>parameter pack</em>），它可以绑定到任意数目、任意类型的对象上。多亏了<code>auto</code>类型的通用引用，函数<code>timeFuncInvocation</code>可以对<strong>近乎任意</strong>（pretty much any）函数进行计时。(如果你想知道任意（any）和近乎任意（pretty much any）的区别，往后翻到<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item30.md">Item30</a>)。</p>
+<p>牢记整个本条款——通用引用的基础——是一个谎言，噢不，是一个“抽象”。其底层真相被称为<strong>引用折叠</strong>（<em>reference collapsing</em>），<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item28.md">Item28</a>的专题将致力于讨论它。但是这个真相并不降低该抽象的有用程度。区分右值引用和通用引用将会帮助你更准确地阅读代码（“究竟我眼前的这个<code>T&amp;&amp;</code>是只绑定到右值还是可以绑定任意对象呢？”），并且，当你在和你的合作者交流时，它会帮助你避免歧义（“在这里我在用一个通用引用，而非右值引用”）。它也可以帮助你弄懂<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item25.md">Item25</a>和<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item26.md">26</a>，它们依赖于右值引用和通用引用的区别。所以，拥抱这份抽象，陶醉于它吧。就像牛顿的力学定律（本质上不正确），比起爱因斯坦的广义相对论（这是真相）而言，往往更简单，更易用。所以通用引用的概念，相较于穷究引用折叠的细节而言，是更合意之选。</p>
+<p><strong>请记住：</strong></p>
+<ul>
+<li>如果一个函数模板形参的类型为<code>T&amp;&amp;</code>，并且<code>T</code>需要被推导得知，或者如果一个对象被声明为<code>auto&amp;&amp;</code>，这个形参或者对象就是一个通用引用。</li>
+<li>如果类型声明的形式不是标准的<code>type&amp;&amp;</code>，或者如果类型推导没有发生，那么<code>type&amp;&amp;</code>代表一个右值引用。</li>
+<li>通用引用，如果它被右值初始化，就会对应地成为右值引用；如果它被左值初始化，就会成为左值引用。</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../5.RRefMovSemPerfForw/item23.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="../5.RRefMovSemPerfForw/item25.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../5.RRefMovSemPerfForw/item23.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../5.RRefMovSemPerfForw/item25.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>

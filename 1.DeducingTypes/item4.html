@@ -1,0 +1,308 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Item 4: Know how to view deduced types - Effective Modern C++</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <!-- MathJax -->
+        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../Introduction.html">Introduction</a></li><li class="chapter-item expanded "><div>Chapter 1. Deducing Types</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../1.DeducingTypes/item1.html">Item 1: Understanding template type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item2.html">Item 2: Understand auto type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item3.html">Item 3: Understand decltype</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item4.html" class="active">Item 4: Know how to view deduced types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 2. auto</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../2.Auto/item5.html">Item 5: Prefer auto to explicit type declarations</a></li><li class="chapter-item expanded "><a href="../2.Auto/item6.html">Item 6: Use the explicitly typed initializer idiom when auto deduces undesired types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 3. Moving to Modern C++</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item7.html">Item 7: Distinguish between () and {} when creating objects</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item8.html">Item 8: Prefer nullptr to 0 or NULL</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item9.html">Item 9: Prefer alias declarations to typedefs</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item10.html">Item 10: Prefer scoped enums to unscoped enums</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item11.html">Item 11: Prefer deleted functions to private undefined ones</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item12.html">Item 12: Declare overriding functions override</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item13.html">Item 13: Prefer const_iterators to iterators</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item14.html">Item 14: Declare functions noexcept if they won't emit exceptions</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item15.html">Item 15: Use constexpr whenever possible</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item16.html">Item 16: Make const member functions thread safe</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item17.html">Item 17: Understand special member funciton generation</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 4. Smart Pointer</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../4.SmartPointers/item18.html">Item 18: Use std::unique_ptr for exclusive-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item19.html">Item 19: Use std::shared_ptr for shared-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item20.html">Item 20: Use std::weak_ptr for std::shared_ptr like pointers that can dangle</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item21.html">Item 21: Prefer std::make_unique and std::make_shared to direct use of new</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item22.html">Item 22: When using the Pimpl Idiom, define special member functions in the implementation file</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 5. Rvalue References, Move Semantics, and Perfect Forwarding</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item23.html">Item 23: Understand std::move and std::forward</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item24.html">Item 24: Distinguish universal references from rvalue references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item25.html">Item 25: Use std::move on rvalue references, std::forward on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item26.html">Item 26: Avoid overloading on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item27.html">Item 27: Familiarize yourself with alternatives to overaloading on univeral references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item28.html">Item 28: Understand reference collapsing</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item29.html">Item 29: Assume that move operations are not present not cheap, and not used</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item30.html">Item 30: Familiarize yourself with perfect forwarding failure cases</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 6. Lambda Expressions</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item31.html">Item 31: Avoid default capture modes</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item32.html">Item 32: Use init capture to move objects into closures</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item33.html">Item 33: Use decltype on auto&&parameters to std::forward them</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item34.html">Item 34: Prefer lambdas to std::bind</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 7. The Concurrency API</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/Item35.html">Item 35: Prefer task-based programming to thread-based</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item36.html">Item 36: Specify std::launch::async if asynchronicity is essential</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item37.html">Item 37: Make std::threads unjionable on all paths</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item38.html">Item 38: Be aware of varying thread handle destructor behavior</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item39.html">Item 39: Consider void futures for one-shot event communication</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item40.html">Item 40: Use std::atomic for concurrency, volatile for special memory</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 8. Tweaks</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../8.Tweaks/item41.html">Item 41: Consider pass by value for copyable parameters that are cheap to move and always copied</a></li><li class="chapter-item expanded "><a href="../8.Tweaks/item42.html">Item 42: Consider emplacement instead of insertion</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Effective Modern C++</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h2 id="条款四学会查看类型推导结果"><a class="header" href="#条款四学会查看类型推导结果">条款四：学会查看类型推导结果</a></h2>
+<p><strong>Item 4: Know how to view deduced types</strong></p>
+<p>选择使用工具查看类型推导，取决于软件开发过程中你想在哪个阶段显示类型推导信息。我们探究三种方案：在你编辑代码的时候获得类型推导的结果，在编译期间获得结果，在运行时获得结果。</p>
+<h3 id="ide编辑器"><a class="header" href="#ide编辑器">IDE编辑器</a></h3>
+<p>在IDE中的代码编辑器通常可以显示程序代码中变量，函数，参数的类型，你只需要简单的把鼠标移到它们的上面，举个例子，有这样的代码中：</p>
+<pre><code class="language-cpp">const int theAnswer = 42;
+
+auto x = theAnswer;
+auto y = &amp;theAnswer;
+</code></pre>
+<p>IDE编辑器可以直接显示<code>x</code>推导的结果为<code>int</code>，<code>y</code>推导的结果为<code>const int*</code>。</p>
+<p>为此，你的代码必须或多或少的处于可编译状态，因为IDE之所以能提供这些信息是因为一个C++编译器（或者至少是前端中的一个部分）运行于IDE中。如果这个编译器对你的代码不能做出有意义的分析或者推导，它就不会显示推导的结果。</p>
+<p>对于像<code>int</code>这样简单的推导，IDE产生的信息通常令人很满意。正如我们将看到的，如果更复杂的类型出现时，IDE提供的信息就几乎没有什么用了。</p>
+<h3 id="编译器诊断"><a class="header" href="#编译器诊断">编译器诊断</a></h3>
+<p>另一个获得推导结果的方法是使用编译器出错时提供的错误消息。这些错误消息无形的提到了造成我们编译错误的类型是什么。</p>
+<p>举个例子，假如我们想看到之前那段代码中<code>x</code>和<code>y</code>的类型，我们可以首先声明一个类模板但<strong>不定义</strong>。就像这样：</p>
+<pre><code class="language-cpp">template&lt;typename T&gt;                //只对TD进行声明
+class TD;                           //TD == &quot;Type Displayer&quot;
+</code></pre>
+<p>如果尝试实例化这个类模板就会引出一个错误消息，因为这里没有用来实例化的类模板定义。为了查看<code>x</code>和<code>y</code>的类型，只需要使用它们的类型去实例化<code>TD</code>：</p>
+<pre><code class="language-cpp">TD&lt;decltype(x)&gt; xType;              //引出包含x和y
+TD&lt;decltype(y)&gt; yType;              //的类型的错误消息
+</code></pre>
+<p>我使用<em><strong>variableName</strong></em><strong>Type</strong>的结构来命名变量，因为这样它们产生的错误消息可以有助于我们查找。对于上面的代码，我的编译器产生了这样的错误信息，我取一部分贴到下面：</p>
+<pre><code class="language-cpp">error: aggregate 'TD&lt;int&gt; xType' has incomplete type and 
+        cannot be defined
+error: aggregate 'TD&lt;const int *&gt; yType' has incomplete type and
+        cannot be defined
+</code></pre>
+<p>另一个编译器也产生了一样的错误，只是格式稍微改变了一下：</p>
+<pre><code class="language-cpp">error: 'xType' uses undefined class 'TD&lt;int&gt;'
+error: 'yType' uses undefined class 'TD&lt;const int *&gt;'
+</code></pre>
+<p>除了格式不同外，几乎所有我测试过的编译器都产生了这样有用的错误消息。</p>
+<h3 id="运行时输出"><a class="header" href="#运行时输出">运行时输出</a></h3>
+<p>使用<code>printf</code>的方法使类型信息只有在运行时才会显示出来（尽管我不是非常建议你使用<code>printf</code>），但是它提供了一种格式化输出的方法。现在唯一的问题是只需对于你关心的变量使用一种优雅的文本表示。“这有什么难的，“你这样想，”这正是<code>typeid</code>和<code>std::type_info::name</code>的价值所在”。为了实现我们想要查看<code>x</code>和<code>y</code>的类型的需求，你可能会这样写：</p>
+<pre><code class="language-cpp">std::cout &lt;&lt; typeid(x).name() &lt;&lt; '\n';  //显示x和y的类型
+std::cout &lt;&lt; typeid(y).name() &lt;&lt; '\n';
+</code></pre>
+<p>这种方法对一个对象如<code>x</code>或<code>y</code>调用<code>typeid</code>产生一个<code>std::type_info</code>的对象，然后<code>std::type_info</code>里面的成员函数<code>name()</code>来产生一个C风格的字符串（即一个<code>const char*</code>）表示变量的名字。</p>
+<p>调用<code>std::type_info::name</code>不保证返回任何有意义的东西，但是库的实现者尝试尽量使它们返回的结果有用。实现者们对于“有用”有不同的理解。举个例子，GNU和Clang环境下<code>x</code>的类型会显示为”<code>i</code>“，<code>y</code>会显示为”<code>PKi</code>“，这样的输出你必须要问问编译器实现者们才能知道他们的意义：”<code>i</code>“表示”<code>int</code>“，”<code>PK</code>“表示”pointer to <del><code>konst</code></del> <code>const</code>“（指向常量的指针）。（这些编译器都提供一个工具<code>c++filt</code>，解释这些“混乱的”类型）Microsoft的编译器输出得更直白一些：对于<code>x</code>输出”<code>int</code>“对于<code>y</code>输出”<code>int const *</code>“</p>
+<p>因为对于<code>x</code>和<code>y</code>来说这样的结果是正确的，你可能认为问题已经接近了，别急，考虑一个更复杂的例子：</p>
+<pre><code class="language-cpp">template&lt;typename T&gt;                    //要调用的模板函数
+void f(const T&amp; param);
+
+std::vector&lt;Widget&gt; createVec();        //工厂函数
+
+const auto vw = createVec();            //使用工厂函数返回值初始化vw
+
+if (!vw.empty()){
+    f(&amp;vw[0]);                          //调用f
+    …
+}
+</code></pre>
+<p>在这段代码中包含了一个用户定义的类型<code>Widget</code>，一个STL容器<code>std::vector</code>和一个<code>auto</code>变量<code>vw</code>，这个更现实的情况是你可能在会遇到的并且想获得他们类型推导的结果，比如模板类型形参<code>T</code>，比如函数<code>f</code>形参<code>param</code>。</p>
+<p>从这里中我们不难看出<code>typeid</code>的问题所在。我们在<code>f</code>中添加一些代码来显示类型：</p>
+<pre><code class="language-cpp">template&lt;typename T&gt;
+void f(const T&amp; param)
+{
+    using std::cout;
+    cout &lt;&lt; &quot;T =     &quot; &lt;&lt; typeid(T).name() &lt;&lt; '\n';             //显示T
+
+    cout &lt;&lt; &quot;param = &quot; &lt;&lt; typeid(param).name() &lt;&lt; '\n';         //显示
+    …                                                           //param
+}                                                               //的类型
+</code></pre>
+<p>GNU和Clang执行这段代码将会输出这样的结果</p>
+<pre><code class="language-cpp">T =     PK6Widget
+param = PK6Widget
+</code></pre>
+<p>我们早就知道在这些编译器中<code>PK</code>表示“pointer to <code>const</code>”，所以只有数字<code>6</code>对我们来说是神奇的。其实数字是类名称（<code>Widget</code>）的字符串长度，所以这些编译器告诉我们<code>T</code>和<code>param</code>都是<code>const Widget*</code>。</p>
+<p>Microsoft的编译器也同意上述言论：</p>
+<pre><code class="language-cpp">T =     class Widget const *
+param = class Widget const *
+</code></pre>
+<p>这三个独立的编译器产生了相同的信息并表示信息非常准确，当然看起来不是那么准确。在模板<code>f</code>中，<code>param</code>的声明类型是<code>const T&amp;</code>。难道你们不觉得<code>T</code>和<code>param</code>类型相同很奇怪吗？比如<code>T</code>是<code>int</code>，<code>param</code>的类型应该是<code>const int&amp;</code>而不是相同类型才对吧。</p>
+<p>遗憾的是，事实就是这样，<code>std::type_info::name</code>的结果并不总是可信的，就像上面一样，三个编译器对<code>param</code>的报告都是错误的。因为它们本质上可以不正确，因为<code>std::type_info::name</code>规范批准像传值形参一样来对待这些类型。正如<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item1.md">Item1</a>提到的，如果传递的是一个引用，那么引用部分（reference-ness）将被忽略，如果忽略后还具有<code>const</code>或者<code>volatile</code>，那么常量性<code>const</code>ness或者易变性<code>volatile</code>ness也会被忽略。那就是为什么<code>param</code>的类型<code>const Widget * const &amp;</code>会输出为<code>const Widget *</code>，首先引用被忽略，然后这个指针自身的常量性<code>const</code>ness被忽略，剩下的就是指针指向一个常量对象。</p>
+<p>同样遗憾的是，IDE编辑器显示的类型信息也不总是可靠的，或者说不总是有用的。还是一样的例子，一个IDE编辑器可能会把<code>T</code>的类型显示为（我没有胡编乱造）：</p>
+<pre><code class="language-cpp">const
+std::_Simple_types&lt;std::_Wrap_alloc&lt;std::_Vec_base_types&lt;Widget,
+std::allocator&lt;Widget&gt;&gt;::_Alloc&gt;::value_type&gt;::value_type *
+</code></pre>
+<p>同样把<code>param</code>的类型显示为</p>
+<pre><code class="language-cpp">const std::_Simple_types&lt;...&gt;::value_type *const &amp;
+</code></pre>
+<p>这个比起<code>T</code>来说要简单一些，但是如果你不知道“<code>...</code>”表示编译器忽略<code>T</code>的部分类型那么可能你还是会产生困惑。如果你运气好点你的IDE可能表现得比这个要好一些。</p>
+<p>比起运气如果你更倾向于依赖库，那么你乐意被告知<code>std::type_info::name</code>和IDE不怎么好，Boost TypeIndex库（通常写作<strong>Boost.TypeIndex</strong>）是更好的选择。这个库不是标准C++的一部分，也不是IDE或者<code>TD</code>这样的模板。Boost库（可在<a href="http://boost.org">boost.com</a>获得）是跨平台，开源，有良好的开源协议的库，这意味着使用Boost和STL一样具有高度可移植性。</p>
+<p>这里是如何使用Boost.TypeIndex得到<code>f</code>的类型的代码</p>
+<pre><code class="language-cpp">#include &lt;boost/type_index.hpp&gt;
+
+template&lt;typename T&gt;
+void f(const T&amp; param)
+{
+    using std::cout;
+    using boost::typeindex::type_id_with_cvr;
+
+    //显示T
+    cout &lt;&lt; &quot;T =     &quot;
+         &lt;&lt; type_id_with_cvr&lt;T&gt;().pretty_name()
+         &lt;&lt; '\n';
+    
+    //显示param类型
+    cout &lt;&lt; &quot;param = &quot;
+         &lt;&lt; type_id_with_cvr&lt;decltype(param)&gt;().pretty_name()
+         &lt;&lt; '\n';
+}
+</code></pre>
+<p><code>boost::typeindex::type_id_with_cvr</code>获取一个类型实参（我们想获得相应信息的那个类型），它不消除实参的<code>const</code>，<code>volatile</code>和引用修饰符（因此模板名中有“<code>with_cur</code>”）。结果是一个<code>boost::typeindex::type_index</code>对象，它的<code>pretty_name</code>成员函数输出一个<code>std::string</code>，包含我们能看懂的类型表示。
+基于这个<code>f</code>的实现版本，再次考虑那个使用<code>typeid</code>时获取<code>param</code>类型信息出错的调用：</p>
+<pre><code class="language-cpp">std::vetor&lt;Widget&gt; createVec();         //工厂函数
+const auto vw = createVec();            //使用工厂函数返回值初始化vw
+if (!vw.empty()){
+    f(&amp;vw[0]);                          //调用f
+    …
+}
+</code></pre>
+<p>在GNU和Clang的编译器环境下，使用Boost.TypeIndex版本的<code>f</code>最后会产生下面的（准确的）输出：</p>
+<pre><code class="language-cpp">T =     Widget const *
+param = Widget const * const&amp;
+</code></pre>
+<p>在Microsoft的编译器环境下，结果也是极其相似：</p>
+<pre><code class="language-cpp">T =     class Widget const *
+param = class Widget const * const &amp;
+</code></pre>
+<p>这样近乎一致的结果是很不错的，但是请记住IDE，编译器错误诊断或者像Boost.TypeIndex这样的库只是用来帮助你理解编译器推导的类型是什么。它们是有用的，但是作为本章结束语我想说它们根本不能替代你对<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item1.md">Item1</a>-<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item3.md">3</a>提到的类型推导的理解。</p>
+<p><strong>请记住：</strong></p>
+<ul>
+<li>类型推断可以从IDE看出，从编译器报错看出，从Boost TypeIndex库的使用看出</li>
+<li>这些工具可能既不准确也无帮助，所以理解C++类型推导规则才是最重要的</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../1.DeducingTypes/item3.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="../2.Auto/item5.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../1.DeducingTypes/item3.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../2.Auto/item5.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>

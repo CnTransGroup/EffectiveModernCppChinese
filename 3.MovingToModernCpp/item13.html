@@ -1,0 +1,246 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Item 13: Prefer const_iterators to iterators - Effective Modern C++</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <!-- MathJax -->
+        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../Introduction.html">Introduction</a></li><li class="chapter-item expanded "><div>Chapter 1. Deducing Types</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../1.DeducingTypes/item1.html">Item 1: Understanding template type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item2.html">Item 2: Understand auto type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item3.html">Item 3: Understand decltype</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item4.html">Item 4: Know how to view deduced types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 2. auto</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../2.Auto/item5.html">Item 5: Prefer auto to explicit type declarations</a></li><li class="chapter-item expanded "><a href="../2.Auto/item6.html">Item 6: Use the explicitly typed initializer idiom when auto deduces undesired types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 3. Moving to Modern C++</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item7.html">Item 7: Distinguish between () and {} when creating objects</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item8.html">Item 8: Prefer nullptr to 0 or NULL</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item9.html">Item 9: Prefer alias declarations to typedefs</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item10.html">Item 10: Prefer scoped enums to unscoped enums</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item11.html">Item 11: Prefer deleted functions to private undefined ones</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item12.html">Item 12: Declare overriding functions override</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item13.html" class="active">Item 13: Prefer const_iterators to iterators</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item14.html">Item 14: Declare functions noexcept if they won't emit exceptions</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item15.html">Item 15: Use constexpr whenever possible</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item16.html">Item 16: Make const member functions thread safe</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item17.html">Item 17: Understand special member funciton generation</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 4. Smart Pointer</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../4.SmartPointers/item18.html">Item 18: Use std::unique_ptr for exclusive-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item19.html">Item 19: Use std::shared_ptr for shared-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item20.html">Item 20: Use std::weak_ptr for std::shared_ptr like pointers that can dangle</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item21.html">Item 21: Prefer std::make_unique and std::make_shared to direct use of new</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item22.html">Item 22: When using the Pimpl Idiom, define special member functions in the implementation file</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 5. Rvalue References, Move Semantics, and Perfect Forwarding</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item23.html">Item 23: Understand std::move and std::forward</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item24.html">Item 24: Distinguish universal references from rvalue references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item25.html">Item 25: Use std::move on rvalue references, std::forward on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item26.html">Item 26: Avoid overloading on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item27.html">Item 27: Familiarize yourself with alternatives to overaloading on univeral references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item28.html">Item 28: Understand reference collapsing</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item29.html">Item 29: Assume that move operations are not present not cheap, and not used</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item30.html">Item 30: Familiarize yourself with perfect forwarding failure cases</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 6. Lambda Expressions</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item31.html">Item 31: Avoid default capture modes</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item32.html">Item 32: Use init capture to move objects into closures</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item33.html">Item 33: Use decltype on auto&&parameters to std::forward them</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item34.html">Item 34: Prefer lambdas to std::bind</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 7. The Concurrency API</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/Item35.html">Item 35: Prefer task-based programming to thread-based</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item36.html">Item 36: Specify std::launch::async if asynchronicity is essential</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item37.html">Item 37: Make std::threads unjionable on all paths</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item38.html">Item 38: Be aware of varying thread handle destructor behavior</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item39.html">Item 39: Consider void futures for one-shot event communication</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item40.html">Item 40: Use std::atomic for concurrency, volatile for special memory</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 8. Tweaks</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../8.Tweaks/item41.html">Item 41: Consider pass by value for copyable parameters that are cheap to move and always copied</a></li><li class="chapter-item expanded "><a href="../8.Tweaks/item42.html">Item 42: Consider emplacement instead of insertion</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Effective Modern C++</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h2 id="条款十三优先考虑const_iterator而非iterator"><a class="header" href="#条款十三优先考虑const_iterator而非iterator">条款十三：优先考虑<code>const_iterator</code>而非<code>iterator</code></a></h2>
+<p><strong>Item 13: Prefer <code>const_iterators</code> to <code>iterators</code></strong></p>
+<p>STL <code>const_iterator</code>等价于指向常量的指针（pointer-to-<code>const</code>）。它们都指向不能被修改的值。标准实践是能加上<code>const</code>就加上，这也指示我们需要一个迭代器时只要没必要修改迭代器指向的值，就应当使用<code>const_iterator</code>。</p>
+<p>上面的说法对C++11和C++98都是正确的，但是在C++98中，标准库对<code>const_iterator</code>的支持不是很完整。首先不容易创建它们，其次就算你有了它，它的使用也是受限的。假如你想在<code>std::vector&lt;int&gt;</code>中查找第一次出现1983（C++代替C with classes的那一年）的位置，然后插入1998（第一个ISO C++标准被接纳的那一年）。如果<em>vector</em>中没有1983，那么就在<em>vector</em>尾部插入。在C++98中使用<code>iterator</code>可以很容易做到：</p>
+<pre><code class="language-cpp">std::vector&lt;int&gt; values;
+…
+std::vector&lt;int&gt;::iterator it =
+    std::find(values.begin(), values.end(), 1983);
+values.insert(it, 1998);
+</code></pre>
+<p>但是这里<code>iterator</code>真的不是一个好的选择，因为这段代码不修改<code>iterator</code>指向的内容。用<code>const_iterator</code>重写这段代码是很平常的，但是在C++98中就不是了。下面是一种概念上可行但是不正确的方法：</p>
+<pre><code class="language-cpp">typedef std::vector&lt;int&gt;::iterator IterT;               //typedef
+typedef std::vector&lt;int&gt;::const_iterator ConstIterT;
+
+std::vector&lt;int&gt; values;
+…
+ConstIterT ci =
+    std::find(static_cast&lt;ConstIterT&gt;(values.begin()),  //cast
+              static_cast&lt;ConstIterT&gt;(values.end()),    //cast
+              1983);
+
+values.insert(static_cast&lt;IterT&gt;(ci), 1998);    //可能无法通过编译，
+                                                //原因见下
+</code></pre>
+<p><code>typedef</code>不是强制的，但是可以让代码中的<em>cast</em>更好写。（你可能想知道为什么我使用<code>typedef</code>而不是<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item9.md">Item9</a>提到的别名声明，因为这段代码在演示C++98做法，别名声明是C++11加入的特性）</p>
+<p>之所以<code>std::find</code>的调用会出现类型转换是因为在C++98中<code>values</code>是non-<code>const</code>容器，没办法简简单单的从non-<code>const</code>容器中获取<code>const_iterator</code>。严格来说类型转换不是必须的，因为用其他方法获取<code>const_iterator</code>也是可以的（比如你可以把<code>values</code>绑定到reference-to-<code>const</code>变量上，然后再用这个变量代替<code>values</code>），但不管怎么说，从non-<code>const</code>容器中获取<code>const_iterator</code>的做法都有点别扭。</p>
+<p>当你费劲地获得了<code>const_iterator</code>，事情可能会变得更糟，因为C++98中，插入操作（以及删除操作）的位置只能由<code>iterator</code>指定，<code>const_iterator</code>是不被接受的。这也是我在上面的代码中，将<code>const_iterator</code>（我那么小心地从<code>std::find</code>搞出来的东西）转换为<code>iterator</code>的原因，因为向<code>insert</code>传入<code>const_iterator</code>不能通过编译。</p>
+<p>老实说，上面的代码也可能无法编译，因为没有一个可移植的从<code>const_iterator</code>到<code>iterator</code>的方法，即使使用<code>static_cast</code>也不行。甚至传说中的牛刀<code>reinterpret_cast</code>也杀不了这条鸡。（它不是C++98的限制，也不是C++11的限制，只是<code>const_iterator</code>就是不能转换为<code>iterator</code>，不管看起来对它们施以转换是有多么合理。）不过有办法生成一个<code>iterator</code>，使其指向和<code>const_iterator</code>指向相同，但是看起来不明显，也没有广泛应用，在这本书也不值得讨论。除此之外，我希望目前我陈述的观点是清晰的：<code>const_iterator</code>在C++98中会有很多问题，不如它的兄弟（译注：指<code>iterator</code>）有用。最终，开发者们不再相信能加<code>const</code>就加它的教条，而是只在实用的地方加它，C++98的<code>const_iterator</code>不是那么实用。</p>
+<p>所有的这些都在C++11中改变了，现在<code>const_iterator</code>既容易获取又容易使用。容器的成员函数<code>cbegin</code>和<code>cend</code>产出<code>const_iterator</code>，甚至对于non-<code>const</code>容器也可用，那些之前使用<em>iterator</em>指示位置（如<code>insert</code>和<code>erase</code>）的STL成员函数也可以使用<code>const_iterator</code>了。使用C++11 <code>const_iterator</code>重写C++98使用<code>iterator</code>的代码也稀松平常：</p>
+<pre><code class="language-cpp">std::vector&lt;int&gt; values;                                //和之前一样
+…
+auto it =                                               //使用cbegin
+	std::find(values.cbegin(), values.cend(), 1983);//和cend
+values.insert(it, 1998);
+</code></pre>
+<p>现在使用<code>const_iterator</code>的代码就很实用了！</p>
+<p>唯一一个C++11对于<code>const_iterator</code>支持不足（译注：C++14支持但是C++11的时候还没）的情况是：当你想写最大程度通用的库，并且这些库代码为一些容器和类似容器的数据结构提供<code>begin</code>、<code>end</code>（以及<code>cbegin</code>，<code>cend</code>，<code>rbegin</code>，<code>rend</code>等）作为<strong>非成员函数</strong>而不是成员函数时。其中一种情况就是原生数组，还有一种情况是一些只由自由函数组成接口的第三方库。（译注：自由函数<em>free function</em>，指的是非成员函数，即一个函数，只要不是成员函数就可被称作<em>free function</em>）最大程度通用的库会考虑使用非成员函数而不是假设成员函数版本存在。</p>
+<p>举个例子，我们可以泛化下面的<code>findAndInsert</code>：</p>
+<pre><code class="language-cpp">template&lt;typename C, typename V&gt;
+void findAndInsert(C&amp; container,            //在容器中查找第一次
+                   const V&amp; targetVal,      //出现targetVal的位置，
+                   const V&amp; insertVal)      //然后在那插入insertVal
+{
+    using std::cbegin;
+    using std::cend;
+
+    auto it = std::find(cbegin(container),  //非成员函数cbegin
+                        cend(container),    //非成员函数cend
+                        targetVal);
+    container.insert(it, insertVal);
+}
+</code></pre>
+<p>它可以在C++14工作良好，但是很遗憾，C++11不在良好之列。由于标准化的疏漏，C++11只添加了非成员函数<code>begin</code>和<code>end</code>，但是没有添加<code>cbegin</code>，<code>cend</code>，<code>rbegin</code>，<code>rend</code>，<code>crbegin</code>，<code>crend</code>。C++14修订了这个疏漏。</p>
+<p>如果你使用C++11，并且想写一个最大程度通用的代码，而你使用的STL没有提供缺失的非成员函数<code>cbegin</code>和它的朋友们，你可以简单的写下你自己的实现。比如，下面就是非成员函数<code>cbegin</code>的实现：</p>
+<pre><code class="language-cpp">template &lt;class C&gt;
+auto cbegin(const C&amp; container)-&gt;decltype(std::begin(container))
+{
+    return std::begin(container);   //解释见下
+}
+</code></pre>
+<p>你可能很惊讶非成员函数<code>cbegin</code>没有调用成员函数<code>cbegin</code>吧？我也是。但是请跟逻辑走。这个<code>cbegin</code>模板接受任何代表类似容器的数据结构的实参类型<code>C</code>，并且通过reference-to-<code>const</code>形参<code>container</code>访问这个实参。如果<code>C</code>是一个普通的容器类型（如<code>std::vector&lt;int&gt;</code>），<code>container</code>将会引用一个<code>const</code>版本的容器（如<code>const std::vector&lt;int&gt;&amp;</code>）。对<code>const</code>容器调用非成员函数<code>begin</code>（由C++11提供）将产出<code>const_iterator</code>，这个迭代器也是模板要返回的。用这种方法实现的好处是就算容器只提供<code>begin</code>成员函数（对于容器来说，C++11的非成员函数<code>begin</code>调用这些成员函数）不提供<code>cbegin</code>成员函数也没问题。那么现在你可以将这个非成员函数<code>cbegin</code>施于只直接支持<code>begin</code>的容器。</p>
+<p>如果<code>C</code>是原生数组，这个模板也能工作。这时，<code>container</code>成为一个<code>const</code>数组的引用。C++11为数组提供特化版本的非成员函数<code>begin</code>，它返回指向数组第一个元素的指针。一个<code>const</code>数组的元素也是<code>const</code>，所以对于<code>const</code>数组，非成员函数<code>begin</code>返回指向<code>const</code>的指针（pointer-to-<code>const</code>）。在数组的上下文中，所谓指向<code>const</code>的指针（pointer-to-<code>const</code>），也就是<code>const_iterator</code>了。</p>
+<p>回到最开始，本条款的中心是鼓励你只要能就使用<code>const_iterator</code>。最原始的动机——只要它有意义就加上<code>const</code>——是C++98就有的思想。但是在C++98，它（译注：<code>const_iterator</code>）只是一般有用，到了C++11，它就是极其有用了，C++14在其基础上做了些修补工作。</p>
+<p><strong>请记住：</strong></p>
+<ul>
+<li>优先考虑<code>const_iterator</code>而非<code>iterator</code></li>
+<li>在最大程度通用的代码中，优先考虑非成员函数版本的<code>begin</code>，<code>end</code>，<code>rbegin</code>等，而非同名成员函数</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../3.MovingToModernCpp/item12.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="../3.MovingToModernCpp/item14.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../3.MovingToModernCpp/item12.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../3.MovingToModernCpp/item14.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>

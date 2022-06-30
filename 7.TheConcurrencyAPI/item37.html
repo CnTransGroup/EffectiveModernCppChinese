@@ -1,0 +1,345 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Item 37: Make std::threads unjionable on all paths - Effective Modern C++</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <!-- MathJax -->
+        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../Introduction.html">Introduction</a></li><li class="chapter-item expanded "><div>Chapter 1. Deducing Types</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../1.DeducingTypes/item1.html">Item 1: Understanding template type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item2.html">Item 2: Understand auto type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item3.html">Item 3: Understand decltype</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item4.html">Item 4: Know how to view deduced types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 2. auto</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../2.Auto/item5.html">Item 5: Prefer auto to explicit type declarations</a></li><li class="chapter-item expanded "><a href="../2.Auto/item6.html">Item 6: Use the explicitly typed initializer idiom when auto deduces undesired types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 3. Moving to Modern C++</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item7.html">Item 7: Distinguish between () and {} when creating objects</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item8.html">Item 8: Prefer nullptr to 0 or NULL</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item9.html">Item 9: Prefer alias declarations to typedefs</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item10.html">Item 10: Prefer scoped enums to unscoped enums</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item11.html">Item 11: Prefer deleted functions to private undefined ones</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item12.html">Item 12: Declare overriding functions override</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item13.html">Item 13: Prefer const_iterators to iterators</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item14.html">Item 14: Declare functions noexcept if they won't emit exceptions</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item15.html">Item 15: Use constexpr whenever possible</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item16.html">Item 16: Make const member functions thread safe</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item17.html">Item 17: Understand special member funciton generation</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 4. Smart Pointer</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../4.SmartPointers/item18.html">Item 18: Use std::unique_ptr for exclusive-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item19.html">Item 19: Use std::shared_ptr for shared-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item20.html">Item 20: Use std::weak_ptr for std::shared_ptr like pointers that can dangle</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item21.html">Item 21: Prefer std::make_unique and std::make_shared to direct use of new</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item22.html">Item 22: When using the Pimpl Idiom, define special member functions in the implementation file</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 5. Rvalue References, Move Semantics, and Perfect Forwarding</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item23.html">Item 23: Understand std::move and std::forward</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item24.html">Item 24: Distinguish universal references from rvalue references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item25.html">Item 25: Use std::move on rvalue references, std::forward on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item26.html">Item 26: Avoid overloading on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item27.html">Item 27: Familiarize yourself with alternatives to overaloading on univeral references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item28.html">Item 28: Understand reference collapsing</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item29.html">Item 29: Assume that move operations are not present not cheap, and not used</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item30.html">Item 30: Familiarize yourself with perfect forwarding failure cases</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 6. Lambda Expressions</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item31.html">Item 31: Avoid default capture modes</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item32.html">Item 32: Use init capture to move objects into closures</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item33.html">Item 33: Use decltype on auto&&parameters to std::forward them</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item34.html">Item 34: Prefer lambdas to std::bind</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 7. The Concurrency API</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/Item35.html">Item 35: Prefer task-based programming to thread-based</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item36.html">Item 36: Specify std::launch::async if asynchronicity is essential</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item37.html" class="active">Item 37: Make std::threads unjionable on all paths</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item38.html">Item 38: Be aware of varying thread handle destructor behavior</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item39.html">Item 39: Consider void futures for one-shot event communication</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item40.html">Item 40: Use std::atomic for concurrency, volatile for special memory</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 8. Tweaks</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../8.Tweaks/item41.html">Item 41: Consider pass by value for copyable parameters that are cheap to move and always copied</a></li><li class="chapter-item expanded "><a href="../8.Tweaks/item42.html">Item 42: Consider emplacement instead of insertion</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Effective Modern C++</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h2 id="条款三十七使stdthread在所有路径最后都不可结合"><a class="header" href="#条款三十七使stdthread在所有路径最后都不可结合">条款三十七：使<code>std::thread</code>在所有路径最后都不可结合</a></h2>
+<p><strong>Item 37: Make <code>std::thread</code>s unjoinable on all paths</strong></p>
+<p>每个<code>std::thread</code>对象处于两个状态之一：<strong>可结合的</strong>（<em>joinable</em>）或者<strong>不可结合的</strong>（<em>unjoinable</em>）。可结合状态的<code>std::thread</code>对应于正在运行或者可能要运行的异步执行线程。比如，对应于一个阻塞的（<em>blocked</em>）或者等待调度的线程的<code>std::thread</code>是可结合的，对应于运行结束的线程的<code>std::thread</code>也可以认为是可结合的。</p>
+<p>不可结合的<code>std::thread</code>正如所期待：一个不是可结合状态的<code>std::thread</code>。不可结合的<code>std::thread</code>对象包括：</p>
+<ul>
+<li><strong>默认构造的<code>std::thread</code>s</strong>。这种<code>std::thread</code>没有函数执行，因此没有对应到底层执行线程上。</li>
+<li><strong>已经被移动走的<code>std::thread</code>对象</strong>。移动的结果就是一个<code>std::thread</code>原来对应的执行线程现在对应于另一个<code>std::thread</code>。</li>
+<li><strong>已经被<code>join</code>的<code>std::thread</code></strong> 。在<code>join</code>之后，<code>std::thread</code>不再对应于已经运行完了的执行线程。</li>
+<li><strong>已经被<code>detach</code>的<code>std::thread</code></strong> 。<code>detach</code>断开了<code>std::thread</code>对象与执行线程之间的连接。</li>
+</ul>
+<p>（译者注：<code>std::thread</code>可以视作状态保存的对象，保存的状态可能也包括可调用对象，有没有具体的线程承载就是有没有连接）</p>
+<p><code>std::thread</code>的可结合性如此重要的原因之一就是当可结合的线程的析构函数被调用，程序执行会终止。比如，假定有一个函数<code>doWork</code>，使用一个过滤函数<code>filter</code>，一个最大值<code>maxVal</code>作为形参。<code>doWork</code>检查是否满足计算所需的条件，然后使用在0到<code>maxVal</code>之间的通过过滤器的所有值进行计算。如果进行过滤非常耗时，并且确定<code>doWork</code>条件是否满足也很耗时，则将两件事并发计算是很合理的。</p>
+<p>我们希望为此采用基于任务的设计（参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.TheConcurrencyAPI/Item35.md">Item35</a>），但是假设我们希望设置做过滤的线程的优先级。<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.TheConcurrencyAPI/Item35.md">Item35</a>阐释了那需要线程的原生句柄，只能通过<code>std::thread</code>的API来完成；基于任务的API（比如<em>future</em>）做不到。所以最终采用基于线程而不是基于任务。</p>
+<p>我们可能写出以下代码：</p>
+<p>代码如下：</p>
+<pre><code class="language-cpp">constexpr auto tenMillion = 10000000;           //constexpr见条款15
+
+bool doWork(std::function&lt;bool(int)&gt; filter,    //返回计算是否执行；
+            int maxVal = tenMillion)            //std::function见条款2
+{
+    std::vector&lt;int&gt; goodVals;                  //满足filter的值
+
+    std::thread t([&amp;filter, maxVal, &amp;goodVals]  //填充goodVals
+                  {
+                      for (auto i = 0; i &lt;= maxVal; ++i)
+                          { if (filter(i)) goodVals.push_back(i); }
+                  });
+
+    auto nh = t.native_handle();                //使用t的原生句柄
+    …                                           //来设置t的优先级
+
+    if (conditionsAreSatisfied()) {
+        t.join();                               //等t完成
+        performComputation(goodVals);
+        return true;                            //执行了计算
+    }
+    return false;                               //未执行计算
+}
+</code></pre>
+<p>在解释这份代码为什么有问题之前，我先把<code>tenMillion</code>的初始化值弄得更可读一些，这利用了C++14的能力，使用单引号作为数字分隔符：</p>
+<pre><code class="language-cpp">constexpr auto tenMillion = 10'000'000;         //C++14
+</code></pre>
+<p>还要指出，在开始运行之后设置<code>t</code>的优先级就像把马放出去之后再关上马厩门一样（译者注：太晚了）。更好的设计是在挂起状态时开始<code>t</code>（这样可以在执行任何计算前调整优先级），但是我不想你为考虑那些代码而分心。如果你对代码中忽略的部分感兴趣，可以转到<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.TheConcurrencyAPI/item39.md">Item39</a>，那个Item告诉你如何以开始那些挂起状态的线程。</p>
+<p>返回<code>doWork</code>。如果<code>conditionsAreSatisfied()</code>返回<code>true</code>，没什么问题，但是如果返回<code>false</code>或者抛出异常，在<code>doWork</code>结束调用<code>t</code>的析构函数时，<code>std::thread</code>对象<code>t</code>会是可结合的。这造成程序执行中止。</p>
+<p>你可能会想，为什么<code>std::thread</code>析构的行为是这样的，那是因为另外两种显而易见的方式更糟：</p>
+<ul>
+<li>
+<p><strong>隐式<code>join</code></strong> 。这种情况下，<code>std::thread</code>的析构函数将等待其底层的异步执行线程完成。这听起来是合理的，但是可能会导致难以追踪的异常表现。比如，如果<code>conditonAreStatisfied()</code>已经返回了<code>false</code>，<code>doWork</code>继续等待过滤器应用于所有值就很违反直觉。</p>
+</li>
+<li>
+<p><strong>隐式<code>detach</code></strong> 。这种情况下，<code>std::thread</code>析构函数会分离<code>std::thread</code>与其底层的线程。底层线程继续运行。听起来比<code>join</code>的方式好，但是可能导致更严重的调试问题。比如，在<code>doWork</code>中，<code>goodVals</code>是通过引用捕获的局部变量。它也被<em>lambda</em>修改（通过调用<code>push_back</code>）。假定，<em>lambda</em>异步执行时，<code>conditionsAreSatisfied()</code>返回<code>false</code>。这时，<code>doWork</code>返回，同时局部变量（包括<code>goodVals</code>）被销毁。栈被弹出，并在<code>doWork</code>的调用点继续执行线程。</p>
+<p>调用点之后的语句有时会进行其他函数调用，并且至少一个这样的调用可能会占用曾经被<code>doWork</code>使用的栈位置。我们调用那么一个函数<code>f</code>。当<code>f</code>运行时，<code>doWork</code>启动的<em>lambda</em>仍在继续异步运行。该<em>lambda</em>可能在栈内存上调用<code>push_back</code>，该内存曾属于<code>goodVals</code>，但是现在是<code>f</code>的栈内存的某个位置。这意味着对<code>f</code>来说，内存被自动修改了！想象一下调试的时候“乐趣”吧。</p>
+</li>
+</ul>
+<p>标准委员会认为，销毁可结合的线程如此可怕以至于实际上禁止了它（规定销毁可结合的线程导致程序终止）。</p>
+<p>这使你有责任确保使用<code>std::thread</code>对象时，在所有的路径上超出定义所在的作用域时都是不可结合的。但是覆盖每条路径可能很复杂，可能包括自然执行通过作用域，或者通过<code>return</code>，<code>continue</code>，<code>break</code>，<code>goto</code>或异常跳出作用域，有太多可能的路径。</p>
+<p>每当你想在执行跳至块之外的每条路径执行某种操作，最通用的方式就是将该操作放入局部对象的析构函数中。这些对象称为<strong>RAII对象</strong>（<em>RAII objects</em>），从<strong>RAII类</strong>中实例化。（RAII全称为 “Resource Acquisition Is Initialization”（资源获得即初始化），尽管技术关键点在析构上而不是实例化上）。RAII类在标准库中很常见。比如STL容器（每个容器析构函数都销毁容器中的内容物并释放内存），标准智能指针（<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item18.md">Item18</a>-<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item20.md">20</a>解释了，<code>std::uniqu_ptr</code>的析构函数调用他指向的对象的删除器，<code>std::shared_ptr</code>和<code>std::weak_ptr</code>的析构函数递减引用计数），<code>std::fstream</code>对象（它们的析构函数关闭对应的文件）等。但是标准库没有<code>std::thread</code>的RAII类，可能是因为标准委员会拒绝将<code>join</code>和<code>detach</code>作为默认选项，不知道应该怎么样完成RAII。</p>
+<p>幸运的是，完成自行实现的类并不难。比如，下面的类实现允许调用者指定<code>ThreadRAII</code>对象（一个<code>std::thread</code>的RAII对象）析构时，调用<code>join</code>或者<code>detach</code>：</p>
+<pre><code class="language-cpp">class ThreadRAII {
+public:
+    enum class DtorAction { join, detach };     //enum class的信息见条款10
+    
+    ThreadRAII(std::thread&amp;&amp; t, DtorAction a)   //析构函数中对t实行a动作
+    : action(a), t(std::move(t)) {}
+
+    ~ThreadRAII()
+    {                                           //可结合性测试见下
+        if (t.joinable()) {
+            if (action == DtorAction::join) {
+                t.join();
+            } else {
+                t.detach();
+            }
+        }
+    }
+
+    std::thread&amp; get() { return t; }            //见下
+
+private:
+    DtorAction action;
+    std::thread t;
+};
+</code></pre>
+<p>我希望这段代码是不言自明的，但是下面几点说明可能会有所帮助：</p>
+<ul>
+<li>
+<p>构造器只接受<code>std::thread</code>右值，因为我们想要把传来的<code>std::thread</code>对象移动进<code>ThreadRAII</code>。（<code>std::thread</code>不可以复制。）</p>
+</li>
+<li>
+<p>构造器的形参顺序设计的符合调用者直觉（首先传递<code>std::thread</code>，然后选择析构执行的动作，这比反过来更合理），但是成员初始化列表设计的匹配成员声明的顺序。将<code>std::thread</code>对象放在声明最后。在这个类中，这个顺序没什么特别之处，但是通常，可能一个数据成员的初始化依赖于另一个，因为<code>std::thread</code>对象可能会在初始化结束后就立即执行函数了，所以在最后声明是一个好习惯。这样就能保证一旦构造结束，在前面的所有数据成员都初始化完毕，可以供<code>std::thread</code>数据成员绑定的异步运行的线程安全使用。</p>
+</li>
+<li>
+<p><code>ThreadRAII</code>提供了<code>get</code>函数访问内部的<code>std::thread</code>对象。这类似于标准智能指针提供的<code>get</code>函数，可以提供访问原始指针的入口。提供<code>get</code>函数避免了<code>ThreadRAII</code>复制完整<code>std::thread</code>接口的需要，也意味着<code>ThreadRAII</code>可以在需要<code>std::thread</code>对象的上下文环境中使用。</p>
+</li>
+<li>
+<p>在<code>ThreadRAII</code>析构函数调用<code>std::thread</code>对象<code>t</code>的成员函数之前，检查<code>t</code>是否可结合。这是必须的，因为在不可结合的<code>std::thread</code>上调用<code>join</code>或<code>detach</code>会导致未定义行为。客户端可能会构造一个<code>std::thread</code>，然后用它构造一个<code>ThreadRAII</code>，使用<code>get</code>获取<code>t</code>，然后移动<code>t</code>，或者调用<code>join</code>或<code>detach</code>，每一个操作都使得<code>t</code>变为不可结合的。</p>
+<p>如果你担心下面这段代码</p>
+<pre><code class="language-cpp">if (t.joinable()) {
+    if (action == DtorAction::join) {
+        t.join();
+    } else {
+        t.detach();
+    }
+}
+</code></pre>
+<p>存在竞争，因为在<code>t.joinable()</code>的执行和调用<code>join</code>或<code>detach</code>的中间，可能有其他线程改变了<code>t</code>为不可结合，你的直觉值得表扬，但是这个担心不必要。只有调用成员函数才能使<code>std::thread</code>对象从可结合变为不可结合状态，比如<code>join</code>，<code>detach</code>或者移动操作。在<code>ThreadRAII</code>对象析构函数调用时，应当没有其他线程在那个对象上调用成员函数。如果同时进行调用，那肯定是有竞争的，但是不在析构函数中，是在客户端代码中试图同时在一个对象上调用两个成员函数（析构函数和其他函数）。通常，仅当所有都为<code>const</code>成员函数时，在一个对象同时调用多个成员函数才是安全的。</p>
+</li>
+</ul>
+<p>在<code>doWork</code>的例子上使用<code>ThreadRAII</code>的代码如下：</p>
+<pre><code class="language-cpp">bool doWork(std::function&lt;bool(int)&gt; filter,        //同之前一样
+            int maxVal = tenMillion)
+{
+    std::vector&lt;int&gt; goodVals;                      //同之前一样
+
+    ThreadRAII t(                                   //使用RAII对象
+        std::thread([&amp;filter, maxVal, &amp;goodVals]
+                    {
+                        for (auto i = 0; i &lt;= maxVal; ++i)
+                            { if (filter(i)) goodVals.push_back(i); }
+                    }),
+                    ThreadRAII::DtorAction::join    //RAII动作
+    );
+
+    auto nh = t.get().native_handle();
+    …
+
+    if (conditionsAreSatisfied()) {
+        t.get().join();
+        performComputation(goodVals);
+        return true;
+    }
+
+    return false;
+}
+</code></pre>
+<p>这种情况下，我们选择在<code>ThreadRAII</code>的析构函数对异步执行的线程进行<code>join</code>，因为在先前分析中，<code>detach</code>可能导致噩梦般的调试过程。我们之前也分析了<code>join</code>可能会导致表现异常（坦率说，也可能调试困难），但是在未定义行为（<code>detach</code>导致），程序终止（使用原生<code>std::thread</code>导致），或者表现异常之间选择一个后果，可能表现异常是最好的那个。</p>
+<p>哎，<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.TheConcurrencyAPI/item39.md">Item39</a>表明了使用<code>ThreadRAII</code>来保证在<code>std::thread</code>的析构时执行<code>join</code>有时不仅可能导致程序表现异常，还可能导致程序挂起。“适当”的解决方案是此类程序应该和异步执行的<em>lambda</em>通信，告诉它不需要执行了，可以直接返回，但是C++11中不支持<strong>可中断线程</strong>（<em>interruptible threads</em>）。可以自行实现，但是这不是本书讨论的主题。（关于这一点，Anthony Williams的《C++ Concurrency in Action》（Manning Publications，2012）的section 9.2中有详细讨论。）（译者注：此书中文版已出版，名为《C++并发编程实战》，且本文翻译时（2020）已有第二版出版。）</p>
+<p><a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item17.md">Item17</a>说明因为<code>ThreadRAII</code>声明了一个析构函数，因此不会有编译器生成移动操作，但是没有理由<code>ThreadRAII</code>对象不能移动。如果要求编译器生成这些函数，函数的功能也正确，所以显式声明来告诉编译器自动生成也是合适的：</p>
+<pre><code class="language-cpp">class ThreadRAII {
+public:
+    enum class DtorAction { join, detach };         //跟之前一样
+
+    ThreadRAII(std::thread&amp;&amp; t, DtorAction a)       //跟之前一样
+    : action(a), t(std::move(t)) {}
+
+    ~ThreadRAII()
+    {
+        …                                           //跟之前一样
+    }
+
+    ThreadRAII(ThreadRAII&amp;&amp;) = default;             //支持移动
+    ThreadRAII&amp; operator=(ThreadRAII&amp;&amp;) = default;
+
+    std::thread&amp; get() { return t; }                //跟之前一样
+
+private: // as before
+    DtorAction action;
+    std::thread t;
+};
+</code></pre>
+<p><strong>请记住：</strong></p>
+<ul>
+<li>在所有路径上保证<code>thread</code>最终是不可结合的。</li>
+<li>析构时<code>join</code>会导致难以调试的表现异常问题。</li>
+<li>析构时<code>detach</code>会导致难以调试的未定义行为。</li>
+<li>声明类数据成员时，最后声明<code>std::thread</code>对象。</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../7.TheConcurrencyAPI/item36.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="../7.TheConcurrencyAPI/item38.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../7.TheConcurrencyAPI/item36.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../7.TheConcurrencyAPI/item38.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>

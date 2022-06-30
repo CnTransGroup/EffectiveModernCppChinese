@@ -1,0 +1,254 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Item 14: Declare functions noexcept if they won&#x27;t emit exceptions - Effective Modern C++</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <!-- MathJax -->
+        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../Introduction.html">Introduction</a></li><li class="chapter-item expanded "><div>Chapter 1. Deducing Types</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../1.DeducingTypes/item1.html">Item 1: Understanding template type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item2.html">Item 2: Understand auto type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item3.html">Item 3: Understand decltype</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item4.html">Item 4: Know how to view deduced types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 2. auto</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../2.Auto/item5.html">Item 5: Prefer auto to explicit type declarations</a></li><li class="chapter-item expanded "><a href="../2.Auto/item6.html">Item 6: Use the explicitly typed initializer idiom when auto deduces undesired types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 3. Moving to Modern C++</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item7.html">Item 7: Distinguish between () and {} when creating objects</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item8.html">Item 8: Prefer nullptr to 0 or NULL</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item9.html">Item 9: Prefer alias declarations to typedefs</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item10.html">Item 10: Prefer scoped enums to unscoped enums</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item11.html">Item 11: Prefer deleted functions to private undefined ones</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item12.html">Item 12: Declare overriding functions override</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item13.html">Item 13: Prefer const_iterators to iterators</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item14.html" class="active">Item 14: Declare functions noexcept if they won't emit exceptions</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item15.html">Item 15: Use constexpr whenever possible</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item16.html">Item 16: Make const member functions thread safe</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item17.html">Item 17: Understand special member funciton generation</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 4. Smart Pointer</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../4.SmartPointers/item18.html">Item 18: Use std::unique_ptr for exclusive-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item19.html">Item 19: Use std::shared_ptr for shared-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item20.html">Item 20: Use std::weak_ptr for std::shared_ptr like pointers that can dangle</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item21.html">Item 21: Prefer std::make_unique and std::make_shared to direct use of new</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item22.html">Item 22: When using the Pimpl Idiom, define special member functions in the implementation file</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 5. Rvalue References, Move Semantics, and Perfect Forwarding</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item23.html">Item 23: Understand std::move and std::forward</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item24.html">Item 24: Distinguish universal references from rvalue references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item25.html">Item 25: Use std::move on rvalue references, std::forward on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item26.html">Item 26: Avoid overloading on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item27.html">Item 27: Familiarize yourself with alternatives to overaloading on univeral references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item28.html">Item 28: Understand reference collapsing</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item29.html">Item 29: Assume that move operations are not present not cheap, and not used</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item30.html">Item 30: Familiarize yourself with perfect forwarding failure cases</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 6. Lambda Expressions</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item31.html">Item 31: Avoid default capture modes</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item32.html">Item 32: Use init capture to move objects into closures</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item33.html">Item 33: Use decltype on auto&&parameters to std::forward them</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item34.html">Item 34: Prefer lambdas to std::bind</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 7. The Concurrency API</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/Item35.html">Item 35: Prefer task-based programming to thread-based</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item36.html">Item 36: Specify std::launch::async if asynchronicity is essential</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item37.html">Item 37: Make std::threads unjionable on all paths</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item38.html">Item 38: Be aware of varying thread handle destructor behavior</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item39.html">Item 39: Consider void futures for one-shot event communication</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item40.html">Item 40: Use std::atomic for concurrency, volatile for special memory</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 8. Tweaks</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../8.Tweaks/item41.html">Item 41: Consider pass by value for copyable parameters that are cheap to move and always copied</a></li><li class="chapter-item expanded "><a href="../8.Tweaks/item42.html">Item 42: Consider emplacement instead of insertion</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Effective Modern C++</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h2 id="条款十四如果函数不抛出异常请使用noexcept"><a class="header" href="#条款十四如果函数不抛出异常请使用noexcept">条款十四：如果函数不抛出异常请使用<code>noexcept</code></a></h2>
+<p><strong>Item 14: Declare functions <code>noexcept</code> if they won’t emit exceptions</strong></p>
+<p>在C++98中，异常说明（<em>exception specifications</em>）是喜怒无常的野兽。你不得不写出函数可能抛出的异常类型，如果函数实现有所改变，异常说明也可能需要修改。改变异常说明会影响客户端代码，因为调用者可能依赖原版本的异常说明。编译器不会在函数实现，异常说明和客户端代码之间提供一致性保障。大多数程序员最终都认为不值得为C++98的异常说明做得如此麻烦。</p>
+<p>在C++11标准化过程中，大家一致认为异常说明真正有用的信息是一个函数是否会抛出异常。非黑即白，一个函数可能抛异常，或者不会。这种&quot;可能-绝不&quot;的二元论构成了C++11异常说的基础，从根本上改变了C++98的异常说明。（C++98风格的异常说明也有效，但是已经标记为deprecated（废弃））。在C++11中，无条件的<code>noexcept</code>保证函数不会抛出任何异常。</p>
+<p>关于一个函数是否已经声明为<code>noexcept</code>是接口设计的事。函数的异常抛出行为是客户端代码最关心的。调用者可以查看函数是否声明为<code>noexcept</code>，这个可以影响到调用代码的异常安全性（<em>exception safety</em>）和效率。就其本身而言，函数是否为<code>noexcept</code>和成员函数是否<code>const</code>一样重要。当你知道这个函数不会抛异常而没加上<code>noexcept</code>，那这个接口说明就有点差劲了。</p>
+<p>不过这里还有给不抛异常的函数加上<code>noexcept</code>的动机：它允许编译器生成更好的目标代码。要想知道为什么，了解C++98和C++11指明一个函数不抛异常的方式是很有用了。考虑一个函数<code>f</code>，它保证调用者永远不会收到一个异常。两种表达方式如下：</p>
+<pre><code class="language-cpp">int f(int x) throw();   //C++98风格，没有来自f的异常
+int f(int x) noexcept;  //C++11风格，没有来自f的异常
+</code></pre>
+<p>如果在运行时，<code>f</code>出现一个异常，那么就和<code>f</code>的异常说明冲突了。在C++98的异常说明中，调用栈（the <em>call stack</em>）会展开至<code>f</code>的调用者，在一些与这地方不相关的动作后，程序被终止。C++11异常说明的运行时行为有些不同：调用栈只是<strong>可能</strong>在程序终止前展开。</p>
+<p>展开调用栈和<strong>可能</strong>展开调用栈两者对于代码生成（code generation）有非常大的影响。在一个<code>noexcept</code>函数中，当异常可能传播到函数外时，优化器不需要保证运行时栈（the runtime stack）处于可展开状态；也不需要保证当异常离开<code>noexcept</code>函数时，<code>noexcept</code>函数中的对象按照构造的反序析构。而标注“<code>throw()</code>”异常声明的函数缺少这样的优化灵活性，没加异常声明的函数也一样。可以总结一下：</p>
+<pre><code class="language-cpp">RetType function(params) noexcept;  //极尽所能优化
+RetType function(params) throw();   //较少优化
+RetType function(params);           //较少优化
+</code></pre>
+<p>这是一个充分的理由使得你当知道它不抛异常时加上<code>noexcept</code>。</p>
+<p>还有一些函数更符合这个情况。移动操作是绝佳的例子。假如你有一份C++98代码，里面用到了<code>std::vector&lt;Widget&gt;</code>。<code>Widget</code>通过<code>push_back</code>一次又一次的添加进<code>std::vector</code>：</p>
+<pre><code class="language-cpp">std::vector&lt;Widget&gt; vw;
+…
+Widget w;
+…                   //用w做点事
+vw.push_back(w);    //把w添加进vw
+…
+</code></pre>
+<p>假设这个代码能正常工作，你也无意修改为C++11风格。但是你确实想要C++11移动语义带来的性能优势，毕竟这里的类型是可以移动的（move-enabled types）。因此你需要确保<code>Widget</code>有移动操作，可以手写代码也可以让编译器自动生成，当然前提是能满足自动生成的条件（参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item17.md">Item17</a>）。</p>
+<p>当新元素添加到<code>std::vector</code>，<code>std::vector</code>可能没地方放它，换句话说，<code>std::vector</code>的大小（size）等于它的容量（capacity）。这时候，<code>std::vector</code>会分配一个新的更大块的内存用于存放其中元素，然后将元素从老内存区移动到新内存区，然后析构老内存区里的对象。在C++98中，移动是通过复制老内存区的每一个元素到新内存区完成的，然后老内存区的每个元素发生析构。这种方法使得<code>push_back</code>可以提供很强的异常安全保证：如果在复制元素期间抛出异常，<code>std::vector</code>状态保持不变，因为老内存元素析构必须建立在它们已经成功复制到新内存的前提下。</p>
+<p>在C++11中，一个很自然的优化就是将上述复制操作替换为移动操作。但是很不幸运，这会破坏<code>push_back</code>的异常安全保证。如果<strong>n</strong>个元素已经从老内存移动到了新内存区，但异常在移动第<strong>n+1</strong>个元素时抛出，那么<code>push_back</code>操作就不能完成。但是原始的<code>std::vector</code>已经被修改：有<strong>n</strong>个元素已经移动走了。恢复<code>std::vector</code>至原始状态也不太可能，因为从新内存移动到老内存本身又可能引发异常。</p>
+<p>这是个很严重的问题，因为老代码可能依赖于<code>push_back</code>提供的强烈的异常安全保证。因此，C++11版本的实现不能简单的将<code>push_back</code>里面的复制操作替换为移动操作，除非知晓移动操作绝不抛异常，这时复制替换为移动就是安全的，唯一的副作用就是性能得到提升。</p>
+<p><code>std::vector::push_back</code>受益于“如果可以就移动，如果必要则复制”策略，并且它不是标准库中唯一采取该策略的函数。C++98中还有一些函数（如<code>std::vector::reverse</code>，<code>std::deque::insert</code>等）也受益于这种强异常保证。对于这个函数只有在知晓移动不抛异常的情况下用C++11的移动操作替换C++98的复制操作才是安全的。但是如何知道一个函数中的移动操作是否产生异常？答案很明显：它检查这个操作是否被声明为<code>noexcept</code>。（这个检查非常弯弯绕。像是<code>std::vector::push_back</code>之类的函数调用<code>std::move_if_noexcept</code>，这是个<code>std::move</code>的变体，根据其中类型的移动构造函数是否为<code>noexcept</code>的，视情况转换为右值或保持左值（参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item23.md">Item23</a>）。反过来，<code>std::move_if_noexcept</code>查阅<code>std::is_nothrow_move_constructible</code>这个<em>type trait</em>，基于移动构造函数是否有<code>noexcept</code>（或者<code>throw()</code>）的设计，编译器设置这个<em>type trait</em>的值。）</p>
+<p><code>swap</code>函数是<code>noexcept</code>的另一个绝佳用地。<code>swap</code>是STL算法实现的一个关键组件，它也常用于拷贝运算符重载中。它的广泛使用意味着对其施加不抛异常的优化是非常有价值的。有趣的是，标准库的<code>swap</code>是否<code>noexcept</code>有时依赖于用户定义的<code>swap</code>是否<code>noexcept</code>。比如，数组和<code>std::pair</code>的<code>swap</code>声明如下：</p>
+<pre><code class="language-cpp">template &lt;class T, size_t N&gt;
+void swap(T (&amp;a)[N],
+          T (&amp;b)[N]) noexcept(noexcept(swap(*a, *b)));  //见下文
+
+template &lt;class T1, class T2&gt;
+struct pair {
+    …
+    void swap(pair&amp; p) noexcept(noexcept(swap(first, p.first)) &amp;&amp;
+                                noexcept(swap(second, p.second)));
+    …
+};
+</code></pre>
+<p>这些函数<strong>视情况</strong><code>noexcept</code>：它们是否<code>noexcept</code>依赖于<code>noexcept</code>声明中的表达式是否<code>noexcept</code>。假设有两个<code>Widget</code>数组，交换数组操作为<code>noexcept</code>的前提是数组中的元素交换是<code>noexcept</code>的，即<code>Widget</code>的<code>swap</code>是<code>noexcept</code>。因此<code>Widget</code>的<code>swap</code>的作者决定了交换<code>widget</code>的数组是否<code>noexcept</code>。对于<code>Widget</code>的交换是否<code>noexcept</code>决定了对于<code>Widget</code>数组的交换是否<code>noexcept</code>，以及其他交换，比如<code>Widget</code>的数组的数组的交换是否<code>noexcept</code>。类似地，交换两个含有<code>Widget</code>的<code>std::pair</code>是否<code>noexcept</code>依赖于<code>Widget</code>的<code>swap</code>是否<code>noexcept</code>。事实上交换高层次数据结构是否<code>noexcept</code>取决于它的构成部分的那些低层次数据结构是否<code>noexcept</code>，这激励你只要可以就提供<code>noexcept</code> <code>swap</code>函数（译注：因为如果你的函数不提供<code>noexcept</code>保证，其它依赖你的高层次<code>swap</code>就不能保证<code>noexcept</code>）。</p>
+<p>现在，我希望你能为<code>noexcept</code>提供的优化机会感到高兴，同时我还得让你缓一缓别太高兴了。优化很重要，但是正确性更重要。我在这个条款的开头提到<code>noexcept</code>是函数接口的一部分，所以仅当你保证一个函数实现在长时间内不会抛出异常时才声明<code>noexcept</code>。如果你声明一个函数为<code>noexcept</code>，但随即又后悔了，你没有选择。你可以从函数声明中移除<code>noexcept</code>（即改变它的接口），这理所当然会影响客户端代码。你可以改变实现使得这个异常可以避免，再保留原版本（现在来看不正确的）异常说明。如果你这么做，在异常试图离开这个函数时程序将会终止。或者你就顺从了既有实现，舍弃了激起你兴趣的东西，从一开始就改变实现。这些选择都不尽人意。</p>
+<p>这个问题的本质是实际上大多数函数都是异常中立（<em>exception-neutral</em>）的。这些函数自己不抛异常，但是它们内部的调用可能抛出。此时，异常中立函数允许那些抛出异常的函数在调用链上更进一步直到遇到异常处理程序，而不是就地终止。异常中立函数决不应该声明为<code>noexcept</code>，因为它们可能抛出那种“让它们过吧”的异常（译注：也就是说在当前这个函数内不处理异常，但是又不立即终止程序，而是让调用这个函数的函数处理异常。）因此大多数函数缺少<code>noexcept</code>设计。</p>
+<p>然而，一些函数很自然的不应该抛异常，更进一步——尤其是移动操作和<code>swap</code>——使其<code>noexcept</code>有重大意义，只要可能就应该将它们实现为<code>noexcept</code>。（STL对容器的移动操作的接口规范里缺少<code>noexcept</code>。然而实现者可以增强STL函数的异常说明，实际上，至少有些容器的移动操作已被声明为<code>noexcept</code>，这些做法就是本条例所给建议的好示例。发现了容器移动操作可以写成不抛异常的之后，实现者经常将这些操作声明为<code>noexcept</code>的，尽管标准并没有要求他们这么做。）老实说，当你确保函数决不抛异常的时候，一定要将它们声明为<code>noexcept</code>。</p>
+<p>请注意我说有些函数有<strong>自然的</strong><code>noexcept</code>实现法。为了<code>noexcept</code>而扭曲函数实现来达成目的是本末倒置。是把马车放到马前，是一叶障目不见泰山。是...选择你喜欢的比喻吧。（译注：几个英语熟语，都是想说明“本末倒置”。）如果一个简单的函数实现可能引发异常（比如调用一个可能抛异常的函数），而你为了讨好调用者隐藏了这个（比如捕获所有异常，然后替换为状态码或者特殊返回值），这不仅会使你的函数实现变得复杂，还会让调用点的代码变得复杂。调用者可能不得不检查状态码或特殊返回值。而这些复杂的运行时开销（比如额外的分支，大的函数给指令缓存带来的压力等）可能超出<code>noexcept</code>带来的性能提升，再加上你会悲哀的发现这些代码又难读又难维护。那是糟糕的软件工程化。</p>
+<p>对于一些函数，使其成为<code>noexcept</code>是很重要的，它们应当默认如是。在C++98，允许内存释放（memory deallocation）函数（即<code>operator delete</code>和<code>operator delete[]</code>）和析构函数抛出异常是糟糕的代码设计，C++11将这种作风升级为语言规则。默认情况下，内存释放函数和析构函数——不管是用户定义的还是编译器生成的——都是隐式<code>noexcept</code>。因此它们不需要声明<code>noexcept</code>。（这么做也不会有问题，只是不合常规）。析构函数非隐式<code>noexcept</code>的情况仅当类的数据成员（包括继承的成员还有继承成员内的数据成员）明确声明它的析构函数可能抛出异常（如声明“<code>noexcept(false)</code>”）。这种析构函数不常见，标准库里面没有。如果一个对象的析构函数可能被标准库使用（比如在容器内或者被传给一个算法），析构函数又可能抛异常，那么程序的行为是未定义的。</p>
+<p>值得注意的是一些库接口设计者会区分有宽泛契约（<strong>wild contracts</strong>）和严格契约（<strong>narrow contracts</strong>）的函数。有宽泛契约的函数没有前置条件。这种函数不管程序状态如何都能调用，它对调用者传来的实参不设约束。（“不管程序状态如何”和“不设约束”对已经行为未定义的程序无效。比如<code>std::vector::size</code>有宽泛契约，但是并不保证如果你把一块随机内存转换为一个<code>std::vector</code>，在这块内存上调用它会有合理的表现。转换的结果是未定义的，所以包含这个转换的程序也无法保证表现合理）宽泛契约的函数决不表现出未定义行为。</p>
+<p>反之，没有宽泛契约的函数就有严格契约。对于这些函数，如果违反前置条件，结果将会是未定义的。</p>
+<p>如果你写了一个有宽泛契约的函数并且你知道它不会抛异常，那么遵循这个条款给它声明一个<code>noexcept</code>是很容易的。对于严格契约的函数，情况就有点微妙了。举个例子，假如你在写一个形参为<code>std::string</code>的函数<code>f</code>，并且假定这个函数<code>f</code>很自然的决不引发异常。这就表明<code>f</code>应该被声明为<code>noexcept</code>。</p>
+<p>现在假如<code>f</code>有一个前置条件：类型为<code>std::string</code>的参数的长度不能超过32个字符。如果现在调用<code>f</code>并传给它一个大于32字符的<code>std::string</code>，函数行为将是未定义的，因为<strong>根据定义</strong>违反了前置条件，导致了未定义行为。<code>f</code>没有义务去检查前置条件，它假设这些前置条件都是满足的。（调用者有责任确保参数字符不超过32字符等这些假设有效。）即使有前置条件，将<code>f</code>声明为<code>noexcept</code>似乎也是合适的：</p>
+<pre><code class="language-cpp">void f(const std::string&amp; s) noexcept;  //前置条件：
+                                        //s.length() &lt;= 32 
+</code></pre>
+<p>假定<code>f</code>的实现者在函数里面检查前置条件冲突。虽然检查是没有必要的，但是也没禁止这么做，检查前置条件可能也是有用的，比如在系统测试时。debug一个抛出的异常一般都比跟踪未定义行为起因更容易。那么怎么报告前置条件冲突使得测试工具或客户端错误处理程序能检测到它呢？简单直接的做法是抛出“precondition was violated”异常，但是如果<code>f</code>声明了<code>noexcept</code>，这就行不通了；抛出一个异常会导致程序终止。因为这个原因，区分严格/宽泛契约库设计者一般会将<code>noexcept</code>留给宽泛契约函数。</p>
+<p>作为结束语，让我详细说明一下之前的观察，即编译器不会为函数实现和异常规范提供一致性保障。考虑下面的代码，它是完全正确的：</p>
+<pre><code class="language-cpp">void setup();           //函数定义另在一处
+void cleanup();
+
+void doWork() noexcept
+{
+ setup();               //设置要做的工作
+ …                      //真实工作
+ cleanup();             //执行清理动作
+}
+</code></pre>
+<p>这里，<code>doWork</code>声明为<code>noexcept</code>，即使它调用了non-<code>noexcept</code>函数<code>setup</code>和<code>cleanup</code>。看起来有点矛盾，其实可以猜想<code>setup</code>和<code>cleanup</code>在文档上写明了它们决不抛出异常，即使它们没有写上<code>noexcept</code>。至于为什么明明不抛异常却不写<code>noexcept</code>也是有合理原因的。比如，它们可能是用C写的库函数的一部分。（即使一些函数从C标准库移动到了<code>std</code>命名空间，也可能缺少异常规范，<code>std::strlen</code>就是一个例子，它没有声明<code>noexcept</code>。）或者它们可能是C++98库的一部分，它们不使用C++98异常规范，到了C++11还没有修订。</p>
+<p>因为有很多合理原因解释为什么<code>noexcept</code>依赖于缺少<code>noexcept</code>保证的函数，所以C++允许这些代码，编译器一般也不会给出warnings。</p>
+<p><strong>请记住：</strong></p>
+<ul>
+<li><code>noexcept</code>是函数接口的一部分，这意味着调用者可能会依赖它</li>
+<li><code>noexcept</code>函数较之于non-<code>noexcept</code>函数更容易优化</li>
+<li><code>noexcept</code>对于移动语义，<code>swap</code>，内存释放函数和析构函数非常有用</li>
+<li>大多数函数是异常中立的（译注：可能抛也可能不抛异常）而不是<code>noexcept</code></li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../3.MovingToModernCpp/item13.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="../3.MovingToModernCpp/item15.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../3.MovingToModernCpp/item13.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../3.MovingToModernCpp/item15.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>

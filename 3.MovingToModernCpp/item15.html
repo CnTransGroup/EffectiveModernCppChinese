@@ -1,0 +1,305 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Item 15: Use constexpr whenever possible - Effective Modern C++</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <!-- MathJax -->
+        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../Introduction.html">Introduction</a></li><li class="chapter-item expanded "><div>Chapter 1. Deducing Types</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../1.DeducingTypes/item1.html">Item 1: Understanding template type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item2.html">Item 2: Understand auto type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item3.html">Item 3: Understand decltype</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item4.html">Item 4: Know how to view deduced types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 2. auto</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../2.Auto/item5.html">Item 5: Prefer auto to explicit type declarations</a></li><li class="chapter-item expanded "><a href="../2.Auto/item6.html">Item 6: Use the explicitly typed initializer idiom when auto deduces undesired types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 3. Moving to Modern C++</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item7.html">Item 7: Distinguish between () and {} when creating objects</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item8.html">Item 8: Prefer nullptr to 0 or NULL</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item9.html">Item 9: Prefer alias declarations to typedefs</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item10.html">Item 10: Prefer scoped enums to unscoped enums</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item11.html">Item 11: Prefer deleted functions to private undefined ones</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item12.html">Item 12: Declare overriding functions override</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item13.html">Item 13: Prefer const_iterators to iterators</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item14.html">Item 14: Declare functions noexcept if they won't emit exceptions</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item15.html" class="active">Item 15: Use constexpr whenever possible</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item16.html">Item 16: Make const member functions thread safe</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item17.html">Item 17: Understand special member funciton generation</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 4. Smart Pointer</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../4.SmartPointers/item18.html">Item 18: Use std::unique_ptr for exclusive-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item19.html">Item 19: Use std::shared_ptr for shared-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item20.html">Item 20: Use std::weak_ptr for std::shared_ptr like pointers that can dangle</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item21.html">Item 21: Prefer std::make_unique and std::make_shared to direct use of new</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item22.html">Item 22: When using the Pimpl Idiom, define special member functions in the implementation file</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 5. Rvalue References, Move Semantics, and Perfect Forwarding</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item23.html">Item 23: Understand std::move and std::forward</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item24.html">Item 24: Distinguish universal references from rvalue references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item25.html">Item 25: Use std::move on rvalue references, std::forward on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item26.html">Item 26: Avoid overloading on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item27.html">Item 27: Familiarize yourself with alternatives to overaloading on univeral references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item28.html">Item 28: Understand reference collapsing</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item29.html">Item 29: Assume that move operations are not present not cheap, and not used</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item30.html">Item 30: Familiarize yourself with perfect forwarding failure cases</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 6. Lambda Expressions</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item31.html">Item 31: Avoid default capture modes</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item32.html">Item 32: Use init capture to move objects into closures</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item33.html">Item 33: Use decltype on auto&&parameters to std::forward them</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item34.html">Item 34: Prefer lambdas to std::bind</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 7. The Concurrency API</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/Item35.html">Item 35: Prefer task-based programming to thread-based</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item36.html">Item 36: Specify std::launch::async if asynchronicity is essential</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item37.html">Item 37: Make std::threads unjionable on all paths</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item38.html">Item 38: Be aware of varying thread handle destructor behavior</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item39.html">Item 39: Consider void futures for one-shot event communication</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item40.html">Item 40: Use std::atomic for concurrency, volatile for special memory</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 8. Tweaks</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../8.Tweaks/item41.html">Item 41: Consider pass by value for copyable parameters that are cheap to move and always copied</a></li><li class="chapter-item expanded "><a href="../8.Tweaks/item42.html">Item 42: Consider emplacement instead of insertion</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Effective Modern C++</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h2 id="条款十五尽可能的使用constexpr"><a class="header" href="#条款十五尽可能的使用constexpr">条款十五：尽可能的使用<code>constexpr</code></a></h2>
+<p><strong>Item 15: Use <code>constexpr</code> whenever possible</strong></p>
+<p>如果要给C++11颁一个“最令人困惑新词”奖，<code>constexpr</code>十有八九会折桂。当用于对象上面，它本质上就是<code>const</code>的加强形式，但是当它用于函数上，意思就大不相同了。有必要消除困惑，因为你绝对会用它的，特别是当你发现<code>constexpr</code> “正合吾意”的时候。</p>
+<p>从概念上来说，<code>constexpr</code>表明一个值不仅仅是常量，还是编译期可知的。这个表述并不全面，因为当<code>constexpr</code>被用于函数的时候，事情就有一些细微差别了。为了避免我毁了结局带来的surprise，我现在只想说，你不能假设<code>constexpr</code>函数的结果是<code>const</code>，也不能保证它们的（译注：返回）值是在编译期可知的。最有意思的是，这些是<strong>特性</strong>。关于<code>constexpr</code>函数返回的结果不需要是<code>const</code>，也不需要编译期可知这一点是<strong>良好的</strong>行为！</p>
+<p>不过我们还是先从<code>constexpr</code>对象开始说起。这些对象，实际上，和<code>const</code>一样，它们是编译期可知的。（技术上来讲，它们的值在翻译期（translation）决议，所谓翻译不仅仅包含是编译（compilation）也包含链接（linking），除非你准备写C++的编译器和链接器，否则这些对你不会造成影响，所以你编程时无需担心，把这些<code>constexpr</code>对象值看做编译期决议也无妨的。）</p>
+<p>编译期可知的值“享有特权”，它们可能被存放到只读存储空间中。对于那些嵌入式系统的开发者，这个特性是相当重要的。更广泛的应用是“其值编译期可知”的常量整数会出现在需要“整型常量表达式（<strong>integral constant expression</strong>）的上下文中，这类上下文包括数组大小，整数模板参数（包括<code>std::array</code>对象的长度），枚举名的值，对齐修饰符（译注：<a href="https://en.cppreference.com/w/cpp/language/alignas"><code>alignas(val)</code></a>），等等。如果你想在这些上下文中使用变量，你一定会希望将它们声明为<code>constexpr</code>，因为编译器会确保它们是编译期可知的：</p>
+<pre><code class="language-cpp">int sz;                             //non-constexpr变量
+…
+constexpr auto arraySize1 = sz;     //错误！sz的值在
+                                    //编译期不可知
+std::array&lt;int, sz&gt; data1;          //错误！一样的问题
+constexpr auto arraySize2 = 10;     //没问题，10是
+                                    //编译期可知常量
+std::array&lt;int, arraySize2&gt; data2;  //没问题, arraySize2是constexpr
+</code></pre>
+<p>注意<code>const</code>不提供<code>constexpr</code>所能保证之事，因为<code>const</code>对象不需要在编译期初始化它的值。</p>
+<pre><code class="language-cpp">int sz;                            //和之前一样
+…
+const auto arraySize = sz;         //没问题，arraySize是sz的const复制
+std::array&lt;int, arraySize&gt; data;   //错误，arraySize值在编译期不可知
+</code></pre>
+<p>简而言之，所有<code>constexpr</code>对象都是<code>const</code>，但不是所有<code>const</code>对象都是<code>constexpr</code>。如果你想编译器保证一个变量有一个值，这个值可以放到那些需要编译期常量（compile-time constants）的上下文的地方，你需要的工具是<code>constexpr</code>而不是<code>const</code>。</p>
+<p>涉及到<code>constexpr</code>函数时，<code>constexpr</code>对象的使用情况就更有趣了。如果实参是编译期常量，这些函数将产出编译期常量；如果实参是运行时才能知道的值，它们就将产出运行时值。这听起来就像你不知道它们要做什么一样，那么想是错误的，请这么看：</p>
+<ul>
+<li><code>constexpr</code>函数可以用于需求编译期常量的上下文。如果你传给<code>constexpr</code>函数的实参在编译期可知，那么结果将在编译期计算。如果实参的值在编译期不知道，你的代码就会被拒绝。</li>
+<li>当一个<code>constexpr</code>函数被一个或者多个编译期不可知值调用时，它就像普通函数一样，运行时计算它的结果。这意味着你不需要两个函数，一个用于编译期计算，一个用于运行时计算。<code>constexpr</code>全做了。</li>
+</ul>
+<p>假设我们需要一个数据结构来存储一个实验的结果，而这个实验可能以各种方式进行。实验期间风扇转速，温度等等都可能导致亮度值改变，亮度值可以是高，低，或者无。如果有<strong>n</strong>个实验相关的环境条件，它们每一个都有三个状态，最终可以得到的组合有3<sup>n</sup>个。储存所有实验结果的所有组合需要足够存放3<sup>n</sup>个值的数据结构。假设每个结果都是<code>int</code>并且<strong>n</strong>是编译期已知的（或者可以被计算出的），一个<code>std::array</code>是一个合理的选择。我们需要一个方法在编译期计算3<sup>n</sup>。C++标准库提供了<code>std::pow</code>，它的数学功能正是我们所需要的，但是，对我们来说，这里还有两个问题。第一，<code>std::pow</code>是为浮点类型设计的，我们需要整型结果。第二，<code>std::pow</code>不是<code>constexpr</code>（即，不保证使用编译期可知值调用而得到编译期可知的结果），所以我们不能用它作为<code>std::array</code>的大小。</p>
+<p>幸运的是，我们可以应需写个<code>pow</code>。我将展示怎么快速完成它，不过现在让我们先看看它应该怎么被声明和使用：</p>
+<pre><code class="language-cpp">constexpr                                   //pow是绝不抛异常的
+int pow(int base, int exp) noexcept         //constexpr函数
+{
+ …                                          //实现在下面
+}
+constexpr auto numConds = 5;                //（上面例子中）条件的个数
+std::array&lt;int, pow(3, numConds)&gt; results;  //结果有3^numConds个元素
+</code></pre>
+<p>回忆下<code>pow</code>前面的<code>constexpr</code>不表明<code>pow</code>返回一个<code>const</code>值，它只说了如果<code>base</code>和<code>exp</code>是编译期常量，<code>pow</code>的值可以被当成编译期常量使用。如果<code>base</code>和/或<code>exp</code>不是编译期常量，<code>pow</code>结果将会在运行时计算。这意味着<code>pow</code>不止可以用于像<code>std::array</code>的大小这种需要编译期常量的地方，它也可以用于运行时环境：</p>
+<pre><code class="language-cpp">auto base = readFromDB(&quot;base&quot;);     //运行时获取这些值
+auto exp = readFromDB(&quot;exponent&quot;); 
+auto baseToExp = pow(base, exp);    //运行时调用pow函数
+</code></pre>
+<p>因为<code>constexpr</code>函数必须能在编译期值调用的时候返回编译期结果，就必须对它的实现施加一些限制。这些限制在C++11和C++14标准间有所出入。</p>
+<p>C++11中，<code>constexpr</code>函数的代码不超过一行语句：一个<code>return</code>。听起来很受限，但实际上有两个技巧可以扩展<code>constexpr</code>函数的表达能力。第一，使用三元运算符“<code>?:</code>”来代替<code>if</code>-<code>else</code>语句，第二，使用递归代替循环。因此<code>pow</code>可以像这样实现：</p>
+<pre><code class="language-cpp">constexpr int pow(int base, int exp) noexcept
+{
+    return (exp == 0 ? 1 : base * pow(base, exp - 1));
+}
+</code></pre>
+<p>这样没问题，但是很难想象除了使用函数式语言的程序员外会觉得这样硬核的编程方式更好。在C++14中，<code>constexpr</code>函数的限制变得非常宽松了，所以下面的函数实现成为了可能：</p>
+<pre><code class="language-cpp">constexpr int pow(int base, int exp) noexcept   //C++14
+{
+    auto result = 1;
+    for (int i = 0; i &lt; exp; ++i) result *= base;
+    
+    return result;
+}
+</code></pre>
+<p><code>constexpr</code>函数限制为只能获取和返回<strong>字面值类型</strong>，这基本上意味着那些有了值的类型能在编译期决定。在C++11中，除了<code>void</code>外的所有内置类型，以及一些用户定义类型都可以是字面值类型，因为构造函数和其他成员函数可能是<code>constexpr</code>：</p>
+<pre><code class="language-cpp">class Point {
+public:
+    constexpr Point(double xVal = 0, double yVal = 0) noexcept
+    : x(xVal), y(yVal)
+    {}
+
+    constexpr double xValue() const noexcept { return x; } 
+    constexpr double yValue() const noexcept { return y; }
+
+    void setX(double newX) noexcept { x = newX; }
+    void setY(double newY) noexcept { y = newY; }
+
+private:
+    double x, y;
+};
+</code></pre>
+<p><code>Point</code>的构造函数可被声明为<code>constexpr</code>，因为如果传入的参数在编译期可知，<code>Point</code>的数据成员也能在编译器可知。因此这样初始化的<code>Point</code>就能为<code>constexpr</code>：</p>
+<pre><code class="language-cpp">constexpr Point p1(9.4, 27.7);  //没问题，constexpr构造函数
+                                //会在编译期“运行”
+constexpr Point p2(28.8, 5.3);  //也没问题
+</code></pre>
+<p>类似的，<code>xValue</code>和<code>yValue</code>的<em>getter</em>（取值器）函数也能是<code>constexpr</code>，因为如果对一个编译期已知的<code>Point</code>对象（如一个<code>constexpr</code> <code>Point</code>对象）调用<em>getter</em>，数据成员<code>x</code>和<code>y</code>的值也能在编译期知道。这使得我们可以写一个<code>constexpr</code>函数，里面调用<code>Point</code>的<em>getter</em>并初始化<code>constexpr</code>的对象：</p>
+<pre><code class="language-cpp">constexpr
+Point midpoint(const Point&amp; p1, const Point&amp; p2) noexcept
+{
+    return { (p1.xValue() + p2.xValue()) / 2,   //调用constexpr
+             (p1.yValue() + p2.yValue()) / 2 }; //成员函数
+}
+constexpr auto mid = midpoint(p1, p2);      //使用constexpr函数的结果
+                                            //初始化constexpr对象
+</code></pre>
+<p>这太令人激动了。它意味着<code>mid</code>对象通过调用构造函数，<em>getter</em>和非成员函数来进行初始化过程就能在只读内存中被创建出来！它也意味着你可以在模板实参或者需要枚举名的值的表达式里面使用像<code>mid.xValue() * 10</code>的表达式！（因为<code>Point::xValue</code>返回<code>double</code>，<code>mid.xValue() * 10</code>也是个<code>double</code>。浮点数类型不可被用于实例化模板或者说明枚举名的值，但是它们可以被用来作为产生整数值的大表达式的一部分。比如，<code>static_cast&lt;int&gt;(mid.xValue() * 10)</code>可以被用来实例化模板或者说明枚举名的值。）它也意味着以前相对严格的编译期完成的工作和运行时完成的工作的界限变得模糊，一些传统上在运行时的计算过程能并入编译时。越多这样的代码并入，你的程序就越快。（然而，编译会花费更长时间）</p>
+<p>在C++11中，有两个限制使得<code>Point</code>的成员函数<code>setX</code>和<code>setY</code>不能声明为<code>constexpr</code>。第一，它们修改它们操作的对象的状态， 并且在C++11中，<code>constexpr</code>成员函数是隐式的<code>const</code>。第二，它们有<code>void</code>返回类型，<code>void</code>类型不是C++11中的字面值类型。这两个限制在C++14中放开了，所以C++14中<code>Point</code>的<em>setter</em>（赋值器）也能声明为<code>constexpr</code>：</p>
+<pre><code class="language-cpp">class Point {
+public:
+    …
+    constexpr void setX(double newX) noexcept { x = newX; } //C++14
+    constexpr void setY(double newY) noexcept { y = newY; } //C++14
+    …
+};
+</code></pre>
+<p>现在也能写这样的函数：</p>
+<pre><code class="language-cpp">//返回p相对于原点的镜像
+constexpr Point reflection(const Point&amp; p) noexcept
+{
+    Point result;                   //创建non-const Point
+    result.setX(-p.xValue());       //设定它的x和y值
+    result.setY(-p.yValue());
+    return result;                  //返回它的副本
+}
+</code></pre>
+<p>客户端代码可以这样写：</p>
+<pre><code class="language-cpp">constexpr Point p1(9.4, 27.7);          //和之前一样
+constexpr Point p2(28.8, 5.3);
+constexpr auto mid = midpoint(p1, p2);
+
+constexpr auto reflectedMid =         //reflectedMid的值
+    reflection(mid);                  //(-19.1, -16.5)在编译期可知
+</code></pre>
+<p>本条款的建议是尽可能的使用<code>constexpr</code>，现在我希望大家已经明白缘由：<code>constexpr</code>对象和<code>constexpr</code>函数可以使用的范围比non-<code>constexpr</code>对象和函数大得多。使用<code>constexpr</code>关键字可以最大化你的对象和函数可以使用的场景。</p>
+<p>还有个重要的需要注意的是<code>constexpr</code>是对象和函数接口的一部分。加上<code>constexpr</code>相当于宣称“我能被用在C++要求常量表达式的地方”。如果你声明一个对象或者函数是<code>constexpr</code>，客户端程序员就可能会在那些场景中使用它。如果你后面认为使用<code>constexpr</code>是一个错误并想移除它，你可能造成大量客户端代码不能编译。（为了debug或者性能优化而添加I/O到一个函数中这样简单的动作可能就导致这样的问题，因为I/O语句一般不被允许出现在<code>constexpr</code>函数里）“尽可能”的使用<code>constexpr</code>表示你需要长期坚持对某个对象或者函数施加这种限制。</p>
+<p><strong>请记住：</strong></p>
+<ul>
+<li><code>constexpr</code>对象是<code>const</code>，它被在编译期可知的值初始化</li>
+<li>当传递编译期可知的值时，<code>constexpr</code>函数可以产出编译期可知的结果</li>
+<li><code>constexpr</code>对象和函数可以使用的范围比non-<code>constexpr</code>对象和函数要大</li>
+<li><code>constexpr</code>是对象和函数接口的一部分</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../3.MovingToModernCpp/item14.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="../3.MovingToModernCpp/item16.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../3.MovingToModernCpp/item14.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../3.MovingToModernCpp/item16.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>

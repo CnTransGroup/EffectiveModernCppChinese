@@ -1,0 +1,335 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Item 42: Consider emplacement instead of insertion - Effective Modern C++</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <!-- MathJax -->
+        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../Introduction.html">Introduction</a></li><li class="chapter-item expanded "><div>Chapter 1. Deducing Types</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../1.DeducingTypes/item1.html">Item 1: Understanding template type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item2.html">Item 2: Understand auto type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item3.html">Item 3: Understand decltype</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item4.html">Item 4: Know how to view deduced types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 2. auto</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../2.Auto/item5.html">Item 5: Prefer auto to explicit type declarations</a></li><li class="chapter-item expanded "><a href="../2.Auto/item6.html">Item 6: Use the explicitly typed initializer idiom when auto deduces undesired types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 3. Moving to Modern C++</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item7.html">Item 7: Distinguish between () and {} when creating objects</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item8.html">Item 8: Prefer nullptr to 0 or NULL</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item9.html">Item 9: Prefer alias declarations to typedefs</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item10.html">Item 10: Prefer scoped enums to unscoped enums</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item11.html">Item 11: Prefer deleted functions to private undefined ones</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item12.html">Item 12: Declare overriding functions override</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item13.html">Item 13: Prefer const_iterators to iterators</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item14.html">Item 14: Declare functions noexcept if they won't emit exceptions</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item15.html">Item 15: Use constexpr whenever possible</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item16.html">Item 16: Make const member functions thread safe</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item17.html">Item 17: Understand special member funciton generation</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 4. Smart Pointer</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../4.SmartPointers/item18.html">Item 18: Use std::unique_ptr for exclusive-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item19.html">Item 19: Use std::shared_ptr for shared-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item20.html">Item 20: Use std::weak_ptr for std::shared_ptr like pointers that can dangle</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item21.html">Item 21: Prefer std::make_unique and std::make_shared to direct use of new</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item22.html">Item 22: When using the Pimpl Idiom, define special member functions in the implementation file</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 5. Rvalue References, Move Semantics, and Perfect Forwarding</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item23.html">Item 23: Understand std::move and std::forward</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item24.html">Item 24: Distinguish universal references from rvalue references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item25.html">Item 25: Use std::move on rvalue references, std::forward on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item26.html">Item 26: Avoid overloading on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item27.html">Item 27: Familiarize yourself with alternatives to overaloading on univeral references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item28.html">Item 28: Understand reference collapsing</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item29.html">Item 29: Assume that move operations are not present not cheap, and not used</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item30.html">Item 30: Familiarize yourself with perfect forwarding failure cases</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 6. Lambda Expressions</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item31.html">Item 31: Avoid default capture modes</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item32.html">Item 32: Use init capture to move objects into closures</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item33.html">Item 33: Use decltype on auto&&parameters to std::forward them</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item34.html">Item 34: Prefer lambdas to std::bind</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 7. The Concurrency API</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/Item35.html">Item 35: Prefer task-based programming to thread-based</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item36.html">Item 36: Specify std::launch::async if asynchronicity is essential</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item37.html">Item 37: Make std::threads unjionable on all paths</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item38.html">Item 38: Be aware of varying thread handle destructor behavior</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item39.html">Item 39: Consider void futures for one-shot event communication</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item40.html">Item 40: Use std::atomic for concurrency, volatile for special memory</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 8. Tweaks</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../8.Tweaks/item41.html">Item 41: Consider pass by value for copyable parameters that are cheap to move and always copied</a></li><li class="chapter-item expanded "><a href="../8.Tweaks/item42.html" class="active">Item 42: Consider emplacement instead of insertion</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Effective Modern C++</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h2 id="条款四十二考虑使用置入代替插入"><a class="header" href="#条款四十二考虑使用置入代替插入">条款四十二：考虑使用置入代替插入</a></h2>
+<p><strong>Item 42: Consider emplacement instead of insertion</strong></p>
+<p>如果你拥有一个容器，例如放着<code>std::string</code>，那么当你通过插入（insertion）函数（例如<code>insert</code>，<code>push_front</code>，<code>push_back</code>，或者对于<code>std::forward_list</code>来说是<code>insert_after</code>）添加新元素时，你传入的元素类型应该是<code>std::string</code>。毕竟，这就是容器里的内容。</p>
+<p>逻辑上看来如此，但是并非总是如此。考虑如下代码：</p>
+<pre><code class="language-cpp">std::vector&lt;std::string&gt; vs;        //std::string的容器
+vs.push_back(&quot;xyzzy&quot;);              //添加字符串字面量
+</code></pre>
+<p>这里，容器里内容是<code>std::string</code>，但是你有的——你实际上试图通过<code>push_back</code>加入的——是字符串字面量，即引号内的字符序列。字符串字面量并不是<code>std::string</code>，这意味着你传递给<code>push_back</code>的实参并不是容器里的内容类型。</p>
+<p><code>std::vector</code>的<code>push_back</code>被按左值和右值分别重载：</p>
+<pre><code class="language-cpp">template &lt;class T,                  //来自C++11标准
+          class Allocator = allocator&lt;T&gt;&gt;
+class vector {
+public:
+    …
+    void push_back(const T&amp; x);     //插入左值
+    void push_back(T&amp;&amp; x);          //插入右值
+    …
+};
+</code></pre>
+<p>在</p>
+<pre><code class="language-cpp">vs.push_back(&quot;xyzzy&quot;);
+</code></pre>
+<p>这个调用中，编译器看到实参类型（<code>const char[6]</code>）和<code>push_back</code>采用的形参类型（<code>std::string</code>的引用）之间不匹配。它们通过从字符串字面量创建一个<code>std::string</code>类型的临时对象来消除不匹配，然后传递临时变量给<code>push_back</code>。换句话说，编译器处理的这个调用应该像这样：</p>
+<pre><code class="language-cpp">vs.push_back(std::string(&quot;xyzzy&quot;)); //创建临时std::string，把它传给push_back
+</code></pre>
+<p>代码可以编译并运行，皆大欢喜。除了对于性能执着的人意识到了这份代码不如预期的执行效率高。</p>
+<p>为了在<code>std::string</code>容器中创建新元素，调用了<code>std::string</code>的构造函数，但是这份代码并不仅调用了一次构造函数，而是调用了两次，而且还调用了<code>std::string</code>析构函数。下面是在<code>push_back</code>运行时发生了什么：</p>
+<ol>
+<li>一个<code>std::string</code>的临时对象从字面量“<code>xyzzy</code>”被创建。这个对象没有名字，我们可以称为<code>temp</code>。<code>temp</code>的构造是第一次<code>std::string</code>构造。因为是临时变量，所以<code>temp</code>是右值。</li>
+<li><code>temp</code>被传递给<code>push_back</code>的右值重载函数，绑定到右值引用形参<code>x</code>。在<code>std::vector</code>的内存中一个<code>x</code>的副本被创建。这次构造——也是第二次构造——在<code>std::vector</code>内部真正创建一个对象。（将<code>x</code>副本拷贝到<code>std::vector</code>内部的构造函数是移动构造函数，因为<code>x</code>在它被拷贝前被转换为一个右值，成为右值引用。有关将右值引用形参强制转换为右值的信息，请参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item25.md">Item25</a>）。</li>
+<li>在<code>push_back</code>返回之后，<code>temp</code>立刻被销毁，调用了一次<code>std::string</code>的析构函数。</li>
+</ol>
+<p>对于性能执着的人不禁注意到是否存在一种方法可以获取字符串字面量并将其直接传入到步骤2里在<code>std::vector</code>内构造<code>std::string</code>的代码中，可以避免临时对象<code>temp</code>的创建与销毁。这样的效率最好，对于性能执着的人也不会有什么意见了。</p>
+<p>因为你是一个C++开发者，所以你更大可能是一个对性能执着的人。如果你不是C++开发者，你可能也会同意这个观点。（如果你根本不考虑性能，为什么你没在用Python？）所以我很高兴告诉你有一种方法，恰是在调用<code>push_back</code>中实现效率最大化。它不叫<code>push_back</code>。<code>push_back</code>函数不正确。你需要的是<code>emplace_back</code>。</p>
+<p><code>emplace_back</code>就是像我们想要的那样做的：使用传递给它的任何实参直接在<code>std::vector</code>内部构造一个<code>std::string</code>。没有临时变量会生成：</p>
+<pre><code class="language-cpp">vs.emplace_back(&quot;xyzzy&quot;);           //直接用“xyzzy”在vs内构造std::string
+</code></pre>
+<p><code>emplace_back</code>使用完美转发，因此只要你没有遇到完美转发的限制（参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item30.md">Item30</a>），就可以传递任何实参以及组合到<code>emplace_back</code>。比如，如果你想通过接受一个字符和一个数量的<code>std::string</code>构造函数，在<code>vs</code>中创建一个<code>std::string</code>，代码如下：</p>
+<pre><code class="language-cpp">vs.emplace_back(50, 'x');           //插入由50个“x”组成的一个std::string
+</code></pre>
+<p><code>emplace_back</code>可以用于每个支持<code>push_back</code>的标准容器。类似的，每个支持<code>push_front</code>的标准容器都支持<code>emplace_front</code>。每个支持<code>insert</code>（除了<code>std::forward_list</code>和<code>std::array</code>）的标准容器支持<code>emplace</code>。关联容器提供<code>emplace_hint</code>来补充接受“hint”迭代器的<code>insert</code>函数，<code>std::forward_list</code>有<code>emplace_after</code>来匹配<code>insert_after</code>。</p>
+<p>使得置入（emplacement）函数功能优于插入函数的原因是它们有灵活的接口。插入函数接受<strong>对象</strong>去插入，而置入函数接受<strong>对象的构造函数接受的实参</strong>去插入。这种差异允许置入函数避免插入函数所必需的临时对象的创建和销毁。</p>
+<p>因为可以传递容器内元素类型的实参给置入函数（因此该实参使函数执行复制或者移动构造函数），所以在插入函数不会构造临时对象的情况，也可以使用置入函数。在这种情况下，插入和置入函数做的是同一件事，比如：</p>
+<pre><code class="language-cpp">std::string queenOfDisco(&quot;Donna Summer&quot;);
+</code></pre>
+<p>下面的调用都是可行的，对容器的实际效果也一样：</p>
+<pre><code class="language-cpp">vs.push_back(queenOfDisco);         //拷贝构造queenOfDisco
+vs.emplace_back(queenOfDisco);      //同上
+</code></pre>
+<p>因此，置入函数可以完成插入函数的所有功能。并且有时效率更高，至少在理论上，不会更低效。那为什么不在所有场合使用它们？</p>
+<p>因为，就像说的那样，只是“理论上”，在理论和实际上没有什么区别，但是实际上区别还是有的。在当前标准库的实现下，有些场景，就像预期的那样，置入执行性能优于插入，但是，有些场景反而插入更快。这种场景不容易描述，因为依赖于传递的实参的类型、使用的容器、置入或插入到容器中的位置、容器中类型的构造函数的异常安全性，和对于禁止重复值的容器（即<code>std::set</code>，<code>std::map</code>，<code>std::unordered_set</code>，<code>set::unordered_map</code>）要添加的值是否已经在容器中。因此，大致的调用建议是：通过benchmark测试来确定置入和插入哪种更快。</p>
+<p>当然这个结论不是很令人满意，所以你会很高兴听到还有一种启发式的方法来帮助你确定是否应该使用置入。如果下列条件都能满足，置入会优于插入：</p>
+<ul>
+<li>
+<p><strong>值是通过构造函数添加到容器，而不是直接赋值。</strong> 例子就像本条款刚开始的那样（用“<code>xyzzy</code>”添加<code>std::string</code>到<code>std::vector</code>容器<code>vs</code>中），值添加到<code>vs</code>末尾——一个先前没有对象存在的地方。新值必须通过构造函数添加到<code>std::vector</code>。如果我们回看这个例子，新值放到已经存在了对象的一个地方，那情况就完全不一样了。考虑下：</p>
+<pre><code class="language-cpp">std::vector&lt;std::string&gt; vs;        //跟之前一样
+…                                   //添加元素到vs
+vs.emplace(vs.begin(), &quot;xyzzy&quot;);    //添加“xyzzy”到vs头部
+</code></pre>
+<p>对于这份代码，没有实现会在已经存在对象的位置<code>vs[0]</code>构造这个添加的<code>std::string</code>。而是，通过移动赋值的方式添加到需要的位置。但是移动赋值需要一个源对象，所以这意味着一个临时对象要被创建，而置入优于插入的原因就是没有临时对象的创建和销毁，所以当通过赋值操作添加元素时，置入的优势消失殆尽。</p>
+<p>而且，向容器添加元素是通过构造还是赋值通常取决于实现者。但是，启发式仍然是有帮助的。基于节点的容器实际上总是使用构造添加新元素，大多数标准库容器都是基于节点的。例外的容器只有<code>std::vector</code>，<code>std::deque</code>，<code>std::string</code>。（<code>std::array</code>也不是基于节点的，但是它不支持置入和插入，所以它与这儿无关。）在不是基于节点的容器中，你可以依靠<code>emplace_back</code>来使用构造向容器添加元素，对于<code>std::deque</code>，<code>emplace_front</code>也是一样的。</p>
+</li>
+<li>
+<p><strong>传递的实参类型与容器的初始化类型不同。</strong> 再次强调，置入优于插入通常基于以下事实：当传递的实参不是容器保存的类型时，接口不需要创建和销毁临时对象。当将类型为<code>T</code>的对象添加到<code>container&lt;T&gt;</code>时，没有理由期望置入比插入运行的更快，因为不需要创建临时对象来满足插入的接口。</p>
+</li>
+<li>
+<p><strong>容器不拒绝重复项作为新值。</strong> 这意味着容器要么允许添加重复值，要么你添加的元素大部分都是不重复的。这样要求的原因是为了判断一个元素是否已经存在于容器中，置入实现通常会创建一个具有新值的节点，以便可以将该节点的值与现有容器中节点的值进行比较。如果要添加的值不在容器中，则链接该节点。然后，如果值已经存在，置入操作取消，创建的节点被销毁，意味着构造和析构时的开销被浪费了。这样的节点更多的是为置入函数而创建，相比起为插入函数来说。</p>
+</li>
+</ul>
+<p>本条款开始的例子中下面的调用满足上面的条件。所以<code>emplace_back</code>比<code>push_back</code>运行更快。</p>
+<pre><code class="language-cpp">vs.emplace_back(&quot;xyzzy&quot;);              //在容器末尾构造新值；不是传递的容器中元
+                                       //素的类型；没有使用拒绝重复项的容器
+
+vs.emplace_back(50, 'x');              //同上
+</code></pre>
+<p>在决定是否使用置入函数时，需要注意另外两个问题。首先是资源管理。假定你有一个盛放<code>std::shared_ptr&lt;Widget&gt;</code>s的容器，</p>
+<pre><code class="language-cpp">std::list&lt;std::shared_ptr&lt;Widget&gt;&gt; ptrs;
+</code></pre>
+<p>然后你想添加一个通过自定义删除器释放的<code>std::shared_ptr</code>（参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item19.md">Item19</a>）。<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item21.md">Item21</a>说明你应该使用<code>std::make_shared</code>来创建<code>std::shared_ptr</code>，但是它也承认有时你无法做到这一点。比如当你要指定一个自定义删除器时。这时，你必须直接<code>new</code>一个原始指针，然后通过<code>std::shared_ptr</code>来管理。</p>
+<p>如果自定义删除器是这个函数，</p>
+<pre><code class="language-cpp">void killWidget(Widget* pWidget);
+</code></pre>
+<p>使用插入函数的代码如下：</p>
+<pre><code class="language-cpp">ptrs.push_back(std::shared_ptr&lt;Widget&gt;(new Widget, killWidget));
+</code></pre>
+<p>也可以像这样：</p>
+<pre><code class="language-cpp">ptrs.push_back({new Widget, killWidget});
+</code></pre>
+<p>不管哪种写法，在调用<code>push_back</code>前会生成一个临时<code>std::shared_ptr</code>对象。<code>push_back</code>的形参是<code>std::shared_ptr</code>的引用，因此必须有一个<code>std::shared_ptr</code>。</p>
+<p>用<code>emplace_back</code>应该可以避免<code>std::shared_ptr</code>临时对象的创建，但是在这个场景下，临时对象值得被创建。考虑如下可能的时间序列：</p>
+<ol>
+<li>在上述的调用中，一个<code>std::shared_ptr&lt;Widget&gt;</code>的临时对象被创建来持有“<code>new Widget</code>”返回的原始指针。称这个对象为<code>temp</code>。</li>
+<li><code>push_back</code>通过引用接受<code>temp</code>。在存储<code>temp</code>的副本的<em>list</em>节点的内存分配过程中，内存溢出异常被抛出。</li>
+<li>随着异常从<code>push_back</code>的传播，<code>temp</code>被销毁。作为唯一管理这个<code>Widget</code>的<code>std::shared_ptr</code>，它自动销毁<code>Widget</code>，在这里就是调用<code>killWidget</code>。</li>
+</ol>
+<p>这样的话，即使发生了异常，没有资源泄漏：在调用<code>push_back</code>中通过“<code>new Widget</code>”创建的<code>Widget</code>在<code>std::shared_ptr</code>管理下自动销毁。生命周期良好。</p>
+<p>考虑使用<code>emplace_back</code>代替<code>push_back</code>：</p>
+<pre><code class="language-cpp">ptrs.emplace_back(new Widget, killWidget);
+</code></pre>
+<ol>
+<li>通过<code>new Widget</code>创建的原始指针完美转发给<code>emplace_back</code>中，<em>list</em>节点被分配的位置。如果分配失败，还是抛出内存溢出异常。</li>
+<li>当异常从<code>emplace_back</code>传播，原始指针是仅有的访问堆上<code>Widget</code>的途径，但是因为异常而丢失了，那个<code>Widget</code>的资源（以及任何它所拥有的资源）发生了泄漏。</li>
+</ol>
+<p>在这个场景中，生命周期不良好，这个失误不能赖<code>std::shared_ptr</code>。使用带自定义删除器的<code>std::unique_ptr</code>也会有同样的问题。根本上讲，像<code>std::shared_ptr</code>和<code>std::unique_ptr</code>这样的资源管理类的高效性是以资源（比如从<code>new</code>来的原始指针）被<strong>立即</strong>传递给资源管理对象的构造函数为条件的。实际上，<code>std::make_shared</code>和<code>std::make_unique</code>这样的函数自动做了这些事，是使它们如此重要的原因。</p>
+<p>在对存储资源管理类对象的容器（比如<code>std::list&lt;std::shared_ptr&lt;Widget&gt;&gt;</code>）调用插入函数时，函数的形参类型通常确保在资源的获取（比如使用<code>new</code>）和资源管理对象的创建之间没有其他操作。在置入函数中，完美转发推迟了资源管理对象的创建，直到可以在容器的内存中构造它们为止，这给“异常导致资源泄漏”提供了可能。所有的标准库容器都容易受到这个问题的影响。在使用资源管理对象的容器时，必须注意确保在使用置入函数而不是插入函数时，不会为提高效率带来的降低异常安全性付出代价。</p>
+<p>坦白说，无论如何，你不应该将“<code>new Widget</code>”之类的表达式传递给<code>emplace_back</code>或者<code>push_back</code>或者大多数这种函数，因为，就像<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item21.md">Item21</a>中解释的那样，这可能导致我们刚刚讨论的异常安全性问题。消除资源泄漏可能性的方法是，使用独立语句把从“<code>new Widget</code>”获取的指针传递给资源管理类对象，然后这个对象作为右值传递给你本来想传递“<code>new Widget</code>”的函数（<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item21.md">Item21</a>有这个观点的详细讨论）。使用<code>push_back</code>的代码应该如下：</p>
+<pre><code class="language-cpp">std::shared_ptr&lt;Widget&gt; spw(new Widget,      //创建Widget，让spw管理它
+                            killWidget);
+ptrs.push_back(std::move(spw));              //添加spw右值
+</code></pre>
+<p><code>emplace_back</code>的版本如下：</p>
+<pre><code class="language-cpp">std::shared_ptr&lt;Widget&gt; spw(new Widget, killWidget);
+ptrs.emplace_back(std::move(spw));
+</code></pre>
+<p>无论哪种方式，都会产生<code>spw</code>的创建和销毁成本。选择置入而非插入的动机是避免容器元素类型的临时对象的开销。但是对于<code>spw</code>的概念来讲，当添加资源管理类型对象到容器中，并根据正确的方式确保在获取资源和连接到资源管理对象上之间无其他操作时，置入函数不太可能胜过插入函数。</p>
+<p>置入函数的第二个值得注意的方面是它们与<code>explicit</code>的构造函数的交互。鉴于C++11对正则表达式的支持，假设你创建了一个正则表达式对象的容器：</p>
+<pre><code class="language-cpp">std::vector&lt;std::regex&gt; regexes;
+</code></pre>
+<p>由于你同事的打扰，你写出了如下看似毫无意义的代码：</p>
+<pre><code class="language-cpp">regexes.emplace_back(nullptr);           //添加nullptr到正则表达式的容器中？
+</code></pre>
+<p>你没有注意到错误，编译器也没有提示你，所以你浪费了大量时间来调试。突然，你发现你插入了空指针到正则表达式的容器中。但是这怎么可能？指针不是正则表达式，如果你试图下面这样写，</p>
+<pre><code class="language-cpp">std::regex r = nullptr;                  //错误！不能编译
+</code></pre>
+<p>编译器就会报错。有趣的是，如果你调用<code>push_back</code>而不是<code>emplace_back</code>，编译器也会报错：</p>
+<pre><code class="language-cpp">regexes.push_back(nullptr);              //错误！不能编译
+</code></pre>
+<p>当前你遇到的奇怪行为来源于“可能用字符串构造<code>std::regex</code>对象”的事实，这就意味着下面代码合法：</p>
+<pre><code class="language-cpp">std::regex upperCaseWorld(&quot;[A-Z]+&quot;);
+</code></pre>
+<p>通过字符串创建<code>std::regex</code>要求相对较长的运行时开销，所以为了最小程度减少无意中产生此类开销的可能性，采用<code>const char*</code>指针的<code>std::regex</code>构造函数是<code>explicit</code>的。这就是下面代码无法编译的原因：</p>
+<pre><code class="language-cpp">std::regex r = nullptr;                  //错误！不能编译
+regexes.push_back(nullptr);              //错误
+</code></pre>
+<p>在上面的代码中，我们要求从指针到<code>std::regex</code>的隐式转换，但是构造函数的<code>explicit</code>ness拒绝了此类转换。</p>
+<p>但是在<code>emplace_back</code>的调用中，我们没有说明要传递一个<code>std::regex</code>对象。然而，我们传递了一个<code>std::regex</code><strong>构造函数实参</strong>。那不被认为是个隐式转换要求。相反，编译器看你像是写了如下代码：</p>
+<pre><code class="language-cpp">std::regex r(nullptr);                   //可编译
+</code></pre>
+<p>如果简洁的注释“可编译”缺乏直观理解，好的，因为这个代码可以编译，但是行为不确定。使用<code>const char*</code>指针的<code>std::regex</code>构造函数要求字符串是一个有效的正则表达式，空指针并不满足要求。如果你写出并编译了这样的代码，最好的希望就是运行时程序崩溃掉。如果你不幸运，就会花费大量的时间调试。</p>
+<p>先把<code>push_back</code>，<code>emplace_back</code>放在一边，注意到相似的初始化语句导致了多么不一样的结果：</p>
+<pre><code class="language-cpp">std::regex r1 = nullptr;                 //错误！不能编译
+std::regex r2(nullptr);                  //可以编译
+</code></pre>
+<p>在标准的官方术语中，用于初始化<code>r1</code>的语法（使用等号）是所谓的<strong>拷贝初始化</strong>。相反，用于初始化<code>r2</code>的语法是（使用小括号，有时也用花括号）被称为<strong>直接初始化</strong>。</p>
+<pre><code class="language-cpp">using regex   = basic_regex&lt;char&gt;;
+
+explicit basic_regex(const char* ptr,flag_type flags); //定义 (1)explicit构造函数
+
+basic_regex(const basic_regex&amp; right); //定义 (2)拷贝构造函数
+</code></pre>
+<p>拷贝初始化不被允许使用<code>explicit</code>构造函数（译者注：即没法调用相应类的<code>explicit</code>拷贝构造函数）：对于<code>r1</code>,使用赋值运算符定义变量时将调用拷贝构造函数<code>定义 (2)</code>，其形参类型为<code>basic_regex&amp;</code>。因此<code>nullptr</code>首先需要隐式装换为<code>basic_regex</code>。而根据<code>定义 (1)</code>中的<code>explicit</code>，这样的隐式转换不被允许，从而产生编译时期的报错。对于直接初始化，编译器会自动选择与提供的参数最匹配的构造函数，即<code>定义 (1)</code>。就是初始化<code>r1</code>不能编译，而初始化<code>r2</code>可以编译的原因。</p>
+<p>然后回到<code>push_back</code>和<code>emplace_back</code>，更一般来说是，插入函数和置入函数的对比。置入函数使用直接初始化，这意味着可能使用<code>explicit</code>的构造函数。插入函数使用拷贝初始化，所以不能用<code>explicit</code>的构造函数。因此：</p>
+<pre><code class="language-cpp">regexes.emplace_back(nullptr);           //可编译。直接初始化允许使用接受指针的
+                                         //std::regex的explicit构造函数
+regexes.push_back(nullptr);              //错误！拷贝初始化不允许用那个构造函数
+</code></pre>
+<p>获得的经验是，当你使用置入函数时，请特别小心确保传递了正确的实参，因为即使是<code>explicit</code>的构造函数也会被编译器考虑，编译器会试图以有效方式解释你的代码。</p>
+<p><strong>请记住：</strong></p>
+<ul>
+<li>原则上，置入函数有时会比插入函数高效，并且不会更差。</li>
+<li>实际上，当以下条件满足时，置入函数更快：（1）值被构造到容器中，而不是直接赋值；（2）传入的类型与容器的元素类型不一致；（3）容器不拒绝已经存在的重复值。</li>
+<li>置入函数可能执行插入函数拒绝的类型转换。</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../8.Tweaks/item41.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../8.Tweaks/item41.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>

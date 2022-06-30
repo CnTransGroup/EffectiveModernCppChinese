@@ -1,0 +1,286 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Item 5: Prefer auto to explicit type declarations - Effective Modern C++</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <!-- MathJax -->
+        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../Introduction.html">Introduction</a></li><li class="chapter-item expanded "><div>Chapter 1. Deducing Types</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../1.DeducingTypes/item1.html">Item 1: Understanding template type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item2.html">Item 2: Understand auto type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item3.html">Item 3: Understand decltype</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item4.html">Item 4: Know how to view deduced types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 2. auto</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../2.Auto/item5.html" class="active">Item 5: Prefer auto to explicit type declarations</a></li><li class="chapter-item expanded "><a href="../2.Auto/item6.html">Item 6: Use the explicitly typed initializer idiom when auto deduces undesired types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 3. Moving to Modern C++</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item7.html">Item 7: Distinguish between () and {} when creating objects</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item8.html">Item 8: Prefer nullptr to 0 or NULL</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item9.html">Item 9: Prefer alias declarations to typedefs</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item10.html">Item 10: Prefer scoped enums to unscoped enums</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item11.html">Item 11: Prefer deleted functions to private undefined ones</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item12.html">Item 12: Declare overriding functions override</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item13.html">Item 13: Prefer const_iterators to iterators</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item14.html">Item 14: Declare functions noexcept if they won't emit exceptions</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item15.html">Item 15: Use constexpr whenever possible</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item16.html">Item 16: Make const member functions thread safe</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item17.html">Item 17: Understand special member funciton generation</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 4. Smart Pointer</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../4.SmartPointers/item18.html">Item 18: Use std::unique_ptr for exclusive-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item19.html">Item 19: Use std::shared_ptr for shared-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item20.html">Item 20: Use std::weak_ptr for std::shared_ptr like pointers that can dangle</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item21.html">Item 21: Prefer std::make_unique and std::make_shared to direct use of new</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item22.html">Item 22: When using the Pimpl Idiom, define special member functions in the implementation file</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 5. Rvalue References, Move Semantics, and Perfect Forwarding</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item23.html">Item 23: Understand std::move and std::forward</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item24.html">Item 24: Distinguish universal references from rvalue references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item25.html">Item 25: Use std::move on rvalue references, std::forward on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item26.html">Item 26: Avoid overloading on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item27.html">Item 27: Familiarize yourself with alternatives to overaloading on univeral references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item28.html">Item 28: Understand reference collapsing</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item29.html">Item 29: Assume that move operations are not present not cheap, and not used</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item30.html">Item 30: Familiarize yourself with perfect forwarding failure cases</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 6. Lambda Expressions</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item31.html">Item 31: Avoid default capture modes</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item32.html">Item 32: Use init capture to move objects into closures</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item33.html">Item 33: Use decltype on auto&&parameters to std::forward them</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item34.html">Item 34: Prefer lambdas to std::bind</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 7. The Concurrency API</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/Item35.html">Item 35: Prefer task-based programming to thread-based</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item36.html">Item 36: Specify std::launch::async if asynchronicity is essential</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item37.html">Item 37: Make std::threads unjionable on all paths</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item38.html">Item 38: Be aware of varying thread handle destructor behavior</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item39.html">Item 39: Consider void futures for one-shot event communication</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item40.html">Item 40: Use std::atomic for concurrency, volatile for special memory</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 8. Tweaks</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../8.Tweaks/item41.html">Item 41: Consider pass by value for copyable parameters that are cheap to move and always copied</a></li><li class="chapter-item expanded "><a href="../8.Tweaks/item42.html">Item 42: Consider emplacement instead of insertion</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Effective Modern C++</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="第2章-auto"><a class="header" href="#第2章-auto">第2章 <code>auto</code></a></h1>
+<p><strong>CHAPTER 2 <code>auto</code></strong></p>
+<p>从概念上来说，<code>auto</code>要多简单有多简单，但是它比看起来要微妙一些。使用它可以存储类型，当然，它也会犯一些错误，而且比之手动声明一些复杂类型也会存在一些性能问题。此外，从程序员的角度来说，如果按照符合规定的流程走，那<code>auto</code>类型推导的一些结果是错误的。当这些情况发生时，对我们来说引导<code>auto</code>产生正确的结果是很重要的，因为严格按照说明书上面的类型写声明虽然可行但是最好避免。</p>
+<p>本章简单的覆盖了<code>auto</code>的里里外外。</p>
+<h2 id="条款五优先考虑auto而非显式类型声明"><a class="header" href="#条款五优先考虑auto而非显式类型声明">条款五：优先考虑<code>auto</code>而非显式类型声明</a></h2>
+<p><strong>Item 5: Prefer <code>auto</code> to explicit type declarations</strong></p>
+<p>哈，开心一下：</p>
+<pre><code class="language-cpp">int x;
+</code></pre>
+<p>等等，该死！我忘记了初始化<code>x</code>，所以<code>x</code>的值是不确定的。它可能会被初始化为0，这得取决于工作环境。哎。</p>
+<p>别介意，让我们转换一个话题， 对一个局部变量使用解引用迭代器的方式初始化：</p>
+<pre><code class="language-cpp">template&lt;typename It&gt;           //对从b到e的所有元素使用
+void dwim(It b, It e)           //dwim（“do what I mean”）算法
+{
+    while (b != e) {
+        typename std::iterator_traits&lt;It&gt;::value_type
+        currValue = *b;
+        …
+    }
+}
+</code></pre>
+<p>嘿！<code>typename std::iterator_traits&lt;It&gt;::value_type</code>是想表达迭代器指向的元素的值的类型吗？我无论如何都说不出它是多么有趣这样的话，该死！等等，我早就说过了吗？</p>
+<p>好吧，声明一个局部变量，类型是一个闭包，闭包的类型只有编译器知道，因此我们写不出来，该死!</p>
+<p>该死该死该死，C++编程不应该是这样不愉快的体验。</p>
+<p>别担心，它只在过去是这样，到了C++11所有的这些问题都消失了，这都多亏了<code>auto</code>。<code>auto</code>变量从初始化表达式中推导出类型，所以我们必须初始化。这意味着当你在现代化C++的高速公路上飞奔的同时你不得不对只声明不初始化变量的老旧方法说拜拜：</p>
+<pre><code class="language-cpp">int x1;                         //潜在的未初始化的变量
+	
+auto x2;                        //错误！必须要初始化
+
+auto x3 = 0;                    //没问题，x已经定义了
+</code></pre>
+<p>而且即使使用解引用迭代器初始化局部变量也不会对你的高速驾驶有任何影响</p>
+<pre><code class="language-cpp">template&lt;typename It&gt;           //如之前一样
+void dwim(It b,It e)
+{
+    while (b != e) {
+        auto currValue = *b;
+        …
+    }
+}
+</code></pre>
+<p>因为使用<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item2.md">Item2</a>所述的<code>auto</code>类型推导技术，它甚至能表示一些只有编译器才知道的类型：</p>
+<pre><code class="language-cpp">auto derefUPLess = 
+    [](const std::unique_ptr&lt;Widget&gt; &amp;p1,       //用于std::unique_ptr
+       const std::unique_ptr&lt;Widget&gt; &amp;p2)       //指向的Widget类型的
+    { return *p1 &lt; *p2; };                      //比较函数
+</code></pre>
+<p>很酷对吧，如果使用C++14，将会变得更酷，因为<em>lambda</em>表达式中的形参也可以使用<code>auto</code>：</p>
+<pre><code class="language-cpp">auto derefLess =                                //C++14版本
+    [](const auto&amp; p1,                          //被任何像指针一样的东西
+       const auto&amp; p2)                          //指向的值的比较函数
+    { return *p1 &lt; *p2; };
+</code></pre>
+<p>尽管这很酷，但是你可能会想我们完全不需要使用<code>auto</code>声明局部变量来保存一个闭包，因为我们可以使用<code>std::function</code>对象。没错，我们的确可以那么做，但是事情可能不是完全如你想的那样。当然现在你可能会问，<code>std::function</code>对象到底是什么。让我来给你解释一下。</p>
+<p><code>std::function</code>是一个C++11标准模板库中的一个模板，它泛化了函数指针的概念。与函数指针只能指向函数不同，<code>std::function</code>可以指向任何可调用对象，也就是那些像函数一样能进行调用的东西。当你声明函数指针时你必须指定函数类型（即函数签名），同样当你创建<code>std::function</code>对象时你也需要提供函数签名，由于它是一个模板所以你需要在它的模板参数里面提供。举个例子，假设你想声明一个<code>std::function</code>对象<code>func</code>使它指向一个可调用对象，比如一个具有这样函数签名的函数，</p>
+<pre><code class="language-cpp">bool(const std::unique_ptr&lt;Widget&gt; &amp;,           //C++11
+     const std::unique_ptr&lt;Widget&gt; &amp;)           //std::unique_ptr&lt;Widget&gt;
+                                                //比较函数的签名
+</code></pre>
+<p>你就得这么写：</p>
+<pre><code class="language-cpp">std::function&lt;bool(const std::unique_ptr&lt;Widget&gt; &amp;,
+                   const std::unique_ptr&lt;Widget&gt; &amp;)&gt; func;
+</code></pre>
+<p>因为<em>lambda</em>表达式能产生一个可调用对象，所以我们现在可以把闭包存放到<code>std::function</code>对象中。这意味着我们可以不使用<code>auto</code>写出C++11版的<code>derefUPLess</code>：</p>
+<pre><code class="language-cpp">std::function&lt;bool(const std::unique_ptr&lt;Widget&gt; &amp;,
+                   const std::unique_ptr&lt;Widget&gt; &amp;)&gt;
+derefUPLess = [](const std::unique_ptr&lt;Widget&gt; &amp;p1,
+                 const std::unique_ptr&lt;Widget&gt; &amp;p2)
+                { return *p1 &lt; *p2; };
+</code></pre>
+<p>语法冗长不说，还需要重复写很多形参类型，使用<code>std::function</code>还不如使用<code>auto</code>。用<code>auto</code>声明的变量保存一个和闭包一样类型的（新）闭包，因此使用了与闭包相同大小存储空间。实例化<code>std::function</code>并声明一个对象这个对象将会有固定的大小。这个大小可能不足以存储一个闭包，这个时候<code>std::function</code>的构造函数将会在堆上面分配内存来存储，这就造成了使用<code>std::function</code>比<code>auto</code>声明变量会消耗更多的内存。并且通过具体实现我们得知通过<code>std::function</code>调用一个闭包几乎无疑比<code>auto</code>声明的对象调用要慢。换句话说，<code>std::function</code>方法比<code>auto</code>方法要更耗空间且更慢，还可能有<em>out-of-memory</em>异常。并且正如上面的例子，比起写<code>std::function</code>实例化的类型来，使用<code>auto</code>要方便得多。在这场存储闭包的比赛中，<code>auto</code>无疑取得了胜利（也可以使用<code>std::bind</code>来生成一个闭包，但在<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/6.LambdaExpressions/item34.md">Item34</a>我会尽我最大努力说服你使用<em>lambda</em>表达式代替<code>std::bind</code>)</p>
+<p>使用<code>auto</code>除了可以避免未初始化的无效变量，省略冗长的声明类型，直接保存闭包外，它还有一个好处是可以避免一个问题，我称之为与类型快捷方式（type shortcuts）有关的问题。你将看到这样的代码——甚至你会这么写：</p>
+<pre><code class="language-cpp">std::vector&lt;int&gt; v;
+…
+unsigned sz = v.size();
+</code></pre>
+<p><code>v.size()</code>的标准返回类型是<code>std::vector&lt;int&gt;::size_type</code>，但是只有少数开发者意识到这点。<code>std::vector&lt;int&gt;::size_type</code>实际上被指定为无符号整型，所以很多人都认为用<code>unsigned</code>就足够了，写下了上述的代码。这会造成一些有趣的结果。举个例子，在<strong>Windows 32-bit</strong>上<code>std::vector&lt;int&gt;::size_type</code>和<code>unsigned</code>是一样的大小，但是在<strong>Windows 64-bit</strong>上<code>std::vector&lt;int&gt;::size_type</code>是64位，<code>unsigned</code>是32位。这意味着这段代码在Windows 32-bit上正常工作，但是当把应用程序移植到Windows 64-bit上时就可能会出现一些问题。谁愿意花时间处理这些细枝末节的问题呢？</p>
+<p>所以使用<code>auto</code>可以确保你不需要浪费时间：</p>
+<pre><code class="language-cpp">auto sz =v.size();                      //sz的类型是std::vector&lt;int&gt;::size_type
+</code></pre>
+<p>你还是不相信使用<code>auto</code>是多么明智的选择？考虑下面的代码：</p>
+<pre><code class="language-cpp">std::unordered_map&lt;std::string, int&gt; m;
+…
+
+for(const std::pair&lt;std::string, int&gt;&amp; p : m)
+{
+    …                                   //用p做一些事
+}
+</code></pre>
+<p>看起来好像很合情合理的表达，但是这里有一个问题，你看到了吗？</p>
+<p>要想看到错误你就得知道<code>std::unordered_map</code>的<em>key</em>是<code>const</code>的，所以<em>hash table</em>（<code>std::unordered_map</code>本质上的东西）中的<code>std::pair</code>的类型不是<code>std::pair&lt;std::string, int&gt;</code>，而是<code>std::pair&lt;const std::string, int&gt;</code>。但那不是在循环中的变量<code>p</code>声明的类型。编译器会努力的找到一种方法把<code>std::pair&lt;const std::string, int&gt;</code>（即<em>hash table</em>中的东西）转换为<code>std::pair&lt;std::string, int&gt;</code>（<code>p</code>的声明类型）。它会成功的，因为它会通过拷贝<code>m</code>中的对象创建一个临时对象，这个临时对象的类型是<code>p</code>想绑定到的对象的类型，即<code>m</code>中元素的类型，然后把<code>p</code>的引用绑定到这个临时对象上。在每个循环迭代结束时，临时对象将会销毁，如果你写了这样的一个循环，你可能会对它的一些行为感到非常惊讶，因为你确信你只是让成为<code>p</code>指向<code>m</code>中各个元素的引用而已。</p>
+<p>使用<code>auto</code>可以避免这些很难被意识到的类型不匹配的错误：</p>
+<pre><code class="language-cpp">for(const auto&amp; p : m)
+{
+    …                                   //如之前一样
+}
+</code></pre>
+<p>这样无疑更具效率，且更容易书写。而且，这个代码有一个非常吸引人的特性，如果你获取<code>p</code>的地址，你确实会得到一个指向<code>m</code>中元素的指针。在没有<code>auto</code>的版本中<code>p</code>会指向一个临时变量，这个临时变量在每次迭代完成时会被销毁。</p>
+<p>后面这两个例子——应当写<code>std::vector&lt;int&gt;::size_type</code>时写了<code>unsigned</code>，应当写<code>std::pair&lt;const std::string, int&gt;</code>时写了<code>std::pair&lt;std::string, int&gt;</code>——说明了显式的指定类型可能会导致你不像看到的类型转换。如果你使用<code>auto</code>声明目标变量你就不必担心这个问题。</p>
+<p>基于这些原因我建议你优先考虑<code>auto</code>而非显式类型声明。然而<code>auto</code>也不是完美的。每个<code>auto</code>变量都从初始化表达式中推导类型，有一些表达式的类型和我们期望的大相径庭。关于在哪些情况下会发生这些问题，以及你可以怎么解决这些问题我们在<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item2.md">Item2</a>和<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/2.Auto/item6.md">6</a>讨论，所以这里我不再赘述。我想把注意力放到你可能关心的另一点：使用auto代替传统类型声明对源码可读性的影响。</p>
+<p>首先，深呼吸，放松，<code>auto</code>是<strong>可选项</strong>，不是<strong>命令</strong>，在某些情况下如果你的专业判断告诉你使用显式类型声明比<code>auto</code>要更清晰更易维护，那你就不必再坚持使用<code>auto</code>。但是要牢记，C++没有在其他众所周知的语言所拥有的类型推导（<em>type inference</em>）上开辟新土地。其他静态类型的过程式语言（如C#、D、Sacla、Visual Basic）或多或少都有等价的特性，更不必提那些静态类型的函数式语言了（如ML、Haskell、OCaml、F#等）。在某种程度上，这是因为动态类型语言，如Perl、Python、Ruby等的成功；在这些语言中，几乎没有显式的类型声明。软件开发社区对于类型推导有丰富的经验，他们展示了在维护大型工业强度的代码上使用这种技术没有任何争议。</p>
+<p>一些开发者也担心使用<code>auto</code>就不能瞥一眼源代码便知道对象的类型，然而，IDE扛起了部分担子（也考虑到了<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item4.md">Item4</a>中提到的IDE类型显示问题），在很多情况下，少量显示一个对象的类型对于知道对象的确切类型是有帮助的，这通常已经足够了。举个例子，要想知道一个对象是容器还是计数器还是智能指针，不需要知道它的确切类型。一个适当的变量名称就能告诉我们大量的抽象类型信息。</p>
+<p>真正的问题是显式指定类型可以避免一些微妙的错误，以及更具效率和正确性，而且，如果初始化表达式的类型改变，则<code>auto</code>推导出的类型也会改变，这意味着使用<code>auto</code>可以帮助我们完成一些重构工作。举个例子，如果一个函数返回类型被声明为<code>int</code>，但是后来你认为将它声明为<code>long</code>会更好，调用它作为初始化表达式的变量会自动改变类型，但是如果你不使用<code>auto</code>你就不得不在源代码中挨个找到调用地点然后修改它们。</p>
+<p><strong>请记住：</strong></p>
+<ul>
+<li><code>auto</code>变量必须初始化，通常它可以避免一些移植性和效率性的问题，也使得重构更方便，还能让你少打几个字。</li>
+<li>正如<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item2.md">Item2</a>和<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/2.Auto/item6.md">6</a>讨论的，<code>auto</code>类型的变量可能会踩到一些陷阱。</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../1.DeducingTypes/item4.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="../2.Auto/item6.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../1.DeducingTypes/item4.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../2.Auto/item6.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>

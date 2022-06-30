@@ -1,0 +1,334 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Item 40: Use std::atomic for concurrency, volatile for special memory - Effective Modern C++</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <!-- MathJax -->
+        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../Introduction.html">Introduction</a></li><li class="chapter-item expanded "><div>Chapter 1. Deducing Types</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../1.DeducingTypes/item1.html">Item 1: Understanding template type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item2.html">Item 2: Understand auto type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item3.html">Item 3: Understand decltype</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item4.html">Item 4: Know how to view deduced types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 2. auto</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../2.Auto/item5.html">Item 5: Prefer auto to explicit type declarations</a></li><li class="chapter-item expanded "><a href="../2.Auto/item6.html">Item 6: Use the explicitly typed initializer idiom when auto deduces undesired types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 3. Moving to Modern C++</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item7.html">Item 7: Distinguish between () and {} when creating objects</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item8.html">Item 8: Prefer nullptr to 0 or NULL</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item9.html">Item 9: Prefer alias declarations to typedefs</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item10.html">Item 10: Prefer scoped enums to unscoped enums</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item11.html">Item 11: Prefer deleted functions to private undefined ones</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item12.html">Item 12: Declare overriding functions override</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item13.html">Item 13: Prefer const_iterators to iterators</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item14.html">Item 14: Declare functions noexcept if they won't emit exceptions</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item15.html">Item 15: Use constexpr whenever possible</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item16.html">Item 16: Make const member functions thread safe</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item17.html">Item 17: Understand special member funciton generation</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 4. Smart Pointer</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../4.SmartPointers/item18.html">Item 18: Use std::unique_ptr for exclusive-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item19.html">Item 19: Use std::shared_ptr for shared-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item20.html">Item 20: Use std::weak_ptr for std::shared_ptr like pointers that can dangle</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item21.html">Item 21: Prefer std::make_unique and std::make_shared to direct use of new</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item22.html">Item 22: When using the Pimpl Idiom, define special member functions in the implementation file</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 5. Rvalue References, Move Semantics, and Perfect Forwarding</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item23.html">Item 23: Understand std::move and std::forward</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item24.html">Item 24: Distinguish universal references from rvalue references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item25.html">Item 25: Use std::move on rvalue references, std::forward on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item26.html">Item 26: Avoid overloading on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item27.html">Item 27: Familiarize yourself with alternatives to overaloading on univeral references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item28.html">Item 28: Understand reference collapsing</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item29.html">Item 29: Assume that move operations are not present not cheap, and not used</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item30.html">Item 30: Familiarize yourself with perfect forwarding failure cases</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 6. Lambda Expressions</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item31.html">Item 31: Avoid default capture modes</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item32.html">Item 32: Use init capture to move objects into closures</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item33.html">Item 33: Use decltype on auto&&parameters to std::forward them</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item34.html">Item 34: Prefer lambdas to std::bind</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 7. The Concurrency API</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/Item35.html">Item 35: Prefer task-based programming to thread-based</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item36.html">Item 36: Specify std::launch::async if asynchronicity is essential</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item37.html">Item 37: Make std::threads unjionable on all paths</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item38.html">Item 38: Be aware of varying thread handle destructor behavior</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item39.html">Item 39: Consider void futures for one-shot event communication</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item40.html" class="active">Item 40: Use std::atomic for concurrency, volatile for special memory</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 8. Tweaks</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../8.Tweaks/item41.html">Item 41: Consider pass by value for copyable parameters that are cheap to move and always copied</a></li><li class="chapter-item expanded "><a href="../8.Tweaks/item42.html">Item 42: Consider emplacement instead of insertion</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Effective Modern C++</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h2 id="条款四十对于并发使用stdatomic对于特殊内存使用volatile"><a class="header" href="#条款四十对于并发使用stdatomic对于特殊内存使用volatile">条款四十：对于并发使用<code>std::atomic</code>，对于特殊内存使用<code>volatile</code></a></h2>
+<p><strong>Item 40: Use <code>std::atomic</code> for concurrency, <code>volatile</code> for special memory</strong></p>
+<p>可怜的<code>volatile</code>。如此令人迷惑。本不应该出现在本章节，因为它跟并发编程没有关系。但是在其他编程语言中（比如，Java和C#），<code>volatile</code>是有并发含义的，即使在C++中，有些编译器在实现时也将并发的某种含义加入到了<code>volatile</code>关键字中（但仅仅是在用那些编译器时）。因此在此值得讨论下关于<code>volatile</code>关键字的含义以消除异议。</p>
+<p>开发者有时会与<code>volatile</code>混淆的特性——本来应该属于本章的那个特性——是<code>std::atomic</code>模板。这种模板的实例化（比如，<code>std::atomic&lt;int&gt;</code>，<code>std::atomic&lt;bool&gt;</code>，<code>std::atomic&lt;Widget*&gt;</code>等）提供了一种在其他线程看来操作是原子性的的保证（译注：即某些操作是像原子一样的不可分割。）。一旦<code>std::atomic</code>对象被构建，在其上的操作表现得像操作是在互斥锁保护的关键区内，但是通常这些操作是使用特定的机器指令实现，这比锁的实现更高效。</p>
+<p>分析如下使用<code>std::atmoic</code>的代码：</p>
+<pre><code class="language-cpp">std::atomic&lt;int&gt; ai(0);         //初始化ai为0
+ai = 10;                        //原子性地设置ai为10
+std::cout &lt;&lt; ai;                //原子性地读取ai的值
+++ai;                           //原子性地递增ai到11
+--ai;                           //原子性地递减ai到10
+</code></pre>
+<p>在这些语句执行过程中，其他线程读取<code>ai</code>，只能读取到0，10，11三个值其中一个。没有其他可能（当然，假设只有这个线程会修改<code>ai</code>）。</p>
+<p>这个例子中有两点值得注意。首先，在“<code>std::cout &lt;&lt; ai;</code>”中，<code>ai</code>是一个<code>std::atomic</code>的事实只保证了对<code>ai</code>的读取是原子的。没有保证整个语句的执行是原子的。在读取<code>ai</code>的时刻与调用<code>operator&lt;&lt;</code>将值写入到标准输出之间，另一个线程可能会修改<code>ai</code>的值。这对于这个语句没有影响，因为<code>int</code>的<code>operator&lt;&lt;</code>是使用<code>int</code>型的传值形参来输出（所以输出的值就是读取到的<code>ai</code>的值），但是重要的是要理解原子性的范围只保证了读取<code>ai</code>是原子性的。</p>
+<p>第二点值得注意的是最后两条语句——关于<code>ai</code>的递增递减。他们都是读-改-写（read-modify-write，RMW）操作，它们整体作为原子执行。这是<code>std::atomic</code>类型的最优的特性之一：一旦<code>std::atomic</code>对象被构建，所有成员函数，包括RMW操作，从其他线程来看都是原子性的。</p>
+<p>相反，使用<code>volatile</code>在多线程中实际上不保证任何事情：</p>
+<pre><code class="language-cpp">volatile int vi(0);             //初始化vi为0
+vi = 10;                        //设置vi为10 
+std::cout &lt;&lt; vi;                //读vi的值
+++vi;                           //递增vi到11
+--vi;                           //递减vi到10
+</code></pre>
+<p>代码的执行过程中，如果其他线程读取<code>vi</code>，可能读到任何值，比如-12，68，4090727——任何值！这份代码有未定义行为，因为这里的语句修改<code>vi</code>，所以如果同时其他线程读取<code>vi</code>，同时存在多个readers和writers读取没有<code>std::atomic</code>或者互斥锁保护的内存，这就是数据竞争的定义。</p>
+<p>举一个关于在多线程程序中<code>std::atomic</code>和<code>volatile</code>表现不同的具体例子，考虑这样一个简单的计数器，通过多线程递增。我们把它们初始化为0：</p>
+<pre><code class="language-cpp">std::atomic&lt;int&gt; ac(0);         //“原子性的计数器”
+volatile int vc(0);             //“volatile计数器”
+</code></pre>
+<p>然后我们在两个同时运行的线程中对两个计数器递增：</p>
+<pre><code class="language-cpp">/*----- Thread 1 ----- */        /*------- Thread 2 ------- */
+        ++ac;                              ++ac;
+        ++vc;                              ++vc;
+</code></pre>
+<p>当两个线程执行结束时，<code>ac</code>的值（即<code>std::atomic</code>的值）肯定是2，因为每个自增操作都是不可分割的（原子性的）。另一方面，<code>vc</code>的值，不一定是2，因为自增不是原子性的。每个自增操作包括了读取<code>vc</code>的值，增加读取的值，然后将结果写回到<code>vc</code>。这三个操作对于<code>volatile</code>对象不能保证原子执行，所有可能是下面的交叉执行顺序：</p>
+<ol>
+<li>Thread1读取<code>vc</code>的值，是0。</li>
+<li>Thread2读取<code>vc</code>的值，还是0。</li>
+<li>Thread1将读到的0加1，然后写回到<code>vc</code>。</li>
+<li>Thread2将读到的0加1，然后写回到<code>vc</code>。</li>
+</ol>
+<p><code>vc</code>的最后结果是1，即使看起来自增了两次。</p>
+<p>不仅只有这一种可能的结果，通常来说<code>vc</code>的最终结果是不可预测的，因为<code>vc</code>会发生数据竞争，对于数据竞争造成未定义行为，标准规定表示编译器生成的代码可能是任何逻辑。当然，编译器不会利用这种行为来作恶。但是它们通常做出一些没有数据竞争的程序中才有效的优化，这些优化在存在数据竞争的程序中会造成异常和不可预测的行为。</p>
+<p>RMW操作不是仅有的<code>std::atomic</code>在并发中有效而<code>volatile</code>无效的例子。假定一个任务计算第二个任务需要的一个重要的值。当第一个任务完成计算，必须传递给第二个任务。<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.TheConcurrencyAPI/item39.md">Item39</a>表明一种使用<code>std::atomic&lt;bool&gt;</code>的方法来使第一个任务通知第二个任务计算完成。计算值的任务的代码如下：</p>
+<pre><code class="language-cpp">std::atomic&lt;bool&gt; valVailable(false); 
+auto imptValue = computeImportantValue();   //计算值
+valAvailable = true;                        //告诉另一个任务，值可用了
+</code></pre>
+<p>人类读这份代码，能看到在<code>valAvailable</code>赋值之前对<code>imptValue</code>赋值很关键，但是所有编译器看到的是给相互独立的变量的一对赋值操作。通常来说，编译器会被允许重排这对没有关联的操作。这意味着，给定如下顺序的赋值操作（其中<code>a</code>，<code>b</code>，<code>x</code>，<code>y</code>都是互相独立的变量），</p>
+<pre><code class="language-cpp">a = b;
+x = y;
+</code></pre>
+<p>编译器可能重排为如下顺序：</p>
+<pre><code class="language-cpp">x = y;
+a = b;
+</code></pre>
+<p>即使编译器没有重排顺序，底层硬件也可能重排（或者可能使它看起来运行在其他核心上），因为有时这样代码执行更快。</p>
+<p>然而，<code>std::atomic</code>会限制这种重排序，并且这样的限制之一是，在源代码中，对<code>std::atomic</code>变量写之前不会有任何操作（或者操作发生在其他核心上）。（这只在<code>std::atomic</code>s使用<strong>顺序一致性</strong>（<em>sequential consistency</em>）时成立，对于使用在本书中展示的语法的<code>std::atomic</code>对象，这也是默认的和唯一的一致性模型。C++11也支持带有更灵活的代码重排规则的一致性模型。这样的<strong>弱</strong>（<em>weak</em>）（亦称<strong>松散的</strong>，<em>relaxed</em>）模型使构建一些软件在某些硬件构架上运行的更快成为可能，但是使用这样的模型产生的软件<strong>更加</strong>难改正、理解、维护。在使用松散原子性的代码中微小的错误很常见，即使专家也会出错，所以应当尽可能坚持顺序一致性。）这意味对我们的代码，</p>
+<pre><code class="language-cpp">auto imptValue = computeImportantValue();   //计算值
+valAvailable = true;                        //告诉另一个任务，值可用了
+</code></pre>
+<p>编译器不仅要保证<code>imptValue</code>和<code>valAvailable</code>的赋值顺序，还要保证生成的硬件代码不会改变这个顺序。结果就是，将<code>valAvailable</code>声明为<code>std::atomic</code>确保了必要的顺序——其他线程看到的是<code>imptValue</code>值的改变不会晚于<code>valAvailable</code>。</p>
+<p>将<code>valAvailable</code>声明为<code>volatile</code>不能保证上述顺序：</p>
+<pre><code class="language-cpp">volatile bool valVailable(false); 
+auto imptValue = computeImportantValue();
+valAvailable = true;                        //其他线程可能看到这个赋值操作早于imptValue的赋值操作
+</code></pre>
+<p>这份代码编译器可能将<code>imptValue</code>和<code>valAvailable</code>赋值顺序对调，如果它们没这么做，可能不能生成机器代码，来阻止底部硬件在其他核心上的代码看到<code>valAvailable</code>更改在<code>imptValue</code>之前。</p>
+<p>这两个问题——不保证操作的原子性以及对代码重排顺序没有足够限制——解释了为什么<code>volatile</code>在多线程编程中没用，但是没有解释它应该用在哪。简而言之，它是用来告诉编译器，它们处理的内存有不正常的表现。</p>
+<p>“正常”内存应该有这个特性，在写入值之后，这个值会一直保持直到被覆盖。假设有这样一个正常的<code>int</code></p>
+<pre><code class="language-cpp">int x;
+</code></pre>
+<p>编译器看到下列的操作序列：</p>
+<pre><code class="language-cpp">auto y = x;                             //读x
+y = x;                                  //再次读x
+</code></pre>
+<p>编译器可通过忽略对<code>y</code>的一次赋值来优化代码，因为有了<code>y</code>初始化，赋值是冗余的。</p>
+<p>正常内存还有一个特征，就是如果你写入内存没有读取，再次写入，第一次写就可以被忽略，因为值没被用过。给出下面的代码：</p>
+<pre><code class="language-cpp">x = 10;                                 //写x
+x = 20;                                 //再次写x
+</code></pre>
+<p>编译器可以忽略第一次写入。这意味着如果写在一起：</p>
+<pre><code class="language-cpp">auto y = x;                             //读x
+y = x;                                  //再次读x
+x = 10;                                 //写x
+x = 20;                                 //再次写x
+</code></pre>
+<p>编译器生成的代码是这样的：</p>
+<pre><code class="language-cpp">auto y = x;                             //读x
+x = 20;                                 //写x
+</code></pre>
+<p>可能你会想谁会写这种重复读写的代码（技术上称为<strong>冗余访问</strong>（<em>redundant loads</em>）和<strong>无用存储</strong>（<em>dead stores</em>）），答案是开发者不会直接写——至少我们不希望开发者这样写。但是在编译器拿到看起来合理的代码，执行了模板实例化，内联和一系列重排序优化之后，结果会出现冗余访问和无用存储，所以编译器需要摆脱这样的情况并不少见。</p>
+<p>这种优化仅仅在内存表现正常时有效。“特殊”的内存不行。最常见的“特殊”内存是用来做内存映射I/O的内存。这种内存实际上是与外围设备（比如外部传感器或者显示器，打印机，网络端口）通信，而不是读写通常的内存（比如RAM）。这种情况下，再次考虑这看起来冗余的代码：</p>
+<pre><code class="language-cpp">auto y = x;                             //读x
+y = x;                                  //再次读x
+</code></pre>
+<p>如果<code>x</code>的值是一个温度传感器上报的，第二次对于<code>x</code>的读取就不是多余的，因为温度可能在第一次和第二次读取之间变化。</p>
+<p>看起来冗余的写操作也类似。比如在这段代码中：</p>
+<pre><code class="language-cpp">x = 10;                                 //写x
+x = 20;                                 //再次写x
+</code></pre>
+<p>如果<code>x</code>与无线电发射器的控制端口关联，则代码是给无线电发指令，10和20意味着不同的指令。优化掉第一条赋值会改变发送到无线电的指令流。</p>
+<p><code>volatile</code>是告诉编译器我们正在处理特殊内存。意味着告诉编译器“不要对这块内存执行任何优化”。所以如果<code>x</code>对应于特殊内存，应该声明为<code>volatile</code>：</p>
+<pre><code class="language-cpp">volatile int x;
+</code></pre>
+<p>考虑对我们的原始代码序列有何影响：</p>
+<pre><code class="language-cpp">auto y = x;                             //读x
+y = x;                                  //再次读x（不会被优化掉）
+
+x = 10;                                 //写x（不会被优化掉）
+x = 20;                                 //再次写x
+</code></pre>
+<p>如果<code>x</code>是内存映射的（或者已经映射到跨进程共享的内存位置等），这正是我们想要的。</p>
+<p>突击测试！在最后一段代码中，<code>y</code>是什么类型：<code>int</code>还是<code>volatile int</code>？（<code>y</code>的类型使用<code>auto</code>类型推导，所以使用<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item2.md">Item2</a>中的规则。规则上说非引用非指针类型的声明（就是<code>y</code>的情况），<code>const</code>和<code>volatile</code>限定符被拿掉。<code>y</code>的类型因此仅仅是<code>int</code>。这意味着对<code>y</code>的冗余读取和写入可以被消除。在例子中，编译器必须执行对<code>y</code>的初始化和赋值两个语句，因为<code>x</code>是<code>volatile</code>的，所以第二次对<code>x</code>的读取可能会产生一个与第一次不同的值。）</p>
+<p>在处理特殊内存时，必须保留看似冗余访问和无用存储的事实，顺便说明了为什么<code>std::atomic</code>不适合这种场景。编译器被允许消除对<code>std::atomic</code>的冗余操作。代码的编写方式与<code>volatile</code>那些不那么相同，但是如果我们暂时忽略它，只关注编译器执行的操作，则概念上可以说，编译器看到这个，</p>
+<pre><code class="language-cpp">std::atomic&lt;int&gt; x;
+auto y = x;                             //概念上会读x（见下）
+y = x;                                  //概念上会再次读x（见下）
+
+x = 10;                                 //写x
+x = 20;                                 //再次写x
+</code></pre>
+<p>会优化为：</p>
+<pre><code class="language-cpp">auto y = x;                             //概念上会读x（见下）
+x = 20;                                 //写x
+</code></pre>
+<p>对于特殊内存，显然这是不可接受的。</p>
+<p>现在，就像下面所发生的，当<code>x</code>是<code>std::atomic</code>时，这两条语句都无法编译通过：</p>
+<pre><code class="language-cpp">auto y = x;                             //错误
+y = x;                                  //错误
+</code></pre>
+<p>这是因为<code>std::atomic</code>类型的拷贝操作是被删除的（参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item11.md">Item11</a>）。因为有个很好的理由删除。想象一下如果<code>y</code>使用<code>x</code>来初始化会发生什么。因为<code>x</code>是<code>std::atomic</code>类型，<code>y</code>的类型被推导为<code>std::atomic</code>（参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item2.md">Item2</a>）。我之前说了<code>std::atomic</code>最好的特性之一就是所有成员函数都是原子性的，但是为了使从<code>x</code>拷贝初始化<code>y</code>的过程是原子性的，编译器不得不生成代码，把读取<code>x</code>和写入<code>y</code>放在一个单独的原子性操作中。硬件通常无法做到这一点，因此<code>std::atomic</code>不支持拷贝构造。出于同样的原因，拷贝赋值也被删除了，这也是为什么从<code>x</code>赋值给<code>y</code>也编译失败。（移动操作在<code>std::atomic</code>没有显式声明，因此根据<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item17.md">Item17</a>中描述的规则来看，<code>std::atomic</code>不支持移动构造和移动赋值）。</p>
+<p>可以将<code>x</code>的值传递给<code>y</code>，但是需要使用<code>std::atomic</code>的<code>load</code>和<code>store</code>成员函数。<code>load</code>函数原子性地读取，<code>store</code>原子性地写入。要使用<code>x</code>初始化<code>y</code>，然后将<code>x</code>的值放入<code>y</code>，代码应该这样写：</p>
+<pre><code class="language-cpp">std::atomic&lt;int&gt; y(x.load());           //读x
+y.store(x.load());                      //再次读x
+</code></pre>
+<p>这可以编译，读取<code>x</code>（通过<code>x.load()</code>）是与初始化或者存储到<code>y</code>相独立的函数，这个事实清楚地表明没理由期待上面的任何一个语句会在单独的原子性的操作中整体执行。</p>
+<p>给出上面的代码，编译器可以通过存储x的值到寄存器代替读取两次来“优化”：</p>
+<pre><code class="language-cpp">register = x.load();                    //把x读到寄存器
+std::atomic&lt;int&gt; y(register);           //使用寄存器值初始化y
+y.store(register);                      //把寄存器值存储到y
+</code></pre>
+<p>结果如你所见，仅读取<code>x</code>一次，这是对于特殊内存必须避免的优化。（这种优化是不允许对<code>volatile</code>类型变量执行的。）</p>
+<p>因此情况很明显：</p>
+<ul>
+<li><code>std::atomic</code>用在并发编程中，对访问特殊内存没用。</li>
+<li><code>volatile</code>用于访问特殊内存，对并发编程没用。</li>
+</ul>
+<p>因为<code>std::atomic</code>和<code>volatile</code>用于不同的目的，所以可以结合起来使用：</p>
+<pre><code class="language-cpp">volatile std::atomic&lt;int&gt; vai;          //对vai的操作是原子性的，且不能被优化掉
+</code></pre>
+<p>如果<code>vai</code>变量关联了内存映射I/O的位置，被多个线程并发访问，这会很有用。</p>
+<p>最后一点，一些开发者在即使不必要时也尤其喜欢使用<code>std::atomic</code>的<code>load</code>和<code>store</code>函数，因为这在代码中显式表明了这个变量不“正常”。强调这一事实并非没有道理。因为访问<code>std::atomic</code>确实会比non-<code>std::atomic</code>更慢一些，我们也看到了<code>std::atomic</code>会阻止编译器对代码执行一些特定的，本应被允许的顺序重排。调用<code>load</code>和<code>store</code>可以帮助识别潜在的可扩展性瓶颈。从正确性的角度来看，<strong>没有</strong>看到在一个变量上调用<code>store</code>来与其他线程进行通信（比如用个flag表示数据的可用性）可能意味着该变量在声明时本应使用而没有使用<code>std::atomic</code>。</p>
+<p>这更多是习惯问题，但是，一定要知道<code>atomic</code>和<code>volatile</code>的巨大不同。</p>
+<p><strong>请记住：</strong></p>
+<ul>
+<li><code>std::atomic</code>用于在不使用互斥锁情况下，来使变量被多个线程访问的情况。是用来编写并发程序的一个工具。</li>
+<li><code>volatile</code>用在读取和写入不应被优化掉的内存上。是用来处理特殊内存的一个工具。</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../7.TheConcurrencyAPI/item39.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="../8.Tweaks/item41.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../7.TheConcurrencyAPI/item39.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../8.Tweaks/item41.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>

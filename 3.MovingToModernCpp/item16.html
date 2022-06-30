@@ -1,0 +1,343 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Item 16: Make const member functions thread safe - Effective Modern C++</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <!-- MathJax -->
+        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../Introduction.html">Introduction</a></li><li class="chapter-item expanded "><div>Chapter 1. Deducing Types</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../1.DeducingTypes/item1.html">Item 1: Understanding template type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item2.html">Item 2: Understand auto type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item3.html">Item 3: Understand decltype</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item4.html">Item 4: Know how to view deduced types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 2. auto</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../2.Auto/item5.html">Item 5: Prefer auto to explicit type declarations</a></li><li class="chapter-item expanded "><a href="../2.Auto/item6.html">Item 6: Use the explicitly typed initializer idiom when auto deduces undesired types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 3. Moving to Modern C++</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item7.html">Item 7: Distinguish between () and {} when creating objects</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item8.html">Item 8: Prefer nullptr to 0 or NULL</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item9.html">Item 9: Prefer alias declarations to typedefs</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item10.html">Item 10: Prefer scoped enums to unscoped enums</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item11.html">Item 11: Prefer deleted functions to private undefined ones</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item12.html">Item 12: Declare overriding functions override</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item13.html">Item 13: Prefer const_iterators to iterators</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item14.html">Item 14: Declare functions noexcept if they won't emit exceptions</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item15.html">Item 15: Use constexpr whenever possible</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item16.html" class="active">Item 16: Make const member functions thread safe</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item17.html">Item 17: Understand special member funciton generation</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 4. Smart Pointer</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../4.SmartPointers/item18.html">Item 18: Use std::unique_ptr for exclusive-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item19.html">Item 19: Use std::shared_ptr for shared-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item20.html">Item 20: Use std::weak_ptr for std::shared_ptr like pointers that can dangle</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item21.html">Item 21: Prefer std::make_unique and std::make_shared to direct use of new</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item22.html">Item 22: When using the Pimpl Idiom, define special member functions in the implementation file</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 5. Rvalue References, Move Semantics, and Perfect Forwarding</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item23.html">Item 23: Understand std::move and std::forward</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item24.html">Item 24: Distinguish universal references from rvalue references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item25.html">Item 25: Use std::move on rvalue references, std::forward on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item26.html">Item 26: Avoid overloading on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item27.html">Item 27: Familiarize yourself with alternatives to overaloading on univeral references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item28.html">Item 28: Understand reference collapsing</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item29.html">Item 29: Assume that move operations are not present not cheap, and not used</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item30.html">Item 30: Familiarize yourself with perfect forwarding failure cases</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 6. Lambda Expressions</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item31.html">Item 31: Avoid default capture modes</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item32.html">Item 32: Use init capture to move objects into closures</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item33.html">Item 33: Use decltype on auto&&parameters to std::forward them</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item34.html">Item 34: Prefer lambdas to std::bind</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 7. The Concurrency API</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/Item35.html">Item 35: Prefer task-based programming to thread-based</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item36.html">Item 36: Specify std::launch::async if asynchronicity is essential</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item37.html">Item 37: Make std::threads unjionable on all paths</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item38.html">Item 38: Be aware of varying thread handle destructor behavior</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item39.html">Item 39: Consider void futures for one-shot event communication</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item40.html">Item 40: Use std::atomic for concurrency, volatile for special memory</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 8. Tweaks</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../8.Tweaks/item41.html">Item 41: Consider pass by value for copyable parameters that are cheap to move and always copied</a></li><li class="chapter-item expanded "><a href="../8.Tweaks/item42.html">Item 42: Consider emplacement instead of insertion</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Effective Modern C++</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h2 id="条款十六让const成员函数线程安全"><a class="header" href="#条款十六让const成员函数线程安全">条款十六：让<code>const</code>成员函数线程安全</a></h2>
+<p><strong>Item 16: Make <code>const</code> member functions thread safe</strong></p>
+<p>如果我们在数学领域中工作，我们就会发现用一个类表示多项式是很方便的。在这个类中，使用一个函数来计算多项式的根是很有用的，也就是多项式的值为零的时候。这样的一个函数它不会更改多项式。所以，它自然被声明为<code>const</code>函数。</p>
+<pre><code class="language-c++">class Polynomial {
+public:
+    using RootsType =           //数据结构保存多项式为零的值
+          std::vector&lt;double&gt;;  //（“using” 的信息查看条款9）
+    …
+    RootsType roots() const;
+    …
+};
+</code></pre>
+<p>计算多项式的根是很复杂的，因此如果不需要的话，我们就不做。如果必须做，我们肯定不想再做第二次。所以，如果必须计算它们，就缓存多项式的根，然后实现<code>roots</code>来返回缓存的值。下面是最基本的实现：</p>
+<pre><code class="language-c++">class Polynomial {
+public:
+    using RootsType = std::vector&lt;double&gt;;
+    
+    RootsType roots() const
+    {
+        if (!rootsAreValid) {               //如果缓存不可用
+            …                               //计算根
+                                            //用rootVals存储它们
+            rootsAreValid = true;
+        }
+        
+        return rootVals;
+    }
+    
+private:
+    mutable bool rootsAreValid{ false };    //初始化器（initializer）的
+    mutable RootsType rootVals{};           //更多信息请查看条款7
+};
+</code></pre>
+<p>从概念上讲，<code>roots</code>并不改变它所操作的<code>Polynomial</code>对象。但是作为缓存的一部分，它也许会改变<code>rootVals</code>和<code>rootsAreValid</code>的值。这就是<code>mutable</code>的经典使用样例，这也是为什么它是数据成员声明的一部分。</p>
+<p>假设现在有两个线程同时调用<code>Polynomial</code>对象的<code>roots</code>方法:</p>
+<pre><code class="language-c++">Polynomial p;
+…
+
+/*------ Thread 1 ------*/      /*-------- Thread 2 --------*/
+auto rootsOfp = p.roots();      auto valsGivingZero = p.roots();
+</code></pre>
+<p>这些用户代码是非常合理的。<code>roots</code>是<code>const</code>成员函数，那就表示着它是一个读操作。在没有同步的情况下，让多个线程执行读操作是安全的。它最起码应该做到这点。在本例中却没有做到线程安全。因为在<code>roots</code>中，这些线程中的一个或两个可能尝试修改成员变量<code>rootsAreValid</code>和<code>rootVals</code>。这就意味着在没有同步的情况下，这些代码会有不同的线程读写相同的内存，这就是数据竞争（<em>data race</em>）的定义。这段代码的行为是未定义的。</p>
+<p>问题就是<code>roots</code>被声明为<code>const</code>，但不是线程安全的。<code>const</code>声明在C++11中与在C++98中一样正确（检索多项式的根并不会更改多项式的值），因此需要纠正的是线程安全的缺乏。</p>
+<p>解决这个问题最普遍简单的方法就是——使用<code>mutex</code>（互斥量）：</p>
+<pre><code class="language-c++">class Polynomial {
+public:
+    using RootsType = std::vector&lt;double&gt;;
+    
+    RootsType roots() const
+    {
+        std::lock_guard&lt;std::mutex&gt; g(m);       //锁定互斥量
+        
+        if (!rootsAreValid) {                   //如果缓存无效
+            …                                   //计算/存储根值
+            rootsAreValid = true;
+        }
+        
+        return rootsVals;
+    }                                           //解锁互斥量
+    
+private:
+    mutable std::mutex m;
+    mutable bool rootsAreValid { false };
+    mutable RootsType rootsVals {};
+};
+</code></pre>
+<p><code>std::mutex m</code>被声明为<code>mutable</code>，因为锁定和解锁它的都是non-<code>const</code>成员函数。在<code>roots</code>（<code>const</code>成员函数）中，<code>m</code>却被视为<code>const</code>对象。</p>
+<p>值得注意的是，因为<code>std::mutex</code>是一种只可移动类型（<em>move-only type</em>，一种可以移动但不能复制的类型），所以将<code>m</code>添加进<code>Polynomial</code>中的副作用是使<code>Polynomial</code>失去了被复制的能力。不过，它仍然可以移动。</p>
+<p>在某些情况下，互斥量的副作用显会得过大。例如，如果你所做的只是计算成员函数被调用了多少次，使用<code>std::atomic</code> 修饰的计数器（保证其他线程视它的操作为不可分割的整体，参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.TheConcurrencyAPI/item40.md">item40</a>）通常会是一个开销更小的方法。（然而它是否轻量取决于你使用的硬件和标准库中互斥量的实现。）以下是如何使用<code>std::atomic</code>来统计调用次数。</p>
+<pre><code class="language-c++">class Point {                                   //2D点
+public:
+    …
+    double distanceFromOrigin() const noexcept  //noexcept的使用
+    {                                           //参考条款14
+        ++callCount;                            //atomic的递增
+        
+        return std::sqrt((x * x) + (y * y));
+    }
+
+private:
+    mutable std::atomic&lt;unsigned&gt; callCount{ 0 };
+    double x, y;
+};
+</code></pre>
+<p>与<code>std::mutex</code>一样，<code>std::atomic</code>是只可移动类型，所以在<code>Point</code>中存在<code>callCount</code>就意味着<code>Point</code>也是只可移动的。</p>
+<p>因为对<code>std::atomic</code>变量的操作通常比互斥量的获取和释放的消耗更小，所以你可能会过度倾向与依赖<code>std::atomic</code>。例如，在一个类中，缓存一个开销昂贵的<code>int</code>，你就会尝试使用一对<code>std::atomic</code>变量而不是互斥量。</p>
+<pre><code class="language-c++">class Widget {
+public:
+    …
+    int magicValue() const
+    {
+        if (cacheValid) return cachedValue;
+        else {
+            auto val1 = expensiveComputation1();
+            auto val2 = expensiveComputation2();
+            cachedValue = val1 + val2;              //第一步
+            cacheValid = true;                      //第二步
+            return cachedValid;
+        }
+    }
+    
+private:
+    mutable std::atomic&lt;bool&gt; cacheValid{ false };
+    mutable std::atomic&lt;int&gt; cachedValue;
+};
+</code></pre>
+<p>这是可行的，但难以避免有时出现重复计算的情况。考虑：</p>
+<ul>
+<li>一个线程调用<code>Widget::magicValue</code>，将<code>cacheValid</code>视为<code>false</code>，执行这两个昂贵的计算，并将它们的和分配给<code>cachedValue</code>。</li>
+<li>此时，第二个线程调用<code>Widget::magicValue</code>，也将<code>cacheValid</code>视为<code>false</code>，因此执行刚才完成的第一个线程相同的计算。（这里的“第二个线程”实际上可能是其他<strong>几个</strong>线程。）</li>
+</ul>
+<p>这种行为与使用缓存的目的背道而驰。将<code>cachedValue</code>和<code>CacheValid</code>的赋值顺序交换可以解决这个问题，但结果会更糟：</p>
+<pre><code class="language-c++">class Widget {
+public:
+    …
+    int magicValue() const
+    {
+        if (cacheValid) return cachedValue;
+        else {
+            auto val1 = expensiveComputation1();
+            auto val2 = expensiveComputation2();
+            cacheValid = true;                      //第一步
+            return cachedValue = val1 + val2;       //第二步
+        }
+    }
+    …
+}
+</code></pre>
+<p>假设<code>cacheValid</code>是false，那么：</p>
+<ul>
+<li>一个线程调用<code>Widget::magicValue</code>，刚执行完将<code>cacheValid</code>设置<code>true</code>的语句。</li>
+<li>在这时，第二个线程调用<code>Widget::magicValue</code>，检查<code>cacheValid</code>。看到它是<code>true</code>，就返回<code>cacheValue</code>，即使第一个线程还没有给它赋值。因此返回的值是不正确的。</li>
+</ul>
+<p>这里有一个坑。对于需要同步的是单个的变量或者内存位置，使用<code>std::atomic</code>就足够了。不过，一旦你需要对两个以上的变量或内存位置作为一个单元来操作的话，就应该使用互斥量。对于<code>Widget::magicValue</code>是这样的。</p>
+<pre><code class="language-c++">class Widget {
+public:
+    …
+    int magicValue() const
+    {
+        std::lock_guard&lt;std::mutex&gt; guard(m);   //锁定m
+        
+        if (cacheValid) return cachedValue;
+        else {
+            auto val1 = expensiveComputation1();
+            auto val2 = expensiveComputation2();
+            cachedValue = val1 + val2;
+            cacheValid = true;
+            return cachedValue;
+        }
+    }                                           //解锁m
+    …
+
+private:
+    mutable std::mutex m;
+    mutable int cachedValue;                    //不再用atomic
+    mutable bool cacheValid{ false };           //不再用atomic
+};
+
+</code></pre>
+<p>现在，这个条款是基于，多个线程可以同时在一个对象上执行一个<code>const</code>成员函数这个假设的。如果你不是在这种情况下编写一个<code>const</code>成员函数——你可以<strong>保证</strong>在一个对象上永远不会有多个线程执行该成员函数——该函数的线程安全是无关紧要的。比如，为独占单线程使用而设计的类的成员函数是否线程安全并不重要。在这种情况下，你可以避免因使用互斥量和<code>std::atomics</code>所消耗的资源，以及包含它们的类只能使用移动语义带来的副作用。然而，这种线程无关的情况越来越少见，而且很可能会越来越少。可以肯定的是，<code>const</code>成员函数应支持并发执行，这就是为什么你应该确保<code>const</code>成员函数是线程安全的。</p>
+<p><strong>请记住：</strong></p>
+<ul>
+<li>确保<code>const</code>成员函数线程安全，除非你<strong>确定</strong>它们永远不会在并发上下文（<em>concurrent context</em>）中使用。</li>
+<li>使用<code>std::atomic</code>变量可能比互斥量提供更好的性能，但是它只适合操作单个变量或内存位置。</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../3.MovingToModernCpp/item15.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="../3.MovingToModernCpp/item17.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../3.MovingToModernCpp/item15.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../3.MovingToModernCpp/item17.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>

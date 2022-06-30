@@ -1,0 +1,328 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Item 30: Familiarize yourself with perfect forwarding failure cases - Effective Modern C++</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <!-- MathJax -->
+        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../Introduction.html">Introduction</a></li><li class="chapter-item expanded "><div>Chapter 1. Deducing Types</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../1.DeducingTypes/item1.html">Item 1: Understanding template type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item2.html">Item 2: Understand auto type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item3.html">Item 3: Understand decltype</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item4.html">Item 4: Know how to view deduced types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 2. auto</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../2.Auto/item5.html">Item 5: Prefer auto to explicit type declarations</a></li><li class="chapter-item expanded "><a href="../2.Auto/item6.html">Item 6: Use the explicitly typed initializer idiom when auto deduces undesired types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 3. Moving to Modern C++</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item7.html">Item 7: Distinguish between () and {} when creating objects</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item8.html">Item 8: Prefer nullptr to 0 or NULL</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item9.html">Item 9: Prefer alias declarations to typedefs</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item10.html">Item 10: Prefer scoped enums to unscoped enums</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item11.html">Item 11: Prefer deleted functions to private undefined ones</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item12.html">Item 12: Declare overriding functions override</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item13.html">Item 13: Prefer const_iterators to iterators</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item14.html">Item 14: Declare functions noexcept if they won't emit exceptions</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item15.html">Item 15: Use constexpr whenever possible</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item16.html">Item 16: Make const member functions thread safe</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item17.html">Item 17: Understand special member funciton generation</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 4. Smart Pointer</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../4.SmartPointers/item18.html">Item 18: Use std::unique_ptr for exclusive-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item19.html">Item 19: Use std::shared_ptr for shared-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item20.html">Item 20: Use std::weak_ptr for std::shared_ptr like pointers that can dangle</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item21.html">Item 21: Prefer std::make_unique and std::make_shared to direct use of new</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item22.html">Item 22: When using the Pimpl Idiom, define special member functions in the implementation file</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 5. Rvalue References, Move Semantics, and Perfect Forwarding</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item23.html">Item 23: Understand std::move and std::forward</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item24.html">Item 24: Distinguish universal references from rvalue references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item25.html">Item 25: Use std::move on rvalue references, std::forward on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item26.html">Item 26: Avoid overloading on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item27.html">Item 27: Familiarize yourself with alternatives to overaloading on univeral references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item28.html">Item 28: Understand reference collapsing</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item29.html">Item 29: Assume that move operations are not present not cheap, and not used</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item30.html" class="active">Item 30: Familiarize yourself with perfect forwarding failure cases</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 6. Lambda Expressions</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item31.html">Item 31: Avoid default capture modes</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item32.html">Item 32: Use init capture to move objects into closures</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item33.html">Item 33: Use decltype on auto&&parameters to std::forward them</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item34.html">Item 34: Prefer lambdas to std::bind</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 7. The Concurrency API</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/Item35.html">Item 35: Prefer task-based programming to thread-based</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item36.html">Item 36: Specify std::launch::async if asynchronicity is essential</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item37.html">Item 37: Make std::threads unjionable on all paths</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item38.html">Item 38: Be aware of varying thread handle destructor behavior</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item39.html">Item 39: Consider void futures for one-shot event communication</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item40.html">Item 40: Use std::atomic for concurrency, volatile for special memory</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 8. Tweaks</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../8.Tweaks/item41.html">Item 41: Consider pass by value for copyable parameters that are cheap to move and always copied</a></li><li class="chapter-item expanded "><a href="../8.Tweaks/item42.html">Item 42: Consider emplacement instead of insertion</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Effective Modern C++</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h2 id="条款三十熟悉完美转发失败的情况"><a class="header" href="#条款三十熟悉完美转发失败的情况">条款三十：熟悉完美转发失败的情况</a></h2>
+<p><strong>Item 30: Familiarize yourself with perfect forwarding failure cases</strong></p>
+<p>C++11最显眼的功能之一就是完美转发功能。<strong>完美</strong>转发，太<strong>完美</strong>了！哎，开始使用，你就发现“完美”，理想与现实还是有差距。C++11的完美转发是非常好用，但是只有当你愿意忽略一些误差情况（译者注：就是完美转发失败的情况），这个条款就是使你熟悉这些情形。</p>
+<p>在我们开始误差探索之前，有必要回顾一下“完美转发”的含义。“转发”仅表示将一个函数的形参传递——就是<strong>转发</strong>——给另一个函数。对于第二个函数（被传递的那个）目标是收到与第一个函数（执行传递的那个）完全相同的对象。这规则排除了按值传递的形参，因为它们是原始调用者传入内容的<strong>拷贝</strong>。我们希望被转发的函数能够使用最开始传进来的那些对象。指针形参也被排除在外，因为我们不想强迫调用者传入指针。关于通常目的的转发，我们将处理引用形参。</p>
+<p><strong>完美转发</strong>（<em>perfect forwarding</em>）意味着我们不仅转发对象，我们还转发显著的特征：它们的类型，是左值还是右值，是<code>const</code>还是<code>volatile</code>。结合到我们会处理引用形参，这意味着我们将使用通用引用（参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item24.md">Item24</a>），因为通用引用形参被传入实参时才确定是左值还是右值。</p>
+<p>假定我们有一些函数<code>f</code>，然后想编写一个转发给它的函数（事实上是一个函数模板）。我们需要的核心看起来像是这样：</p>
+<pre><code class="language-cpp">template&lt;typename T&gt;
+void fwd(T&amp;&amp; param)             //接受任何实参
+{
+    f(std::forward&lt;T&gt;(param));  //转发给f
+}
+</code></pre>
+<p>从本质上说，转发函数是通用的。例如<code>fwd</code>模板，接受任何类型的实参，并转发得到的任何东西。这种通用性的逻辑扩展是，转发函数不仅是模板，而且是可变模板，因此可以接受任何数量的实参。<code>fwd</code>的可变形式如下：</p>
+<pre><code class="language-cpp">template&lt;typename... Ts&gt;
+void fwd(Ts&amp;&amp;... params)            //接受任何实参
+{
+    f(std::forward&lt;Ts&gt;(params)...); //转发给f
+}
+</code></pre>
+<p>这种形式你会在标准化容器置入函数（emplace functions）中（参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/8.Tweaks/item42.md">Item42</a>）和智能指针的工厂函数<code>std::make_unique</code>和<code>std::make_shared</code>中（参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item21.md">Item21</a>）看到，当然还有其他一些地方。</p>
+<p>给定我们的目标函数<code>f</code>和转发函数<code>fwd</code>，如果<code>f</code>使用某特定实参会执行某个操作，但是<code>fwd</code>使用相同的实参会执行不同的操作，完美转发就会失败</p>
+<pre><code class="language-cpp">f( expression );        //调用f执行某个操作
+fwd( expression );		//但调用fwd执行另一个操作，则fwd不能完美转发expression给f
+</code></pre>
+<p>导致这种失败的实参种类有很多。知道它们是什么以及如何解决它们很重要，因此让我们来看看无法做到完美转发的实参类型。</p>
+<h3 id="花括号初始化器"><a class="header" href="#花括号初始化器">花括号初始化器</a></h3>
+<p>假定<code>f</code>这样声明：</p>
+<pre><code class="language-cpp">void f(const std::vector&lt;int&gt;&amp; v);
+</code></pre>
+<p>在这个例子中，用花括号初始化调用<code>f</code>通过编译，</p>
+<pre><code class="language-cpp">f({ 1, 2, 3 });         //可以，“{1, 2, 3}”隐式转换为std::vector&lt;int&gt;
+</code></pre>
+<p>但是传递相同的列表初始化给fwd不能编译</p>
+<pre><code class="language-cpp">fwd({ 1, 2, 3 });       //错误！不能编译
+</code></pre>
+<p>这是因为这是完美转发失效的一种情况。</p>
+<p>所有这种错误有相同的原因。在对<code>f</code>的直接调用（例如<code>f({ 1, 2, 3 })</code>），编译器看看调用地传入的实参，看看<code>f</code>声明的形参类型。它们把调用地的实参和声明的实参进行比较，看看是否匹配，并且必要时执行隐式转换操作使得调用成功。在上面的例子中，从<code>{ 1, 2, 3 }</code>生成了临时<code>std::vector&lt;int&gt;</code>对象，因此<code>f</code>的形参<code>v</code>会绑定到<code>std::vector&lt;int&gt;</code>对象上。</p>
+<p>当通过调用函数模板<code>fwd</code>间接调用<code>f</code>时，编译器不再把调用地传入给<code>fwd</code>的实参和<code>f</code>的声明中形参类型进行比较。而是<strong>推导</strong>传入给<code>fwd</code>的实参类型，然后比较推导后的实参类型和<code>f</code>的形参声明类型。当下面情况任何一个发生时，完美转发就会失败：</p>
+<ul>
+<li>**编译器不能推导出<code>fwd</code>的一个或者多个形参类型。**这种情况下代码无法编译。</li>
+<li>**编译器推导“错”了<code>fwd</code>的一个或者多个形参类型。**在这里，“错误”可能意味着<code>fwd</code>的实例将无法使用推导出的类型进行编译，但是也可能意味着使用<code>fwd</code>的推导类型调用<code>f</code>，与用传给<code>fwd</code>的实参直接调用<code>f</code>表现出不一致的行为。这种不同行为的原因可能是因为<code>f</code>是个重载函数的名字，并且由于是“不正确的”类型推导，在<code>fwd</code>内部调用的<code>f</code>重载和直接调用的<code>f</code>重载不一样。</li>
+</ul>
+<p>在上面的<code>fwd({ 1, 2, 3 })</code>例子中，问题在于，将花括号初始化传递给未声明为<code>std::initializer_list</code>的函数模板形参，被判定为——就像标准说的——“非推导上下文”。简单来讲，这意味着编译器不准在对<code>fwd</code>的调用中推导表达式<code>{ 1, 2, 3 }</code>的类型，因为<code>fwd</code>的形参没有声明为<code>std::initializer_list</code>。对于<code>fwd</code>形参的推导类型被阻止，编译器只能拒绝该调用。</p>
+<p>有趣的是，<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item2.md">Item2</a>说明了使用花括号初始化的<code>auto</code>的变量的类型推导是成功的。这种变量被视为<code>std::initializer_list</code>对象，在转发函数应推导出类型为<code>std::initializer_list</code>的情况，这提供了一种简单的解决方法——使用<code>auto</code>声明一个局部变量，然后将局部变量传进转发函数：</p>
+<pre><code class="language-cpp">auto il = { 1, 2, 3 };  //il的类型被推导为std::initializer_list&lt;int&gt;
+fwd(il);                //可以，完美转发il给f
+</code></pre>
+<h3 id="0或者null作为空指针"><a class="header" href="#0或者null作为空指针"><code>0</code>或者<code>NULL</code>作为空指针</a></h3>
+<p><a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item8.md">Item8</a>说明当你试图传递<code>0</code>或者<code>NULL</code>作为空指针给模板时，类型推导会出错，会把传来的实参推导为一个整型类型（典型情况为<code>int</code>）而不是指针类型。结果就是不管是<code>0</code>还是<code>NULL</code>都不能作为空指针被完美转发。解决方法非常简单，传一个<code>nullptr</code>而不是<code>0</code>或者<code>NULL</code>。具体的细节，参考<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item8.md">Item8</a>。</p>
+<h3 id="仅有声明的整型static-const数据成员"><a class="header" href="#仅有声明的整型static-const数据成员">仅有声明的整型<code>static const</code>数据成员</a></h3>
+<p>通常，无需在类中定义整型<code>static const</code>数据成员；声明就可以了。这是因为编译器会对此类成员实行<strong>常量传播</strong>（<em>const propagation</em>），因此消除了保留内存的需要。比如，考虑下面的代码：</p>
+<pre><code class="language-cpp">class Widget {
+public:
+    static const std::size_t MinVals = 28;  //MinVal的声明
+    …
+};
+…                                           //没有MinVals定义
+
+std::vector&lt;int&gt; widgetData;
+widgetData.reserve(Widget::MinVals);        //使用MinVals
+</code></pre>
+<p>这里，我们使用<code>Widget::MinVals</code>（或者简单点<code>MinVals</code>）来确定<code>widgetData</code>的初始容量，即使<code>MinVals</code>缺少定义。编译器通过将值28放入所有提到<code>MinVals</code>的位置来补充缺少的定义（就像它们被要求的那样）。没有为<code>MinVals</code>的值留存储空间是没有问题的。如果要使用<code>MinVals</code>的地址（例如，有人创建了指向<code>MinVals</code>的指针），则<code>MinVals</code>需要存储（这样指针才有可指向的东西），尽管上面的代码仍然可以编译，但是链接时就会报错，直到为<code>MinVals</code>提供定义。</p>
+<p>按照这个思路，想象下<code>f</code>（<code>fwd</code>要转发实参给它的那个函数）这样声明：</p>
+<pre><code class="language-cpp">void f(std::size_t val);
+</code></pre>
+<p>使用<code>MinVals</code>调用<code>f</code>是可以的，因为编译器直接将值28代替<code>MinVals</code>：</p>
+<pre><code class="language-cpp">f(Widget::MinVals);         //可以，视为“f(28)”
+</code></pre>
+<p>不过如果我们尝试通过<code>fwd</code>调用<code>f</code>，事情不会进展那么顺利：</p>
+<pre><code class="language-cpp">fwd(Widget::MinVals);       //错误！不应该链接
+</code></pre>
+<p>代码可以编译，但是不应该链接。如果这让你想到使用<code>MinVals</code>地址会发生的事，确实，底层的问题是一样的。</p>
+<p>尽管代码中没有使用<code>MinVals</code>的地址，但是<code>fwd</code>的形参是通用引用，而引用，在编译器生成的代码中，通常被视作指针。在程序的二进制底层代码中（以及硬件中）指针和引用是一样的。在这个水平上，引用只是可以自动解引用的指针。在这种情况下，通过引用传递<code>MinVals</code>实际上与通过指针传递<code>MinVals</code>是一样的，因此，必须有内存使得指针可以指向。通过引用传递的整型<code>static const</code>数据成员，通常需要定义它们，这个要求可能会造成在不使用完美转发的代码成功的地方，使用等效的完美转发失败。（译者注：这里意思应该是没有定义，完美转发就会失败）</p>
+<p>可能你也注意到了在上述讨论中我使用了一些模棱两可的词。代码“不应该”链接。引用“通常”被看做指针。传递整型<code>static const</code>数据成员“通常”要求定义。看起来就像有些事情我没有告诉你......</p>
+<p>确实，根据标准，通过引用传递<code>MinVals</code>要求有定义。但不是所有的实现都强制要求这一点。所以，取决于你的编译器和链接器，你可能发现你可以在未定义的情况使用完美转发，恭喜你，但是这不是那样做的理由。为了具有可移植性，只要给整型<code>static const</code>提供一个定义，比如这样：</p>
+<pre><code class="language-cpp">const std::size_t Widget::MinVals;  //在Widget的.cpp文件
+</code></pre>
+<p>注意定义中不要重复初始化（这个例子中就是赋值28）。但是不要忽略这个细节。如果你忘了，并且在两个地方都提供了初始化，编译器就会报错，提醒你只能初始化一次。</p>
+<h3 id="重载函数的名称和模板名称"><a class="header" href="#重载函数的名称和模板名称">重载函数的名称和模板名称</a></h3>
+<p>假定我们的函数<code>f</code>（我们想通过<code>fwd</code>完美转发实参给的那个函数）可以通过向其传递执行某些功能的函数来自定义其行为。假设这个函数接受和返回值都是<code>int</code>，<code>f</code>声明就像这样：</p>
+<pre><code class="language-cpp">void f(int (*pf)(int));             //pf = “process function”
+</code></pre>
+<p>值得注意的是，也可以使用更简单的非指针语法声明。这种声明就像这样，含义与上面是一样的：</p>
+<pre><code class="language-cpp">void f(int pf(int));                //与上面定义相同的f
+</code></pre>
+<p>无论哪种写法都可，现在假设我们有了一个重载函数，<code>processVal</code>：</p>
+<pre><code class="language-cpp">int processVal(int value);
+int processVal(int value, int priority);
+</code></pre>
+<p>我们可以传递<code>processVal</code>给<code>f</code>，</p>
+<pre><code class="language-cpp">f(processVal);                      //可以
+</code></pre>
+<p>但是我们会发现一些吃惊的事情。<code>f</code>要求一个函数指针作为实参，但是<code>processVal</code>不是一个函数指针或者一个函数，它是同名的两个不同函数。但是，编译器可以知道它需要哪个：匹配上<code>f</code>的形参类型的那个。因此选择了仅带有一个<code>int</code>的<code>processVal</code>地址传递给<code>f</code>。</p>
+<p>工作的基本机制是<code>f</code>的声明让编译器识别出哪个是需要的<code>processVal</code>。但是，<code>fwd</code>是一个函数模板，没有它可接受的类型的信息，使得编译器不可能决定出哪个函数应被传递：</p>
+<pre><code class="language-cpp">fwd(processVal);                    //错误！那个processVal？
+</code></pre>
+<p>单用<code>processVal</code>是没有类型信息的，所以就不能类型推导，完美转发失败。</p>
+<p>如果我们试图使用函数模板而不是（或者也加上）重载函数的名字，同样的问题也会发生。一个函数模板不代表单独一个函数，它表示一个函数族：</p>
+<pre><code class="language-cpp">template&lt;typename T&gt;
+T workOnVal(T param)                //处理值的模板
+{ … }
+
+fwd(workOnVal);                     //错误！哪个workOnVal实例？
+</code></pre>
+<p>要让像<code>fwd</code>的完美转发函数接受一个重载函数名或者模板名，方法是指定要转发的那个重载或者实例。比如，你可以创造与<code>f</code>相同形参类型的函数指针，通过<code>processVal</code>或者<code>workOnVal</code>实例化这个函数指针（这可以引导选择正确版本的<code>processVal</code>或者产生正确的<code>workOnVal</code>实例），然后传递指针给<code>fwd</code>：</p>
+<pre><code class="language-cpp">using ProcessFuncType =                         //写个类型定义；见条款9
+    int (*)(int);
+
+ProcessFuncType processValPtr = processVal;     //指定所需的processVal签名
+
+fwd(processValPtr);                             //可以
+fwd(static_cast&lt;ProcessFuncType&gt;(workOnVal));   //也可以
+</code></pre>
+<p>当然，这要求你知道<code>fwd</code>转发的函数指针的类型。没有理由去假定完美转发函数会记录着这些东西。毕竟，完美转发被设计为接受任何内容，所以如果没有文档告诉你要传递什么，你又从何而知这些东西呢？</p>
+<h3 id="位域"><a class="header" href="#位域">位域</a></h3>
+<p>完美转发最后一种失败的情况是函数实参使用位域这种类型。为了更直观的解释，IPv4的头部有如下模型：（这假定的是位域是按从最低有效位（<em>least significant bit</em>，lsb）到最高有效位（<em>most significant bit</em>，msb）布局的。C++不保证这一点，但是编译器经常提供一种机制，允许程序员控制位域布局。）</p>
+<pre><code class="language-cpp">struct IPv4Header {
+    std::uint32_t version:4,
+                  IHL:4,
+                  DSCP:6,
+                  ECN:2,
+                  totalLength:16;
+    …
+};
+</code></pre>
+<p>如果声明我们的函数<code>f</code>（转发函数<code>fwd</code>的目标）为接收一个<code>std::size_t</code>的形参，则使用<code>IPv4Header</code>对象的<code>totalLength</code>字段进行调用没有问题：</p>
+<pre><code class="language-cpp">void f(std::size_t sz);         //要调用的函数
+
+IPv4Header h;
+…
+f(h.totalLength);               //可以
+</code></pre>
+<p>如果通过<code>fwd</code>转发<code>h.totalLength</code>给<code>f</code>呢，那就是一个不同的情况了：</p>
+<pre><code class="language-cpp">fwd(h.totalLength);             //错误！
+</code></pre>
+<p>问题在于<code>fwd</code>的形参是引用，而<code>h.totalLength</code>是non-<code>const</code>位域。听起来并不是那么糟糕，但是C++标准非常清楚地谴责了这种组合：non-<code>const</code>引用不应该绑定到位域。禁止的理由很充分。位域可能包含了机器字的任意部分（比如32位<code>int</code>的3-5位），但是这些东西无法直接寻址。我之前提到了在硬件层面引用和指针是一样的，所以没有办法创建一个指向任意<em>bit</em>的指针（C++规定你可以指向的最小单位是<code>char</code>），同样没有办法绑定引用到任意<em>bit</em>上。</p>
+<p>一旦意识到接收位域实参的函数都将接收位域的<strong>副本</strong>，就可以轻松解决位域不能完美转发的问题。毕竟，没有函数可以绑定引用到位域，也没有函数可以接受指向位域的指针，因为不存在这种指针。位域可以传给的形参种类只有按值传递的形参，有趣的是，还有reference-to-<code>const</code>。在传值形参的情况中，被调用的函数接受了一个位域的副本；在传reference-to-<code>const</code>形参的情况中，标准要求这个引用实际上绑定到存放位域值的副本对象，这个对象是某种整型（比如<code>int</code>）。reference-to-<code>const</code>不直接绑定到位域，而是绑定位域值拷贝到的一个普通对象。</p>
+<p>传递位域给完美转发的关键就是利用传给的函数接受的是一个副本的事实。你可以自己创建副本然后利用副本调用完美转发。在<code>IPv4Header</code>的例子中，可以如下写法：</p>
+<pre><code class="language-cpp">//拷贝位域值；参看条款6了解关于初始化形式的信息
+auto length = static_cast&lt;std::uint16_t&gt;(h.totalLength);
+
+fwd(length);                    //转发这个副本
+</code></pre>
+<h3 id="总结"><a class="header" href="#总结">总结</a></h3>
+<p>在大多数情况下，完美转发工作的很好。你基本不用考虑其他问题。但是当其不工作时——当看起来合理的代码无法编译，或者更糟的是，虽能编译但无法按照预期运行时——了解完美转发的缺陷就很重要了。同样重要的是如何解决它们。在大多数情况下，都很简单。</p>
+<p><strong>请记住：</strong></p>
+<ul>
+<li>当模板类型推导失败或者推导出错误类型，完美转发会失败。</li>
+<li>导致完美转发失败的实参种类有花括号初始化，作为空指针的<code>0</code>或者<code>NULL</code>，仅有声明的整型<code>static const</code>数据成员，模板和重载函数的名字，位域。</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../5.RRefMovSemPerfForw/item29.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="../6.LambdaExpressions/item31.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../5.RRefMovSemPerfForw/item29.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../6.LambdaExpressions/item31.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>

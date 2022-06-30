@@ -1,0 +1,362 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Item 10: Prefer scoped enums to unscoped enums - Effective Modern C++</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <!-- MathJax -->
+        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../Introduction.html">Introduction</a></li><li class="chapter-item expanded "><div>Chapter 1. Deducing Types</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../1.DeducingTypes/item1.html">Item 1: Understanding template type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item2.html">Item 2: Understand auto type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item3.html">Item 3: Understand decltype</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item4.html">Item 4: Know how to view deduced types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 2. auto</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../2.Auto/item5.html">Item 5: Prefer auto to explicit type declarations</a></li><li class="chapter-item expanded "><a href="../2.Auto/item6.html">Item 6: Use the explicitly typed initializer idiom when auto deduces undesired types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 3. Moving to Modern C++</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item7.html">Item 7: Distinguish between () and {} when creating objects</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item8.html">Item 8: Prefer nullptr to 0 or NULL</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item9.html">Item 9: Prefer alias declarations to typedefs</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item10.html" class="active">Item 10: Prefer scoped enums to unscoped enums</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item11.html">Item 11: Prefer deleted functions to private undefined ones</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item12.html">Item 12: Declare overriding functions override</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item13.html">Item 13: Prefer const_iterators to iterators</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item14.html">Item 14: Declare functions noexcept if they won't emit exceptions</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item15.html">Item 15: Use constexpr whenever possible</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item16.html">Item 16: Make const member functions thread safe</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item17.html">Item 17: Understand special member funciton generation</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 4. Smart Pointer</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../4.SmartPointers/item18.html">Item 18: Use std::unique_ptr for exclusive-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item19.html">Item 19: Use std::shared_ptr for shared-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item20.html">Item 20: Use std::weak_ptr for std::shared_ptr like pointers that can dangle</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item21.html">Item 21: Prefer std::make_unique and std::make_shared to direct use of new</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item22.html">Item 22: When using the Pimpl Idiom, define special member functions in the implementation file</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 5. Rvalue References, Move Semantics, and Perfect Forwarding</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item23.html">Item 23: Understand std::move and std::forward</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item24.html">Item 24: Distinguish universal references from rvalue references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item25.html">Item 25: Use std::move on rvalue references, std::forward on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item26.html">Item 26: Avoid overloading on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item27.html">Item 27: Familiarize yourself with alternatives to overaloading on univeral references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item28.html">Item 28: Understand reference collapsing</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item29.html">Item 29: Assume that move operations are not present not cheap, and not used</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item30.html">Item 30: Familiarize yourself with perfect forwarding failure cases</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 6. Lambda Expressions</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item31.html">Item 31: Avoid default capture modes</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item32.html">Item 32: Use init capture to move objects into closures</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item33.html">Item 33: Use decltype on auto&&parameters to std::forward them</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item34.html">Item 34: Prefer lambdas to std::bind</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 7. The Concurrency API</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/Item35.html">Item 35: Prefer task-based programming to thread-based</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item36.html">Item 36: Specify std::launch::async if asynchronicity is essential</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item37.html">Item 37: Make std::threads unjionable on all paths</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item38.html">Item 38: Be aware of varying thread handle destructor behavior</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item39.html">Item 39: Consider void futures for one-shot event communication</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item40.html">Item 40: Use std::atomic for concurrency, volatile for special memory</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 8. Tweaks</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../8.Tweaks/item41.html">Item 41: Consider pass by value for copyable parameters that are cheap to move and always copied</a></li><li class="chapter-item expanded "><a href="../8.Tweaks/item42.html">Item 42: Consider emplacement instead of insertion</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Effective Modern C++</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h2 id="条款十优先考虑限域enum而非未限域enum"><a class="header" href="#条款十优先考虑限域enum而非未限域enum">条款十：优先考虑限域<code>enum</code>而非未限域<code>enum</code></a></h2>
+<p><strong>Item 10: Prefer scoped <code>enum</code>s to unscoped <code>enum</code>s</strong></p>
+<p>通常来说，在花括号中声明一个名字会限制它的作用域在花括号之内。但这对于C++98风格的<code>enum</code>中声明的枚举名（译注：<em>enumerator</em>，连同下文“枚举名”都指<em>enumerator</em>）是不成立的。这些枚举名的名字（译注：<em>enumerator</em> names，连同下文“名字”都指names）属于包含这个<code>enum</code>的作用域，这意味着作用域内不能含有相同名字的其他东西：</p>
+<pre><code class="language-cpp">enum Color { black, white, red };   //black, white, red在
+                                    //Color所在的作用域
+auto white = false;                 //错误! white早已在这个作用
+                                    //域中声明
+</code></pre>
+<p>这些枚举名的名字泄漏进它们所被定义的<code>enum</code>在的那个作用域，这个事实有一个官方的术语：未限域枚举(<em>unscoped <code>enum</code></em>)。在C++11中它们有一个相似物，限域枚举(<em>scoped <code>enum</code></em>)，它不会导致枚举名泄漏：</p>
+<pre><code class="language-cpp">enum class Color { black, white, red }; //black, white, red
+                                        //限制在Color域内
+auto white = false;                     //没问题，域内没有其他“white”
+
+Color c = white;                        //错误，域中没有枚举名叫white
+
+Color c = Color::white;                 //没问题
+auto c = Color::white;                  //也没问题（也符合Item5的建议）
+</code></pre>
+<p>因为限域<code>enum</code>是通过“<code>enum class</code>”声明，所以它们有时候也被称为枚举类(<em><code>enum</code> classes</em>)。</p>
+<p>使用限域<code>enum</code>来减少命名空间污染，这是一个足够合理使用它而不是它的同胞未限域<code>enum</code>的理由，其实限域<code>enum</code>还有第二个吸引人的优点：在它的作用域中，枚举名是强类型。未限域<code>enum</code>中的枚举名会隐式转换为整型（现在，也可以转换为浮点类型）。因此下面这种歪曲语义的做法也是完全有效的：</p>
+<pre><code class="language-cpp">enum Color { black, white, red };       //未限域enum
+
+std::vector&lt;std::size_t&gt;                //func返回x的质因子
+  primeFactors(std::size_t x);
+
+Color c = red;
+…
+
+if (c &lt; 14.5) {                         // Color与double比较 (!)
+    auto factors =                      // 计算一个Color的质因子(!)
+      primeFactors(c);
+    …
+}
+</code></pre>
+<p>在<code>enum</code>后面写一个<code>class</code>就可以将非限域<code>enum</code>转换为限域<code>enum</code>，接下来就是完全不同的故事展开了。现在不存在任何隐式转换可以将限域<code>enum</code>中的枚举名转化为任何其他类型：</p>
+<pre><code class="language-cpp">enum class Color { black, white, red }; //Color现在是限域enum
+
+Color c = Color::red;                   //和之前一样，只是
+...                                     //多了一个域修饰符
+
+if (c &lt; 14.5) {                         //错误！不能比较
+                                        //Color和double
+    auto factors =                      //错误！不能向参数为std::size_t
+      primeFactors(c);                  //的函数传递Color参数
+    …
+}
+</code></pre>
+<p>如果你真的很想执行<code>Color</code>到其他类型的转换，和平常一样，使用正确的类型转换运算符扭曲类型系统：</p>
+<pre><code class="language-cpp">if (static_cast&lt;double&gt;(c) &lt; 14.5) {    //奇怪的代码，
+                                        //但是有效
+    auto factors =                                  //有问题，但是
+      primeFactors(static_cast&lt;std::size_t&gt;(c));    //能通过编译
+    …
+}
+</code></pre>
+<p>似乎比起非限域<code>enum</code>而言，限域<code>enum</code>有第三个好处，因为限域<code>enum</code>可以被前置声明。也就是说，它们可以不指定枚举名直接声明：</p>
+<pre><code class="language-cpp">enum Color;         //错误！
+enum class Color;   //没问题
+</code></pre>
+<p>其实这是一个误导。在C++11中，非限域<code>enum</code>也可以被前置声明，但是只有在做一些其他工作后才能实现。这些工作来源于一个事实：在C++中所有的<code>enum</code>都有一个由编译器决定的整型的底层类型。对于非限域<code>enum</code>比如<code>Color</code>，</p>
+<pre><code class="language-cpp">enum Color { black, white, red };
+</code></pre>
+<p>编译器可能选择<code>char</code>作为底层类型，因为这里只需要表示三个值。然而，有些<code>enum</code>中的枚举值范围可能会大些，比如：</p>
+<pre><code class="language-cpp">enum Status { good = 0,
+              failed = 1,
+              incomplete = 100,
+              corrupt = 200,
+              indeterminate = 0xFFFFFFFF
+            };
+</code></pre>
+<p>这里值的范围从<code>0</code>到<code>0xFFFFFFFF</code>。除了在不寻常的机器上（比如一个<code>char</code>至少有32bits的那种），编译器都会选择一个比<code>char</code>大的整型类型来表示<code>Status</code>。</p>
+<p>为了高效使用内存，编译器通常在确保能包含所有枚举值的前提下为<code>enum</code>选择一个最小的底层类型。在一些情况下，编译器将会优化速度，舍弃大小，这种情况下它可能不会选择最小的底层类型，而是选择对优化大小有帮助的类型。为此，C++98只支持<code>enum</code>定义（所有枚举名全部列出来）；<code>enum</code>声明是不被允许的。这使得编译器能在使用之前为每一个<code>enum</code>选择一个底层类型。</p>
+<p>但是不能前置声明<code>enum</code>也是有缺点的。最大的缺点莫过于它可能增加编译依赖。再次考虑<code>Status</code> <code>enum</code>：</p>
+<pre><code class="language-cpp">enum Status { good = 0,
+              failed = 1,
+              incomplete = 100,
+              corrupt = 200,
+              indeterminate = 0xFFFFFFFF
+            };
+</code></pre>
+<p>这种<code>enum</code>很有可能用于整个系统，因此系统中每个包含这个头文件的组件都会依赖它。如果引入一个新状态值，</p>
+<pre><code class="language-cpp">enum Status { good = 0,
+              failed = 1,
+              incomplete = 100,
+              corrupt = 200,
+              audited = 500,
+              indeterminate = 0xFFFFFFFF
+            };
+</code></pre>
+<p>那么可能整个系统都得重新编译，即使只有一个子系统——或者只有一个函数——使用了新添加的枚举名。这是大家都<strong>不希望</strong>看到的。C++11中的前置声明<code>enum</code>s可以解决这个问题。比如这里有一个完全有效的限域<code>enum</code>声明和一个以该限域<code>enum</code>作为形参的函数声明：</p>
+<pre><code class="language-cpp">enum class Status;                  //前置声明
+void continueProcessing(Status s);  //使用前置声明enum
+</code></pre>
+<p>即使<code>Status</code>的定义发生改变，包含这些声明的头文件也不需要重新编译。而且如果<code>Status</code>有改动（比如添加一个<code>audited</code>枚举名），<code>continueProcessing</code>的行为不受影响（比如因为<code>continueProcessing</code>没有使用这个新添加的<code>audited</code>），<code>continueProcessing</code>也不需要重新编译。</p>
+<p>但是如果编译器在使用它之前需要知晓该<code>enum</code>的大小，该怎么声明才能让C++11做到C++98不能做到的事情呢？答案很简单：限域<code>enum</code>的底层类型总是已知的，而对于非限域<code>enum</code>，你可以指定它。</p>
+<p>默认情况下，限域枚举的底层类型是<code>int</code>：</p>
+<pre><code class="language-cpp">enum class Status;                  //底层类型是int
+</code></pre>
+<p>如果默认的<code>int</code>不适用，你可以重写它：</p>
+<pre><code class="language-cpp">enum class Status: std::uint32_t;   //Status的底层类型
+                                    //是std::uint32_t
+                                    //（需要包含 &lt;cstdint&gt;）
+</code></pre>
+<p>不管怎样，编译器都知道限域<code>enum</code>中的枚举名占用多少字节。</p>
+<p>要为非限域<code>enum</code>指定底层类型，你可以同上，结果就可以前向声明：</p>
+<pre><code class="language-cpp">enum Color: std::uint8_t;   //非限域enum前向声明
+                            //底层类型为
+                            //std::uint8_t
+</code></pre>
+<p>底层类型说明也可以放到<code>enum</code>定义处：</p>
+<pre><code class="language-cpp">enum class Status: std::uint32_t { good = 0,
+                                   failed = 1,
+                                   incomplete = 100,
+                                   corrupt = 200,
+                                   audited = 500,
+                                   indeterminate = 0xFFFFFFFF
+                                 };
+</code></pre>
+<p>限域<code>enum</code>避免命名空间污染而且不接受荒谬的隐式类型转换，但它并非万事皆宜，你可能会很惊讶听到至少有一种情况下非限域<code>enum</code>是很有用的。那就是牵扯到C++11的<code>std::tuple</code>的时候。比如在社交网站中，假设我们有一个<em>tuple</em>保存了用户的名字，email地址，声望值：</p>
+<pre><code class="language-cpp">using UserInfo =                //类型别名，参见Item9
+    std::tuple&lt;std::string,     //名字
+               std::string,     //email地址
+               std::size_t&gt; ;   //声望
+</code></pre>
+<p>虽然注释说明了tuple各个字段对应的意思，但当你在另一文件遇到下面的代码那之前的注释就不是那么有用了：</p>
+<pre><code class="language-cpp">UserInfo uInfo;                 //tuple对象
+…
+auto val = std::get&lt;1&gt;(uInfo);	//获取第一个字段
+</code></pre>
+<p>作为一个程序员，你有很多工作要持续跟进。你应该记住第一个字段代表用户的email地址吗？我认为不。可以使用非限域<code>enum</code>将名字和字段编号关联起来以避免上述需求：</p>
+<pre><code class="language-cpp">enum UserInfoFields { uiName, uiEmail, uiReputation };
+
+UserInfo uInfo;                         //同之前一样
+…
+auto val = std::get&lt;uiEmail&gt;(uInfo);    //啊，获取用户email字段的值
+</code></pre>
+<p>之所以它能正常工作是因为<code>UserInfoFields</code>中的枚举名隐式转换成<code>std::size_t</code>了，其中<code>std::size_t</code>是<code>std::get</code>模板实参所需的。</p>
+<p>对应的限域<code>enum</code>版本就很啰嗦了：</p>
+<pre><code class="language-cpp">enum class UserInfoFields { uiName, uiEmail, uiReputation };
+
+UserInfo uInfo;                         //同之前一样
+…
+auto val =
+    std::get&lt;static_cast&lt;std::size_t&gt;(UserInfoFields::uiEmail)&gt;
+        (uInfo);
+</code></pre>
+<p>为避免这种冗长的表示，我们可以写一个函数传入枚举名并返回对应的<code>std::size_t</code>值，但这有一点技巧性。<code>std::get</code>是一个模板（函数），需要你给出一个<code>std::size_t</code>值的模板实参（注意使用<code>&lt;&gt;</code>而不是<code>()</code>），因此将枚举名变换为<code>std::size_t</code>值的函数必须<strong>在编译期</strong>产生这个结果。如<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item15.md">Item15</a>提到的，那必须是一个<code>constexpr</code>函数。</p>
+<p>事实上，它也的确该是一个<code>constexpr</code>函数模板，因为它应该能用于任何<code>enum</code>。如果我们想让它更一般化，我们还要泛化它的返回类型。较之于返回<code>std::size_t</code>，我们更应该返回枚举的底层类型。这可以通过<code>std::underlying_type</code>这个<em>type trait</em>获得。（参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item9.md">Item9</a>关于<em>type trait</em>的内容）。最终我们还要再加上<code>noexcept</code>修饰（参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item14.md">Item14</a>），因为我们知道它肯定不会产生异常。根据上述分析最终得到的<code>toUType</code>函数模板在编译期接受任意枚举名并返回它的值：</p>
+<pre><code class="language-cpp">template&lt;typename E&gt;
+constexpr typename std::underlying_type&lt;E&gt;::type
+    toUType(E enumerator) noexcept
+{
+    return
+        static_cast&lt;typename
+                    std::underlying_type&lt;E&gt;::type&gt;(enumerator);
+}
+</code></pre>
+<p>在C++14中，<code>toUType</code>还可以进一步用<code>std::underlying_type_t</code>（参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item9.md">Item9</a>）代替<code>typename std::underlying_type&lt;E&gt;::type</code>打磨：</p>
+<pre><code class="language-cpp">template&lt;typename E&gt;                //C++14
+constexpr std::underlying_type_t&lt;E&gt;
+    toUType(E enumerator) noexcept
+{
+    return static_cast&lt;std::underlying_type_t&lt;E&gt;&gt;(enumerator);
+}
+</code></pre>
+<p>还可以再用C++14 <code>auto</code>（参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item3.md">Item3</a>）打磨一下代码：</p>
+<pre><code class="language-cpp">template&lt;typename E&gt;                //C++14
+constexpr auto
+    toUType(E enumerator) noexcept
+{
+    return static_cast&lt;std::underlying_type_t&lt;E&gt;&gt;(enumerator);
+}
+</code></pre>
+<p>不管它怎么写，<code>toUType</code>现在允许这样访问tuple的字段了：</p>
+<pre><code class="language-cpp">auto val = std::get&lt;toUType(UserInfoFields::uiEmail)&gt;(uInfo);
+</code></pre>
+<p>这仍然比使用非限域<code>enum</code>要写更多的代码，但同时它也避免命名空间污染，防止不经意间使用隐式转换。大多数情况下，你应该会觉得多敲几个（几行）字符作为避免使用未限域枚举这种老得和2400波特率猫同时代技术的代价是值得的。</p>
+<p><strong>记住</strong></p>
+<ul>
+<li>C++98的<code>enum</code>即非限域<code>enum</code>。</li>
+<li>限域<code>enum</code>的枚举名仅在<code>enum</code>内可见。要转换为其它类型只能使用<em>cast</em>。</li>
+<li>非限域/限域<code>enum</code>都支持底层类型说明语法，限域<code>enum</code>底层类型默认是<code>int</code>。非限域<code>enum</code>没有默认底层类型。</li>
+<li>限域<code>enum</code>总是可以前置声明。非限域<code>enum</code>仅当指定它们的底层类型时才能前置。</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../3.MovingToModernCpp/item9.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="../3.MovingToModernCpp/item11.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../3.MovingToModernCpp/item9.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../3.MovingToModernCpp/item11.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>

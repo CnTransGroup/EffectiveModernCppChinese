@@ -1,0 +1,362 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Item 12: Declare overriding functions override - Effective Modern C++</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <!-- MathJax -->
+        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../Introduction.html">Introduction</a></li><li class="chapter-item expanded "><div>Chapter 1. Deducing Types</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../1.DeducingTypes/item1.html">Item 1: Understanding template type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item2.html">Item 2: Understand auto type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item3.html">Item 3: Understand decltype</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item4.html">Item 4: Know how to view deduced types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 2. auto</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../2.Auto/item5.html">Item 5: Prefer auto to explicit type declarations</a></li><li class="chapter-item expanded "><a href="../2.Auto/item6.html">Item 6: Use the explicitly typed initializer idiom when auto deduces undesired types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 3. Moving to Modern C++</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item7.html">Item 7: Distinguish between () and {} when creating objects</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item8.html">Item 8: Prefer nullptr to 0 or NULL</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item9.html">Item 9: Prefer alias declarations to typedefs</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item10.html">Item 10: Prefer scoped enums to unscoped enums</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item11.html">Item 11: Prefer deleted functions to private undefined ones</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item12.html" class="active">Item 12: Declare overriding functions override</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item13.html">Item 13: Prefer const_iterators to iterators</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item14.html">Item 14: Declare functions noexcept if they won't emit exceptions</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item15.html">Item 15: Use constexpr whenever possible</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item16.html">Item 16: Make const member functions thread safe</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item17.html">Item 17: Understand special member funciton generation</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 4. Smart Pointer</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../4.SmartPointers/item18.html">Item 18: Use std::unique_ptr for exclusive-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item19.html">Item 19: Use std::shared_ptr for shared-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item20.html">Item 20: Use std::weak_ptr for std::shared_ptr like pointers that can dangle</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item21.html">Item 21: Prefer std::make_unique and std::make_shared to direct use of new</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item22.html">Item 22: When using the Pimpl Idiom, define special member functions in the implementation file</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 5. Rvalue References, Move Semantics, and Perfect Forwarding</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item23.html">Item 23: Understand std::move and std::forward</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item24.html">Item 24: Distinguish universal references from rvalue references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item25.html">Item 25: Use std::move on rvalue references, std::forward on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item26.html">Item 26: Avoid overloading on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item27.html">Item 27: Familiarize yourself with alternatives to overaloading on univeral references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item28.html">Item 28: Understand reference collapsing</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item29.html">Item 29: Assume that move operations are not present not cheap, and not used</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item30.html">Item 30: Familiarize yourself with perfect forwarding failure cases</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 6. Lambda Expressions</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item31.html">Item 31: Avoid default capture modes</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item32.html">Item 32: Use init capture to move objects into closures</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item33.html">Item 33: Use decltype on auto&&parameters to std::forward them</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item34.html">Item 34: Prefer lambdas to std::bind</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 7. The Concurrency API</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/Item35.html">Item 35: Prefer task-based programming to thread-based</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item36.html">Item 36: Specify std::launch::async if asynchronicity is essential</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item37.html">Item 37: Make std::threads unjionable on all paths</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item38.html">Item 38: Be aware of varying thread handle destructor behavior</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item39.html">Item 39: Consider void futures for one-shot event communication</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item40.html">Item 40: Use std::atomic for concurrency, volatile for special memory</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 8. Tweaks</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../8.Tweaks/item41.html">Item 41: Consider pass by value for copyable parameters that are cheap to move and always copied</a></li><li class="chapter-item expanded "><a href="../8.Tweaks/item42.html">Item 42: Consider emplacement instead of insertion</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Effective Modern C++</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h2 id="条款十二使用override声明重写函数"><a class="header" href="#条款十二使用override声明重写函数">条款十二：使用<code>override</code>声明重写函数</a></h2>
+<p><strong>Item 12: Declare overriding functions <code>override</code></strong></p>
+<p>在C++面向对象的世界里，涉及的概念有类，继承，虚函数。这个世界最基本的概念是派生类的虚函数<strong>重写</strong>基类同名函数。令人遗憾的是虚函数重写可能一不小心就错了。似乎这部分语言的设计理念是不仅仅要遵守墨菲定律，还应该尊重它。</p>
+<p>虽然“重写（<em>overriding</em>）”听起来像“重载（<em>overloading</em>）”，然而两者完全不相关，所以让我澄清一下，正是虚函数重写机制的存在，才使我们可以通过基类的接口调用派生类的成员函数：</p>
+<pre><code class="language-cpp">class Base {
+public:
+    virtual void doWork();          //基类虚函数
+    …
+};
+
+class Derived: public Base {
+public:
+    virtual void doWork();          //重写Base::doWork
+    …                               //（这里“virtual”是可以省略的）
+}; 
+
+std::unique_ptr&lt;Base&gt; upb =         //创建基类指针指向派生类对象
+    std::make_unique&lt;Derived&gt;();    //关于std：：make_unique
+…                                   //请参见Item21
+
+    
+upb-&gt;doWork();                      //通过基类指针调用doWork，
+                                    //实际上是派生类的doWork
+                                    //函数被调用
+</code></pre>
+<p>要想重写一个函数，必须满足下列要求：</p>
+<ul>
+<li>基类函数必须是<code>virtual</code></li>
+<li>基类和派生类函数名必须完全一样（除非是析构函数)</li>
+<li>基类和派生类函数形参类型必须完全一样</li>
+<li>基类和派生类函数常量性<code>const</code>ness必须完全一样</li>
+<li>基类和派生类函数的返回值和异常说明（<em>exception specifications</em>）必须兼容</li>
+</ul>
+<p>除了这些C++98就存在的约束外，C++11又添加了一个：</p>
+<ul>
+<li>函数的引用限定符（<em>reference qualifiers</em>）必须完全一样。成员函数的引用限定符是C++11很少抛头露脸的特性，所以如果你从没听过它无需惊讶。它可以限定成员函数只能用于左值或者右值。成员函数不需要<code>virtual</code>也能使用它们：</li>
+</ul>
+<pre><code class="language-cpp">class Widget {
+public:
+    …
+    void doWork() &amp;;    //只有*this为左值的时候才能被调用
+    void doWork() &amp;&amp;;   //只有*this为右值的时候才能被调用
+}; 
+…
+Widget makeWidget();    //工厂函数（返回右值）
+Widget w;               //普通对象（左值）
+…
+w.doWork();             //调用被左值引用限定修饰的Widget::doWork版本
+                        //（即Widget::doWork &amp;）
+makeWidget().doWork();  //调用被右值引用限定修饰的Widget::doWork版本
+                        //（即Widget::doWork &amp;&amp;）
+</code></pre>
+<p>后面我还会提到引用限定符修饰成员函数，但是现在，只需要记住如果基类的虚函数有引用限定符，派生类的重写就必须具有相同的引用限定符。如果没有，那么新声明的函数还是属于派生类，但是不会重写父类的任何函数。</p>
+<p>这么多的重写需求意味着哪怕一个小小的错误也会造成巨大的不同。代码中包含重写错误通常是有效的，但它的意图不是你想要的。因此你不能指望当你犯错时编译器能通知你。比如，下面的代码是完全合法的，咋一看，还很有道理，但是它没有任何虚函数重写——没有一个派生类函数联系到基类函数。你能识别每种情况的错误吗，换句话说，为什么派生类函数没有重写同名基类函数？</p>
+<pre><code class="language-cpp">class Base {
+public:
+    virtual void mf1() const;
+    virtual void mf2(int x);
+    virtual void mf3() &amp;;
+    void mf4() const;
+};
+
+class Derived: public Base {
+public:
+    virtual void mf1();
+    virtual void mf2(unsigned int x);
+    virtual void mf3() &amp;&amp;;
+    void mf4() const;
+};
+</code></pre>
+<p>需要一点帮助吗？</p>
+<ul>
+<li>
+<p><code>mf1</code>在<code>Base</code>基类声明为<code>const</code>，但是<code>Derived</code>派生类没有这个常量限定符</p>
+</li>
+<li>
+<p><code>mf2</code>在<code>Base</code>基类声明为接受一个<code>int</code>参数，但是在<code>Derived</code>派生类声明为接受<code>unsigned int</code>参数</p>
+</li>
+<li>
+<p><code>mf3</code>在<code>Base</code>基类声明为左值引用限定，但是在<code>Derived</code>派生类声明为右值引用限定</p>
+</li>
+<li>
+<p><code>mf4</code>在<code>Base</code>基类没有声明为<code>virtual</code>虚函数</p>
+</li>
+</ul>
+<p>你可能会想，“哎呀，实际操作的时候，这些warnings都能被编译器探测到，所以我不需要担心。”你说的可能对，也可能不对。就我目前检查的两款编译器来说，这些代码编译时没有任何warnings，即使我开启了输出所有warnings。（其他编译器可能会为这些问题的部分输出warnings，但不是全部。）</p>
+<p>由于正确声明派生类的重写函数很重要，但很容易出错，C++11提供一个方法让你可以显式地指定一个派生类函数是基类版本的重写：将它声明为<code>override</code>。还是上面那个例子，我们可以这样做：</p>
+<pre><code class="language-cpp">class Derived: public Base {
+public:
+    virtual void mf1() override;
+    virtual void mf2(unsigned int x) override;
+    virtual void mf3() &amp;&amp; override;
+    virtual void mf4() const override;
+};
+</code></pre>
+<p>代码不能编译，当然了，因为这样写的时候，编译器会抱怨所有与重写有关的问题。这也是你想要的，以及为什么要在所有重写函数后面加上<code>override</code>。</p>
+<p>使用<code>override</code>的代码编译时看起来就像这样（假设我们的目的是<code>Derived</code>派生类中的所有函数重写<code>Base</code>基类的相应虚函数）:</p>
+<pre><code class="language-cpp">class Base {
+public:
+    virtual void mf1() const;
+    virtual void mf2(int x);
+    virtual void mf3() &amp;;
+    virtual void mf4() const;
+};
+
+class Derived: public Base {
+public:
+    virtual void mf1() const override;
+    virtual void mf2(int x) override;
+    virtual void mf3() &amp; override;
+    void mf4() const override;          //可以添加virtual，但不是必要
+}; 
+</code></pre>
+<p>注意在这个例子中<code>mf4</code>有别于之前，它在<code>Base</code>中的声明有<code>virtual</code>修饰，所以能正常工作。大多数和重写有关的错误都是在派生类引发的，但也可能是基类的不正确导致。</p>
+<p>比起让编译器（译注：通过warnings）告诉你想重写的而实际没有重写，不如给你的派生类重写函数全都加上<code>override</code>。如果你考虑修改修改基类虚函数的函数签名，<code>override</code>还可以帮你评估后果。如果派生类全都用上<code>override</code>，你可以只改变基类函数签名，重编译系统，再看看你造成了多大的问题（即，多少派生类不能通过编译），然后决定是否值得如此麻烦更改函数签名。没有<code>override</code>，你只能寄希望于完善的单元测试，因为，正如我们所见，派生类虚函数本想重写基类，但是没有，编译器也没有探测并发出诊断信息。</p>
+<p>C++既有很多关键字，C++11引入了两个上下文关键字（<em>contextual keywords</em>），<code>override</code>和<code>final</code>（向虚函数添加<code>final</code>可以防止派生类重写。<code>final</code>也能用于类，这时这个类不能用作基类）。这两个关键字的特点是它们是保留的，它们只是位于特定上下文才被视为关键字。对于<code>override</code>，它只在成员函数声明结尾处才被视为关键字。这意味着如果你以前写的代码里面已经用过<strong>override</strong>这个名字，那么换到C++11标准你也无需修改代码：</p>
+<pre><code class="language-cpp">class Warning {         //C++98潜在的传统类代码
+public:
+    …
+    void override();    //C++98和C++11都合法（且含义相同）
+    …
+};
+</code></pre>
+<p>关于<code>override</code>想说的就这么多，但对于成员函数引用限定（<em>reference qualifiers</em>）还有一些内容。我之前承诺我会在后面提供更多的关于它们的资料，现在就是&quot;后面&quot;了。</p>
+<p>如果我们想写一个函数只接受左值实参，我们声明一个non-<code>const</code>左值引用形参：</p>
+<pre><code class="language-cpp">void doSomething(Widget&amp; w);    //只接受左值Widget对象
+</code></pre>
+<p>如果我们想写一个函数只接受右值实参，我们声明一个右值引用形参：</p>
+<pre><code class="language-cpp">void doSomething(Widget&amp;&amp; w);   //只接受右值Widget对象
+</code></pre>
+<p>成员函数的引用限定可以很容易的区分一个成员函数被哪个对象（即<code>*this</code>）调用。它和在成员函数声明尾部添加一个<code>const</code>很相似，暗示了调用这个成员函数的对象（即<code>*this</code>）是<code>const</code>的。</p>
+<p>对成员函数添加引用限定不常见，但是可以见。举个例子，假设我们的<code>Widget</code>类有一个<code>std::vector</code>数据成员，我们提供一个访问函数让客户端可以直接访问它：</p>
+<pre><code class="language-cpp">class Widget {
+public:
+    using DataType = std::vector&lt;double&gt;;   //“using”的信息参见Item9
+    …
+    DataType&amp; data() { return values; }
+    …
+private:
+    DataType values;
+};
+</code></pre>
+<p>这是最具封装性的设计，只给外界保留一线光。但先把这个放一边，思考一下下面的客户端代码：</p>
+<pre><code class="language-cpp">Widget w;
+…
+auto vals1 = w.data();  //拷贝w.values到vals1
+</code></pre>
+<p><code>Widget::data</code>函数的返回值是一个左值引用（准确的说是<code>std::vector&lt;double&gt;&amp;</code>）,
+因为左值引用是左值，所以<code>vals1</code>是从左值初始化的。因此<code>vals1</code>由<code>w.values</code>拷贝构造而得，就像注释说的那样。</p>
+<p>现在假设我们有一个创建<code>Widget</code>s的工厂函数，</p>
+<pre><code class="language-cpp">Widget makeWidget();
+</code></pre>
+<p>我们想用<code>makeWidget</code>返回的<code>Widget</code>里的<code>std::vector</code>初始化一个变量：</p>
+<pre><code class="language-cpp">auto vals2 = makeWidget().data();   //拷贝Widget里面的值到vals2
+</code></pre>
+<p>再说一次，<code>Widgets::data</code>返回的是左值引用，还有，左值引用是左值。所以，我们的对象（<code>vals2</code>）得从<code>Widget</code>里的<code>values</code>拷贝构造。这一次，<code>Widget</code>是<code>makeWidget</code>返回的临时对象（即右值），所以将其中的<code>std::vector</code>进行拷贝纯属浪费。最好是移动，但是因为<code>data</code>返回左值引用，C++的规则要求编译器不得不生成一个拷贝。（这其中有一些优化空间，被称作“as if rule”，但是你依赖编译器使用这个优化规则就有点傻。）（译注：“as if rule”简单来说就是在不影响程序的“外在表现”情况下做一些改变）</p>
+<p>我们需要的是指明当<code>data</code>被右值<code>Widget</code>对象调用的时候结果也应该是一个右值。现在就可以使用引用限定，为左值<code>Widget</code>和右值<code>Widget</code>写一个<code>data</code>的重载函数来达成这一目的：</p>
+<pre><code class="language-cpp">class Widget {
+public:
+    using DataType = std::vector&lt;double&gt;;
+    …
+    DataType&amp; data() &amp;              //对于左值Widgets,
+    { return values; }              //返回左值
+    
+    DataType data() &amp;&amp;              //对于右值Widgets,
+    { return std::move(values); }   //返回右值
+    …
+
+private:
+    DataType values;
+};
+</code></pre>
+<p>注意<code>data</code>重载的返回类型是不同的，左值引用重载版本返回一个左值引用（即一个左值），右值引用重载返回一个临时对象（即一个右值）。这意味着现在客户端的行为和我们的期望相符了：</p>
+<pre><code class="language-cpp">auto vals1 = w.data();              //调用左值重载版本的Widget::data，
+                                    //拷贝构造vals1
+auto vals2 = makeWidget().data();   //调用右值重载版本的Widget::data, 
+                                    //移动构造vals2
+</code></pre>
+<p>这真的很棒，但别被这结尾的暖光照耀分心以致忘记了该条款的中心。这个条款的中心是只要你在派生类声明想要重写基类虚函数的函数，就加上<code>override</code>。</p>
+<p><strong>请记住：</strong></p>
+<ul>
+<li>为重写函数加上<code>override</code></li>
+<li>成员函数引用限定让我们可以区别对待左值对象和右值对象（即<code>*this</code>)</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../3.MovingToModernCpp/item11.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="../3.MovingToModernCpp/item13.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../3.MovingToModernCpp/item11.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../3.MovingToModernCpp/item13.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>

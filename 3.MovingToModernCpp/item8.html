@@ -1,0 +1,278 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Item 8: Prefer nullptr to 0 or NULL - Effective Modern C++</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <!-- MathJax -->
+        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../Introduction.html">Introduction</a></li><li class="chapter-item expanded "><div>Chapter 1. Deducing Types</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../1.DeducingTypes/item1.html">Item 1: Understanding template type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item2.html">Item 2: Understand auto type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item3.html">Item 3: Understand decltype</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item4.html">Item 4: Know how to view deduced types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 2. auto</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../2.Auto/item5.html">Item 5: Prefer auto to explicit type declarations</a></li><li class="chapter-item expanded "><a href="../2.Auto/item6.html">Item 6: Use the explicitly typed initializer idiom when auto deduces undesired types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 3. Moving to Modern C++</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item7.html">Item 7: Distinguish between () and {} when creating objects</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item8.html" class="active">Item 8: Prefer nullptr to 0 or NULL</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item9.html">Item 9: Prefer alias declarations to typedefs</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item10.html">Item 10: Prefer scoped enums to unscoped enums</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item11.html">Item 11: Prefer deleted functions to private undefined ones</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item12.html">Item 12: Declare overriding functions override</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item13.html">Item 13: Prefer const_iterators to iterators</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item14.html">Item 14: Declare functions noexcept if they won't emit exceptions</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item15.html">Item 15: Use constexpr whenever possible</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item16.html">Item 16: Make const member functions thread safe</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item17.html">Item 17: Understand special member funciton generation</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 4. Smart Pointer</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../4.SmartPointers/item18.html">Item 18: Use std::unique_ptr for exclusive-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item19.html">Item 19: Use std::shared_ptr for shared-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item20.html">Item 20: Use std::weak_ptr for std::shared_ptr like pointers that can dangle</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item21.html">Item 21: Prefer std::make_unique and std::make_shared to direct use of new</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item22.html">Item 22: When using the Pimpl Idiom, define special member functions in the implementation file</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 5. Rvalue References, Move Semantics, and Perfect Forwarding</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item23.html">Item 23: Understand std::move and std::forward</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item24.html">Item 24: Distinguish universal references from rvalue references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item25.html">Item 25: Use std::move on rvalue references, std::forward on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item26.html">Item 26: Avoid overloading on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item27.html">Item 27: Familiarize yourself with alternatives to overaloading on univeral references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item28.html">Item 28: Understand reference collapsing</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item29.html">Item 29: Assume that move operations are not present not cheap, and not used</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item30.html">Item 30: Familiarize yourself with perfect forwarding failure cases</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 6. Lambda Expressions</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item31.html">Item 31: Avoid default capture modes</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item32.html">Item 32: Use init capture to move objects into closures</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item33.html">Item 33: Use decltype on auto&&parameters to std::forward them</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item34.html">Item 34: Prefer lambdas to std::bind</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 7. The Concurrency API</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/Item35.html">Item 35: Prefer task-based programming to thread-based</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item36.html">Item 36: Specify std::launch::async if asynchronicity is essential</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item37.html">Item 37: Make std::threads unjionable on all paths</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item38.html">Item 38: Be aware of varying thread handle destructor behavior</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item39.html">Item 39: Consider void futures for one-shot event communication</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item40.html">Item 40: Use std::atomic for concurrency, volatile for special memory</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 8. Tweaks</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../8.Tweaks/item41.html">Item 41: Consider pass by value for copyable parameters that are cheap to move and always copied</a></li><li class="chapter-item expanded "><a href="../8.Tweaks/item42.html">Item 42: Consider emplacement instead of insertion</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Effective Modern C++</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h2 id="条款八优先考虑nullptr而非0和null"><a class="header" href="#条款八优先考虑nullptr而非0和null">条款八：优先考虑<code>nullptr</code>而非<code>0</code>和<code>NULL</code></a></h2>
+<p><strong>Item 8: Prefer <code>nullptr</code> to <code>0</code> and <code>NULL</code></strong></p>
+<p>你看这样对不对：字面值<code>0</code>是一个<code>int</code>不是指针。如果C++发现在当前上下文只能使用指针，它会很不情愿的把<code>0</code>解释为指针，但是那是最后的退路。一般来说C++的解析策略是把<code>0</code>看做<code>int</code>而不是指针。</p>
+<p>实际上，<code>NULL</code>也是这样的。但在<code>NULL</code>的实现细节有些不确定因素，因为实现被允许给<code>NULL</code>一个除了<code>int</code>之外的整型类型（比如<code>long</code>）。这不常见，但也算不上问题所在。这里的问题不是<code>NULL</code>没有一个确定的类型，而是<code>0</code>和<code>NULL</code>都不是指针类型。</p>
+<p>在C++98中，对指针类型和整型进行重载意味着可能导致奇怪的事情。如果给下面的重载函数传递<code>0</code>或<code>NULL</code>，它们绝不会调用指针版本的重载函数：</p>
+<pre><code class="language-cpp">void f(int);        //三个f的重载函数
+void f(bool);
+void f(void*);
+
+f(0);               //调用f(int)而不是f(void*)
+
+f(NULL);            //可能不会被编译，一般来说调用f(int)，
+                    //绝对不会调用f(void*)
+</code></pre>
+<p>而<code>f(NULL)</code>的不确定行为是由<code>NULL</code>的实现不同造成的。如果<code>NULL</code>被定义为<code>0L</code>（指的是<code>0</code>为<code>long</code>类型），这个调用就具有二义性，因为从<code>long</code>到<code>int</code>的转换或从<code>long</code>到<code>bool</code>的转换或<code>0L</code>到<code>void*</code>的转换都同样好。有趣的是源代码<strong>表现出</strong>的意思（“我使用空指针<code>NULL</code>调用<code>f</code>”）和<strong>实际表达出</strong>的意思（“我是用整型数据而不是空指针调用<code>f</code>”）是相矛盾的。这种违反直觉的行为导致C++98程序员都将避开同时重载指针和整型作为编程准则（译注：请务必注意结合上下文使用这条规则）。在C++11中这个编程准则也有效，因为尽管我这个条款建议使用<code>nullptr</code>，可能很多程序员还是会继续使用<code>0</code>或<code>NULL</code>，哪怕<code>nullptr</code>是更好的选择。</p>
+<p><code>nullptr</code>的优点是它不是整型。老实说它也不是一个指针类型，但是你可以把它认为是<strong>所有</strong>类型的指针。<code>nullptr</code>的真正类型是<code>std::nullptr_t</code>，在一个完美的循环定义以后，<code>std::nullptr_t</code>又被定义为<code>nullptr</code>。<code>std::nullptr_t</code>可以隐式转换为指向任何内置类型的指针，这也是为什么<code>nullptr</code>表现得像所有类型的指针。</p>
+<p>使用<code>nullptr</code>调用<code>f</code>将会调用<code>void*</code>版本的重载函数，因为<code>nullptr</code>不能被视作任何整型：</p>
+<pre><code class="language-cpp">f(nullptr);         //调用重载函数f的f(void*)版本
+</code></pre>
+<p>使用<code>nullptr</code>代替<code>0</code>和<code>NULL</code>可以避开了那些令人奇怪的函数重载决议，这不是它的唯一优势。它也可以使代码表意明确，尤其是当涉及到与<code>auto</code>声明的变量一起使用时。举个例子，假如你在一个代码库中遇到了这样的代码：</p>
+<pre><code class="language-cpp">auto result = findRecord( /* arguments */ );
+if (result == 0) {
+    …
+} 
+</code></pre>
+<p>如果你不知道<code>findRecord</code>返回了什么（或者不能轻易的找出），那么你就不太清楚到底<code>result</code>是一个指针类型还是一个整型。毕竟，<code>0</code>（用来测试<code>result</code>的值的那个）也可以像我们之前讨论的那样被解析。但是换一种假设如果你看到这样的代码：</p>
+<pre><code class="language-cpp">auto result = findRecord( /* arguments */ );
+
+if (result == nullptr) {  
+    …
+}
+</code></pre>
+<p>这就没有任何歧义：<code>result</code>的结果一定是指针类型。</p>
+<p>当模板出现时<code>nullptr</code>就更有用了。假如你有一些函数只能被合适的已锁互斥量调用。每个函数都有一个不同类型的指针：</p>
+<pre><code class="language-cpp">int    f1(std::shared_ptr&lt;Widget&gt; spw);     //只能被合适的
+double f2(std::unique_ptr&lt;Widget&gt; upw);     //已锁互斥量
+bool   f3(Widget* pw);                      //调用
+</code></pre>
+<p>如果这样传递空指针：</p>
+<pre><code class="language-cpp">std::mutex f1m, f2m, f3m;       //用于f1，f2，f3函数的互斥量
+
+using MuxGuard =                //C++11的typedef，参见Item9
+    std::lock_guard&lt;std::mutex&gt;;
+…
+
+{  
+    MuxGuard g(f1m);            //为f1m上锁
+    auto result = f1(0);        //向f1传递0作为空指针
+}                               //解锁 
+…
+{  
+    MuxGuard g(f2m);            //为f2m上锁
+    auto result = f2(NULL);     //向f2传递NULL作为空指针
+}                               //解锁 
+…
+{
+    MuxGuard g(f3m);            //为f3m上锁
+    auto result = f3(nullptr);  //向f3传递nullptr作为空指针
+}                               //解锁 
+</code></pre>
+<p>令人遗憾前两个调用没有使用<code>nullptr</code>，但是代码可以正常运行，这也许对一些东西有用。但是重复的调用代码——为互斥量上锁，调用函数，解锁互斥量——更令人遗憾。它让人很烦。模板就是被设计于减少重复代码，所以让我们模板化这个调用流程：</p>
+<pre><code class="language-cpp">template&lt;typename FuncType,
+         typename MuxType,
+         typename PtrType&gt;
+auto lockAndCall(FuncType func,                 
+                 MuxType&amp; mutex,                 
+                 PtrType ptr) -&gt; decltype(func(ptr))
+{
+    MuxGuard g(mutex);  
+    return func(ptr); 
+}
+</code></pre>
+<p>如果你对函数返回类型（<code>auto ... -&gt; decltype(func(ptr))</code>）感到困惑不解，<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item3.md">Item3</a>可以帮助你。在C++14中代码的返回类型还可以被简化为<code>decltype(auto)</code>：</p>
+<pre><code class="language-cpp">template&lt;typename FuncType,
+         typename MuxType,
+         typename PtrType&gt;
+decltype(auto) lockAndCall(FuncType func,       //C++14
+                           MuxType&amp; mutex,
+                           PtrType ptr)
+{ 
+    MuxGuard g(mutex);  
+    return func(ptr); 
+}
+</code></pre>
+<p>可以写这样的代码调用<code>lockAndCall</code>模板（两个版本都可）：</p>
+<pre><code class="language-cpp">auto result1 = lockAndCall(f1, f1m, 0);         //错误！
+...
+auto result2 = lockAndCall(f2, f2m, NULL);      //错误！
+...
+auto result3 = lockAndCall(f3, f3m, nullptr);   //没问题
+</code></pre>
+<p>代码虽然可以这样写，但是就像注释中说的，前两个情况不能通过编译。在第一个调用中存在的问题是当<code>0</code>被传递给<code>lockAndCall</code>模板，模板类型推导会尝试去推导实参类型，<code>0</code>的类型总是<code>int</code>，所以这就是这次调用<code>lockAndCall</code>实例化出的<code>ptr</code>的类型。不幸的是，这意味着<code>lockAndCall</code>中<code>func</code>会被<code>int</code>类型的实参调用，这与<code>f1</code>期待的<code>std::shared_ptr&lt;Widget&gt;</code>形参不符。传递<code>0</code>给<code>lockAndCall</code>本来想表示空指针，结果<code>f1</code>得到的是和它相差十万八千里的<code>int</code>。把<code>int</code>类型看做<code>std::shared_ptr&lt;Widget&gt;</code>类型给<code>f1</code>自然是一个类型错误。在模板<code>lockAndCall</code>中使用<code>0</code>之所以失败是因为在模板中，传给的是<code>int</code>但实际上函数期待的是一个<code>std::shared_ptr&lt;Widget&gt;</code>。</p>
+<p>第二个使用<code>NULL</code>调用的分析也是一样的。当<code>NULL</code>被传递给<code>lockAndCall</code>，形参<code>ptr</code>被推导为整型（译注：由于依赖于具体实现所以不一定是整数类型，所以用整型泛指<code>int</code>，<code>long</code>等类型），然后当<code>ptr</code>——一个<code>int</code>或者类似<code>int</code>的类型——传递给<code>f2</code>的时候就会出现类型错误，<code>f2</code>期待的是<code>std::unique_ptr&lt;Widget&gt;</code>。</p>
+<p>然而，使用<code>nullptr</code>是调用没什么问题。当<code>nullptr</code>传给<code>lockAndCall</code>时，<code>ptr</code>被推导为<code>std::nullptr_t</code>。当<code>ptr</code>被传递给<code>f3</code>的时候，隐式转换使<code>std::nullptr_t</code>转换为<code>Widget</code>，因为<code>std::nullptr_t</code>可以隐式转换为任何指针类型。</p>
+<p>模板类型推导将<code>0</code>和<code>NULL</code>推导为一个错误的类型（即它们的实际类型，而不是作为空指针的隐含意义），这就导致在当你想要一个空指针时，它们的替代品<code>nullptr</code>很吸引人。使用<code>nullptr</code>，模板不会有什么特殊的转换。另外，使用<code>nullptr</code>不会让你受到同重载决议特殊对待<code>0</code>和<code>NULL</code>一样的待遇。当你想用一个空指针，使用<code>nullptr</code>，不用<code>0</code>或者<code>NULL</code>。</p>
+<p><strong>记住</strong></p>
+<ul>
+<li>优先考虑<code>nullptr</code>而非<code>0</code>和<code>NULL</code></li>
+<li>避免重载指针和整型</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../3.MovingToModernCpp/item7.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="../3.MovingToModernCpp/item9.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../3.MovingToModernCpp/item7.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../3.MovingToModernCpp/item9.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>

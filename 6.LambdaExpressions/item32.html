@@ -1,0 +1,299 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Item 32: Use init capture to move objects into closures - Effective Modern C++</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <!-- MathJax -->
+        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../Introduction.html">Introduction</a></li><li class="chapter-item expanded "><div>Chapter 1. Deducing Types</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../1.DeducingTypes/item1.html">Item 1: Understanding template type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item2.html">Item 2: Understand auto type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item3.html">Item 3: Understand decltype</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item4.html">Item 4: Know how to view deduced types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 2. auto</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../2.Auto/item5.html">Item 5: Prefer auto to explicit type declarations</a></li><li class="chapter-item expanded "><a href="../2.Auto/item6.html">Item 6: Use the explicitly typed initializer idiom when auto deduces undesired types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 3. Moving to Modern C++</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item7.html">Item 7: Distinguish between () and {} when creating objects</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item8.html">Item 8: Prefer nullptr to 0 or NULL</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item9.html">Item 9: Prefer alias declarations to typedefs</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item10.html">Item 10: Prefer scoped enums to unscoped enums</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item11.html">Item 11: Prefer deleted functions to private undefined ones</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item12.html">Item 12: Declare overriding functions override</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item13.html">Item 13: Prefer const_iterators to iterators</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item14.html">Item 14: Declare functions noexcept if they won't emit exceptions</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item15.html">Item 15: Use constexpr whenever possible</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item16.html">Item 16: Make const member functions thread safe</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item17.html">Item 17: Understand special member funciton generation</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 4. Smart Pointer</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../4.SmartPointers/item18.html">Item 18: Use std::unique_ptr for exclusive-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item19.html">Item 19: Use std::shared_ptr for shared-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item20.html">Item 20: Use std::weak_ptr for std::shared_ptr like pointers that can dangle</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item21.html">Item 21: Prefer std::make_unique and std::make_shared to direct use of new</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item22.html">Item 22: When using the Pimpl Idiom, define special member functions in the implementation file</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 5. Rvalue References, Move Semantics, and Perfect Forwarding</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item23.html">Item 23: Understand std::move and std::forward</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item24.html">Item 24: Distinguish universal references from rvalue references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item25.html">Item 25: Use std::move on rvalue references, std::forward on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item26.html">Item 26: Avoid overloading on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item27.html">Item 27: Familiarize yourself with alternatives to overaloading on univeral references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item28.html">Item 28: Understand reference collapsing</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item29.html">Item 29: Assume that move operations are not present not cheap, and not used</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item30.html">Item 30: Familiarize yourself with perfect forwarding failure cases</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 6. Lambda Expressions</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item31.html">Item 31: Avoid default capture modes</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item32.html" class="active">Item 32: Use init capture to move objects into closures</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item33.html">Item 33: Use decltype on auto&&parameters to std::forward them</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item34.html">Item 34: Prefer lambdas to std::bind</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 7. The Concurrency API</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/Item35.html">Item 35: Prefer task-based programming to thread-based</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item36.html">Item 36: Specify std::launch::async if asynchronicity is essential</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item37.html">Item 37: Make std::threads unjionable on all paths</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item38.html">Item 38: Be aware of varying thread handle destructor behavior</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item39.html">Item 39: Consider void futures for one-shot event communication</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item40.html">Item 40: Use std::atomic for concurrency, volatile for special memory</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 8. Tweaks</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../8.Tweaks/item41.html">Item 41: Consider pass by value for copyable parameters that are cheap to move and always copied</a></li><li class="chapter-item expanded "><a href="../8.Tweaks/item42.html">Item 42: Consider emplacement instead of insertion</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Effective Modern C++</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h2 id="条款三十二使用初始化捕获来移动对象到闭包中"><a class="header" href="#条款三十二使用初始化捕获来移动对象到闭包中">条款三十二：使用初始化捕获来移动对象到闭包中</a></h2>
+<p><strong>Item 32: Use init capture to move objects into closures</strong></p>
+<p>在某些场景下，按值捕获和按引用捕获都不是你所想要的。如果你有一个只能被移动的对象（例如<code>std::unique_ptr</code>或<code>std::future</code>）要进入到闭包里，使用C++11是无法实现的。如果你要复制的对象复制开销非常高，但移动的成本却不高（例如标准库中的大多数容器），并且你希望的是宁愿移动该对象到闭包而不是复制它。然而C++11却无法实现这一目标。</p>
+<p>但那是C++11的时候。到了C++14就另一回事了，它能支持将对象移动到闭包中。如果你的编译器兼容支持C++14，那么请愉快地阅读下去。如果你仍然在使用仅支持C++11的编译器，也请愉快阅读，因为在C++11中有很多方法可以实现近似的移动捕获。</p>
+<p>缺少移动捕获被认为是C++11的一个缺点，直接的补救措施是将该特性添加到C++14中，但标准化委员会选择了另一种方法。他们引入了一种新的捕获机制，该机制非常灵活，移动捕获是它可以执行的技术之一。新功能被称作<strong>初始化捕获</strong>（<em>init capture</em>），C++11捕获形式能做的所有事它几乎可以做，甚至能完成更多功能。你不能用初始化捕获表达的东西是默认捕获模式，但<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/6.LambdaExpressions/item31.md">Item31</a>说明提醒了你无论如何都应该远离默认捕获模式。（在C++11捕获模式所能覆盖的场景里，初始化捕获的语法有点不大方便。因此在C++11的捕获模式能完成所需功能的情况下，使用它是完全合理的）。</p>
+<p>使用初始化捕获可以让你指定：</p>
+<ol>
+<li>从lambda生成的闭包类中的<strong>数据成员名称</strong>；</li>
+<li>初始化该成员的<strong>表达式</strong>；</li>
+</ol>
+<p>这是使用初始化捕获将<code>std::unique_ptr</code>移动到闭包中的方法：</p>
+<pre><code class="language-c++">class Widget {                          //一些有用的类型
+public:
+    …
+    bool isValidated() const;
+    bool isProcessed() const;
+    bool isArchived() const;
+private:
+    …
+};
+
+auto pw = std::make_unique&lt;Widget&gt;();   //创建Widget；使用std::make_unique
+                                        //的有关信息参见条款21
+
+…                                       //设置*pw
+
+auto func = [pw = std::move(pw)]        //使用std::move(pw)初始化闭包数据成员
+            { return pw-&gt;isValidated()
+                     &amp;&amp; pw-&gt;isArchived(); };
+</code></pre>
+<p>高亮的文本包含了初始化捕获的使用（译者注：高亮了“<code>pw = std::move(pw)</code>”），“<code>=</code>”的左侧是指定的闭包类中数据成员的名称，右侧则是初始化表达式。有趣的是，“<code>=</code>”左侧的作用域不同于右侧的作用域。左侧的作用域是闭包类，右侧的作用域和<em>lambda</em>定义所在的作用域相同。在上面的示例中，“<code>=</code>”左侧的名称<code>pw</code>表示闭包类中的数据成员，而右侧的名称<code>pw</code>表示在<em>lambda</em>上方声明的对象，即由调用<code>std::make_unique</code>去初始化的变量。因此，“<code>pw = std::move(pw)</code>”的意思是“在闭包中创建一个数据成员<code>pw</code>，并使用将<code>std::move</code>应用于局部变量<code>pw</code>的结果来初始化该数据成员”。</p>
+<p>一般来说，<em>lambda</em>主体中的代码在闭包类的作用域内，因此<code>pw</code>的使用指的是闭包类的数据成员。</p>
+<p>在此示例中，注释“设置<code>*pw</code>”表示在由<code>std::make_unique</code>创建<code>Widget</code>之后，<em>lambda</em>捕获到指向<code>Widget</code>的<code>std::unique_ptr</code>之前，该<code>Widget</code>以某种方式进行了修改。如果不需要这样的设置，即如果<code>std::make_unique</code>创建的<code>Widget</code>处于适合被<em>lambda</em>捕获的状态，则不需要局部变量<code>pw</code>，因为闭包类的数据成员可以通过<code>std::make_unique</code>直接初始化：</p>
+<pre><code class="language-c++">auto func = [pw = std::make_unique&lt;Widget&gt;()]   //使用调用make_unique得到的结果
+            { return pw-&gt;isValidated()          //初始化闭包数据成员
+                     &amp;&amp; pw-&gt;isArchived(); };
+</code></pre>
+<p>这清楚地表明了，这个C++14的捕获概念是从C++11发展出来的的，在C++11中，无法捕获表达式的结果。 因此，初始化捕获的另一个名称是<strong>通用<em>lambda</em>捕获</strong>（<em>generalized lambda capture</em>）。</p>
+<p>但是，如果你使用的一个或多个编译器不支持C++14的初始捕获怎么办？ 如何使用不支持移动捕获的语言完成移动捕获？</p>
+<p>请记住，<em>lambda</em>表达式只是生成一个类和创建该类型对象的一种简单方式而已。没什么事是你用<em>lambda</em>可以做而不能自己手动实现的。 那么我们刚刚看到的C++14的示例代码可以用C++11重新编写，如下所示：</p>
+<pre><code class="language-c++">class IsValAndArch {                            //“is validated and archived”
+public:
+    using DataType = std::unique_ptr&lt;Widget&gt;;
+    
+    explicit IsValAndArch(DataType&amp;&amp; ptr)       //条款25解释了std::move的使用
+    : pw(std::move(ptr)) {}
+    
+    bool operator()() const
+    { return pw-&gt;isValidated() &amp;&amp; pw-&gt;isArchived(); }
+    
+private:
+    DataType pw;
+};
+
+auto func = IsValAndArch(std::make_unique&lt;Widget&gt;());
+</code></pre>
+<p>这个代码量比<em>lambda</em>表达式要多，但这并不难改变这样一个事实，即如果你希望使用一个C++11的类来支持其数据成员的移动初始化，那么你唯一要做的就是在键盘上多花点时间。</p>
+<p>如果你坚持要使用<em>lambda</em>（并且考虑到它们的便利性，你可能会这样做），移动捕获可以在C++11中这样模拟：</p>
+<ol>
+<li><strong>将要捕获的对象移动到由<code>std::bind</code>产生的函数对象中；</strong></li>
+<li><strong>将“被捕获的”对象的引用赋予给<em>lambda</em>。</strong></li>
+</ol>
+<p>如果你熟悉<code>std::bind</code>，那么代码其实非常简单。如果你不熟悉<code>std::bind</code>，那可能需要花费一些时间来习惯它，但这无疑是值得的。</p>
+<p>假设你要创建一个本地的<code>std::vector</code>，在其中放入一组适当的值，然后将其移动到闭包中。在C++14中，这很容易实现：</p>
+<pre><code class="language-c++">std::vector&lt;double&gt; data;               //要移动进闭包的对象
+
+…                                       //填充data
+
+auto func = [data = std::move(data)]    //C++14初始化捕获
+            { /*使用data*/ };
+</code></pre>
+<p>我已经对该代码的关键部分进行了高亮：要移动的对象的类型（<code>std::vector&lt;double&gt;</code>），该对象的名称（<code>data</code>）以及用于初始化捕获的初始化表达式（<code>std::move(data)</code>）。C++11的等效代码如下，其中我强调了相同的关键事项：</p>
+<pre><code class="language-c++">std::vector&lt;double&gt; data;               //同上
+
+…                                       //同上
+
+auto func =
+    std::bind(                              //C++11模拟初始化捕获
+        [](const std::vector&lt;double&gt;&amp; data) //译者注：本行高亮
+        { /*使用data*/ },
+        std::move(data)                     //译者注：本行高亮
+    );
+</code></pre>
+<p>如<em>lambda</em>表达式一样，<code>std::bind</code>产生函数对象。我将由<code>std::bind</code>返回的函数对象称为<strong>bind对象</strong>（<em>bind objects</em>）。<code>std::bind</code>的第一个实参是可调用对象，后续实参表示要传递给该对象的值。</p>
+<p>一个bind对象包含了传递给<code>std::bind</code>的所有实参的副本。对于每个左值实参，bind对象中的对应对象都是复制构造的。对于每个右值，它都是移动构造的。在此示例中，第二个实参是一个右值（<code>std::move</code>的结果，请参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item23.md">Item23</a>），因此将<code>data</code>移动构造到绑定对象中。这种移动构造是模仿移动捕获的关键，因为将右值移动到bind对象是我们解决无法将右值移动到C++11闭包中的方法。</p>
+<p>当“调用”bind对象（即调用其函数调用运算符）时，其存储的实参将传递到最初传递给<code>std::bind</code>的可调用对象。在此示例中，这意味着当调用<code>func</code>（bind对象）时，<code>func</code>中所移动构造的<code>data</code>副本将作为实参传递给<code>std::bind</code>中的<em>lambda</em>。</p>
+<p>该<em>lambda</em>与我们在C++14中使用的<em>lambda</em>相同，只是添加了一个形参<code>data</code>来对应我们的伪移动捕获对象。此形参是对bind对象中<code>data</code>副本的左值引用。（这不是右值引用，因为尽管用于初始化<code>data</code>副本的表达式（<code>std::move(data)</code>）为右值，但<code>data</code>副本本身为左值。）因此，<em>lambda</em>将对绑定在对象内部的移动构造的<code>data</code>副本进行操作。</p>
+<p>默认情况下，从<em>lambda</em>生成的闭包类中的<code>operator()</code>成员函数为<code>const</code>的。这具有在<em>lambda</em>主体内把闭包中的所有数据成员渲染为<code>const</code>的效果。但是，bind对象内部的移动构造的<code>data</code>副本不是<code>const</code>的，因此，为了防止在<em>lambda</em>内修改该<code>data</code>副本，<em>lambda</em>的形参应声明为reference-to-<code>const</code>。 如果将<em>lambda</em>声明为<code>mutable</code>，则闭包类中的<code>operator()</code>将不会声明为<code>const</code>，并且在<em>lambda</em>的形参声明中省略<code>const</code>也是合适的：</p>
+<pre><code class="language-c++">auto func =
+    std::bind(                                  //C++11对mutable lambda
+        [](std::vector&lt;double&gt;&amp; data) mutable	//初始化捕获的模拟
+        { /*使用data*/ },
+        std::move(data)
+    );
+</code></pre>
+<p>因为bind对象存储着传递给<code>std::bind</code>的所有实参的副本，所以在我们的示例中，bind对象包含由<em>lambda</em>生成的闭包副本，这是它的第一个实参。 因此闭包的生命周期与bind对象的生命周期相同。 这很重要，因为这意味着只要存在闭包，包含伪移动捕获对象的bind对象也将存在。</p>
+<p>如果这是你第一次接触<code>std::bind</code>，则可能需要先阅读你最喜欢的C++11参考资料，然后再讨论所有详细信息。 即使是这样，这些基本要点也应该清楚：</p>
+<ul>
+<li>无法移动构造一个对象到C++11闭包，但是可以将对象移动构造进C++11的bind对象。</li>
+<li>在C++11中模拟移动捕获包括将对象移动构造进bind对象，然后通过传引用将移动构造的对象传递给<em>lambda</em>。</li>
+<li>由于bind对象的生命周期与闭包对象的生命周期相同，因此可以将bind对象中的对象视为闭包中的对象。</li>
+</ul>
+<p>作为使用<code>std::bind</code>模仿移动捕获的第二个示例，这是我们之前看到的在闭包中创建<code>std::unique_ptr</code>的C++14代码：</p>
+<pre><code class="language-c++">auto func = [pw = std::make_unique&lt;Widget&gt;()]   //同之前一样
+            { return pw-&gt;isValidated()          //在闭包中创建pw
+                     &amp;&amp; pw-&gt;isArchived(); };
+</code></pre>
+<p>这是C++11的模拟实现：</p>
+<pre><code class="language-c++">auto func = std::bind(
+                [](const std::unique_ptr&lt;Widget&gt;&amp; pw)
+                { return pw-&gt;isValidated()
+                         &amp;&amp; pw-&gt;isArchived(); },
+                std::make_unique&lt;Widget&gt;()
+            );
+</code></pre>
+<p>具备讽刺意味的是，这里我展示了如何使用<code>std::bind</code>解决C++11 <em>lambda</em>中的限制，因为在<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/6.LambdaExpressions/item34.md">Item34</a>中，我主张使用<em>lambda</em>而不是<code>std::bind</code>。但是，该条款解释的是在C++11中有些情况下<code>std::bind</code>可能有用，这就是其中一种。 （在C++14中，初始化捕获和<code>auto</code>形参等特性使得这些情况不再存在。）</p>
+<p><strong>请记住：</strong></p>
+<ul>
+<li>使用C++14的初始化捕获将对象移动到闭包中。</li>
+<li>在C++11中，通过手写类或<code>std::bind</code>的方式来模拟初始化捕获。</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../6.LambdaExpressions/item31.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="../6.LambdaExpressions/item33.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../6.LambdaExpressions/item31.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../6.LambdaExpressions/item33.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>

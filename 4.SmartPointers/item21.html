@@ -1,0 +1,335 @@
+<!DOCTYPE HTML>
+<html lang="zh" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Item 21: Prefer std::make_unique and std::make_shared to direct use of new - Effective Modern C++</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <!-- MathJax -->
+        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../Introduction.html">Introduction</a></li><li class="chapter-item expanded "><div>Chapter 1. Deducing Types</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../1.DeducingTypes/item1.html">Item 1: Understanding template type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item2.html">Item 2: Understand auto type deduction</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item3.html">Item 3: Understand decltype</a></li><li class="chapter-item expanded "><a href="../1.DeducingTypes/item4.html">Item 4: Know how to view deduced types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 2. auto</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../2.Auto/item5.html">Item 5: Prefer auto to explicit type declarations</a></li><li class="chapter-item expanded "><a href="../2.Auto/item6.html">Item 6: Use the explicitly typed initializer idiom when auto deduces undesired types</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 3. Moving to Modern C++</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item7.html">Item 7: Distinguish between () and {} when creating objects</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item8.html">Item 8: Prefer nullptr to 0 or NULL</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item9.html">Item 9: Prefer alias declarations to typedefs</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item10.html">Item 10: Prefer scoped enums to unscoped enums</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item11.html">Item 11: Prefer deleted functions to private undefined ones</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item12.html">Item 12: Declare overriding functions override</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item13.html">Item 13: Prefer const_iterators to iterators</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item14.html">Item 14: Declare functions noexcept if they won't emit exceptions</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item15.html">Item 15: Use constexpr whenever possible</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item16.html">Item 16: Make const member functions thread safe</a></li><li class="chapter-item expanded "><a href="../3.MovingToModernCpp/item17.html">Item 17: Understand special member funciton generation</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 4. Smart Pointer</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../4.SmartPointers/item18.html">Item 18: Use std::unique_ptr for exclusive-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item19.html">Item 19: Use std::shared_ptr for shared-ownership resource management</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item20.html">Item 20: Use std::weak_ptr for std::shared_ptr like pointers that can dangle</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item21.html" class="active">Item 21: Prefer std::make_unique and std::make_shared to direct use of new</a></li><li class="chapter-item expanded "><a href="../4.SmartPointers/item22.html">Item 22: When using the Pimpl Idiom, define special member functions in the implementation file</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 5. Rvalue References, Move Semantics, and Perfect Forwarding</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item23.html">Item 23: Understand std::move and std::forward</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item24.html">Item 24: Distinguish universal references from rvalue references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item25.html">Item 25: Use std::move on rvalue references, std::forward on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item26.html">Item 26: Avoid overloading on universal references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item27.html">Item 27: Familiarize yourself with alternatives to overaloading on univeral references</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item28.html">Item 28: Understand reference collapsing</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item29.html">Item 29: Assume that move operations are not present not cheap, and not used</a></li><li class="chapter-item expanded "><a href="../5.RRefMovSemPerfForw/item30.html">Item 30: Familiarize yourself with perfect forwarding failure cases</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 6. Lambda Expressions</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item31.html">Item 31: Avoid default capture modes</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item32.html">Item 32: Use init capture to move objects into closures</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item33.html">Item 33: Use decltype on auto&&parameters to std::forward them</a></li><li class="chapter-item expanded "><a href="../6.LambdaExpressions/item34.html">Item 34: Prefer lambdas to std::bind</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 7. The Concurrency API</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/Item35.html">Item 35: Prefer task-based programming to thread-based</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item36.html">Item 36: Specify std::launch::async if asynchronicity is essential</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item37.html">Item 37: Make std::threads unjionable on all paths</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item38.html">Item 38: Be aware of varying thread handle destructor behavior</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item39.html">Item 39: Consider void futures for one-shot event communication</a></li><li class="chapter-item expanded "><a href="../7.TheConcurrencyAPI/item40.html">Item 40: Use std::atomic for concurrency, volatile for special memory</a></li></ol></li><li class="chapter-item expanded "><div>Chapter 8. Tweaks</div></li><li><ol class="section"><li class="chapter-item expanded "><a href="../8.Tweaks/item41.html">Item 41: Consider pass by value for copyable parameters that are cheap to move and always copied</a></li><li class="chapter-item expanded "><a href="../8.Tweaks/item42.html">Item 42: Consider emplacement instead of insertion</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Effective Modern C++</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h2 id="条款二十一优先考虑使用stdmake_unique和stdmake_shared而非new"><a class="header" href="#条款二十一优先考虑使用stdmake_unique和stdmake_shared而非new">条款二十一：优先考虑使用<code>std::make_unique</code>和<code>std::make_shared</code>而非<code>new</code></a></h2>
+<p><strong>Item 21: Prefer <code>std::make_unique</code> and <code>std::make_shared</code> to direct use of <code>new</code></strong></p>
+<p>让我们先对<code>std::make_unique</code>和<code>std::make_shared</code>做个铺垫。<code>std::make_shared</code>是C++11标准的一部分，但很可惜的是，<code>std::make_unique</code>不是。它从C++14开始加入标准库。如果你在使用C++11，不用担心，一个基础版本的<code>std::make_unique</code>是很容易自己写出的，如下：</p>
+<pre><code class="language-cpp">template&lt;typename T, typename... Ts&gt;
+std::unique_ptr&lt;T&gt; make_unique(Ts&amp;&amp;... params)
+{
+    return std::unique_ptr&lt;T&gt;(new T(std::forward&lt;Ts&gt;(params)...));
+}
+</code></pre>
+<p>正如你看到的，<code>make_unique</code>只是将它的参数完美转发到所要创建的对象的构造函数，从<code>new</code>产生的原始指针里面构造出<code>std::unique_ptr</code>，并返回这个<code>std::unique_ptr</code>。这种形式的函数不支持数组和自定义析构（见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item18.md">Item18</a>），但它给出了一个示范：只需一点努力就能写出你想要的<code>make_unique</code>函数。（要想实现一个特性完备的<code>make_unique</code>，就去找提供这个的标准化文件吧，然后拷贝那个实现。你想要的这个文件是N3656，是Stephan T. Lavavej写于2013-04-18的文档。）需要记住的是，不要把它放到<code>std</code>命名空间中，因为你可能并不希望看到升级C++14标准库的时候你放进<code>std</code>命名空间的内容和编译器供应商提供的<code>std</code>命名空间的内容发生冲突。</p>
+<p><code>std::make_unique</code>和<code>std::make_shared</code>是三个<strong>make函数</strong> 中的两个：接收任意的多参数集合，完美转发到构造函数去动态分配一个对象，然后返回这个指向这个对象的指针。第三个<code>make</code>函数是<code>std::allocate_shared</code>。它行为和<code>std::make_shared</code>一样，只不过第一个参数是用来动态分配内存的<em>allocator</em>对象。</p>
+<p>即使通过用和不用<code>make</code>函数来创建智能指针的一个小小比较，也揭示了为何使用<code>make</code>函数更好的第一个原因。例如：</p>
+<pre><code class="language-c++">auto upw1(std::make_unique&lt;Widget&gt;());      //使用make函数
+std::unique_ptr&lt;Widget&gt; upw2(new Widget);   //不使用make函数
+auto spw1(std::make_shared&lt;Widget&gt;());      //使用make函数
+std::shared_ptr&lt;Widget&gt; spw2(new Widget);   //不使用make函数
+</code></pre>
+<p>我高亮了关键区别：使用<code>new</code>的版本重复了类型，但是<code>make</code>函数的版本没有。（译者注：这里高亮的是<code>Widget</code>，用<code>new</code>的声明语句需要写2遍<code>Widget</code>，<code>make</code>函数只需要写一次。）重复写类型和软件工程里面一个关键原则相冲突：应该避免重复代码。源代码中的重复增加了编译的时间，会导致目标代码冗余，并且通常会让代码库使用更加困难。它经常演变成不一致的代码，而代码库中的不一致常常导致bug。此外，打两次字比一次更费力，而且没人不喜欢少打字吧？</p>
+<p>第二个使用<code>make</code>函数的原因和异常安全有关。假设我们有个函数按照某种优先级处理<code>Widget</code>：</p>
+<pre><code class="language-c++">void processWidget(std::shared_ptr&lt;Widget&gt; spw, int priority);
+</code></pre>
+<p>值传递<code>std::shared_ptr</code>可能看起来很可疑，但是<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/8.Tweaks/item41.md">Item41</a>解释了，如果<code>processWidget</code>总是复制<code>std::shared_ptr</code>（例如，通过将其存储在已处理的<code>Widget</code>的一个数据结构中），那么这可能是一个合理的设计选择。</p>
+<p>现在假设我们有一个函数来计算相关的优先级，</p>
+<pre><code class="language-c++">int computePriority();
+</code></pre>
+<p>并且我们在调用<code>processWidget</code>时使用了<code>new</code>而不是<code>std::make_shared</code>：</p>
+<pre><code class="language-c++">processWidget(std::shared_ptr&lt;Widget&gt;(new Widget),  //潜在的资源泄漏！
+              computePriority());
+</code></pre>
+<p>如注释所说，这段代码可能在<code>new</code>一个<code>Widget</code>时发生泄漏。为何？调用的代码和被调用的函数都用<code>std::shared_ptr</code>s，且<code>std::shared_ptr</code>s就是设计出来防止泄漏的。它们会在最后一个<code>std::shared_ptr</code>销毁时自动释放所指向的内存。如果每个人在每个地方都用<code>std::shared_ptr</code>s，这段代码怎么会泄漏呢？</p>
+<p>答案和编译器将源码转换为目标代码有关。在运行时，一个函数的实参必须先被计算，这个函数再被调用，所以在调用<code>processWidget</code>之前，必须执行以下操作，<code>processWidget</code>才开始执行：</p>
+<ul>
+<li>表达式“<code>new Widget</code>”必须计算，例如，一个<code>Widget</code>对象必须在堆上被创建</li>
+<li>负责管理<code>new</code>出来指针的<code>std::shared_ptr&lt;Widget&gt;</code>构造函数必须被执行</li>
+<li><code>computePriority</code>必须运行</li>
+</ul>
+<p>编译器不需要按照执行顺序生成代码。“<code>new Widget</code>”必须在<code>std::shared_ptr</code>的构造函数被调用前执行，因为<code>new</code>出来的结果作为构造函数的实参，但<code>computePriority</code>可能在这之前，之后，或者<strong>之间</strong>执行。也就是说，编译器可能按照这个执行顺序生成代码：</p>
+<ol>
+<li>执行“<code>new Widget</code>”</li>
+<li>执行<code>computePriority</code></li>
+<li>运行<code>std::shared_ptr</code>构造函数</li>
+</ol>
+<p>如果按照这样生成代码，并且在运行时<code>computePriority</code>产生了异常，那么第一步动态分配的<code>Widget</code>就会泄漏。因为它永远都不会被第三步的<code>std::shared_ptr</code>所管理了。</p>
+<p>使用<code>std::make_shared</code>可以防止这种问题。调用代码看起来像是这样：</p>
+<pre><code class="language-c++">processWidget(std::make_shared&lt;Widget&gt;(),   //没有潜在的资源泄漏
+              computePriority());
+</code></pre>
+<p>在运行时，<code>std::make_shared</code>和<code>computePriority</code>其中一个会先被调用。如果是<code>std::make_shared</code>先被调用，在<code>computePriority</code>调用前，动态分配<code>Widget</code>的原始指针会安全的保存在作为返回值的<code>std::shared_ptr</code>中。如果<code>computePriority</code>产生一个异常，那么<code>std::shared_ptr</code>析构函数将确保管理的<code>Widget</code>被销毁。如果首先调用<code>computePriority</code>并产生一个异常，那么<code>std::make_shared</code>将不会被调用，因此也就不需要担心动态分配<code>Widget</code>（会泄漏）。</p>
+<p>如果我们将<code>std::shared_ptr</code>，<code>std::make_shared</code>替换成<code>std::unique_ptr</code>，<code>std::make_unique</code>，同样的道理也适用。因此，在编写异常安全代码时，使用<code>std::make_unique</code>而不是<code>new</code>与使用<code>std::make_shared</code>（而不是<code>new</code>）同样重要。</p>
+<p><code>std::make_shared</code>的一个特性（与直接使用<code>new</code>相比）是效率提升。使用<code>std::make_shared</code>允许编译器生成更小，更快的代码，并使用更简洁的数据结构。考虑以下对new的直接使用：</p>
+<pre><code class="language-c++">std::shared_ptr&lt;Widget&gt; spw(new Widget);
+</code></pre>
+<p>显然，这段代码需要进行内存分配，但它实际上执行了两次。<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item19.md">Item19</a>解释了每个<code>std::shared_ptr</code>指向一个控制块，其中包含被指向对象的引用计数，还有其他东西。这个控制块的内存在<code>std::shared_ptr</code>构造函数中分配。因此，直接使用<code>new</code>需要为<code>Widget</code>进行一次内存分配，为控制块再进行一次内存分配。</p>
+<p>如果使用<code>std::make_shared</code>代替：</p>
+<pre><code class="language-c++">auto spw = std::make_shared&lt;Widget&gt;();
+</code></pre>
+<p>一次分配足矣。这是因为<code>std::make_shared</code>分配一块内存，同时容纳了<code>Widget</code>对象和控制块。这种优化减少了程序的静态大小，因为代码只包含一个内存分配调用，并且它提高了可执行代码的速度，因为内存只分配一次。此外，使用<code>std::make_shared</code>避免了对控制块中的某些簿记信息的需要，潜在地减少了程序的总内存占用。</p>
+<p>对于<code>std::make_shared</code>的效率分析同样适用于<code>std::allocate_shared</code>，因此<code>std::make_shared</code>的性能优势也扩展到了该函数。</p>
+<p>更倾向于使用<code>make</code>函数而不是直接使用<code>new</code>的争论非常激烈。尽管它们在软件工程、异常安全和效率方面具有优势，但本条款的建议是，更<strong>倾向于</strong>使用<code>make</code>函数，而不是完全依赖于它们。这是因为有些情况下它们不能或不应该被使用。</p>
+<p>例如，<code>make</code>函数都不允许指定自定义删除器（见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item18.md">Item18</a>和<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item19.md">19</a>），但是<code>std::unique_ptr</code>和<code>std::shared_ptr</code>有构造函数这么做。有个<code>Widget</code>的自定义删除器：</p>
+<pre><code class="language-cpp">auto widgetDeleter = [](Widget* pw) { … };
+</code></pre>
+<p>创建一个使用它的智能指针只能直接使用<code>new</code>：</p>
+<pre><code class="language-cpp">std::unique_ptr&lt;Widget, decltype(widgetDeleter)&gt;
+    upw(new Widget, widgetDeleter);
+
+std::shared_ptr&lt;Widget&gt; spw(new Widget, widgetDeleter);
+</code></pre>
+<p>对于<code>make</code>函数，没有办法做同样的事情。</p>
+<p><code>make</code>函数第二个限制来自于其实现中的语法细节。<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item7.md">Item7</a>解释了，当构造函数重载，有使用<code>std::initializer_list</code>作为参数的重载形式和不用其作为参数的的重载形式，用花括号创建的对象更倾向于使用<code>std::initializer_list</code>作为形参的重载形式，而用小括号创建对象将调用不用<code>std::initializer_list</code>作为参数的的重载形式。<code>make</code>函数会将它们的参数完美转发给对象构造函数，但是它们是使用小括号还是花括号？对某些类型，问题的答案会很不相同。例如，在这些调用中，</p>
+<pre><code class="language-cpp">auto upv = std::make_unique&lt;std::vector&lt;int&gt;&gt;(10, 20);
+auto spv = std::make_shared&lt;std::vector&lt;int&gt;&gt;(10, 20);
+</code></pre>
+<p>生成的智能指针指向带有10个元素的<code>std::vector</code>，每个元素值为20，还是指向带有两个元素的<code>std::vector</code>，其中一个元素值10，另一个为20？或者结果是不确定的？</p>
+<p>好消息是这并非不确定：两种调用都创建了10个元素，每个值为20的<code>std::vector</code>。这意味着在<code>make</code>函数中，完美转发使用小括号，而不是花括号。坏消息是如果你想用花括号初始化指向的对象，你必须直接使用<code>new</code>。使用<code>make</code>函数会需要能够完美转发花括号初始化的能力，但是，正如<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item30.md">Item30</a>所说，花括号初始化无法完美转发。但是，<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item30.md">Item30</a>介绍了一个变通的方法：使用<code>auto</code>类型推导从花括号初始化创建<code>std::initializer_list</code>对象（见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item2.md">Item2</a>），然后将<code>auto</code>创建的对象传递给<code>make</code>函数。</p>
+<pre><code class="language-cpp">//创建std::initializer_list
+auto initList = { 10, 20 };
+//使用std::initializer_list为形参的构造函数创建std::vector
+auto spv = std::make_shared&lt;std::vector&lt;int&gt;&gt;(initList);
+</code></pre>
+<p>对于<code>std::unique_ptr</code>，只有这两种情景（自定义删除器和花括号初始化）使用<code>make</code>函数有点问题。对于<code>std::shared_ptr</code>和它的<code>make</code>函数，还有2个问题。都属于边缘情况，但是一些开发者常碰到，你也可能是其中之一。</p>
+<p>一些类重载了<code>operator new</code>和<code>operator delete</code>。这些函数的存在意味着对这些类型的对象的全局内存分配和释放是不合常规的。设计这种定制操作往往只会精确的分配、释放对象大小的内存。例如，<code>Widget</code>类的<code>operator new</code>和<code>operator delete</code>只会处理<code>sizeof(Widget)</code>大小的内存块的分配和释放。这种系列行为不太适用于<code>std::shared_ptr</code>对自定义分配（通过<code>std::allocate_shared</code>）和释放（通过自定义删除器）的支持，因为<code>std::allocate_shared</code>需要的内存总大小不等于动态分配的对象大小，还需要<strong>再加上</strong>控制块大小。因此，使用<code>make</code>函数去创建重载了<code>operator new</code>和<code>operator delete</code>类的对象是个典型的糟糕想法。</p>
+<p>与直接使用<code>new</code>相比，<code>std::make_shared</code>在大小和速度上的优势源于<code>std::shared_ptr</code>的控制块与指向的对象放在同一块内存中。当对象的引用计数降为0，对象被销毁（即析构函数被调用）。但是，因为控制块和对象被放在同一块分配的内存块中，直到控制块的内存也被销毁，对象占用的内存才被释放。</p>
+<p>正如我说，控制块除了引用计数，还包含簿记信息。引用计数追踪有多少<code>std::shared_ptr</code>s指向控制块，但控制块还有第二个计数，记录多少个<code>std::weak_ptr</code>s指向控制块。第二个引用计数就是<em>weak count</em>。（实际上，<em>weak count</em>的值不总是等于指向控制块的<code>std::weak_ptr</code>的数目，因为库的实现者找到一些方法在<em>weak count</em>中添加附加信息，促进更好的代码产生。为了本条款的目的，我们会忽略这一点，假定<em>weak count</em>的值等于指向控制块的<code>std::weak_ptr</code>的数目。）当一个<code>std::weak_ptr</code>检测它是否过期时（见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item19.md">Item19</a>），它会检测指向的控制块中的引用计数（而不是<em>weak count</em>）。如果引用计数是0（即对象没有<code>std::shared_ptr</code>再指向它，已经被销毁了），<code>std::weak_ptr</code>就已经过期。否则就没过期。</p>
+<p>只要<code>std::weak_ptr</code>s引用一个控制块（即<em>weak count</em>大于零），该控制块必须继续存在。只要控制块存在，包含它的内存就必须保持分配。通过<code>std::shared_ptr</code>的<code>make</code>函数分配的内存，直到最后一个<code>std::shared_ptr</code>和最后一个指向它的<code>std::weak_ptr</code>已被销毁，才会释放。</p>
+<p>如果对象类型非常大，而且销毁最后一个<code>std::shared_ptr</code>和销毁最后一个<code>std::weak_ptr</code>之间的时间很长，那么在销毁对象和释放它所占用的内存之间可能会出现延迟。</p>
+<pre><code class="language-c++">class ReallyBigType { … };
+
+auto pBigObj =                          //通过std::make_shared
+    std::make_shared&lt;ReallyBigType&gt;();  //创建一个大对象
+                    
+…           //创建std::shared_ptrs和std::weak_ptrs
+            //指向这个对象，使用它们
+
+…           //最后一个std::shared_ptr在这销毁，
+            //但std::weak_ptrs还在
+
+…           //在这个阶段，原来分配给大对象的内存还分配着
+
+…           //最后一个std::weak_ptr在这里销毁；
+            //控制块和对象的内存被释放
+</code></pre>
+<p>直接只用<code>new</code>，一旦最后一个<code>std::shared_ptr</code>被销毁，<code>ReallyBigType</code>对象的内存就会被释放：</p>
+<pre><code class="language-c++">class ReallyBigType { … };              //和之前一样
+
+std::shared_ptr&lt;ReallyBigType&gt; pBigObj(new ReallyBigType);
+                                        //通过new创建大对象
+
+…           //像之前一样，创建std::shared_ptrs和std::weak_ptrs
+            //指向这个对象，使用它们
+            
+…           //最后一个std::shared_ptr在这销毁,
+            //但std::weak_ptrs还在；
+            //对象的内存被释放
+
+…           //在这阶段，只有控制块的内存仍然保持分配
+
+…           //最后一个std::weak_ptr在这里销毁；
+            //控制块内存被释放
+</code></pre>
+<p>如果你发现自己处于不可能或不合适使用<code>std::make_shared</code>的情况下，你将想要保证自己不受我们之前看到的异常安全问题的影响。最好的方法是确保在直接使用<code>new</code>时，在<strong>一个不做其他事情的语句中</strong>，立即将结果传递到智能指针构造函数。这可以防止编译器生成的代码在使用<code>new</code>和调用管理<code>new</code>出来对象的智能指针的构造函数之间发生异常。</p>
+<p>例如，考虑我们前面讨论过的<code>processWidget</code>函数，对其非异常安全调用的一个小修改。这一次，我们将指定一个自定义删除器:</p>
+<pre><code class="language-c++">void processWidget(std::shared_ptr&lt;Widget&gt; spw,     //和之前一样
+                   int priority);
+void cusDel(Widget *ptr);                           //自定义删除器
+</code></pre>
+<p>这是非异常安全调用:</p>
+<pre><code class="language-c++">processWidget( 									    //和之前一样，
+    std::shared_ptr&lt;Widget&gt;(new Widget, cusDel),    //潜在的内存泄漏！
+    computePriority() 
+);
+</code></pre>
+<p>回想一下：如果<code>computePriority</code>在“<code>new Widget</code>”之后，而在<code>std::shared_ptr</code>构造函数之前调用，并且如果<code>computePriority</code>产生一个异常，那么动态分配的<code>Widget</code>将会泄漏。</p>
+<p>这里使用自定义删除排除了对<code>std::make_shared</code>的使用，因此避免出现问题的方法是将<code>Widget</code>的分配和<code>std::shared_ptr</code>的构造放入它们自己的语句中，然后使用得到的<code>std::shared_ptr</code>调用<code>processWidget</code>。这是该技术的本质，不过，正如我们稍后将看到的，我们可以对其进行调整以提高其性能：</p>
+<pre><code class="language-c++">std::shared_ptr&lt;Widget&gt; spw(new Widget, cusDel);
+processWidget(spw, computePriority());  // 正确，但是没优化，见下
+</code></pre>
+<p>这是可行的，因为<code>std::shared_ptr</code>获取了传递给它的构造函数的原始指针的所有权，即使构造函数产生了一个异常。此例中，如果<code>spw</code>的构造函数抛出异常（比如无法为控制块动态分配内存），仍然能够保证<code>cusDel</code>会在“<code>new Widget</code>”产生的指针上调用。</p>
+<p>一个小小的性能问题是，在非异常安全调用中，我们将一个右值传递给<code>processWidget</code>：</p>
+<pre><code class="language-c++">processWidget(
+    std::shared_ptr&lt;Widget&gt;(new Widget, cusDel),    //实参是一个右值
+    computePriority()
+);
+</code></pre>
+<p>但是在异常安全调用中，我们传递了左值：</p>
+<pre><code class="language-c++">processWidget(spw, computePriority());              //实参是左值
+</code></pre>
+<p>因为<code>processWidget</code>的<code>std::shared_ptr</code>形参是传值，从右值构造只需要移动，而传递左值构造需要拷贝。对<code>std::shared_ptr</code>而言，这种区别是有意义的，因为拷贝<code>std::shared_ptr</code>需要对引用计数原子递增，移动则不需要对引用计数有操作。为了使异常安全代码达到非异常安全代码的性能水平，我们需要用<code>std::move</code>将<code>spw</code>转换为右值（见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item23.md">Item23</a>）：</p>
+<pre><code class="language-c++">processWidget(std::move(spw), computePriority());   //高效且异常安全
+</code></pre>
+<p>这很有趣，也值得了解，但通常是无关紧要的，因为您很少有理由不使用<code>make</code>函数。除非你有令人信服的理由这样做，否则你应该使用<code>make</code>函数。</p>
+<p><strong>请记住：</strong></p>
+<ul>
+<li>和直接使用<code>new</code>相比，<code>make</code>函数消除了代码重复，提高了异常安全性。对于<code>std::make_shared</code>和<code>std::allocate_shared</code>，生成的代码更小更快。</li>
+<li>不适合使用<code>make</code>函数的情况包括需要指定自定义删除器和希望用花括号初始化。</li>
+<li>对于<code>std::shared_ptr</code>s，其他不建议使用<code>make</code>函数的情况包括(1)有自定义内存管理的类；(2)特别关注内存的系统，非常大的对象，以及<code>std::weak_ptr</code>s比对应的<code>std::shared_ptr</code>s活得更久。</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../4.SmartPointers/item20.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="../4.SmartPointers/item22.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../4.SmartPointers/item20.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../4.SmartPointers/item22.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>
