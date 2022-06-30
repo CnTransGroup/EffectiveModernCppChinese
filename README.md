@@ -10,7 +10,7 @@
 > ! 我没有版权，我没有版权，我没有版权<br>
 > ! 本书要求读者具有C++基础<br>
 > ! 未翻译的条款名称现在直译，翻译时可能适当修改<br>
-> ! [在线浏览](https://cntransgroup.github.io/EffectiveModernCppChinese)
+> ! [在线浏览](https://cntransgroup.github.io/EffectiveModernCppChinese)<br>
 > ! [PDF格式英文版下载](0.Public/EffectiveModernCpp.pdf),仅供翻译参考<br>
 
 ## 目录
