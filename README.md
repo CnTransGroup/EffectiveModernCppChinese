@@ -5,11 +5,9 @@
 [![Backers on Open Collective](https://opencollective.com/EffectiveModernCppChinese/backers/badge.svg)](#backers)
  [![Sponsors on Open Collective](https://opencollective.com/EffectiveModernCppChinese/sponsors/badge.svg)](#sponsors) 
 
-> ! 2017.10开始更新<br>
 > ! 标注“已修订”的章节表示已经没有大致的错误<br>
 > ! 我没有版权，我没有版权，我没有版权<br>
 > ! 本书要求读者具有C++基础<br>
-> ! 未翻译的条款名称现在直译，翻译时可能适当修改<br>
 > ! [在线浏览](https://cntransgroup.github.io/EffectiveModernCppChinese)<br>
 > ! [PDF格式英文版下载](0.Public/EffectiveModernCpp.pdf),仅供翻译参考<br>
 
@@ -38,7 +36,7 @@
 4. __智能指针__
 	1. [Item 18:对于独占资源使用std::unique_ptr](src/4.SmartPointers/item18.md) 由 @wendajiang贡献
 	2. [Item 19:对于共享资源使用std::shared_ptr](src/4.SmartPointers/item19.md) 已修订
-	3. [Item 20:当std::shard_ptr可能悬空时使用std::weak_ptr](src/4.SmartPointers/item20.md) 更新完成
+	3. [Item 20:当std::shard_ptr可能悬空时使用std::weak_ptr](src/4.SmartPointers/item20.md)
 	4. [Item 21:优先考虑使用std::make_unique和std::make_shared而非new](src/4.SmartPointers/item21.md) 由 @pusidun贡献
 	5. [Item 22:当使用Pimpl惯用法，请在实现文件中定义特殊成员函数](src/4.SmartPointers/item22.md) 由 @BlurryLight贡献
 5. __右值引用，移动语义，完美转发__
@@ -67,6 +65,7 @@
 	2. [Item 42:考虑就地创建而非插入](src/8.Tweaks/item42.md) 由 @wendajiang贡献
 
 ## 其他资源
++ [**在线阅读**](https://cntransgroup.github.io/EffectiveModernCppChinese)
 + 本书[PDF格式的中文版](./0.Public/translated/translate-zh-combine.pdf)见于此，该版本通常同步或者滞后于当前Markdown文档
 + [Effective C++ Xmind Doc](./0.Public/EffectModernC++.xmind)
 
