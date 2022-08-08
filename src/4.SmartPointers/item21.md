@@ -1,4 +1,4 @@
-## 条款二十一：优先考虑使用`std::make_unique`和`std::make_shared`而非`new`
+## 条款二十一：优先考虑使用`std::make_unique`和`std::make_shared`，而非直接使用`new`
 
 **Item 21: Prefer `std::make_unique` and `std::make_shared` to direct use of `new`**
 
