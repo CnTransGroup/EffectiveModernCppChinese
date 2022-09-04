@@ -18,7 +18,7 @@
 ```c++
 void f(Widget&& w);
 ```
-形参`w`是一个左值，即使它的类型是一个rvalue-reference-to-`Widget`。（如果这里震惊到你了，请重新回顾从本书[简介](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/Introduction.md)开始的关于左值和右值的总览。）
+形参`w`是一个左值，即使它的类型是一个rvalue-reference-to-`Widget`。（如果这里震惊到你了，请重新回顾从本书[简介](https://github.com/CnTransGroup/EffectiveModernCppChinese/blob/master/src/Introduction.md)开始的关于左值和右值的总览。）
 
 ## 条款二十三：理解`std::move`和`std::forward`
 
