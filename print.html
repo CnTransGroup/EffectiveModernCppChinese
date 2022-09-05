@@ -2839,7 +2839,7 @@ auto spw2 = wpw.lock();                     //同上，但是使用auto
 <li>用<code>std::weak_ptr</code>替代可能会悬空的<code>std::shared_ptr</code>。</li>
 <li><code>std::weak_ptr</code>的潜在使用场景包括：缓存、观察者列表、打破<code>std::shared_ptr</code>环状结构。</li>
 </ul>
-<div style="break-before: page; page-break-before: always;"></div><h2 id="条款二十一优先考虑使用stdmake_unique和stdmake_shared而非new"><a class="header" href="#条款二十一优先考虑使用stdmake_unique和stdmake_shared而非new">条款二十一：优先考虑使用<code>std::make_unique</code>和<code>std::make_shared</code>而非<code>new</code></a></h2>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="条款二十一优先考虑使用stdmake_unique和stdmake_shared而非直接使用new"><a class="header" href="#条款二十一优先考虑使用stdmake_unique和stdmake_shared而非直接使用new">条款二十一：优先考虑使用<code>std::make_unique</code>和<code>std::make_shared</code>，而非直接使用<code>new</code></a></h2>
 <p><strong>Item 21: Prefer <code>std::make_unique</code> and <code>std::make_shared</code> to direct use of <code>new</code></strong></p>
 <p>让我们先对<code>std::make_unique</code>和<code>std::make_shared</code>做个铺垫。<code>std::make_shared</code>是C++11标准的一部分，但很可惜的是，<code>std::make_unique</code>不是。它从C++14开始加入标准库。如果你在使用C++11，不用担心，一个基础版本的<code>std::make_unique</code>是很容易自己写出的，如下：</p>
 <pre><code class="language-cpp">template&lt;typename T, typename... Ts&gt;
