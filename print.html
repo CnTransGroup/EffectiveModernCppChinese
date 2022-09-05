@@ -837,7 +837,7 @@ void f(const T&amp; param)
          &lt;&lt; '\n';
 }
 </code></pre>
-<p><code>boost::typeindex::type_id_with_cvr</code>获取一个类型实参（我们想获得相应信息的那个类型），它不消除实参的<code>const</code>，<code>volatile</code>和引用修饰符（因此模板名中有“<code>with_cur</code>”）。结果是一个<code>boost::typeindex::type_index</code>对象，它的<code>pretty_name</code>成员函数输出一个<code>std::string</code>，包含我们能看懂的类型表示。
+<p><code>boost::typeindex::type_id_with_cvr</code>获取一个类型实参（我们想获得相应信息的那个类型），它不消除实参的<code>const</code>，<code>volatile</code>和引用修饰符（因此模板名中有“<code>with_cvr</code>”）。结果是一个<code>boost::typeindex::type_index</code>对象，它的<code>pretty_name</code>成员函数输出一个<code>std::string</code>，包含我们能看懂的类型表示。
 基于这个<code>f</code>的实现版本，再次考虑那个使用<code>typeid</code>时获取<code>param</code>类型信息出错的调用：</p>
 <pre><code class="language-cpp">std::vetor&lt;Widget&gt; createVec();         //工厂函数
 const auto vw = createVec();            //使用工厂函数返回值初始化vw
