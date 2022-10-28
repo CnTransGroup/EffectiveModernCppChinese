@@ -1,4 +1,4 @@
-## 条款二十：当`std::shard_ptr`可能悬空时使用`std::weak_ptr`
+## 条款二十：当`std::shared_ptr`可能悬空时使用`std::weak_ptr`
 
 **Item 20: Use `std::weak_ptr` for `std::shared_ptr`-like pointers that can dangle**
 
