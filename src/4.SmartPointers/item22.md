@@ -114,7 +114,7 @@ Widget w;                           //错误！
 
 为了解决这个问题，你只需要确保在编译器生成销毁`std::unique_ptr<Widget::Impl>`的代码之前， `Widget::Impl`已经是一个完成类型（*complete type*）。 当编译器“看到”它的定义的时候，该类型就成为完成类型了。 但是 `Widget::Impl`的定义在`widget.cpp`里。成功编译的关键，就是在`widget.cpp`文件内，让编译器在“看到” `Widget`的析构函数实现之前（也即编译器插入的，用来销毁`std::unique_ptr`这个数据成员的代码的，那个位置），先定义`Widget::Impl`。
 
-做出这样的调整很容易。只需要在先在`widget.h`里，只声明类`Widget`的析构函数，却不要在这里定义它：
+做出这样的调整很容易。只需要先在`widget.h`里，只声明类`Widget`的析构函数，但不要在这里定义它：
 
 ```cpp
 class Widget {                  //跟之前一样，在“widget.h”中
@@ -151,13 +151,13 @@ Widget::~Widget()                   //析构函数的定义（译者注：这里
 {}
 ```
 
-这样就可以了，并且这样增加的代码也最少，但是，如果你想要强调编译器自动生成的析构函数做的没错——你声明`Widget`的析构函数的唯一原因，是确保它会在`Widget`的实现文件内（译者注：指`widget.cpp`）被自动生成，你可以把析构函数体直接定义为“`= default`”：
+这样就可以了，并且这样增加的代码也最少，但是，如果你想强调编译器生成的析构函数会做正确的事情——你声明`Widget`的析构函数的唯一原因是导致它的定义在 Widget 的实现文件中（译者注：指`widget.cpp`）生成，你可以使用“`= default`”定义析构函数体：
 
 ```cpp
 Widget::~Widget() = default;        //同上述代码效果一致
 ```
 
-使用了Pimpl惯用法的类自然适合支持移动操作，因为编译器自动生成的移动操作正合我们所意：对其中的`std::unique_ptr`进行移动。 正如[Item17](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item17.md)所解释的那样，声明一个类`Widget`的析构函数会阻止编译器生成移动操作，所以如果你想要支持移动操作，你必须自己声明相关的函数。考虑到编译器自动生成的版本能够正常功能，你可能会被诱使着来这样实现:
+使用了Pimpl惯用法的类自然适合支持移动操作，因为编译器自动生成的移动操作正合我们所意：对其中的`std::unique_ptr`进行移动。 正如[Item17](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item17.md)所解释的那样，声明一个类`Widget`的析构函数会阻止编译器生成移动操作，所以如果你想要支持移动操作，你必须自己声明相关的函数。考虑到编译器自动生成的版本会正常运行，你可能会很想按如下方式实现它们：
 
 ```cpp
 class Widget {                                  //仍然在“widget.h”中
@@ -210,7 +210,7 @@ Widget::Widget(Widget&& rhs) = default;             //这里定义
 Widget& Widget::operator=(Widget&& rhs) = default;
 ```
 
-Pimpl惯用法是用来减少类的实现和类使用者之间的编译依赖的一种方法，但是，从概念而言，使用这种惯用法并不改变这个类的表现。 原来的类`Widget`包含有`std::string`，`std::vector`和`Gadget`数据成员，并且，假设类型`Gadget`，如同`std::string`和`std::vector`一样，允许复制操作，所以类`Widget`支持复制操作也很合理。 我们必须要自己来写这些函数，因为第一，对包含有只可移动（*move-only*）类型，如`std::unique_ptr`的类，编译器不会生成复制操作；第二，即使编译器帮我们生成了，生成的复制操作也只会复制`std::unique_ptr`（也即浅复制（*shallow copy*））,而实际上我们需要复制指针所指向的对象（也即深复制（*deep copy*））。
+Pimpl惯用法是用来减少类的实现和类使用者之间的编译依赖的一种方法，但是，从概念而言，使用这种惯用法并不改变这个类的表现。 原来的类`Widget`包含有`std::string`，`std::vector`和`Gadget`数据成员，并且，假设类型`Gadget`，如同`std::string`和`std::vector`一样，允许复制操作，所以类`Widget`支持复制操作也很合理。 我们必须要自己来写这些函数，因为第一，对包含有只可移动（*move-only*）类型，如`std::unique_ptr`的类，编译器不会生成复制操作；第二，即使编译器帮我们生成了，生成的复制操作也只会复制`std::unique_ptr`（也即浅拷贝（*shallow copy*）），而实际上我们需要复制指针所指向的对象（也即深拷贝（*deep copy*））。
 
 使用我们已经熟悉的方法，我们在头文件里声明函数，而在实现文件里去实现他们:
 
