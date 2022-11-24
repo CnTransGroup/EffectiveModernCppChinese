@@ -2,7 +2,7 @@
 
 **Item 6: Use the explicitly typed initializer idiom when `auto` deduces undesired types**
 
-在[Item5](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/2.Auto/item5.md)中解释了比起显式指定类型使用`auto`声明变量有若干技术优势，但是有时当你想向左转`auto`却向右转。举个例子，假如我有一个函数，参数为`Widget`，返回一个`std::vector<bool>`，这里的`bool`表示`Widget`是否提供一个独有的特性。
+在[Item5](../2.Auto/item5.md)中解释了比起显式指定类型使用`auto`声明变量有若干技术优势，但是有时当你想向左转`auto`却向右转。举个例子，假如我有一个函数，参数为`Widget`，返回一个`std::vector<bool>`，这里的`bool`表示`Widget`是否提供一个独有的特性。
 ````cpp
 std::vector<bool> features(const Widget& w);
 ````
@@ -48,7 +48,7 @@ processWidget(w, highPriority);         //未定义行为！
                                         //highPriority包含一个悬置指针！
 ````
 
-`std::vector<bool>::reference`是一个代理类（*proxy class*）的例子：所谓代理类就是以模仿和增强一些类型的行为为目的而存在的类。很多情况下都会使用代理类，`std::vector<bool>::reference`展示了对`std::vector<bool>`使用`operator[]`来实现引用*bit*这样的行为。另外，C++标准模板库中的智能指针（见[第4章](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item18.md)）也是用代理类实现了对原始指针的资源管理行为。代理类的功能已被大家广泛接受。事实上，“Proxy”设计模式是软件设计这座万神庙中一直都存在的高级会员。
+`std::vector<bool>::reference`是一个代理类（*proxy class*）的例子：所谓代理类就是以模仿和增强一些类型的行为为目的而存在的类。很多情况下都会使用代理类，`std::vector<bool>::reference`展示了对`std::vector<bool>`使用`operator[]`来实现引用*bit*这样的行为。另外，C++标准模板库中的智能指针（见[第4章](../4.SmartPointers/item18.md)）也是用代理类实现了对原始指针的资源管理行为。代理类的功能已被大家广泛接受。事实上，“Proxy”设计模式是软件设计这座万神庙中一直都存在的高级会员。
 
 一些代理类被设计于用以对客户可见。比如`std::shared_ptr`和`std::unique_ptr`。其他的代理类则或多或少不可见，比如`std::vector<bool>::reference`就是不可见代理类的一个例子，还有它在`std::bitset`的胞弟`std::bitset::reference`。
 
@@ -64,7 +64,7 @@ Matrix sum = m1 + m2 + m3 + m4;
 ````cpp
 auto someVar = expression of "invisible" proxy class type;
 ````
-但是你怎么能意识到你正在使用代理类？应用他们的软件不可能宣告它们的存在。它们被设计为**不可见**，至少概念上说是这样！每当你发现它们，你真的应该舍弃[Item5](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/2.Auto/item5.md)演示的`auto`所具有的诸多好处吗？
+但是你怎么能意识到你正在使用代理类？应用他们的软件不可能宣告它们的存在。它们被设计为**不可见**，至少概念上说是这样！每当你发现它们，你真的应该舍弃[Item5](../2.Auto/item5.md)演示的`auto`所具有的诸多好处吗？
 
 让我们首先回到如何找到它们的问题上。虽然“不可见”代理类都在程序员日常使用的雷达下方飞行，但是很多库都证明它们可以上方飞行。当你越熟悉你使用的库的基本设计理念，你的思维就会越活跃，不至于思维僵化认为代理类只能在这些库中使用。
 

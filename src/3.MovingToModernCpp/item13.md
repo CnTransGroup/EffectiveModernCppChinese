@@ -31,7 +31,7 @@ values.insert(static_cast<IterT>(ci), 1998);    //可能无法通过编译，
                                                 //原因见下
 ```
 
-`typedef`不是强制的，但是可以让代码中的*cast*更好写。（你可能想知道为什么我使用`typedef`而不是[Item9](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item9.md)提到的别名声明，因为这段代码在演示C++98做法，别名声明是C++11加入的特性）
+`typedef`不是强制的，但是可以让代码中的*cast*更好写。（你可能想知道为什么我使用`typedef`而不是[Item9](../3.MovingToModernCpp/item9.md)提到的别名声明，因为这段代码在演示C++98做法，别名声明是C++11加入的特性）
 
 之所以`std::find`的调用会出现类型转换是因为在C++98中`values`是non-`const`容器，没办法简简单单的从non-`const`容器中获取`const_iterator`。严格来说类型转换不是必须的，因为用其他方法获取`const_iterator`也是可以的（比如你可以把`values`绑定到reference-to-`const`变量上，然后再用这个变量代替`values`），但不管怎么说，从non-`const`容器中获取`const_iterator`的做法都有点别扭。
 

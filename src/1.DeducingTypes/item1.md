@@ -40,7 +40,7 @@ f(x);                           //用一个int类型的变量调用f
 
 我们可能很自然的期望`T`和传递进函数的实参是相同的类型，也就是，`T`为`expr`的类型。在上面的例子中，事实就是那样：`x`是`int`，`T`被推导为`int`。但有时情况并非总是如此，`T`的类型推导不仅取决于`expr`的类型，也取决于`ParamType`的类型。这里有三种情况：
 
-+ `ParamType`是一个指针或引用，但不是通用引用（关于通用引用请参见[Item24](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item24.md)。在这里你只需要知道它存在，而且不同于左值引用和右值引用）
++ `ParamType`是一个指针或引用，但不是通用引用（关于通用引用请参见[Item24](../5.RRefMovSemPerfForw/item24.md)。在这里你只需要知道它存在，而且不同于左值引用和右值引用）
 + `ParamType`一个通用引用
 + `ParamType`既不是指针也不是引用
 
@@ -116,7 +116,7 @@ f(px);                          //T是const int，param的类型是const int*
 
 ### 情景二：`ParamType`是一个通用引用
 
-模板使用通用引用形参的话，那事情就不那么明显了。这样的形参被声明为像右值引用一样（也就是，在函数模板中假设有一个类型形参`T`，那么通用引用声明形式就是`T&&`)，它们的行为在传入左值实参时大不相同。完整的叙述请参见[Item24](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item24.md)，在这有些最必要的你还是需要知道：
+模板使用通用引用形参的话，那事情就不那么明显了。这样的形参被声明为像右值引用一样（也就是，在函数模板中假设有一个类型形参`T`，那么通用引用声明形式就是`T&&`)，它们的行为在传入左值实参时大不相同。完整的叙述请参见[Item24](../5.RRefMovSemPerfForw/item24.md)，在这有些最必要的你还是需要知道：
 
 + 如果`expr`是左值，`T`和`ParamType`都会被推导为左值引用。这非常不寻常，第一，这是模板类型推导中唯一一种`T`被推导为引用的情况。第二，虽然`ParamType`被声明为右值引用类型，但是最后推导的结果是左值引用。
 + 如果`expr`是右值，就使用正常的（也就是**情景一**）推导规则
@@ -142,7 +142,7 @@ f(rx);                          //rx是左值，所以T是const int&，
 f(27);                          //27是右值，所以T是int，
                                 //param类型就是int&&
 ````
-[Item24](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item24.md)详细解释了为什么这些例子是像这样发生的。这里关键在于通用引用的类型推导规则是不同于普通的左值或者右值引用的。尤其是，当通用引用被使用时，类型推导会区分左值实参和右值实参，但是对非通用引用时不会区分。
+[Item24](../5.RRefMovSemPerfForw/item24.md)详细解释了为什么这些例子是像这样发生的。这里关键在于通用引用的类型推导规则是不同于普通的左值或者右值引用的。尤其是，当通用引用被使用时，类型推导会区分左值实参和右值实参，但是对非通用引用时不会区分。
 
 ### 情景三：`ParamType`既不是指针也不是引用
 
@@ -154,7 +154,7 @@ void f(T param);                //以传值的方式处理param
 这意味着无论传递什么`param`都会成为它的一份拷贝——一个完整的新对象。事实上`param`成为一个新对象这一行为会影响`T`如何从`expr`中推导出结果。
 
 1. 和之前一样，如果`expr`的类型是一个引用，忽略这个引用部分
-2. 如果忽略`expr`的引用性（reference-ness）之后，`expr`是一个`const`，那就再忽略`const`。如果它是`volatile`，也忽略`volatile`（`volatile`对象不常见，它通常用于驱动程序的开发中。关于`volatile`的细节请参见[Item40](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.TheConcurrencyAPI/item40.md)）
+2. 如果忽略`expr`的引用性（reference-ness）之后，`expr`是一个`const`，那就再忽略`const`。如果它是`volatile`，也忽略`volatile`（`volatile`对象不常见，它通常用于驱动程序的开发中。关于`volatile`的细节请参见[Item40](../7.TheConcurrencyAPI/item40.md)）
 
 因此
 ````cpp
@@ -233,7 +233,7 @@ constexpr std::size_t arraySize(T (&)[N]) noexcept      //constexpr
     return N;                                           //的信息
 }                                                       //请看下面
 ````
-在[Item15](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item15.md)提到将一个函数声明为`constexpr`使得结果在编译期间可用。这使得我们可以用一个花括号声明一个数组，然后第二个数组可以使用第一个数组的大小作为它的大小，就像这样：
+在[Item15](../3.MovingToModernCpp/item15.md)提到将一个函数声明为`constexpr`使得结果在编译期间可用。这使得我们可以用一个花括号声明一个数组，然后第二个数组可以使用第一个数组的大小作为它的大小，就像这样：
 ````cpp
 int keyVals[] = { 1, 3, 7, 9, 11, 22, 35 };             //keyVals有七个元素
 
@@ -243,7 +243,7 @@ int mappedVals[arraySize(keyVals)];                     //mappedVals也有七个
 ````cpp
 std::array<int, arraySize(keyVals)> mappedVals;         //mappedVals的大小为7
 ````
-至于`arraySize`被声明为`noexcept`，会使得编译器生成更好的代码，具体的细节请参见[Item14](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item14.md)。
+至于`arraySize`被声明为`noexcept`，会使得编译器生成更好的代码，具体的细节请参见[Item14](../3.MovingToModernCpp/item14.md)。
 
 ### 函数实参
 
@@ -265,7 +265,7 @@ f2(someFunc);                       //param被推导为指向函数的引用，
 ````
 这个实际上没有什么不同，但是如果你知道数组退化为指针，你也会知道函数退化为指针。
 
-这里你需要知道：`auto`依赖于模板类型推导。正如我在开始谈论的，在大多数情况下它们的行为很直接。在通用引用中对于左值的特殊处理使得本来很直接的行为变得有些污点，然而，数组和函数退化为指针把这团水搅得更浑浊。有时你只需要编译器告诉你推导出的类型是什么。这种情况下，翻到[item4](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item4.md),它会告诉你如何让编译器这么做。
+这里你需要知道：`auto`依赖于模板类型推导。正如我在开始谈论的，在大多数情况下它们的行为很直接。在通用引用中对于左值的特殊处理使得本来很直接的行为变得有些污点，然而，数组和函数退化为指针把这团水搅得更浑浊。有时你只需要编译器告诉你推导出的类型是什么。这种情况下，翻到[item4](../1.DeducingTypes/item4.md),它会告诉你如何让编译器这么做。
 
 **请记住：**
 

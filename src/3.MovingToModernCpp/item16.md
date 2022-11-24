@@ -83,7 +83,7 @@ private:
 
 值得注意的是，因为`std::mutex`是一种只可移动类型（*move-only type*，一种可以移动但不能复制的类型），所以将`m`添加进`Polynomial`中的副作用是使`Polynomial`失去了被复制的能力。不过，它仍然可以移动。
 
-在某些情况下，互斥量的副作用显会得过大。例如，如果你所做的只是计算成员函数被调用了多少次，使用`std::atomic` 修饰的计数器（保证其他线程视它的操作为不可分割的整体，参见[item40](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.TheConcurrencyAPI/item40.md)）通常会是一个开销更小的方法。（然而它是否轻量取决于你使用的硬件和标准库中互斥量的实现。）以下是如何使用`std::atomic`来统计调用次数。
+在某些情况下，互斥量的副作用显会得过大。例如，如果你所做的只是计算成员函数被调用了多少次，使用`std::atomic` 修饰的计数器（保证其他线程视它的操作为不可分割的整体，参见[item40](../7.TheConcurrencyAPI/item40.md)）通常会是一个开销更小的方法。（然而它是否轻量取决于你使用的硬件和标准库中互斥量的实现。）以下是如何使用`std::atomic`来统计调用次数。
 
 ```c++
 class Point {                                   //2D点

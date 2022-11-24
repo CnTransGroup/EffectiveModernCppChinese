@@ -176,9 +176,9 @@ auto val =
     std::get<static_cast<std::size_t>(UserInfoFields::uiEmail)>
         (uInfo);
 ```
-为避免这种冗长的表示，我们可以写一个函数传入枚举名并返回对应的`std::size_t`值，但这有一点技巧性。`std::get`是一个模板（函数），需要你给出一个`std::size_t`值的模板实参（注意使用`<>`而不是`()`），因此将枚举名变换为`std::size_t`值的函数必须**在编译期**产生这个结果。如[Item15](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item15.md)提到的，那必须是一个`constexpr`函数。
+为避免这种冗长的表示，我们可以写一个函数传入枚举名并返回对应的`std::size_t`值，但这有一点技巧性。`std::get`是一个模板（函数），需要你给出一个`std::size_t`值的模板实参（注意使用`<>`而不是`()`），因此将枚举名变换为`std::size_t`值的函数必须**在编译期**产生这个结果。如[Item15](../3.MovingToModernCpp/item15.md)提到的，那必须是一个`constexpr`函数。
 
-事实上，它也的确该是一个`constexpr`函数模板，因为它应该能用于任何`enum`。如果我们想让它更一般化，我们还要泛化它的返回类型。较之于返回`std::size_t`，我们更应该返回枚举的底层类型。这可以通过`std::underlying_type`这个*type trait*获得。（参见[Item9](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item9.md)关于*type trait*的内容）。最终我们还要再加上`noexcept`修饰（参见[Item14](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item14.md)），因为我们知道它肯定不会产生异常。根据上述分析最终得到的`toUType`函数模板在编译期接受任意枚举名并返回它的值：
+事实上，它也的确该是一个`constexpr`函数模板，因为它应该能用于任何`enum`。如果我们想让它更一般化，我们还要泛化它的返回类型。较之于返回`std::size_t`，我们更应该返回枚举的底层类型。这可以通过`std::underlying_type`这个*type trait*获得。（参见[Item9](../3.MovingToModernCpp/item9.md)关于*type trait*的内容）。最终我们还要再加上`noexcept`修饰（参见[Item14](../3.MovingToModernCpp/item14.md)），因为我们知道它肯定不会产生异常。根据上述分析最终得到的`toUType`函数模板在编译期接受任意枚举名并返回它的值：
 
 ```cpp
 template<typename E>
@@ -190,7 +190,7 @@ constexpr typename std::underlying_type<E>::type
                     std::underlying_type<E>::type>(enumerator);
 }
 ```
-在C++14中，`toUType`还可以进一步用`std::underlying_type_t`（参见[Item9](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item9.md)）代替`typename std::underlying_type<E>::type`打磨：
+在C++14中，`toUType`还可以进一步用`std::underlying_type_t`（参见[Item9](../3.MovingToModernCpp/item9.md)）代替`typename std::underlying_type<E>::type`打磨：
 
 ```cpp
 template<typename E>                //C++14
@@ -200,7 +200,7 @@ constexpr std::underlying_type_t<E>
     return static_cast<std::underlying_type_t<E>>(enumerator);
 }
 ```
-还可以再用C++14 `auto`（参见[Item3](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item3.md)）打磨一下代码：
+还可以再用C++14 `auto`（参见[Item3](../1.DeducingTypes/item3.md)）打磨一下代码：
 ```cpp
 template<typename E>                //C++14
 constexpr auto

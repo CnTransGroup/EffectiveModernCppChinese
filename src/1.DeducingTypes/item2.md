@@ -2,11 +2,11 @@
 
 **Item 2: Understand `auto` type deduction**
 
-如果你已经读过[Item1](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item1.md)的模板类型推导，那么你几乎已经知道了`auto`类型推导的大部分内容，至于为什么不是全部是因为这里有一个`auto`不同于模板类型推导的例外。但这怎么可能？模板类型推导包括模板，函数，形参，但`auto`不处理这些东西啊。
+如果你已经读过[Item1](../1.DeducingTypes/item1.md)的模板类型推导，那么你几乎已经知道了`auto`类型推导的大部分内容，至于为什么不是全部是因为这里有一个`auto`不同于模板类型推导的例外。但这怎么可能？模板类型推导包括模板，函数，形参，但`auto`不处理这些东西啊。
 
 你是对的，但没关系。`auto`类型推导和模板类型推导有一个直接的映射关系。它们之间可以通过一个非常规范非常系统化的转换流程来转换彼此。
 
-在[Item1](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item2.md)中，模板类型推导使用下面这个函数模板
+在[Item1](../1.DeducingTypes/item2.md)中，模板类型推导使用下面这个函数模板
 ````cpp
 template<typename T>
 void f(ParmaType param);
@@ -54,7 +54,7 @@ func_for_rx(x);                 //概念化调用：
 ````
 正如我说的，`auto`类型推导除了一个例外（我们很快就会讨论），其他情况都和模板类型推导一样。
 
-[Item1](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item1.md)基于`ParamType`——在函数模板中`param`的类型说明符——的不同特征，把模板类型推导分成三个部分来讨论。在使用`auto`作为类型说明符的变量声明中，类型说明符代替了`ParamType`，因此Item1描述的三个情景稍作修改就能适用于auto：
+[Item1](../1.DeducingTypes/item1.md)基于`ParamType`——在函数模板中`param`的类型说明符——的不同特征，把模板类型推导分成三个部分来讨论。在使用`auto`作为类型说明符的变量声明中，类型说明符代替了`ParamType`，因此Item1描述的三个情景稍作修改就能适用于auto：
 
 + 情景一：类型说明符是一个指针或引用但不是通用引用
 + 情景二：类型说明符一个通用引用
@@ -77,7 +77,7 @@ auto&& uref3 = 27;              //27是int右值，
                                 //所以uref3类型为int&&
 ```
 
-[Item1](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item1.md)讨论并总结了对于non-reference类型说明符，数组和函数名如何退化为指针。那些内容也同样适用于`auto`类型推导：
+[Item1](../1.DeducingTypes/item1.md)讨论并总结了对于non-reference类型说明符，数组和函数名如何退化为指针。那些内容也同样适用于`auto`类型推导：
 
 ````cpp
 const char name[] =             //name的类型是const char[13]
@@ -108,7 +108,7 @@ int x4{ 27 };
 ````
 总之，这四种不同的语法只会产生一个相同的结果：变量类型为`int`值为27
 
-但是[Item5](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/2.Auto/item5.md)解释了使用`auto`说明符代替指定类型说明符的好处，所以我们应该很乐意把上面声明中的`int`替换为`auto`，我们会得到这样的代码：
+但是[Item5](../2.Auto/item5.md)解释了使用`auto`说明符代替指定类型说明符的好处，所以我们应该很乐意把上面声明中的`int`替换为`auto`，我们会得到这样的代码：
 ````cpp
 auto x1 = 27;
 auto x2(27);
@@ -148,9 +148,9 @@ f({ 11, 23, 9 });               //T被推导为int，initList的类型为
 ````
 因此`auto`类型推导和模板类型推导的真正区别在于，`auto`类型推导假定花括号表示`std::initializer_list`而模板类型推导不会这样（确切的说是不知道怎么办）。
 
-你可能想知道为什么`auto`类型推导和模板类型推导对于花括号有不同的处理方式。我也想知道。哎，我至今没找到一个令人信服的解释。但是规则就是规则，这意味着你必须记住如果你使用`auto`声明一个变量，并用花括号进行初始化，`auto`类型推导总会得出`std::initializer_list`的结果。如果你使用**uniform initialization（花括号的方式进行初始化）**用得很爽你就得记住这个例外以免犯错，在C++11编程中一个典型的错误就是偶然使用了`std::initializer_list<T>`类型的变量，这个陷阱也导致了很多C++程序员抛弃花括号初始化，只有不得不使用的时候再做考虑。（在[Item7](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item7.md)讨论了必须使用时该怎么做）
+你可能想知道为什么`auto`类型推导和模板类型推导对于花括号有不同的处理方式。我也想知道。哎，我至今没找到一个令人信服的解释。但是规则就是规则，这意味着你必须记住如果你使用`auto`声明一个变量，并用花括号进行初始化，`auto`类型推导总会得出`std::initializer_list`的结果。如果你使用**uniform initialization（花括号的方式进行初始化）**用得很爽你就得记住这个例外以免犯错，在C++11编程中一个典型的错误就是偶然使用了`std::initializer_list<T>`类型的变量，这个陷阱也导致了很多C++程序员抛弃花括号初始化，只有不得不使用的时候再做考虑。（在[Item7](../3.MovingToModernCpp/item7.md)讨论了必须使用时该怎么做）
 
-对于C++11故事已经说完了。但是对于C++14故事还在继续，C++14允许`auto`用于函数返回值并会被推导（参见[Item3](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item3.md)），而且C++14的*lambda*函数也允许在形参声明中使用`auto`。但是在这些情况下`auto`实际上使用**模板类型推导**的那一套规则在工作，而不是`auto`类型推导，所以说下面这样的代码不会通过编译：
+对于C++11故事已经说完了。但是对于C++14故事还在继续，C++14允许`auto`用于函数返回值并会被推导（参见[Item3](../1.DeducingTypes/item3.md)），而且C++14的*lambda*函数也允许在形参声明中使用`auto`。但是在这些情况下`auto`实际上使用**模板类型推导**的那一套规则在工作，而不是`auto`类型推导，所以说下面这样的代码不会通过编译：
 ````cpp
 auto createInitList()
 {

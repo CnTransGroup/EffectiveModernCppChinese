@@ -2,7 +2,7 @@
 
 **Item 20: Use `std::weak_ptr` for `std::shared_ptr`-like pointers that can dangle**
 
-自相矛盾的是，如果有一个像`std::shared_ptr`（见[Item19](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item19.md)）的但是不参与资源所有权共享的指针是很方便的。换句话说，是一个类似`std::shared_ptr`但不影响对象引用计数的指针。这种类型的智能指针必须要解决一个`std::shared_ptr`不存在的问题：可能指向已经销毁的对象。一个真正的智能指针应该跟踪所指对象，在悬空时知晓，悬空（*dangle*）就是指针指向的对象不再存在。这就是对`std::weak_ptr`最精确的描述。
+自相矛盾的是，如果有一个像`std::shared_ptr`（见[Item19](../4.SmartPointers/item19.md)）的但是不参与资源所有权共享的指针是很方便的。换句话说，是一个类似`std::shared_ptr`但不影响对象引用计数的指针。这种类型的智能指针必须要解决一个`std::shared_ptr`不存在的问题：可能指向已经销毁的对象。一个真正的智能指针应该跟踪所指对象，在悬空时知晓，悬空（*dangle*）就是指针指向的对象不再存在。这就是对`std::weak_ptr`最精确的描述。
 
 你可能想知道什么时候该用`std::weak_ptr`。你可能想知道关于`std::weak_ptr` API的更多。它什么都好除了不太智能。`std::weak_ptr`不能解引用，也不能测试是否为空值。因为`std::weak_ptr`不是一个独立的智能指针。它是`std::shared_ptr`的增强。
 
@@ -34,7 +34,7 @@ auto spw2 = wpw.lock();                     //同上，但是使用auto
 ```cpp
 std::shared_ptr<Widget> spw3(wpw);          //如果wpw过期，抛出std::bad_weak_ptr异常
 ```
-但是你可能还想知道为什么`std::weak_ptr`就有用了。考虑一个工厂函数，它基于一个唯一ID从只读对象上产出智能指针。根据[Item18](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item19.md)的描述，工厂函数会返回一个该对象类型的`std::unique_ptr`：
+但是你可能还想知道为什么`std::weak_ptr`就有用了。考虑一个工厂函数，它基于一个唯一ID从只读对象上产出智能指针。根据[Item18](../4.SmartPointers/item19.md)的描述，工厂函数会返回一个该对象类型的`std::unique_ptr`：
 ```cpp
 std::unique_ptr<const Widget> loadWidget(WidgetID id);
 ```
@@ -83,7 +83,7 @@ std::shared_ptr<const Widget> fastLoadWidget(WidgetID id)
 
 当然，不是所有的使用指针的数据结构都是严格分层的，所以当发生这种情况时，比如上面所述缓存和观察者列表的实现之类的，知道`std::weak_ptr`随时待命也是不错的。
 
-从效率角度来看，`std::weak_ptr`与`std::shared_ptr`基本相同。两者的大小是相同的，使用相同的控制块（参见[Item19](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item19.md)），构造、析构、赋值操作涉及引用计数的原子操作。这可能让你感到惊讶，因为本条款开篇就提到`std::weak_ptr`不影响引用计数。我写的是`std::weak_ptr`不参与对象的**共享所有权**，因此不影响**指向对象的引用计数**。实际上在控制块中还是有第二个引用计数，`std::weak_ptr`操作的是第二个引用计数。想了解细节的话，继续看[Item21](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item21.md)吧。
+从效率角度来看，`std::weak_ptr`与`std::shared_ptr`基本相同。两者的大小是相同的，使用相同的控制块（参见[Item19](../4.SmartPointers/item19.md)），构造、析构、赋值操作涉及引用计数的原子操作。这可能让你感到惊讶，因为本条款开篇就提到`std::weak_ptr`不影响引用计数。我写的是`std::weak_ptr`不参与对象的**共享所有权**，因此不影响**指向对象的引用计数**。实际上在控制块中还是有第二个引用计数，`std::weak_ptr`操作的是第二个引用计数。想了解细节的话，继续看[Item21](../4.SmartPointers/item21.md)吧。
 
 **请记住：**
 
