@@ -143,7 +143,7 @@
 <p><strong>Item 34: Prefer lambdas to <code>std::bind</code></strong></p>
 <p>C++11中的<code>std::bind</code>是C++98的<code>std::bind1st</code>和<code>std::bind2nd</code>的后续，但在2005年已经非正式成为了标准库的一部分。那时标准化委员采用了TR1的文档，其中包含了<code>bind</code>的规范。（在TR1中，<code>bind</code>位于不同的命名空间，因此它是<code>std::tr1::bind</code>，而不是<code>std::bind</code>，接口细节也有所不同）。这段历史意味着一些程序员有十年及以上的<code>std::bind</code>使用经验。如果你是其中之一，可能会不愿意放弃一个对你有用的工具。这是可以理解的，但是在这种情况下，改变是更好的，因为在C++11中，<em>lambda</em>几乎总是比<code>std::bind</code>更好的选择。 从C++14开始，<em>lambda</em>的作用不仅强大，而且是完全值得使用的。</p>
 <p>这个条款假设你熟悉<code>std::bind</code>。 如果不是这样，你将需要获得基本的了解，然后再继续。 无论如何，这样的理解都是值得的，因为你永远不知道何时会在阅读或维护的代码库中遇到<code>std::bind</code>。</p>
-<p>与<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/6.LambdaExpressions/item32.md">Item32</a>中一样，我们将从<code>std::bind</code>返回的函数对象称为<strong>bind对象</strong>（<em>bind objects</em>）。</p>
+<p>与<a href="../6.LambdaExpressions/item32.html">Item32</a>中一样，我们将从<code>std::bind</code>返回的函数对象称为<strong>bind对象</strong>（<em>bind objects</em>）。</p>
 <p>优先<em>lambda</em>而不是<code>std::bind</code>的最重要原因是<em>lambda</em>更易读。 例如，假设我们有一个设置警报器的函数：</p>
 <pre><code class="language-c++">//一个时间点的类型定义（语法见条款9）
 using Time = std::chrono::steady_clock::time_point;
@@ -310,8 +310,8 @@ auto compressRateB = std::bind(compress, w, _1);
 <p>同样，唯一的方法是记住<code>std::bind</code>的工作方式。（答案是传递给bind对象的所有实参都是通过引用传递的，因为此类对象的函数调用运算符使用完美转发。）</p>
 <p>与<em>lambda</em>相比，使用<code>std::bind</code>进行编码的代码可读性较低，表达能力较低，并且效率可能较低。 在C++14中，没有<code>std::bind</code>的合理用例。 但是，在C++11中，可以在两个受约束的情况下证明使用<code>std::bind</code>是合理的：</p>
 <ul>
-<li><strong>移动捕获</strong>。C++11的<em>lambda</em>不提供移动捕获，但是可以通过结合<em>lambda</em>和<code>std::bind</code>来模拟。 有关详细信息，请参阅<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/6.LambdaExpressions/item32.md">Item32</a>，该条款还解释了在C++14中，<em>lambda</em>对初始化捕获的支持消除了这个模拟的需求。</li>
-<li><strong>多态函数对象</strong>。因为bind对象上的函数调用运算符使用完美转发，所以它可以接受任何类型的实参（以<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item30.md">Item30</a>中描述的完美转发的限制为界限）。当你要绑定带有模板化函数调用运算符的对象时，此功能很有用。 例如这个类，</li>
+<li><strong>移动捕获</strong>。C++11的<em>lambda</em>不提供移动捕获，但是可以通过结合<em>lambda</em>和<code>std::bind</code>来模拟。 有关详细信息，请参阅<a href="../6.LambdaExpressions/item32.html">Item32</a>，该条款还解释了在C++14中，<em>lambda</em>对初始化捕获的支持消除了这个模拟的需求。</li>
+<li><strong>多态函数对象</strong>。因为bind对象上的函数调用运算符使用完美转发，所以它可以接受任何类型的实参（以<a href="../5.RRefMovSemPerfForw/item30.html">Item30</a>中描述的完美转发的限制为界限）。当你要绑定带有模板化函数调用运算符的对象时，此功能很有用。 例如这个类，</li>
 </ul>
 <pre><code class="language-c++">class PolyWidget {
 public:

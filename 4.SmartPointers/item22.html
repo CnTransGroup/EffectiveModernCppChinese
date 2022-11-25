@@ -188,7 +188,7 @@ Widget::~Widget()               //销毁数据成员
 { delete pImpl; }
 </code></pre>
 <p>在这里我把<code>#include</code>命令写出来是为了明确一点，对于<code>std::string</code>，<code>std::vector</code>和<code>Gadget</code>的头文件的整体依赖依然存在。 然而，这些依赖从头文件<code>widget.h</code>（它被所有<code>Widget</code>类的使用者包含，并且对他们可见）移动到了<code>widget.cpp</code>（该文件只被<code>Widget</code>类的实现者包含，并只对他可见）。 我高亮了其中动态分配和回收<code>Impl</code>对象的部分（译者注：markdown高亮不了，实际高亮的是<code>new Impl</code>和<code>delete pImpl;</code>两个语句）。这就是为什么我们需要<code>Widget</code>的析构函数——我们需要<code>Widget</code>被销毁时回收该对象。</p>
-<p>但是，我展示给你们看的是一段C++98的代码，散发着一股已经过去了几千年的腐朽气息。 它使用了原始指针，原始的<code>new</code>和原始的<code>delete</code>，一切都让它如此的...原始。这一章建立在“智能指针比原始指针更好”的主题上，并且，如果我们想要的只是在类<code>Widget</code>的构造函数动态分配<code>Widget::impl</code>对象，在<code>Widget</code>对象销毁时一并销毁它， <code>std::unique_ptr</code>（见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item18.md">Item18</a>）是最合适的工具。在头文件中用<code>std::unique_ptr</code>替代原始指针，就有了头文件中如下代码:</p>
+<p>但是，我展示给你们看的是一段C++98的代码，散发着一股已经过去了几千年的腐朽气息。 它使用了原始指针，原始的<code>new</code>和原始的<code>delete</code>，一切都让它如此的...原始。这一章建立在“智能指针比原始指针更好”的主题上，并且，如果我们想要的只是在类<code>Widget</code>的构造函数动态分配<code>Widget::impl</code>对象，在<code>Widget</code>对象销毁时一并销毁它， <code>std::unique_ptr</code>（见<a href="../4.SmartPointers/item18.html">Item18</a>）是最合适的工具。在头文件中用<code>std::unique_ptr</code>替代原始指针，就有了头文件中如下代码:</p>
 <pre><code class="language-cpp">class Widget {                      //在“widget.h”中
 public:
     Widget();
@@ -223,7 +223,7 @@ Widget w;                           //错误！
 </code></pre>
 <p>你所看到的错误信息根据编译器不同会有所不同，但是其文本一般会提到一些有关于“把<code>sizeof</code>或<code>delete</code>应用到未完成类型上”的信息。对于未完成类型，使用以上操作是禁止的。</p>
 <p>在Pimpl惯用法中使用<code>std::unique_ptr</code>会抛出错误，有点惊悚，因为第一<code>std::unique_ptr</code>宣称它支持未完成类型，第二Pimpl惯用法是<code>std::unique_ptr</code>的最常见的使用情况之一。 幸运的是，让这段代码能正常运行很简单。 只需要对上面出现的问题的原因有一个基础的认识就可以了。</p>
-<p>在对象<code>w</code>被析构时（例如离开了作用域），问题出现了。在这个时候，它的析构函数被调用。我们在类的定义里使用了<code>std::unique_ptr</code>，所以我们没有声明一个析构函数，因为我们并没有任何代码需要写在里面。根据编译器自动生成的特殊成员函数的规则（见 <a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item17.md">Item17</a>），编译器会自动为我们生成一个析构函数。 在这个析构函数里，编译器会插入一些代码来调用类<code>Widget</code>的数据成员<code>pImpl</code>的析构函数。 <code>pImpl</code>是一个<code>std::unique_ptr&lt;Widget::Impl&gt;</code>，也就是说，一个使用默认删除器的<code>std::unique_ptr</code>。 默认删除器是一个函数，它使用<code>delete</code>来销毁内置于<code>std::unique_ptr</code>的原始指针。然而，在使用<code>delete</code>之前，通常会使默认删除器使用C++11的特性<code>static_assert</code>来确保原始指针指向的类型不是一个未完成类型。 当编译器为<code>Widget w</code>的析构生成代码时，它会遇到<code>static_assert</code>检查并且失败，这通常是错误信息的来源。 这些错误信息只在对象<code>w</code>销毁的地方出现，因为类<code>Widget</code>的析构函数，正如其他的编译器生成的特殊成员函数一样，是暗含<code>inline</code>属性的。 错误信息自身往往指向对象<code>w</code>被创建的那行，因为这行代码明确地构造了这个对象，导致了后面潜在的析构。</p>
+<p>在对象<code>w</code>被析构时（例如离开了作用域），问题出现了。在这个时候，它的析构函数被调用。我们在类的定义里使用了<code>std::unique_ptr</code>，所以我们没有声明一个析构函数，因为我们并没有任何代码需要写在里面。根据编译器自动生成的特殊成员函数的规则（见 <a href="../3.MovingToModernCpp/item17.html">Item17</a>），编译器会自动为我们生成一个析构函数。 在这个析构函数里，编译器会插入一些代码来调用类<code>Widget</code>的数据成员<code>pImpl</code>的析构函数。 <code>pImpl</code>是一个<code>std::unique_ptr&lt;Widget::Impl&gt;</code>，也就是说，一个使用默认删除器的<code>std::unique_ptr</code>。 默认删除器是一个函数，它使用<code>delete</code>来销毁内置于<code>std::unique_ptr</code>的原始指针。然而，在使用<code>delete</code>之前，通常会使默认删除器使用C++11的特性<code>static_assert</code>来确保原始指针指向的类型不是一个未完成类型。 当编译器为<code>Widget w</code>的析构生成代码时，它会遇到<code>static_assert</code>检查并且失败，这通常是错误信息的来源。 这些错误信息只在对象<code>w</code>销毁的地方出现，因为类<code>Widget</code>的析构函数，正如其他的编译器生成的特殊成员函数一样，是暗含<code>inline</code>属性的。 错误信息自身往往指向对象<code>w</code>被创建的那行，因为这行代码明确地构造了这个对象，导致了后面潜在的析构。</p>
 <p>为了解决这个问题，你只需要确保在编译器生成销毁<code>std::unique_ptr&lt;Widget::Impl&gt;</code>的代码之前， <code>Widget::Impl</code>已经是一个完成类型（<em>complete type</em>）。 当编译器“看到”它的定义的时候，该类型就成为完成类型了。 但是 <code>Widget::Impl</code>的定义在<code>widget.cpp</code>里。成功编译的关键，就是在<code>widget.cpp</code>文件内，让编译器在“看到” <code>Widget</code>的析构函数实现之前（也即编译器插入的，用来销毁<code>std::unique_ptr</code>这个数据成员的代码的，那个位置），先定义<code>Widget::Impl</code>。</p>
 <p>做出这样的调整很容易。只需要先在<code>widget.h</code>里，只声明类<code>Widget</code>的析构函数，但不要在这里定义它：</p>
 <pre><code class="language-cpp">class Widget {                  //跟之前一样，在“widget.h”中
@@ -259,7 +259,7 @@ Widget::~Widget()                   //析构函数的定义（译者注：这里
 <p>这样就可以了，并且这样增加的代码也最少，你声明<code>Widget</code>析构函数只是为了在 Widget 的实现文件中（译者注：指<code>widget.cpp</code>）写出它的定义，但是如果你想强调编译器自动生成的析构函数会做和你一样正确的事情，你可以直接使用“<code>= default</code>”定义析构函数体</p>
 <pre><code class="language-cpp">Widget::~Widget() = default;        //同上述代码效果一致
 </code></pre>
-<p>使用了Pimpl惯用法的类自然适合支持移动操作，因为编译器自动生成的移动操作正合我们所意：对其中的<code>std::unique_ptr</code>进行移动。 正如<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item17.md">Item17</a>所解释的那样，声明一个类<code>Widget</code>的析构函数会阻止编译器生成移动操作，所以如果你想要支持移动操作，你必须自己声明相关的函数。考虑到编译器自动生成的版本会正常运行，你可能会很想按如下方式实现它们：</p>
+<p>使用了Pimpl惯用法的类自然适合支持移动操作，因为编译器自动生成的移动操作正合我们所意：对其中的<code>std::unique_ptr</code>进行移动。 正如<a href="../3.MovingToModernCpp/item17.html">Item17</a>所解释的那样，声明一个类<code>Widget</code>的析构函数会阻止编译器生成移动操作，所以如果你想要支持移动操作，你必须自己声明相关的函数。考虑到编译器自动生成的版本会正常运行，你可能会很想按如下方式实现它们：</p>
 <pre><code class="language-cpp">class Widget {                                  //仍然在“widget.h”中
 public:
     Widget();
@@ -335,7 +335,7 @@ Widget&amp; Widget::operator=(const Widget&amp; rhs)    //拷贝operator=
     return *this;
 }
 </code></pre>
-<p>两个函数的实现都比较中规中矩。 在每个情况中，我们都只从源对象（<code>rhs</code>）中，复制了结构体<code>Impl</code>的内容到目标对象中（<code>*this</code>）。我们利用了编译器会为我们自动生成结构体<code>Impl</code>的复制操作函数的机制，而不是逐一复制结构体<code>Impl</code>的成员，自动生成的复制操作能自动复制每一个成员。 因此我们通过调用编译器生成的<code>Widget::Impl</code>的复制操作函数来实现了类<code>Widget</code>的复制操作。 在复制构造函数中，注意，我们仍然遵从了<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item21.md">Item21</a>的建议，使用<code>std::make_unique</code>而非直接使用<code>new</code>。</p>
+<p>两个函数的实现都比较中规中矩。 在每个情况中，我们都只从源对象（<code>rhs</code>）中，复制了结构体<code>Impl</code>的内容到目标对象中（<code>*this</code>）。我们利用了编译器会为我们自动生成结构体<code>Impl</code>的复制操作函数的机制，而不是逐一复制结构体<code>Impl</code>的成员，自动生成的复制操作能自动复制每一个成员。 因此我们通过调用编译器生成的<code>Widget::Impl</code>的复制操作函数来实现了类<code>Widget</code>的复制操作。 在复制构造函数中，注意，我们仍然遵从了<a href="../4.SmartPointers/item21.html">Item21</a>的建议，使用<code>std::make_unique</code>而非直接使用<code>new</code>。</p>
 <p>为了实现Pimpl惯用法，<code>std::unique_ptr</code>是我们使用的智能指针，因为位于对象内部的<code>pImpl</code>指针（例如，在类<code>Widget</code>内部），对所指向的对应实现的对象的享有独占所有权。然而，有趣的是，如果我们使用<code>std::shared_ptr</code>而不是<code>std::unique_ptr</code>来做<code>pImpl</code>指针， 我们会发现本条款的建议不再适用。 我们不需要在类<code>Widget</code>里声明析构函数，没有了用户定义析构函数，编译器将会愉快地生成移动操作，并且将会如我们所期望般工作。<code>widget.h</code>里的代码如下，</p>
 <pre><code class="language-cpp">class Widget {                      //在“widget.h”中
 public:

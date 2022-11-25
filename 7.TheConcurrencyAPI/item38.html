@@ -141,9 +141,9 @@
                     <main>
                         <h2 id="条款三十八关注不同线程句柄的析构行为"><a class="header" href="#条款三十八关注不同线程句柄的析构行为">条款三十八：关注不同线程句柄的析构行为</a></h2>
 <p><strong>Item 38：Be aware of varying thread handle destructor behavior</strong></p>
-<p><a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.TheConcurrencyAPI/item37.md">Item37</a>中说明了可结合的<code>std::thread</code>对应于执行的系统线程。未延迟（non-deferred）任务的<em>future</em>（参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.TheConcurrencyAPI/item36.md">Item36</a>）与系统线程有相似的关系。因此，可以将<code>std::thread</code>对象和<em>future</em>对象都视作系统线程的<strong>句柄</strong>（<em>handles</em>）。</p>
-<p>从这个角度来说，有趣的是<code>std::thread</code>和<em>future</em>在析构时有相当不同的行为。在<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.TheConcurrencyAPI/item37.md">Item37</a>中说明，可结合的<code>std::thread</code>析构会终止你的程序，因为两个其他的替代选择——隐式<code>join</code>或者隐式<code>detach</code>都是更加糟糕的。但是，<em>future</em>的析构表现有时就像执行了隐式<code>join</code>，有时又像是隐式执行了<code>detach</code>，有时又没有执行这两个选择。它永远不会造成程序终止。这个线程句柄多种表现值得研究一下。</p>
-<p>我们可以观察到实际上<em>future</em>是通信信道的一端，被调用者通过该信道将结果发送给调用者。（<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.TheConcurrencyAPI/item39.md">Item39</a>说，与<em>future</em>有关的这种通信信道也可以被用于其他目的。但是对于本条款，我们只考虑它们作为这样一个机制的用法，即被调用者传送结果给调用者。）被调用者（通常是异步执行）将计算结果写入通信信道中（通常通过<code>std::promise</code>对象），调用者使用<em>future</em>读取结果。你可以想象成下面的图示，虚线表示信息的流动方向：</p>
+<p><a href="../7.TheConcurrencyAPI/item37.html">Item37</a>中说明了可结合的<code>std::thread</code>对应于执行的系统线程。未延迟（non-deferred）任务的<em>future</em>（参见<a href="../7.TheConcurrencyAPI/item36.html">Item36</a>）与系统线程有相似的关系。因此，可以将<code>std::thread</code>对象和<em>future</em>对象都视作系统线程的<strong>句柄</strong>（<em>handles</em>）。</p>
+<p>从这个角度来说，有趣的是<code>std::thread</code>和<em>future</em>在析构时有相当不同的行为。在<a href="../7.TheConcurrencyAPI/item37.html">Item37</a>中说明，可结合的<code>std::thread</code>析构会终止你的程序，因为两个其他的替代选择——隐式<code>join</code>或者隐式<code>detach</code>都是更加糟糕的。但是，<em>future</em>的析构表现有时就像执行了隐式<code>join</code>，有时又像是隐式执行了<code>detach</code>，有时又没有执行这两个选择。它永远不会造成程序终止。这个线程句柄多种表现值得研究一下。</p>
+<p>我们可以观察到实际上<em>future</em>是通信信道的一端，被调用者通过该信道将结果发送给调用者。（<a href="../7.TheConcurrencyAPI/item39.html">Item39</a>说，与<em>future</em>有关的这种通信信道也可以被用于其他目的。但是对于本条款，我们只考虑它们作为这样一个机制的用法，即被调用者传送结果给调用者。）被调用者（通常是异步执行）将计算结果写入通信信道中（通常通过<code>std::promise</code>对象），调用者使用<em>future</em>读取结果。你可以想象成下面的图示，虚线表示信息的流动方向：</p>
 <p><img src="media/item38_fig1.png" alt="item38_fig1" /></p>
 <p>但是被调用者的结果存储在哪里？被调用者会在调用者<code>get</code>相关的<em>future</em>之前执行完成，所以结果不能存储在被调用者的<code>std::promise</code>。这个对象是局部的，当被调用者执行结束后，会被销毁。</p>
 <p>结果同样不能存储在调用者的<em>future</em>，因为（当然还有其他原因）<code>std::future</code>可能会被用来创建<code>std::shared_future</code>（这会将被调用者的结果所有权从<code>std::future</code>转移给<code>std::shared_future</code>），而<code>std::shared_future</code>在<code>std::future</code>被销毁之后可能被复制很多次。鉴于不是所有的结果都可以被拷贝（即只可移动类型），并且结果的生命周期至少与最后一个引用它的<em>future</em>一样长，这些潜在的<em>future</em>中哪个才是被调用者用来存储结果的？</p>
@@ -155,16 +155,16 @@
 <li><strong>引用了共享状态——使用<code>std::async</code>启动的未延迟任务建立的那个——的最后一个<em>future</em>的析构函数会阻塞住</strong>，直到任务完成。本质上，这种<em>future</em>的析构函数对执行异步任务的线程执行了隐式的<code>join</code>。</li>
 <li><strong>其他所有<em>future</em>的析构函数简单地销毁<em>future</em>对象</strong>。对于异步执行的任务，就像对底层的线程执行<code>detach</code>。对于延迟任务来说如果这是最后一个<em>future</em>，意味着这个延迟任务永远不会执行了。</li>
 </ul>
-<p>这些规则听起来好复杂。我们真正要处理的是一个简单的“正常”行为以及一个单独的例外。正常行为是<em>future</em>析构函数销毁<em>future</em>。就是这样。那意味着不<code>join</code>也不<code>detach</code>，也不运行什么，只销毁<em>future</em>的数据成员（当然，还做了另一件事，就是递减了共享状态中的引用计数，这个共享状态是由引用它的<em>future</em>和被调用者的<code>std::promise</code>共同控制的。这个引用计数让库知道共享状态什么时候可以被销毁。对于引用计数的一般信息参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item19.md">Item19</a>。）</p>
+<p>这些规则听起来好复杂。我们真正要处理的是一个简单的“正常”行为以及一个单独的例外。正常行为是<em>future</em>析构函数销毁<em>future</em>。就是这样。那意味着不<code>join</code>也不<code>detach</code>，也不运行什么，只销毁<em>future</em>的数据成员（当然，还做了另一件事，就是递减了共享状态中的引用计数，这个共享状态是由引用它的<em>future</em>和被调用者的<code>std::promise</code>共同控制的。这个引用计数让库知道共享状态什么时候可以被销毁。对于引用计数的一般信息参见<a href="../4.SmartPointers/item19.html">Item19</a>。）</p>
 <p>正常行为的例外情况仅在某个<code>future</code>同时满足下列所有情况下才会出现：</p>
 <ul>
 <li><strong>它关联到由于调用<code>std::async</code>而创建出的共享状态</strong>。</li>
-<li><strong>任务的启动策略是<code>std::launch::async</code></strong>（参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.TheConcurrencyAPI/item36.md">Item36</a>），原因是运行时系统选择了该策略，或者在对<code>std::async</code>的调用中指定了该策略。</li>
+<li><strong>任务的启动策略是<code>std::launch::async</code></strong>（参见<a href="../7.TheConcurrencyAPI/item36.html">Item36</a>），原因是运行时系统选择了该策略，或者在对<code>std::async</code>的调用中指定了该策略。</li>
 <li><strong>这个<em>future</em>是关联共享状态的最后一个<em>future</em></strong>。对于<code>std::future</code>，情况总是如此，对于<code>std::shared_future</code>，如果还有其他的<code>std::shared_future</code>，与要被销毁的<em>future</em>引用相同的共享状态，则要被销毁的<em>future</em>遵循正常行为（即简单地销毁它的数据成员）。</li>
 </ul>
 <p>只有当上面的三个条件都满足时，<em>future</em>的析构函数才会表现“异常”行为，就是在异步任务执行完之前阻塞住。实际上，这相当于对由于运行<code>std::async</code>创建出任务的线程隐式<code>join</code>。</p>
 <p>通常会听到将这种异常的析构函数行为称为“<code>std::async</code>来的<em>futures</em>阻塞了它们的析构函数”。作为近似描述没有问题，但是有时你不只需要一个近似描述。现在你已经知道了其中真相。</p>
-<p>你可能想要了解更加深入。比如“为什么由<code>std::async</code>启动的未延迟任务的共享状态，会有这么个特殊规则”，这很合理。据我所知，标准委员会希望避免隐式<code>detach</code>（参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.TheConcurrencyAPI/item37.md">Item37</a>）的有关问题，但是不想采取强制程序终止这种激进的方案（就像对可结合的<code>sth::thread</code>做的那样（译者注：指析构时<code>std::thread</code>若可结合则调用<code>std::terminal</code>终止程序），同样参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.TheConcurrencyAPI/item37.md">Item37</a>），所以妥协使用隐式<code>join</code>。这个决定并非没有争议，并且认真讨论过在C++14中放弃这种行为。最后，决定先不改变，所以C++11和C++14中这里的行为是一致的。</p>
+<p>你可能想要了解更加深入。比如“为什么由<code>std::async</code>启动的未延迟任务的共享状态，会有这么个特殊规则”，这很合理。据我所知，标准委员会希望避免隐式<code>detach</code>（参见<a href="../7.TheConcurrencyAPI/item37.html">Item37</a>）的有关问题，但是不想采取强制程序终止这种激进的方案（就像对可结合的<code>sth::thread</code>做的那样（译者注：指析构时<code>std::thread</code>若可结合则调用<code>std::terminal</code>终止程序），同样参见<a href="../7.TheConcurrencyAPI/item37.html">Item37</a>），所以妥协使用隐式<code>join</code>。这个决定并非没有争议，并且认真讨论过在C++14中放弃这种行为。最后，决定先不改变，所以C++11和C++14中这里的行为是一致的。</p>
 <p><em>future</em>的API没办法确定是否<em>future</em>引用了一个<code>std::async</code>调用产生的共享状态，因此给定一个任意的<em>future</em>对象，无法判断会不会阻塞析构函数从而等待异步任务的完成。这就产生了有意思的事情：</p>
 <pre><code class="language-cpp">//这个容器可能在析构函数处阻塞，因为其中至少一个future可能引用由std::async启动的
 //未延迟任务创建出来的共享状态
@@ -185,7 +185,7 @@ auto fut = pt.get_future();     //从pt获取future
 </code></pre>
 <p>此时，我们知道<em>future</em>没有关联<code>std::async</code>创建的共享状态，所以析构函数肯定正常方式执行。</p>
 <p>一旦被创建，<code>std::packaged_task</code>类型的<code>pt</code>就可以在一个线程上执行。（也可以通过调用<code>std::async</code>运行，但是如果你想使用<code>std::async</code>运行任务，没有理由使用<code>std::packaged_task</code>，因为在<code>std::packaged_task</code>安排任务并执行之前，<code>std::async</code>会做<code>std::packaged_task</code>做的所有事。）</p>
-<p><code>std::packaged_task</code>不可拷贝，所以当<code>pt</code>被传递给<code>std::thread</code>构造函数时，必须先转为右值（通过<code>std::move</code>，参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item23.md">Item23</a>）：</p>
+<p><code>std::packaged_task</code>不可拷贝，所以当<code>pt</code>被传递给<code>std::thread</code>构造函数时，必须先转为右值（通过<code>std::move</code>，参见<a href="../5.RRefMovSemPerfForw/item23.html">Item23</a>）：</p>
 <pre><code class="language-cpp">std::thread t(std::move(pt));   //在t上运行pt
 </code></pre>
 <p>这个例子是你对于<em>future</em>的析构函数的正常行为有一些了解，但是将这些语句放在一个作用域的语句块里更容易看：</p>
@@ -201,7 +201,7 @@ auto fut = pt.get_future();     //从pt获取future
 </code></pre>
 <p>此处最有趣的代码是在创建<code>std::thread</code>对象<code>t</code>之后，代码块结束前的“<code>…</code>”。使代码有趣的事是，在“<code>…</code>”中<code>t</code>上会发生什么。有三种可能性：</p>
 <ul>
-<li><strong>对<code>t</code>什么也不做</strong>。这种情况，<code>t</code>会在语句块结束时是可结合的，这会使得程序终止（参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.TheConcurrencyAPI/item37.md">Item37</a>）。</li>
+<li><strong>对<code>t</code>什么也不做</strong>。这种情况，<code>t</code>会在语句块结束时是可结合的，这会使得程序终止（参见<a href="../7.TheConcurrencyAPI/item37.html">Item37</a>）。</li>
 <li><strong>对<code>t</code>调用<code>join</code></strong>。这种情况，不需要<code>fut</code>在它的析构函数处阻塞，因为<code>join</code>被显式调用了。</li>
 <li><strong>对<code>t</code>调用<code>detach</code></strong>。这种情况，不需要在<code>fut</code>的析构函数执行<code>detach</code>，因为显式调用了。</li>
 </ul>

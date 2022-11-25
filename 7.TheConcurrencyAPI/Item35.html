@@ -172,9 +172,9 @@ std::thread t(doAsyncWork);
 <p>如果你把这些问题推给另一个人做，你就会变得很轻松，而使用<code>std::async</code>就做了这件事：</p>
 <pre><code class="language-cpp">auto fut = std::async(doAsyncWork); //线程管理责任交给了标准库的开发者
 </code></pre>
-<p>这种调用方式将线程管理的职责转交给C++标准库的开发者。举个例子，这种调用方式会减少抛出资源超额异常的可能性，因为这个调用可能不会开启一个新的线程。你会想：“怎么可能？如果我要求比系统可以提供的更多的软件线程，创建<code>std::thread</code>和调用<code>std::async</code>为什么会有区别？”确实有区别，因为以这种形式调用（即使用默认启动策略——见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.TheConcurrencyAPI/item36.md">Item36</a>）时，<code>std::async</code>不保证会创建新的软件线程。然而，他们允许通过调度器来将特定函数（本例中为<code>doAsyncWork</code>）运行在等待此函数结果的线程上（即在对<code>fut</code>调用<code>get</code>或者<code>wait</code>的线程上），合理的调度器在系统资源超额或者线程耗尽时就会利用这个自由度。</p>
+<p>这种调用方式将线程管理的职责转交给C++标准库的开发者。举个例子，这种调用方式会减少抛出资源超额异常的可能性，因为这个调用可能不会开启一个新的线程。你会想：“怎么可能？如果我要求比系统可以提供的更多的软件线程，创建<code>std::thread</code>和调用<code>std::async</code>为什么会有区别？”确实有区别，因为以这种形式调用（即使用默认启动策略——见<a href="../7.TheConcurrencyAPI/item36.html">Item36</a>）时，<code>std::async</code>不保证会创建新的软件线程。然而，他们允许通过调度器来将特定函数（本例中为<code>doAsyncWork</code>）运行在等待此函数结果的线程上（即在对<code>fut</code>调用<code>get</code>或者<code>wait</code>的线程上），合理的调度器在系统资源超额或者线程耗尽时就会利用这个自由度。</p>
 <p>如果考虑自己实现“在等待结果的线程上运行输出结果的函数”，之前提到了可能引出负载不均衡的问题，这问题不那么容易解决，因为应该是<code>std::async</code>和运行时的调度程序来解决这个问题而不是你。遇到负载不均衡问题时，对机器内发生的事情，运行时调度程序比你有更全面的了解，因为它管理的是所有执行过程，而不仅仅个别开发者运行的代码。</p>
-<p>有了<code>std::async</code>，GUI线程中响应变慢仍然是个问题，因为调度器并不知道你的哪个线程有高响应要求。这种情况下，你会想通过向<code>std::async</code>传递<code>std::launch::async</code>启动策略来保证想运行函数在不同的线程上执行（见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.TheConcurrencyAPI/item36.md">Item36</a>）。</p>
+<p>有了<code>std::async</code>，GUI线程中响应变慢仍然是个问题，因为调度器并不知道你的哪个线程有高响应要求。这种情况下，你会想通过向<code>std::async</code>传递<code>std::launch::async</code>启动策略来保证想运行函数在不同的线程上执行（见<a href="../7.TheConcurrencyAPI/item36.html">Item36</a>）。</p>
 <p>最前沿的线程调度器使用系统级线程池（<em>thread pool</em>）来避免资源超额的问题，并且通过工作窃取算法（<em>work-stealing algorithm</em>）来提升了跨硬件核心的负载均衡。C++标准实际上并不要求使用线程池或者工作窃取，实际上C++11并发规范的某些技术层面使得实现这些技术的难度可能比想象中更有挑战。不过，库开发者在标准库实现中采用了这些技术，也有理由期待这个领域会有更多进展。如果你当前的并发编程采用基于任务的方式，在这些技术发展中你会持续获得回报。相反如果你直接使用<code>std::thread</code>编程，处理线程耗尽、资源超额、负责均衡问题的责任就压在了你身上，更不用说你对这些问题的解决方法与同机器上其他程序采用的解决方案配合得好不好了。</p>
 <p>对比基于线程的编程方式，基于任务的设计为开发者避免了手动线程管理的痛苦，并且自然提供了一种获取异步执行程序的结果（即返回值或者异常）的方式。当然，仍然存在一些场景直接使用<code>std::thread</code>会更有优势：</p>
 <ul>

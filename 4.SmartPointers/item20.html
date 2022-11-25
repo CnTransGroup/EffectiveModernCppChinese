@@ -141,7 +141,7 @@
                     <main>
                         <h2 id="条款二十当stdshared_ptr可能悬空时使用stdweak_ptr"><a class="header" href="#条款二十当stdshared_ptr可能悬空时使用stdweak_ptr">条款二十：当<code>std::shared_ptr</code>可能悬空时使用<code>std::weak_ptr</code></a></h2>
 <p><strong>Item 20: Use <code>std::weak_ptr</code> for <code>std::shared_ptr</code>-like pointers that can dangle</strong></p>
-<p>自相矛盾的是，如果有一个像<code>std::shared_ptr</code>（见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item19.md">Item19</a>）的但是不参与资源所有权共享的指针是很方便的。换句话说，是一个类似<code>std::shared_ptr</code>但不影响对象引用计数的指针。这种类型的智能指针必须要解决一个<code>std::shared_ptr</code>不存在的问题：可能指向已经销毁的对象。一个真正的智能指针应该跟踪所指对象，在悬空时知晓，悬空（<em>dangle</em>）就是指针指向的对象不再存在。这就是对<code>std::weak_ptr</code>最精确的描述。</p>
+<p>自相矛盾的是，如果有一个像<code>std::shared_ptr</code>（见<a href="../4.SmartPointers/item19.html">Item19</a>）的但是不参与资源所有权共享的指针是很方便的。换句话说，是一个类似<code>std::shared_ptr</code>但不影响对象引用计数的指针。这种类型的智能指针必须要解决一个<code>std::shared_ptr</code>不存在的问题：可能指向已经销毁的对象。一个真正的智能指针应该跟踪所指对象，在悬空时知晓，悬空（<em>dangle</em>）就是指针指向的对象不再存在。这就是对<code>std::weak_ptr</code>最精确的描述。</p>
 <p>你可能想知道什么时候该用<code>std::weak_ptr</code>。你可能想知道关于<code>std::weak_ptr</code> API的更多。它什么都好除了不太智能。<code>std::weak_ptr</code>不能解引用，也不能测试是否为空值。因为<code>std::weak_ptr</code>不是一个独立的智能指针。它是<code>std::shared_ptr</code>的增强。</p>
 <p>这种关系在它创建之时就建立了。<code>std::weak_ptr</code>通常从<code>std::shared_ptr</code>上创建。当从<code>std::shared_ptr</code>上创建<code>std::weak_ptr</code>时两者指向相同的对象，但是<code>std::weak_ptr</code>不会影响所指对象的引用计数：</p>
 <pre><code class="language-cpp">auto spw =                      //spw创建之后，指向的Widget的
@@ -165,7 +165,7 @@ auto spw2 = wpw.lock();                     //同上，但是使用auto
 <p>另一种形式是以<code>std::weak_ptr</code>为实参构造<code>std::shared_ptr</code>。这种情况中，如果<code>std::weak_ptr</code>过期，会抛出一个异常：</p>
 <pre><code class="language-cpp">std::shared_ptr&lt;Widget&gt; spw3(wpw);          //如果wpw过期，抛出std::bad_weak_ptr异常
 </code></pre>
-<p>但是你可能还想知道为什么<code>std::weak_ptr</code>就有用了。考虑一个工厂函数，它基于一个唯一ID从只读对象上产出智能指针。根据<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item19.md">Item18</a>的描述，工厂函数会返回一个该对象类型的<code>std::unique_ptr</code>：</p>
+<p>但是你可能还想知道为什么<code>std::weak_ptr</code>就有用了。考虑一个工厂函数，它基于一个唯一ID从只读对象上产出智能指针。根据<a href="../4.SmartPointers/item19.html">Item18</a>的描述，工厂函数会返回一个该对象类型的<code>std::unique_ptr</code>：</p>
 <pre><code class="language-cpp">std::unique_ptr&lt;const Widget&gt; loadWidget(WidgetID id);
 </code></pre>
 <p>如果调用<code>loadWidget</code>是一个昂贵的操作（比如它操作文件或者数据库I/O）并且重复使用ID很常见，一个合理的优化是再写一个函数除了完成<code>loadWidget</code>做的事情之外再缓存它的结果。当每个请求获取的<code>Widget</code>阻塞了缓存也会导致本身性能问题，所以另一个合理的优化可以是当<code>Widget</code>不再使用的时候销毁它的缓存。</p>
@@ -201,7 +201,7 @@ auto spw2 = wpw.lock();                     //同上，但是使用auto
 </ul>
 <p>使用<code>std::weak_ptr</code>显然是这些选择中最好的。但是，需要注意使用<code>std::weak_ptr</code>打破<code>std::shared_ptr</code>循环并不常见。在严格分层的数据结构比如树中，子节点只被父节点持有。当父节点被销毁时，子节点就被销毁。从父到子的链接关系可以使用<code>std::unique_ptr</code>很好的表征。从子到父的反向连接可以使用原始指针安全实现，因为子节点的生命周期肯定短于父节点。因此没有子节点解引用一个悬垂的父节点指针这样的风险。</p>
 <p>当然，不是所有的使用指针的数据结构都是严格分层的，所以当发生这种情况时，比如上面所述缓存和观察者列表的实现之类的，知道<code>std::weak_ptr</code>随时待命也是不错的。</p>
-<p>从效率角度来看，<code>std::weak_ptr</code>与<code>std::shared_ptr</code>基本相同。两者的大小是相同的，使用相同的控制块（参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item19.md">Item19</a>），构造、析构、赋值操作涉及引用计数的原子操作。这可能让你感到惊讶，因为本条款开篇就提到<code>std::weak_ptr</code>不影响引用计数。我写的是<code>std::weak_ptr</code>不参与对象的<strong>共享所有权</strong>，因此不影响<strong>指向对象的引用计数</strong>。实际上在控制块中还是有第二个引用计数，<code>std::weak_ptr</code>操作的是第二个引用计数。想了解细节的话，继续看<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item21.md">Item21</a>吧。</p>
+<p>从效率角度来看，<code>std::weak_ptr</code>与<code>std::shared_ptr</code>基本相同。两者的大小是相同的，使用相同的控制块（参见<a href="../4.SmartPointers/item19.html">Item19</a>），构造、析构、赋值操作涉及引用计数的原子操作。这可能让你感到惊讶，因为本条款开篇就提到<code>std::weak_ptr</code>不影响引用计数。我写的是<code>std::weak_ptr</code>不参与对象的<strong>共享所有权</strong>，因此不影响<strong>指向对象的引用计数</strong>。实际上在控制块中还是有第二个引用计数，<code>std::weak_ptr</code>操作的是第二个引用计数。想了解细节的话，继续看<a href="../4.SmartPointers/item21.html">Item21</a>吧。</p>
 <p><strong>请记住：</strong></p>
 <ul>
 <li>用<code>std::weak_ptr</code>替代可能会悬空的<code>std::shared_ptr</code>。</li>

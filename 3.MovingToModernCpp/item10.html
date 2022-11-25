@@ -285,8 +285,8 @@ auto val =
     std::get&lt;static_cast&lt;std::size_t&gt;(UserInfoFields::uiEmail)&gt;
         (uInfo);
 </code></pre>
-<p>为避免这种冗长的表示，我们可以写一个函数传入枚举名并返回对应的<code>std::size_t</code>值，但这有一点技巧性。<code>std::get</code>是一个模板（函数），需要你给出一个<code>std::size_t</code>值的模板实参（注意使用<code>&lt;&gt;</code>而不是<code>()</code>），因此将枚举名变换为<code>std::size_t</code>值的函数必须<strong>在编译期</strong>产生这个结果。如<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item15.md">Item15</a>提到的，那必须是一个<code>constexpr</code>函数。</p>
-<p>事实上，它也的确该是一个<code>constexpr</code>函数模板，因为它应该能用于任何<code>enum</code>。如果我们想让它更一般化，我们还要泛化它的返回类型。较之于返回<code>std::size_t</code>，我们更应该返回枚举的底层类型。这可以通过<code>std::underlying_type</code>这个<em>type trait</em>获得。（参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item9.md">Item9</a>关于<em>type trait</em>的内容）。最终我们还要再加上<code>noexcept</code>修饰（参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item14.md">Item14</a>），因为我们知道它肯定不会产生异常。根据上述分析最终得到的<code>toUType</code>函数模板在编译期接受任意枚举名并返回它的值：</p>
+<p>为避免这种冗长的表示，我们可以写一个函数传入枚举名并返回对应的<code>std::size_t</code>值，但这有一点技巧性。<code>std::get</code>是一个模板（函数），需要你给出一个<code>std::size_t</code>值的模板实参（注意使用<code>&lt;&gt;</code>而不是<code>()</code>），因此将枚举名变换为<code>std::size_t</code>值的函数必须<strong>在编译期</strong>产生这个结果。如<a href="../3.MovingToModernCpp/item15.html">Item15</a>提到的，那必须是一个<code>constexpr</code>函数。</p>
+<p>事实上，它也的确该是一个<code>constexpr</code>函数模板，因为它应该能用于任何<code>enum</code>。如果我们想让它更一般化，我们还要泛化它的返回类型。较之于返回<code>std::size_t</code>，我们更应该返回枚举的底层类型。这可以通过<code>std::underlying_type</code>这个<em>type trait</em>获得。（参见<a href="../3.MovingToModernCpp/item9.html">Item9</a>关于<em>type trait</em>的内容）。最终我们还要再加上<code>noexcept</code>修饰（参见<a href="../3.MovingToModernCpp/item14.html">Item14</a>），因为我们知道它肯定不会产生异常。根据上述分析最终得到的<code>toUType</code>函数模板在编译期接受任意枚举名并返回它的值：</p>
 <pre><code class="language-cpp">template&lt;typename E&gt;
 constexpr typename std::underlying_type&lt;E&gt;::type
     toUType(E enumerator) noexcept
@@ -296,7 +296,7 @@ constexpr typename std::underlying_type&lt;E&gt;::type
                     std::underlying_type&lt;E&gt;::type&gt;(enumerator);
 }
 </code></pre>
-<p>在C++14中，<code>toUType</code>还可以进一步用<code>std::underlying_type_t</code>（参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item9.md">Item9</a>）代替<code>typename std::underlying_type&lt;E&gt;::type</code>打磨：</p>
+<p>在C++14中，<code>toUType</code>还可以进一步用<code>std::underlying_type_t</code>（参见<a href="../3.MovingToModernCpp/item9.html">Item9</a>）代替<code>typename std::underlying_type&lt;E&gt;::type</code>打磨：</p>
 <pre><code class="language-cpp">template&lt;typename E&gt;                //C++14
 constexpr std::underlying_type_t&lt;E&gt;
     toUType(E enumerator) noexcept
@@ -304,7 +304,7 @@ constexpr std::underlying_type_t&lt;E&gt;
     return static_cast&lt;std::underlying_type_t&lt;E&gt;&gt;(enumerator);
 }
 </code></pre>
-<p>还可以再用C++14 <code>auto</code>（参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item3.md">Item3</a>）打磨一下代码：</p>
+<p>还可以再用C++14 <code>auto</code>（参见<a href="../1.DeducingTypes/item3.html">Item3</a>）打磨一下代码：</p>
 <pre><code class="language-cpp">template&lt;typename E&gt;                //C++14
 constexpr auto
     toUType(E enumerator) noexcept

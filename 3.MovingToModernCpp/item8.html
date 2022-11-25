@@ -211,7 +211,7 @@ auto lockAndCall(FuncType func,
     return func(ptr); 
 }
 </code></pre>
-<p>如果你对函数返回类型（<code>auto ... -&gt; decltype(func(ptr))</code>）感到困惑不解，<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item3.md">Item3</a>可以帮助你。在C++14中代码的返回类型还可以被简化为<code>decltype(auto)</code>：</p>
+<p>如果你对函数返回类型（<code>auto ... -&gt; decltype(func(ptr))</code>）感到困惑不解，<a href="../1.DeducingTypes/item3.html">Item3</a>可以帮助你。在C++14中代码的返回类型还可以被简化为<code>decltype(auto)</code>：</p>
 <pre><code class="language-cpp">template&lt;typename FuncType,
          typename MuxType,
          typename PtrType&gt;

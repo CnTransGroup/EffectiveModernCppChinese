@@ -160,7 +160,7 @@ logAndAdd(&quot;Patty Dog&quot;);                 //传递字符串字面值
 <p>在第一个调用中，<code>logAndAdd</code>的形参<code>name</code>绑定到变量<code>petName</code>。在<code>logAndAdd</code>中<code>name</code>最终传给<code>names.emplace</code>。因为<code>name</code>是左值，会拷贝到<code>names</code>中。没有方法避免拷贝，因为是左值（<code>petName</code>）传递给<code>logAndAdd</code>的。</p>
 <p>在第二个调用中，形参<code>name</code>绑定到右值（显式从“<code>Persephone</code>”创建的临时<code>std::string</code>）。<code>name</code>本身是个左值，所以它被拷贝到<code>names</code>中，但是我们意识到，原则上，它的值可以被移动到<code>names</code>中。本次调用中，我们有个拷贝代价，但是我们应该能用移动勉强应付。</p>
 <p>在第三个调用中，形参<code>name</code>也绑定一个右值，但是这次是通过“<code>Patty Dog</code>”隐式创建的临时<code>std::string</code>变量。就像第二个调用中，<code>name</code>被拷贝到<code>names</code>，但是这里，传递给<code>logAndAdd</code>的实参是一个字符串字面量。如果直接将字符串字面量传递给<code>emplace</code>，就不会创建<code>std::string</code>的临时变量，而是直接在<code>std::multiset</code>中通过字面量构建<code>std::string</code>。在第三个调用中，我们有个<code>std::string</code>拷贝开销，但是我们连移动开销都不想要，更别说拷贝的。</p>
-<p>我们可以通过使用通用引用（参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item24.md">Item24</a>）重写<code>logAndAdd</code>来使第二个和第三个调用效率提升，按照<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item25.md">Item25</a>的说法，<code>std::forward</code>转发这个引用到<code>emplace</code>。代码如下：</p>
+<p>我们可以通过使用通用引用（参见<a href="../5.RRefMovSemPerfForw/item24.html">Item24</a>）重写<code>logAndAdd</code>来使第二个和第三个调用效率提升，按照<a href="../5.RRefMovSemPerfForw/item25.html">Item25</a>的说法，<code>std::forward</code>转发这个引用到<code>emplace</code>。代码如下：</p>
 <pre><code class="language-cpp">template&lt;typename T&gt;
 void logAndAdd(T&amp;&amp; name)
 {
@@ -203,7 +203,7 @@ logAndAdd(nameIdx);                     //错误！
 <p>最后一行的注释并不清楚明白，下面让我来说明发生了什么。</p>
 <p>有两个重载的<code>logAndAdd</code>。使用通用引用的那个推导出<code>T</code>的类型是<code>short</code>，因此可以精确匹配。对于<code>int</code>类型参数的重载也可以在<code>short</code>类型提升后匹配成功。根据正常的重载解决规则，精确匹配优先于类型提升的匹配，所以被调用的是通用引用的重载。</p>
 <p>在通用引用那个重载中，<code>name</code>形参绑定到要传入的<code>short</code>上，然后<code>name</code>被<code>std::forward</code>给<code>names</code>（一个<code>std::multiset&lt;std::string&gt;</code>）的<code>emplace</code>成员函数，然后又被转发给<code>std::string</code>构造函数。<code>std::string</code>没有接受<code>short</code>的构造函数，所以<code>logAndAdd</code>调用里的<code>multiset::emplace</code>调用里的<code>std::string</code>构造函数调用失败。（译者注：这句话比较绕，实际上就是调用链。）所有这一切的原因就是对于<code>short</code>类型通用引用重载优先于<code>int</code>类型的重载。</p>
-<p>使用通用引用的函数在C++中是最贪婪的函数。它们几乎可以精确匹配任何类型的实参（极少不适用的实参在<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item30.md">Item30</a>中介绍）。这也是把重载和通用引用组合在一块是糟糕主意的原因：通用引用的实现会匹配比开发者预期要多得多的实参类型。</p>
+<p>使用通用引用的函数在C++中是最贪婪的函数。它们几乎可以精确匹配任何类型的实参（极少不适用的实参在<a href="../5.RRefMovSemPerfForw/item30.html">Item30</a>中介绍）。这也是把重载和通用引用组合在一块是糟糕主意的原因：通用引用的实现会匹配比开发者预期要多得多的实参类型。</p>
 <p>一个更容易掉入这种陷阱的例子是写一个完美转发构造函数。简单对<code>logAndAdd</code>例子进行改造就可以说明这个问题。不用写接受<code>std::string</code>或者用索引查找<code>std::string</code>的自由函数，只是想一个构造函数有着相同操作的<code>Person</code>类：</p>
 <pre><code class="language-cpp">class Person {
 public:
@@ -219,7 +219,7 @@ private:
     std::string name;
 };
 </code></pre>
-<p>就像在<code>logAndAdd</code>的例子中，传递一个不是<code>int</code>的整型变量（比如<code>std::size_t</code>，<code>short</code>，<code>long</code>等）会调用通用引用的构造函数而不是<code>int</code>的构造函数，这会导致编译错误。这里这个问题甚至更糟糕，因为<code>Person</code>中存在的重载比肉眼看到的更多。在<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item17.md">Item17</a>中说明，在适当的条件下，C++会生成拷贝和移动构造函数，即使类包含了模板化的构造函数，模板函数能实例化产生与拷贝和移动构造函数一样的签名，也在合适的条件范围内。如果拷贝和移动构造被生成，<code>Person</code>类看起来就像这样：</p>
+<p>就像在<code>logAndAdd</code>的例子中，传递一个不是<code>int</code>的整型变量（比如<code>std::size_t</code>，<code>short</code>，<code>long</code>等）会调用通用引用的构造函数而不是<code>int</code>的构造函数，这会导致编译错误。这里这个问题甚至更糟糕，因为<code>Person</code>中存在的重载比肉眼看到的更多。在<a href="../3.MovingToModernCpp/item17.html">Item17</a>中说明，在适当的条件下，C++会生成拷贝和移动构造函数，即使类包含了模板化的构造函数，模板函数能实例化产生与拷贝和移动构造函数一样的签名，也在合适的条件范围内。如果拷贝和移动构造被生成，<code>Person</code>类看起来就像这样：</p>
 <pre><code class="language-cpp">class Person {
 public:
     template&lt;typename T&gt;            //完美转发的构造函数
@@ -269,7 +269,7 @@ public:
 };
 </code></pre>
 <p>但是没啥影响，因为重载规则规定当模板实例化函数和非模板函数（或者称为“正常”函数）匹配优先级相当时，优先使用“正常”函数。拷贝构造函数（正常函数）因此胜过具有相同签名的模板实例化函数。</p>
-<p>（如果你想知道为什么编译器在生成一个拷贝构造函数时还会模板实例化一个相同签名的函数，参考<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item17.md">Item17</a>。）</p>
+<p>（如果你想知道为什么编译器在生成一个拷贝构造函数时还会模板实例化一个相同签名的函数，参考<a href="../3.MovingToModernCpp/item17.html">Item17</a>。）</p>
 <p>当继承纳入考虑范围时，完美转发的构造函数与编译器生成的拷贝、移动操作之间的交互会更加复杂。尤其是，派生类的拷贝和移动操作的传统实现会表现得非常奇怪。来看一下：</p>
 <pre><code class="language-cpp">class SpecialPerson: public Person {
 public:
@@ -283,7 +283,7 @@ public:
 };
 </code></pre>
 <p>如同注释表示的，派生类的拷贝和移动构造函数没有调用基类的拷贝和移动构造函数，而是调用了基类的完美转发构造函数！为了理解原因，要知道派生类将<code>SpecialPerson</code>类型的实参传递给其基类，然后通过模板实例化和重载解析规则作用于基类<code>Person</code>。最终，代码无法编译，因为<code>std::string</code>没有接受一个<code>SpecialPerson</code>的构造函数。</p>
-<p>我希望到目前为止，已经说服了你，如果可能的话，避免对通用引用形参的函数进行重载。但是，如果在通用引用上重载是糟糕的主意，那么如果需要可转发大多数实参类型的函数，但是对于某些实参类型又要特殊处理应该怎么办？存在多种办法。实际上，下一个条款，<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item27.md">Item27</a>专门来讨论这个问题，敬请阅读。</p>
+<p>我希望到目前为止，已经说服了你，如果可能的话，避免对通用引用形参的函数进行重载。但是，如果在通用引用上重载是糟糕的主意，那么如果需要可转发大多数实参类型的函数，但是对于某些实参类型又要特殊处理应该怎么办？存在多种办法。实际上，下一个条款，<a href="../5.RRefMovSemPerfForw/item27.html">Item27</a>专门来讨论这个问题，敬请阅读。</p>
 <p><strong>请记住：</strong></p>
 <ul>
 <li>对通用引用形参的函数进行重载，通用引用函数的调用机会几乎总会比你期望的多得多。</li>

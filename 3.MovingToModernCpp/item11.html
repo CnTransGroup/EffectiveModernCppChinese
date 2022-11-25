@@ -142,7 +142,7 @@
                         <h2 id="条款十一优先考虑使用deleted函数而非使用未定义的私有声明"><a class="header" href="#条款十一优先考虑使用deleted函数而非使用未定义的私有声明">条款十一：优先考虑使用<em>deleted</em>函数而非使用未定义的私有声明</a></h2>
 <p><strong>Item 11: Prefer deleted functions to private undefined ones.</strong></p>
 <p>如果你写的代码要被其他人使用，你不想让他们调用某个特殊的函数，你通常不会声明这个函数。无声明，不函数。简简单单！但有时C++会给你自动声明一些函数，如果你想防止客户调用这些函数，事情就不那么简单了。</p>
-<p>上述场景见于特殊的成员函数，即当有必要时C++自动生成的那些函数。<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item17.md">Item17</a>详细讨论了这些函数，但是现在，我们只关心拷贝构造函数和拷贝赋值运算符重载。本节主要致力于讨论C++98中那些被C++11所取代的最佳实践，而且在C++98中，你想要禁止使用的成员函数，几乎总是拷贝构造函数或者赋值运算符，或者两者都是。</p>
+<p>上述场景见于特殊的成员函数，即当有必要时C++自动生成的那些函数。<a href="../3.MovingToModernCpp/item17.html">Item17</a>详细讨论了这些函数，但是现在，我们只关心拷贝构造函数和拷贝赋值运算符重载。本节主要致力于讨论C++98中那些被C++11所取代的最佳实践，而且在C++98中，你想要禁止使用的成员函数，几乎总是拷贝构造函数或者赋值运算符，或者两者都是。</p>
 <p>在C++98中防止调用这些函数的方法是将它们声明为私有（<code>private</code>）成员函数并且不定义。举个例子，在C++ 标准库<em>iostream</em>继承链的顶部是模板类<code>basic_ios</code>。所有<em>istream</em>和<em>ostream</em>类都继承此类（直接或者间接）。拷贝<em>istream</em>和<em>ostream</em>是不合适的，因为这些操作应该怎么做是模棱两可的。比如一个<code>istream</code>对象，代表一个输入值的流，流中有一些已经被读取，有一些可能马上要被读取。如果一个<em>istream</em>被拷贝，需要拷贝将要被读取的值和已经被读取的值吗？解决这个问题最好的方法是不定义这个操作。直接禁止拷贝流。</p>
 <p>要使这些<em>istream</em>和<em>ostream</em>类不可拷贝，<code>basic_ios</code>在C++98中是这样声明的（包括注释）：</p>
 <pre><code class="language-cpp">template &lt;class charT, class traits = char_traits&lt;charT&gt; &gt;
@@ -190,7 +190,7 @@ bool isLucky(double) = delete;  //拒绝float和double
 if (isLucky(true)) …    //错误！
 if (isLucky(3.5f)) …    //错误！
 </code></pre>
-<p>另一个<em>deleted</em>函数用武之地（<code>private</code>成员函数做不到的地方）是禁止一些模板的实例化。假如你要求一个模板仅支持原生指针（尽管<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item18.md">第四章</a>建议使用智能指针代替原生指针）：</p>
+<p>另一个<em>deleted</em>函数用武之地（<code>private</code>成员函数做不到的地方）是禁止一些模板的实例化。假如你要求一个模板仅支持原生指针（尽管<a href="../4.SmartPointers/item18.html">第四章</a>建议使用智能指针代替原生指针）：</p>
 <pre><code class="language-cpp">template&lt;typename T&gt;
 void processPointer(T* ptr);
 </code></pre>

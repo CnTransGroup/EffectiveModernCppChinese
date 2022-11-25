@@ -144,7 +144,7 @@
 <p>对于C++中的通用技术和特性，总是存在适用和不适用的场景。除了本章覆盖的两个例外，描述什么场景使用哪种通用技术通常来说很容易。这两个例外是传值（pass by value）和安置（emplacement）。决定何时使用这两种技术受到多种因素的影响，本书提供的最佳建议是在使用它们的同时仔细考虑清楚，尽管它们都是高效的现代C++编程的重要角色。接下来的条款提供了使用它们来编写软件是否合适的所需信息。</p>
 <h2 id="条款四十一对于移动成本低且总是被拷贝的可拷贝形参考虑按值传递"><a class="header" href="#条款四十一对于移动成本低且总是被拷贝的可拷贝形参考虑按值传递">条款四十一：对于移动成本低且总是被拷贝的可拷贝形参，考虑按值传递</a></h2>
 <p><strong>Item 41: Consider pass by value for copyable parameters that are cheap to move and always copied</strong></p>
-<p>有些函数的形参是可拷贝的。（在本条款中，“拷贝”一个形参通常意思是，将形参作为拷贝或移动操作的源对象。<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/Introduction.md">简介</a>中提到，C++没有术语来区分拷贝操作得到的副本和移动操作得到的副本。）比如说，<code>addName</code>成员函数可以拷贝自己的形参到一个私有容器。为了提高效率，应该拷贝左值，移动右值。</p>
+<p>有些函数的形参是可拷贝的。（在本条款中，“拷贝”一个形参通常意思是，将形参作为拷贝或移动操作的源对象。<a href="../Introduction.html">简介</a>中提到，C++没有术语来区分拷贝操作得到的副本和移动操作得到的副本。）比如说，<code>addName</code>成员函数可以拷贝自己的形参到一个私有容器。为了提高效率，应该拷贝左值，移动右值。</p>
 <pre><code class="language-cpp">class Widget {
 public:
     void addName(const std::string&amp; newName)    //接受左值；拷贝它
@@ -159,7 +159,7 @@ private:
 </code></pre>
 <p>这是可行的，但是需要编写两个函数来做本质相同的事。这有点让人难受：两个函数声明，两个函数实现，两个函数写说明，两个函数的维护。唉。</p>
 <p>此外，目标代码中会有两个函数——你可能会担心程序的空间占用。这种情况下，两个函数都可能内联，可能会避免同时两个函数同时存在导致的代码膨胀问题，但是一旦没有被内联，目标代码就会出现两个函数。</p>
-<p>另一种方法是使<code>addName</code>函数成为具有通用引用的函数模板（参考<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item24.md">Item24</a>）：</p>
+<p>另一种方法是使<code>addName</code>函数成为具有通用引用的函数模板（参考<a href="../5.RRefMovSemPerfForw/item24.html">Item24</a>）：</p>
 <pre><code class="language-cpp">class Widget {
 public:
     template&lt;typename T&gt;                            //接受左值和右值；
@@ -169,7 +169,7 @@ public:
     …
 };
 </code></pre>
-<p>这减少了源代码的维护工作，但是通用引用会导致其他复杂性。作为模板，<code>addName</code>的实现必须放置在头文件中。在编译器展开的时候，可能会产生多个函数，因为不止为左值和右值实例化，也可能为<code>std::string</code>和可转换为<code>std::string</code>的类型分别实例化为多个函数（参考<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item25.md">Item25</a>）。同时有些实参类型不能通过通用引用传递（参考<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item30.md">Item30</a>），而且如果传递了不合法的实参类型，编译器错误会令人生畏（参考<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item27.md">Item27</a>）。</p>
+<p>这减少了源代码的维护工作，但是通用引用会导致其他复杂性。作为模板，<code>addName</code>的实现必须放置在头文件中。在编译器展开的时候，可能会产生多个函数，因为不止为左值和右值实例化，也可能为<code>std::string</code>和可转换为<code>std::string</code>的类型分别实例化为多个函数（参考<a href="../5.RRefMovSemPerfForw/item25.html">Item25</a>）。同时有些实参类型不能通过通用引用传递（参考<a href="../5.RRefMovSemPerfForw/item30.html">Item30</a>），而且如果传递了不合法的实参类型，编译器错误会令人生畏（参考<a href="../5.RRefMovSemPerfForw/item27.html">Item27</a>）。</p>
 <p>是否存在一种编写<code>addName</code>的方法，可以左值拷贝，右值移动，只用处理一个函数（源代码和目标代码中），且避免使用通用引用？答案是是的。你要做的就是放弃你学习C++编程的第一条规则。这条规则是避免在传递用户定义的对象时使用传值方式。像是<code>addName</code>函数中的<code>newName</code>形参，按值传递可能是一种完全合理的策略。</p>
 <p>在我们讨论为什么对于<code>addName</code>中的<code>newName</code>按值传递非常合理之前，让我们来考虑该会怎样实现：</p>
 <pre><code class="language-cpp">class Widget {
@@ -344,7 +344,7 @@ private:
 <p>这种情况下，按值传递的开销包括了内存分配和内存销毁——可能会比<code>std::string</code>的移动操作高出几个数量级。</p>
 <p>有趣的是，如果旧密码短于新密码，在赋值过程中就不可避免要销毁、分配内存，这种情况，按值传递跟按引用传递的效率是一样的。因此，基于赋值的形参拷贝操作开销取决于具体的实参的值，这种分析适用于在动态分配内存中存值的形参类型。不是所有类型都满足，但是很多——包括<code>std::string</code>和<code>std::vector</code>——是这样。</p>
 <p>这种潜在的开销增加仅在传递左值实参时才适用，因为执行内存分配和释放通常发生在真正的拷贝操作（即，不是移动）中。对右值实参，移动几乎就足够了。</p>
-<p>结论是，使用通过赋值拷贝一个形参进行按值传递的函数的额外开销，取决于传递的类型，左值和右值的比例，这个类型是否需要动态分配内存，以及，如果需要分配内存的话，赋值操作符的具体实现，还有赋值目标占的内存至少要跟赋值源占的内存一样大。对于<code>std::string</code>来说，开销还取决于实现是否使用了小字符串优化（SSO——参考<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item29.md">Item29</a>），如果是，那么要赋值的值是否匹配SSO缓冲区。</p>
+<p>结论是，使用通过赋值拷贝一个形参进行按值传递的函数的额外开销，取决于传递的类型，左值和右值的比例，这个类型是否需要动态分配内存，以及，如果需要分配内存的话，赋值操作符的具体实现，还有赋值目标占的内存至少要跟赋值源占的内存一样大。对于<code>std::string</code>来说，开销还取决于实现是否使用了小字符串优化（SSO——参考<a href="../5.RRefMovSemPerfForw/item29.html">Item29</a>），如果是，那么要赋值的值是否匹配SSO缓冲区。</p>
 <p>所以，正如我所说，当形参通过赋值进行拷贝时，分析按值传递的开销是复杂的。通常，最有效的经验就是“在证明没问题之前假设有问题”，就是除非已证明按值传递会为你需要的形参类型产生可接受的执行效率，否则使用重载或者通用引用的实现方式。</p>
 <p>到此为止，对于需要运行尽可能快的软件来说，按值传递可能不是一个好策略，因为避免即使开销很小的移动操作也非常重要。此外，有时并不能清楚知道会发生多少次移动操作。在<code>Widget::addName</code>例子中，按值传递仅多了一次移动操作，但是如果<code>Widget::addName</code>调用了<code>Widget::validateName</code>，这个函数也是按值传递。（假定它有理由总是拷贝它的形参，比如把验证过的所有值存在一个数据结构中。）并假设<code>validateName</code>调用了第三个函数，也是按值传递……</p>
 <p>可以看到这将会通向何方。在调用链中，每个函数都使用传值，因为“只多了一次移动的开销”，但是整个调用链总体就会产生无法忍受的开销，通过引用传递，调用链不会增加这种开销。</p>

@@ -143,7 +143,7 @@
 <p><strong>Item 30: Familiarize yourself with perfect forwarding failure cases</strong></p>
 <p>C++11最显眼的功能之一就是完美转发功能。<strong>完美</strong>转发，太<strong>完美</strong>了！哎，开始使用，你就发现“完美”，理想与现实还是有差距。C++11的完美转发是非常好用，但是只有当你愿意忽略一些误差情况（译者注：就是完美转发失败的情况），这个条款就是使你熟悉这些情形。</p>
 <p>在我们开始误差探索之前，有必要回顾一下“完美转发”的含义。“转发”仅表示将一个函数的形参传递——就是<strong>转发</strong>——给另一个函数。对于第二个函数（被传递的那个）目标是收到与第一个函数（执行传递的那个）完全相同的对象。这规则排除了按值传递的形参，因为它们是原始调用者传入内容的<strong>拷贝</strong>。我们希望被转发的函数能够使用最开始传进来的那些对象。指针形参也被排除在外，因为我们不想强迫调用者传入指针。关于通常目的的转发，我们将处理引用形参。</p>
-<p><strong>完美转发</strong>（<em>perfect forwarding</em>）意味着我们不仅转发对象，我们还转发显著的特征：它们的类型，是左值还是右值，是<code>const</code>还是<code>volatile</code>。结合到我们会处理引用形参，这意味着我们将使用通用引用（参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item24.md">Item24</a>），因为通用引用形参被传入实参时才确定是左值还是右值。</p>
+<p><strong>完美转发</strong>（<em>perfect forwarding</em>）意味着我们不仅转发对象，我们还转发显著的特征：它们的类型，是左值还是右值，是<code>const</code>还是<code>volatile</code>。结合到我们会处理引用形参，这意味着我们将使用通用引用（参见<a href="../5.RRefMovSemPerfForw/item24.html">Item24</a>），因为通用引用形参被传入实参时才确定是左值还是右值。</p>
 <p>假定我们有一些函数<code>f</code>，然后想编写一个转发给它的函数（事实上是一个函数模板）。我们需要的核心看起来像是这样：</p>
 <pre><code class="language-cpp">template&lt;typename T&gt;
 void fwd(T&amp;&amp; param)             //接受任何实参
@@ -158,7 +158,7 @@ void fwd(Ts&amp;&amp;... params)            //接受任何实参
     f(std::forward&lt;Ts&gt;(params)...); //转发给f
 }
 </code></pre>
-<p>这种形式你会在标准化容器置入函数（emplace functions）中（参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/8.Tweaks/item42.md">Item42</a>）和智能指针的工厂函数<code>std::make_unique</code>和<code>std::make_shared</code>中（参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item21.md">Item21</a>）看到，当然还有其他一些地方。</p>
+<p>这种形式你会在标准化容器置入函数（emplace functions）中（参见<a href="../8.Tweaks/item42.html">Item42</a>）和智能指针的工厂函数<code>std::make_unique</code>和<code>std::make_shared</code>中（参见<a href="../4.SmartPointers/item21.html">Item21</a>）看到，当然还有其他一些地方。</p>
 <p>给定我们的目标函数<code>f</code>和转发函数<code>fwd</code>，如果<code>f</code>使用某特定实参会执行某个操作，但是<code>fwd</code>使用相同的实参会执行不同的操作，完美转发就会失败</p>
 <pre><code class="language-cpp">f( expression );        //调用f执行某个操作
 fwd( expression );		//但调用fwd执行另一个操作，则fwd不能完美转发expression给f
@@ -182,12 +182,12 @@ fwd( expression );		//但调用fwd执行另一个操作，则fwd不能完美转�
 <li>**编译器推导“错”了<code>fwd</code>的一个或者多个形参类型。**在这里，“错误”可能意味着<code>fwd</code>的实例将无法使用推导出的类型进行编译，但是也可能意味着使用<code>fwd</code>的推导类型调用<code>f</code>，与用传给<code>fwd</code>的实参直接调用<code>f</code>表现出不一致的行为。这种不同行为的原因可能是因为<code>f</code>是个重载函数的名字，并且由于是“不正确的”类型推导，在<code>fwd</code>内部调用的<code>f</code>重载和直接调用的<code>f</code>重载不一样。</li>
 </ul>
 <p>在上面的<code>fwd({ 1, 2, 3 })</code>例子中，问题在于，将花括号初始化传递给未声明为<code>std::initializer_list</code>的函数模板形参，被判定为——就像标准说的——“非推导上下文”。简单来讲，这意味着编译器不准在对<code>fwd</code>的调用中推导表达式<code>{ 1, 2, 3 }</code>的类型，因为<code>fwd</code>的形参没有声明为<code>std::initializer_list</code>。对于<code>fwd</code>形参的推导类型被阻止，编译器只能拒绝该调用。</p>
-<p>有趣的是，<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item2.md">Item2</a>说明了使用花括号初始化的<code>auto</code>的变量的类型推导是成功的。这种变量被视为<code>std::initializer_list</code>对象，在转发函数应推导出类型为<code>std::initializer_list</code>的情况，这提供了一种简单的解决方法——使用<code>auto</code>声明一个局部变量，然后将局部变量传进转发函数：</p>
+<p>有趣的是，<a href="../1.DeducingTypes/item2.html">Item2</a>说明了使用花括号初始化的<code>auto</code>的变量的类型推导是成功的。这种变量被视为<code>std::initializer_list</code>对象，在转发函数应推导出类型为<code>std::initializer_list</code>的情况，这提供了一种简单的解决方法——使用<code>auto</code>声明一个局部变量，然后将局部变量传进转发函数：</p>
 <pre><code class="language-cpp">auto il = { 1, 2, 3 };  //il的类型被推导为std::initializer_list&lt;int&gt;
 fwd(il);                //可以，完美转发il给f
 </code></pre>
 <h3 id="0或者null作为空指针"><a class="header" href="#0或者null作为空指针"><code>0</code>或者<code>NULL</code>作为空指针</a></h3>
-<p><a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item8.md">Item8</a>说明当你试图传递<code>0</code>或者<code>NULL</code>作为空指针给模板时，类型推导会出错，会把传来的实参推导为一个整型类型（典型情况为<code>int</code>）而不是指针类型。结果就是不管是<code>0</code>还是<code>NULL</code>都不能作为空指针被完美转发。解决方法非常简单，传一个<code>nullptr</code>而不是<code>0</code>或者<code>NULL</code>。具体的细节，参考<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item8.md">Item8</a>。</p>
+<p><a href="../3.MovingToModernCpp/item8.html">Item8</a>说明当你试图传递<code>0</code>或者<code>NULL</code>作为空指针给模板时，类型推导会出错，会把传来的实参推导为一个整型类型（典型情况为<code>int</code>）而不是指针类型。结果就是不管是<code>0</code>还是<code>NULL</code>都不能作为空指针被完美转发。解决方法非常简单，传一个<code>nullptr</code>而不是<code>0</code>或者<code>NULL</code>。具体的细节，参考<a href="../3.MovingToModernCpp/item8.html">Item8</a>。</p>
 <h3 id="仅有声明的整型static-const数据成员"><a class="header" href="#仅有声明的整型static-const数据成员">仅有声明的整型<code>static const</code>数据成员</a></h3>
 <p>通常，无需在类中定义整型<code>static const</code>数据成员；声明就可以了。这是因为编译器会对此类成员实行<strong>常量传播</strong>（<em>const propagation</em>），因此消除了保留内存的需要。比如，考虑下面的代码：</p>
 <pre><code class="language-cpp">class Widget {

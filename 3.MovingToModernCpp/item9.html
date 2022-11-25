@@ -141,7 +141,7 @@
                     <main>
                         <h2 id="条款九优先考虑别名声明而非typedefs"><a class="header" href="#条款九优先考虑别名声明而非typedefs">条款九：优先考虑别名声明而非<code>typedef</code>s</a></h2>
 <p><strong>Item 9: Prefer alias declarations to <code>typedef</code>s</strong></p>
-<p>我相信每个人都同意使用STL容器是个好主意，并且我希望<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item18.md">Item18</a>能说服你让你觉得使用<code>std:unique_ptr</code>也是个好主意，但我猜没有人喜欢写上几次 <code>std::unique_ptr&lt;std::unordered_map&lt;std::string, std::string&gt;&gt;</code>这样的类型，它可能会让你患上腕管综合征的风险大大增加。</p>
+<p>我相信每个人都同意使用STL容器是个好主意，并且我希望<a href="../4.SmartPointers/item18.html">Item18</a>能说服你让你觉得使用<code>std:unique_ptr</code>也是个好主意，但我猜没有人喜欢写上几次 <code>std::unique_ptr&lt;std::unordered_map&lt;std::string, std::string&gt;&gt;</code>这样的类型，它可能会让你患上腕管综合征的风险大大增加。</p>
 <p>避免上述医疗悲剧也很简单，引入<code>typedef</code>即可：</p>
 <pre><code class="language-cpp">typedef
     std::unique_ptr&lt;std::unordered_map&lt;std::string, std::string&gt;&gt;
@@ -212,7 +212,7 @@ private:
 };
 </code></pre>
 <p>就像你看到的，<code>MyAllocList&lt;Wine&gt;::type</code>不是一个类型。如果<code>Widget</code>使用<code>Wine</code>实例化，在<code>Widget</code>模板中的<code>MyAllocList&lt;Wine&gt;::type</code>将会是一个数据成员，不是一个类型。在<code>Widget</code>模板内，<code>MyAllocList&lt;T&gt;::type</code>是否表示一个类型取决于<code>T</code>是什么，这就是为什么编译器会坚持要求你在前面加上<code>typename</code>。</p>
-<p>如果你尝试过模板元编程（<em>template metaprogramming</em>，TMP）， 你一定会碰到取模板类型参数然后基于它创建另一种类型的情况。举个例子，给一个类型<code>T</code>，如果你想去掉<code>T</code>的常量修饰和引用修饰（<code>const</code>- or reference qualifiers），比如你想把<code>const std::string&amp;</code>变成<code>std::string</code>。又或者你想给一个类型加上<code>const</code>或变为左值引用，比如把<code>Widget</code>变成<code>const Widget</code>或<code>Widget&amp;</code>。（如果你没有用过模板元编程，太遗憾了，因为如果你真的想成为一个高效C++程序员，你需要至少熟悉C++在这方面的基本知识。你可以看看在<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item23.md">Item23</a>，<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item27.md">27</a>里的TMP的应用实例，包括我提到的类型转换）。</p>
+<p>如果你尝试过模板元编程（<em>template metaprogramming</em>，TMP）， 你一定会碰到取模板类型参数然后基于它创建另一种类型的情况。举个例子，给一个类型<code>T</code>，如果你想去掉<code>T</code>的常量修饰和引用修饰（<code>const</code>- or reference qualifiers），比如你想把<code>const std::string&amp;</code>变成<code>std::string</code>。又或者你想给一个类型加上<code>const</code>或变为左值引用，比如把<code>Widget</code>变成<code>const Widget</code>或<code>Widget&amp;</code>。（如果你没有用过模板元编程，太遗憾了，因为如果你真的想成为一个高效C++程序员，你需要至少熟悉C++在这方面的基本知识。你可以看看在<a href="../5.RRefMovSemPerfForw/item23.html">Item23</a>，<a href="../5.RRefMovSemPerfForw/item27.html">27</a>里的TMP的应用实例，包括我提到的类型转换）。</p>
 <p>C++11在<em>type traits</em>（类型特性）中给了你一系列工具去实现类型转换，如果要使用这些模板请包含头文件<code>&lt;type_traits&gt;</code>。里面有许许多多<em>type traits</em>，也不全是类型转换的工具，也包含一些可预测接口的工具。给一个你想施加转换的类型<code>T</code>，结果类型就是<code>std::</code>transformation<code>&lt;T&gt;::type</code>，比如：</p>
 <pre><code class="language-cpp">std::remove_const&lt;T&gt;::type          //从const T中产出T
 std::remove_reference&lt;T&gt;::type      //从T&amp;和T&amp;&amp;中产出T

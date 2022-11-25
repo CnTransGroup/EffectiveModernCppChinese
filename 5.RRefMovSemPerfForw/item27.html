@@ -141,14 +141,14 @@
                     <main>
                         <h2 id="条款二十七熟悉通用引用重载的替代方法"><a class="header" href="#条款二十七熟悉通用引用重载的替代方法">条款二十七：熟悉通用引用重载的替代方法</a></h2>
 <p><strong>Item 27: Familiarize yourself with alternatives to overloading on universal references</strong></p>
-<p><a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item26.md">Item26</a>中说明了对使用通用引用形参的函数，无论是独立函数还是成员函数（尤其是构造函数），进行重载都会导致一系列问题。但是也提供了一些示例，如果能够按照我们期望的方式运行，重载可能也是有用的。这个条款探讨了几种，通过避免在通用引用上重载的设计，或者通过限制通用引用可以匹配的参数类型，来实现所期望行为的方法。</p>
-<p>讨论基于<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item26.md">Item26</a>中的示例，如果你还没有阅读那个条款，请先阅读那个条款再继续。</p>
+<p><a href="../5.RRefMovSemPerfForw/item26.html">Item26</a>中说明了对使用通用引用形参的函数，无论是独立函数还是成员函数（尤其是构造函数），进行重载都会导致一系列问题。但是也提供了一些示例，如果能够按照我们期望的方式运行，重载可能也是有用的。这个条款探讨了几种，通过避免在通用引用上重载的设计，或者通过限制通用引用可以匹配的参数类型，来实现所期望行为的方法。</p>
+<p>讨论基于<a href="../5.RRefMovSemPerfForw/item26.html">Item26</a>中的示例，如果你还没有阅读那个条款，请先阅读那个条款再继续。</p>
 <h3 id="放弃重载"><a class="header" href="#放弃重载">放弃重载</a></h3>
-<p>在<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item26.md">Item26</a>中的第一个例子中，<code>logAndAdd</code>是许多函数的代表，这些函数可以使用不同的名字来避免在通用引用上的重载的弊端。例如两个重载的<code>logAndAdd</code>函数，可以分别改名为<code>logAndAddName</code>和<code>logAndAddNameIdx</code>。但是，这种方式不能用在第二个例子，<code>Person</code>构造函数中，因为构造函数的名字被语言固定了（译者注：即构造函数名与类名相同）。此外谁愿意放弃重载呢？</p>
+<p>在<a href="../5.RRefMovSemPerfForw/item26.html">Item26</a>中的第一个例子中，<code>logAndAdd</code>是许多函数的代表，这些函数可以使用不同的名字来避免在通用引用上的重载的弊端。例如两个重载的<code>logAndAdd</code>函数，可以分别改名为<code>logAndAddName</code>和<code>logAndAddNameIdx</code>。但是，这种方式不能用在第二个例子，<code>Person</code>构造函数中，因为构造函数的名字被语言固定了（译者注：即构造函数名与类名相同）。此外谁愿意放弃重载呢？</p>
 <h3 id="传递const-t"><a class="header" href="#传递const-t">传递const T&amp;</a></h3>
-<p>一种替代方案是退回到C++98，然后将传递通用引用替换为传递lvalue-refrence-to-<code>const</code>。事实上，这是<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item26.md">Item26</a>中首先考虑的方法。缺点是效率不高。现在我们知道了通用引用和重载的相互关系，所以放弃一些效率来确保行为正确简单可能也是一种不错的折中。</p>
+<p>一种替代方案是退回到C++98，然后将传递通用引用替换为传递lvalue-refrence-to-<code>const</code>。事实上，这是<a href="../5.RRefMovSemPerfForw/item26.html">Item26</a>中首先考虑的方法。缺点是效率不高。现在我们知道了通用引用和重载的相互关系，所以放弃一些效率来确保行为正确简单可能也是一种不错的折中。</p>
 <h3 id="传值"><a class="header" href="#传值">传值</a></h3>
-<p>通常在不增加复杂性的情况下提高性能的一种方法是，将按传引用形参替换为按值传递，这是违反直觉的。该设计遵循<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/8.Tweaks/item41.md">Item41</a>中给出的建议，即在你知道要拷贝时就按值传递，因此会参考那个条款来详细讨论如何设计与工作，效率如何。这里，在<code>Person</code>的例子中展示：</p>
+<p>通常在不增加复杂性的情况下提高性能的一种方法是，将按传引用形参替换为按值传递，这是违反直觉的。该设计遵循<a href="../8.Tweaks/item41.html">Item41</a>中给出的建议，即在你知道要拷贝时就按值传递，因此会参考那个条款来详细讨论如何设计与工作，效率如何。这里，在<code>Person</code>的例子中展示：</p>
 <pre><code class="language-cpp">class Person {
 public:
     explicit Person(std::string n)  //代替T&amp;&amp;构造函数，
@@ -162,7 +162,7 @@ private:
     std::string name;
 };
 </code></pre>
-<p>因为没有<code>std::string</code>构造函数可以接受整型参数，所有<code>int</code>或者其他整型变量（比如<code>std::size_t</code>、<code>short</code>、<code>long</code>等）都会使用<code>int</code>类型重载的构造函数。相似的，所有<code>std::string</code>类似的实参（还有可以用来创建<code>std::string</code>的东西，比如字面量“<code>Ruth</code>”等）都会使用<code>std::string</code>类型的重载构造函数。没有意外情况。我想你可能会说有些人使用<code>0</code>或者<code>NULL</code>指代空指针会调用<code>int</code>重载的构造函数让他们很吃惊，但是这些人应该参考<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item8.md">Item8</a>反复阅读直到使用<code>0</code>或者<code>NULL</code>作为空指针让他们恶心。</p>
+<p>因为没有<code>std::string</code>构造函数可以接受整型参数，所有<code>int</code>或者其他整型变量（比如<code>std::size_t</code>、<code>short</code>、<code>long</code>等）都会使用<code>int</code>类型重载的构造函数。相似的，所有<code>std::string</code>类似的实参（还有可以用来创建<code>std::string</code>的东西，比如字面量“<code>Ruth</code>”等）都会使用<code>std::string</code>类型的重载构造函数。没有意外情况。我想你可能会说有些人使用<code>0</code>或者<code>NULL</code>指代空指针会调用<code>int</code>重载的构造函数让他们很吃惊，但是这些人应该参考<a href="../3.MovingToModernCpp/item8.html">Item8</a>反复阅读直到使用<code>0</code>或者<code>NULL</code>作为空指针让他们恶心。</p>
 <h3 id="使用tag-dispatch"><a class="header" href="#使用tag-dispatch">使用<em>tag dispatch</em></a></h3>
 <p>传递lvalue-reference-to-<code>const</code>以及按值传递都不支持完美转发。如果使用通用引用的动机是完美转发，我们就只能使用通用引用了，没有其他选择。但是又不想放弃重载。所以如果不放弃重载又不放弃通用引用，如何避免在通用引用上重载呢？</p>
 <p>实际上并不难。通过查看所有重载的所有形参以及调用点的所有传入实参，然后选择最优匹配的函数——考虑所有形参/实参的组合。通用引用通常提供了最优匹配，但是如果通用引用是包含其他<strong>非</strong>通用引用的形参列表的一部分，则非通用引用形参的较差匹配会使有一个通用引用的重载版本不被运行。这就是<em>tag dispatch</em>方法的基础，下面的示例会使这段话更容易理解。</p>
@@ -177,8 +177,8 @@ void logAndAdd(T&amp;&amp; name)
     names.emplace(std::forward&lt;T&gt;(name));
 }
 </code></pre>
-<p>就其本身而言，功能执行没有问题，但是如果引入一个<code>int</code>类型的重载来用索引查找对象，就会重新陷入<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item26.md">Item26</a>中描述的麻烦。这个条款的目标是避免它。不通过重载，我们重新实现<code>logAndAdd</code>函数分拆为两个函数，一个针对整型值，一个针对其他。<code>logAndAdd</code>本身接受所有实参类型，包括整型和非整型。</p>
-<p>这两个真正执行逻辑的函数命名为<code>logAndAddImpl</code>，即我们使用重载。其中一个函数接受通用引用。所以我们同时使用了重载和通用引用。但是每个函数接受第二个形参，表征传入的实参是否为整型。这第二个形参可以帮助我们避免陷入到<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item26.md">Item26</a>中提到的麻烦中，因为我们将其安排为第二个实参决定选择哪个重载函数。</p>
+<p>就其本身而言，功能执行没有问题，但是如果引入一个<code>int</code>类型的重载来用索引查找对象，就会重新陷入<a href="../5.RRefMovSemPerfForw/item26.html">Item26</a>中描述的麻烦。这个条款的目标是避免它。不通过重载，我们重新实现<code>logAndAdd</code>函数分拆为两个函数，一个针对整型值，一个针对其他。<code>logAndAdd</code>本身接受所有实参类型，包括整型和非整型。</p>
+<p>这两个真正执行逻辑的函数命名为<code>logAndAddImpl</code>，即我们使用重载。其中一个函数接受通用引用。所以我们同时使用了重载和通用引用。但是每个函数接受第二个形参，表征传入的实参是否为整型。这第二个形参可以帮助我们避免陷入到<a href="../5.RRefMovSemPerfForw/item26.html">Item26</a>中提到的麻烦中，因为我们将其安排为第二个实参决定选择哪个重载函数。</p>
 <p>是的，我知道，“不要在啰嗦了，赶紧亮出代码”。没有问题，代码如下，这是最接近正确版本的：</p>
 <pre><code class="language-cpp">template&lt;typename T&gt;
 void logAndAdd(T&amp;&amp; name) 
@@ -187,8 +187,8 @@ void logAndAdd(T&amp;&amp; name)
                   std::is_integral&lt;T&gt;());   //不那么正确
 }
 </code></pre>
-<p>这个函数转发它的形参给<code>logAndAddImpl</code>函数，但是多传递了一个表示形参<code>T</code>是否为整型的实参。至少，这就是应该做的。对于右值的整型实参来说，这也是正确的。但是如同<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item28.md">Item28</a>中说明，如果左值实参传递给通用引用<code>name</code>，对<code>T</code>类型推断会得到左值引用。所以如果左值<code>int</code>被传入<code>logAndAdd</code>，<code>T</code>将被推断为<code>int&amp;</code>。这不是一个整型类型，因为引用不是整型类型。这意味着<code>std::is_integral&lt;T&gt;</code>对于任何左值实参返回false，即使确实传入了整型值。</p>
-<p>意识到这个问题基本相当于解决了它，因为C++标准库有一个<em>type trait</em>（参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item9.md">Item9</a>），<code>std::remove_reference</code>，函数名字就说明做了我们希望的：移除类型的引用说明符。所以正确实现的代码应该是这样：</p>
+<p>这个函数转发它的形参给<code>logAndAddImpl</code>函数，但是多传递了一个表示形参<code>T</code>是否为整型的实参。至少，这就是应该做的。对于右值的整型实参来说，这也是正确的。但是如同<a href="../5.RRefMovSemPerfForw/item28.html">Item28</a>中说明，如果左值实参传递给通用引用<code>name</code>，对<code>T</code>类型推断会得到左值引用。所以如果左值<code>int</code>被传入<code>logAndAdd</code>，<code>T</code>将被推断为<code>int&amp;</code>。这不是一个整型类型，因为引用不是整型类型。这意味着<code>std::is_integral&lt;T&gt;</code>对于任何左值实参返回false，即使确实传入了整型值。</p>
+<p>意识到这个问题基本相当于解决了它，因为C++标准库有一个<em>type trait</em>（参见<a href="../3.MovingToModernCpp/item9.html">Item9</a>），<code>std::remove_reference</code>，函数名字就说明做了我们希望的：移除类型的引用说明符。所以正确实现的代码应该是这样：</p>
 <pre><code class="language-cpp">template&lt;typename T&gt;
 void logAndAdd(T&amp;&amp; name)
 {
@@ -198,7 +198,7 @@ void logAndAdd(T&amp;&amp; name)
     );
 }
 </code></pre>
-<p>这个代码很巧妙。（在C++14中，你可以通过<code>std::remove_reference_t&lt;T&gt;</code>来简化写法，参看<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item9.md">Item9</a>）</p>
+<p>这个代码很巧妙。（在C++14中，你可以通过<code>std::remove_reference_t&lt;T&gt;</code>来简化写法，参看<a href="../3.MovingToModernCpp/item9.html">Item9</a>）</p>
 <p>处理完之后，我们可以将注意力转移到名为<code>logAndAddImpl</code>的函数上了。有两个重载函数，第一个仅用于非整型类型（即<code>std::is_integral&lt;typename std::remove_reference&lt;T&gt;::type&gt;</code>是false）：</p>
 <pre><code class="language-cpp">template&lt;typename T&gt;                            //非整型实参：添加到全局数据结构中
 void logAndAddImpl(T&amp;&amp; name, std::false_type)	//译者注：高亮std::false_type
@@ -218,13 +218,13 @@ void logAndAddImpl(int idx, std::true_type) //译者注：高亮std::true_type
 </code></pre>
 <p>通过索引找到对应的<code>name</code>，然后让<code>logAndAddImpl</code>传递给<code>logAndAdd</code>（名字会被再<code>std::forward</code>给另一个<code>logAndAddImpl</code>重载），我们避免了将日志代码放入这个<code>logAndAddImpl</code>重载中。</p>
 <p>在这个设计中，类型<code>std::true_type</code>和<code>std::false_type</code>是“标签”（tag），其唯一目的就是强制重载解析按照我们的想法来执行。注意到我们甚至没有对这些参数进行命名。他们在运行时毫无用处，事实上我们希望编译器可以意识到这些标签形参没被使用，然后在程序执行时优化掉它们。（至少某些时候有些编译器会这样做。）通过创建标签对象，在<code>logAndAdd</code>内部将重载实现函数的调用“分发”（<em>dispatch</em>）给正确的重载。因此这个设计名称为：<em>tag dispatch</em>。这是模板元编程的标准构建模块，你对现代C++库中的代码了解越多，你就会越多遇到这种设计。</p>
-<p>就我们的目的而言，<em>tag dispatch</em>的重要之处在于它可以允许我们组合重载和通用引用使用，而没有<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item26.md">Item26</a>中提到的问题。分发函数——<code>logAndAdd</code>——接受一个没有约束的通用引用参数，但是这个函数没有重载。实现函数——<code>logAndAddImpl</code>——是重载的，一个接受通用引用参数，但是重载规则不仅依赖通用引用形参，还依赖新引入的标签形参，标签值设计来保证有不超过一个的重载是合适的匹配。结果是标签来决定采用哪个重载函数。通用引用参数可以生成精确匹配的事实在这里并不重要。（译者注：这里确实比较啰嗦，如果理解了上面的内容，这段完全可以没有。）</p>
+<p>就我们的目的而言，<em>tag dispatch</em>的重要之处在于它可以允许我们组合重载和通用引用使用，而没有<a href="../5.RRefMovSemPerfForw/item26.html">Item26</a>中提到的问题。分发函数——<code>logAndAdd</code>——接受一个没有约束的通用引用参数，但是这个函数没有重载。实现函数——<code>logAndAddImpl</code>——是重载的，一个接受通用引用参数，但是重载规则不仅依赖通用引用形参，还依赖新引入的标签形参，标签值设计来保证有不超过一个的重载是合适的匹配。结果是标签来决定采用哪个重载函数。通用引用参数可以生成精确匹配的事实在这里并不重要。（译者注：这里确实比较啰嗦，如果理解了上面的内容，这段完全可以没有。）</p>
 <h3 id="约束使用通用引用的模板"><a class="header" href="#约束使用通用引用的模板">约束使用通用引用的模板</a></h3>
-<p><em>tag dispatch</em>的关键是存在单独一个函数（没有重载）给客户端API。这个单独的函数分发给具体的实现函数。创建一个没有重载的分发函数通常是容易的，但是<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item26.md">Item26</a>中所述第二个问题案例是<code>Person</code>类的完美转发构造函数，是个例外。编译器可能会自行生成拷贝和移动构造函数，所以即使你只写了一个构造函数并在其中使用<em>tag dispatch</em>，有一些对构造函数的调用也被编译器生成的函数处理，绕过了分发机制。</p>
-<p>实际上，真正的问题不是编译器生成的函数会绕过<em>tag dispatch</em>设计，而是不<strong>总</strong>会绕过去。你希望类的拷贝构造函数总是处理该类型的左值拷贝请求，但是如同<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item26.md">Item26</a>中所述，提供具有通用引用的构造函数，会使通用引用构造函数在拷贝non-<code>const</code>左值时被调用（而不是拷贝构造函数）。那个条款还说明了当一个基类声明了完美转发构造函数，派生类实现自己的拷贝和移动构造函数时会调用那个完美转发构造函数，尽管正确的行为是调用基类的拷贝或者移动构造。</p>
+<p><em>tag dispatch</em>的关键是存在单独一个函数（没有重载）给客户端API。这个单独的函数分发给具体的实现函数。创建一个没有重载的分发函数通常是容易的，但是<a href="../5.RRefMovSemPerfForw/item26.html">Item26</a>中所述第二个问题案例是<code>Person</code>类的完美转发构造函数，是个例外。编译器可能会自行生成拷贝和移动构造函数，所以即使你只写了一个构造函数并在其中使用<em>tag dispatch</em>，有一些对构造函数的调用也被编译器生成的函数处理，绕过了分发机制。</p>
+<p>实际上，真正的问题不是编译器生成的函数会绕过<em>tag dispatch</em>设计，而是不<strong>总</strong>会绕过去。你希望类的拷贝构造函数总是处理该类型的左值拷贝请求，但是如同<a href="../5.RRefMovSemPerfForw/item26.html">Item26</a>中所述，提供具有通用引用的构造函数，会使通用引用构造函数在拷贝non-<code>const</code>左值时被调用（而不是拷贝构造函数）。那个条款还说明了当一个基类声明了完美转发构造函数，派生类实现自己的拷贝和移动构造函数时会调用那个完美转发构造函数，尽管正确的行为是调用基类的拷贝或者移动构造。</p>
 <p>这种情况，采用通用引用的重载函数通常比期望的更加贪心，虽然不像单个分派函数一样那么贪心，而又不满足使用<em>tag dispatch</em>的条件。你需要另外的技术，可以让你确定允许使用通用引用模板的条件。朋友，你需要的就是<code>std::enable_if</code>。</p>
 <p><code>std::enable_if</code>可以给你提供一种强制编译器执行行为的方法，像是特定模板不存在一样。这种模板被称为被<strong>禁止</strong>（disabled）。默认情况下，所有模板是<strong>启用</strong>的（enabled），但是使用<code>std::enable_if</code>可以使得仅在<code>std::enable_if</code>指定的条件满足时模板才启用。在这个例子中，我们只在传递的类型不是<code>Person</code>时使用<code>Person</code>的完美转发构造函数。如果传递的类型是<code>Person</code>，我们要禁止完美转发构造函数（即让编译器忽略它），因为这会让拷贝或者移动构造函数处理调用，这是我们想要使用<code>Person</code>初始化另一个<code>Person</code>的初衷。</p>
-<p>这个主意听起来并不难，但是语法比较繁杂，尤其是之前没有接触过的话，让我慢慢引导你。有一些<code>std::enbale_if</code>的contidion（条件）部分的样板，让我们从这里开始。下面的代码是<code>Person</code>完美转发构造函数的声明，多展示<code>std::enable_if</code>的部分来简化使用难度。我仅展示构造函数的声明，因为<code>std::enable_if</code>的使用对函数实现没影响。实现部分跟<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item26.md">Item26</a>中没有区别。</p>
+<p>这个主意听起来并不难，但是语法比较繁杂，尤其是之前没有接触过的话，让我慢慢引导你。有一些<code>std::enbale_if</code>的contidion（条件）部分的样板，让我们从这里开始。下面的代码是<code>Person</code>完美转发构造函数的声明，多展示<code>std::enable_if</code>的部分来简化使用难度。我仅展示构造函数的声明，因为<code>std::enable_if</code>的使用对函数实现没影响。实现部分跟<a href="../5.RRefMovSemPerfForw/item26.html">Item26</a>中没有区别。</p>
 <pre><code class="language-cpp">class Person {
 public:
     template&lt;typename T,
@@ -234,7 +234,7 @@ public:
 };
 </code></pre>
 <p>为了理解高亮部分发生了什么，我很遗憾的表示你要自行参考其他代码，因为详细解释需要花费一定空间和时间，而本书并没有足够的空间（在你自行学习过程中，请研究“SFINAE”以及<code>std::enable_if</code>，因为“SFINAE”就是使<code>std::enable_if</code>起作用的技术）。这里我想要集中讨论条件的表示，该条件表示此构造函数是否启用。</p>
-<p>这里我们想表示的条件是确认<code>T</code>不是<code>Person</code>类型，即模板构造函数应该在<code>T</code>不是<code>Person</code>类型的时候启用。多亏了<em>type trait</em>可以确定两个对象类型是否相同（<code>std::is_same</code>），看起来我们需要的就是<code>!std::is_same&lt;Person, T&gt;::value</code>（注意语句开始的<code>!</code>，我们想要的是<strong>不</strong>相同）。这很接近我们想要的了，但是不完全正确，因为如同<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item28.md">Item28</a>中所述，使用左值来初始化通用引用的话会推导成左值引用，比如这个代码:</p>
+<p>这里我们想表示的条件是确认<code>T</code>不是<code>Person</code>类型，即模板构造函数应该在<code>T</code>不是<code>Person</code>类型的时候启用。多亏了<em>type trait</em>可以确定两个对象类型是否相同（<code>std::is_same</code>），看起来我们需要的就是<code>!std::is_same&lt;Person, T&gt;::value</code>（注意语句开始的<code>!</code>，我们想要的是<strong>不</strong>相同）。这很接近我们想要的了，但是不完全正确，因为如同<a href="../5.RRefMovSemPerfForw/item28.html">Item28</a>中所述，使用左值来初始化通用引用的话会推导成左值引用，比如这个代码:</p>
 <pre><code class="language-cpp">Person p(&quot;Nancy&quot;);
 auto cloneOfP(p);       //用左值初始化
 </code></pre>
@@ -244,10 +244,10 @@ auto cloneOfP(p);       //用左值初始化
 <li><strong>是否是个引用</strong>。对于决定是否通用引用构造函数启用的目的来说，<code>Person</code>，<code>Person&amp;</code>，<code>Person&amp;&amp;</code>都是跟<code>Person</code>一样的。</li>
 <li><strong>是不是<code>const</code>或者<code>volatile</code></strong>。如上所述，<code>const Person</code>，<code>volatile Person</code> ，<code>const volatile Person</code>也是跟<code>Person</code>一样的。</li>
 </ul>
-<p>这意味着我们需要一种方法消除对于<code>T</code>的引用，<code>const</code>，<code>volatile</code>修饰。再次，标准库提供了这样功能的<em>type trait</em>，就是<code>std::decay</code>。<code>std::decay&lt;T&gt;::value</code>与<code>T</code>是相同的，只不过会移除引用和cv限定符（<em>cv-qualifiers</em>，即<code>const</code>或<code>volatile</code>标识符）的修饰。（这里我没有说出另外的真相，<code>std::decay</code>如同其名一样，可以将数组或者函数退化成指针，参考<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item1.md">Item1</a>，但是在这里讨论的问题中，它刚好合适）。我们想要控制构造函数是否启用的条件可以写成：</p>
+<p>这意味着我们需要一种方法消除对于<code>T</code>的引用，<code>const</code>，<code>volatile</code>修饰。再次，标准库提供了这样功能的<em>type trait</em>，就是<code>std::decay</code>。<code>std::decay&lt;T&gt;::value</code>与<code>T</code>是相同的，只不过会移除引用和cv限定符（<em>cv-qualifiers</em>，即<code>const</code>或<code>volatile</code>标识符）的修饰。（这里我没有说出另外的真相，<code>std::decay</code>如同其名一样，可以将数组或者函数退化成指针，参考<a href="../1.DeducingTypes/item1.html">Item1</a>，但是在这里讨论的问题中，它刚好合适）。我们想要控制构造函数是否启用的条件可以写成：</p>
 <pre><code class="language-cpp">!std::is_same&lt;Person, typename std::decay&lt;T&gt;::type&gt;::value
 </code></pre>
-<p>即<code>Person</code>和<code>T</code>的类型不同，忽略了所有引用和cv限定符。（如<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item9.md">Item9</a>所述，<code>std::decay</code>前的“<code>typename</code>”是必需的，因为<code>std::decay&lt;T&gt;::type</code>的类型取决于模板形参<code>T</code>。）</p>
+<p>即<code>Person</code>和<code>T</code>的类型不同，忽略了所有引用和cv限定符。（如<a href="../3.MovingToModernCpp/item9.html">Item9</a>所述，<code>std::decay</code>前的“<code>typename</code>”是必需的，因为<code>std::decay&lt;T&gt;::type</code>的类型取决于模板形参<code>T</code>。）</p>
 <p>将其带回上面<code>std::enable_if</code>样板的代码中，加上调整一下格式，让各部分如何组合在一起看起来更容易，<code>Person</code>的完美转发构造函数的声明如下：</p>
 <pre><code class="language-cpp">class Person {
 public:
@@ -265,7 +265,7 @@ public:
 </code></pre>
 <p>如果你之前从没有看到过这种类型的代码，那你可太幸福了。最后才放出这种设计是有原因的。当你有其他机制来避免同时使用重载和通用引用时（你总会这样做），确实应该那样做。不过，一旦你习惯了使用函数语法和尖括号的使用，也不坏。此外，这可以提供你一直想要的行为表现。在上面的声明中，使用<code>Person</code>初始化一个<code>Person</code>——无论是左值还是右值，<code>const</code>还是non-<code>const</code>，<code>volatile</code>还是non-<code>volatile</code>——都不会调用到通用引用构造函数。</p>
 <p>成功了，对吗？确实！</p>
-<p>啊，不对。等会再庆祝。<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item26.md">Item26</a>还有一个情景需要解决，我们需要继续探讨下去。</p>
+<p>啊，不对。等会再庆祝。<a href="../5.RRefMovSemPerfForw/item26.html">Item26</a>还有一个情景需要解决，我们需要继续探讨下去。</p>
 <p>假定从<code>Person</code>派生的类以常规方式实现拷贝和移动操作：</p>
 <pre><code class="language-cpp">class SpecialPerson: public Person {
 public:
@@ -280,7 +280,7 @@ public:
     …
 };
 </code></pre>
-<p>这和<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item26.md">Item26</a>中的代码是一样的，包括注释也是一样。当我们拷贝或者移动一个<code>SpecialPerson</code>对象时，我们希望调用基类对应的拷贝和移动构造函数，来拷贝或者移动基类部分，但是这里，我们将<code>SpecialPerson</code>传递给基类的构造函数，因为<code>SpecialPerson</code>和<code>Person</code>类型不同（在应用<code>std::decay</code>后也不同），所以完美转发构造函数是启用的，会实例化为精确匹配<code>SpecialPerson</code>实参的构造函数。相比于派生类到基类的转化——这个转化对于在<code>Person</code>拷贝和移动构造函数中把<code>SpecialPerson</code>对象绑定到<code>Person</code>形参非常重要，生成的精确匹配是更优的，所以这里的代码，拷贝或者移动<code>SpecialPerson</code>对象就会调用<code>Person</code>类的完美转发构造函数来执行基类的部分。跟<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item26.md">Item26</a>的困境一样。</p>
+<p>这和<a href="../5.RRefMovSemPerfForw/item26.html">Item26</a>中的代码是一样的，包括注释也是一样。当我们拷贝或者移动一个<code>SpecialPerson</code>对象时，我们希望调用基类对应的拷贝和移动构造函数，来拷贝或者移动基类部分，但是这里，我们将<code>SpecialPerson</code>传递给基类的构造函数，因为<code>SpecialPerson</code>和<code>Person</code>类型不同（在应用<code>std::decay</code>后也不同），所以完美转发构造函数是启用的，会实例化为精确匹配<code>SpecialPerson</code>实参的构造函数。相比于派生类到基类的转化——这个转化对于在<code>Person</code>拷贝和移动构造函数中把<code>SpecialPerson</code>对象绑定到<code>Person</code>形参非常重要，生成的精确匹配是更优的，所以这里的代码，拷贝或者移动<code>SpecialPerson</code>对象就会调用<code>Person</code>类的完美转发构造函数来执行基类的部分。跟<a href="../5.RRefMovSemPerfForw/item26.html">Item26</a>的困境一样。</p>
 <p>派生类仅仅是按照常规的规则生成了自己的移动和拷贝构造函数，所以这个问题的解决还要落实在基类，尤其是控制是否使用<code>Person</code>通用引用构造函数启用的条件。现在我们意识到不只是禁止<code>Person</code>类型启用模板构造函数，而是禁止<code>Person</code>**以及任何派生自<code>Person</code>**的类型启用模板构造函数。讨厌的继承！</p>
 <p>你应该不意外在这里看到标准库中也有<em>type trait</em>判断一个类型是否继承自另一个类型，就是<code>std::is_base_of</code>。如果<code>std::is_base_of&lt;T1, T2&gt;</code>是true就表示<code>T2</code>派生自<code>T1</code>。类型也可被认为是从他们自己派生，所以<code>std::is_base_of&lt;T, T&gt;::value</code>总是true。这就很方便了，我们想要修正控制<code>Person</code>完美转发构造函数的启用条件，只有当<code>T</code>在消除引用和cv限定符之后，并且既不是<code>Person</code>又不是<code>Person</code>的派生类时，才满足条件。所以使用<code>std::is_base_of</code>代替<code>std::is_same</code>就可以了：</p>
 <pre><code class="language-cpp">class Person {
@@ -343,7 +343,7 @@ private:
 <h3 id="折中"><a class="header" href="#折中">折中</a></h3>
 <p>本条款提到的前三个技术——放弃重载、传递const T&amp;、传值——在函数调用中指定每个形参的类型。后两个技术——<em>tag dispatch</em>和限制模板适用范围——使用完美转发，因此不需要指定形参类型。这一基本决定（是否指定类型）有一定后果。</p>
 <p>通常，完美转发更有效率，因为它避免了仅仅去为了符合形参声明的类型而创建临时对象。在<code>Person</code>构造函数的例子中，完美转发允许将“<code>Nancy</code>”这种字符串字面量转发到<code>Person</code>内部的<code>std::string</code>的构造函数，不使用完美转发的技术则会从字符串字面值创建一个临时<code>std::string</code>对象，来满足<code>Person</code>构造函数指定的形参要求。</p>
-<p>但是完美转发也有缺点。即使某些类型的实参可以传递给接受特定类型的函数，也无法完美转发。<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item30.md">Item30</a>中探索了完美转发失败的例子。</p>
+<p>但是完美转发也有缺点。即使某些类型的实参可以传递给接受特定类型的函数，也无法完美转发。<a href="../5.RRefMovSemPerfForw/item30.html">Item30</a>中探索了完美转发失败的例子。</p>
 <p>第二个问题是当客户传递无效参数时错误消息的可理解性。例如假如客户传递了一个由<code>char16_t</code>（一种C++11引入的类型表示16位字符）而不是<code>char</code>（<code>std::string</code>包含的）组成的字符串字面值来创建一个<code>Person</code>对象：</p>
 <pre><code class="language-cpp">Person p(u&quot;Konrad Zuse&quot;);   //“Konrad Zuse”由const char16_t类型字符组成
 </code></pre>

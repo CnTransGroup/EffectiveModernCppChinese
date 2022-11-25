@@ -141,10 +141,10 @@
                     <main>
                         <h2 id="条款三十六如果有异步的必要请指定stdlaunchasync"><a class="header" href="#条款三十六如果有异步的必要请指定stdlaunchasync">条款三十六：如果有异步的必要请指定<code>std::launch::async</code></a></h2>
 <p><strong>Item 36: Specify <code>std::launch::async</code> if asynchronicity is essential.</strong></p>
-<p>当你调用<code>std::async</code>执行函数时（或者其他可调用对象），你通常希望异步执行函数。但是这并不一定是你要求<code>std::async</code>执行的操作。你事实上要求这个函数按照<code>std::async</code>启动策略来执行。有两种标准策略，每种都通过<code>std::launch</code>这个限域<code>enum</code>的一个枚举名表示（关于枚举的更多细节参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item10.md">Item10</a>）。假定一个函数<code>f</code>传给<code>std::async</code>来执行：</p>
+<p>当你调用<code>std::async</code>执行函数时（或者其他可调用对象），你通常希望异步执行函数。但是这并不一定是你要求<code>std::async</code>执行的操作。你事实上要求这个函数按照<code>std::async</code>启动策略来执行。有两种标准策略，每种都通过<code>std::launch</code>这个限域<code>enum</code>的一个枚举名表示（关于枚举的更多细节参见<a href="../3.MovingToModernCpp/item10.html">Item10</a>）。假定一个函数<code>f</code>传给<code>std::async</code>来执行：</p>
 <ul>
 <li><strong><code>std::launch::async</code>启动策略</strong>意味着<code>f</code>必须异步执行，即在不同的线程。</li>
-<li><strong><code>std::launch::deferred</code>启动策略</strong>意味着<code>f</code>仅当在<code>std::async</code>返回的<em>future</em>上调用<code>get</code>或者<code>wait</code>时才执行。这表示<code>f</code><strong>推迟</strong>到存在这样的调用时才执行（译者注：异步与并发是两个不同概念，这里侧重于惰性求值）。当<code>get</code>或<code>wait</code>被调用，<code>f</code>会同步执行，即调用方被阻塞，直到<code>f</code>运行结束。如果<code>get</code>和<code>wait</code>都没有被调用，<code>f</code>将不会被执行。（这是个简化说法。关键点不是要在其上调用<code>get</code>或<code>wait</code>的那个<em>future</em>，而是<em>future</em>引用的那个共享状态。（<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.TheConcurrencyAPI/item38.md">Item38</a>讨论了<em>future</em>与共享状态的关系。）因为<code>std::future</code>支持移动，也可以用来构造<code>std::shared_future</code>，并且因为<code>std::shared_future</code>可以被拷贝，对共享状态——对<code>f</code>传到的那个<code>std::async</code>进行调用产生的——进行引用的<em>future</em>对象，有可能与<code>std::async</code>返回的那个<em>future</em>对象不同。这非常绕口，所以经常回避这个事实，简称为在<code>std::async</code>返回的<em>future</em>上调用<code>get</code>或<code>wait</code>。）</li>
+<li><strong><code>std::launch::deferred</code>启动策略</strong>意味着<code>f</code>仅当在<code>std::async</code>返回的<em>future</em>上调用<code>get</code>或者<code>wait</code>时才执行。这表示<code>f</code><strong>推迟</strong>到存在这样的调用时才执行（译者注：异步与并发是两个不同概念，这里侧重于惰性求值）。当<code>get</code>或<code>wait</code>被调用，<code>f</code>会同步执行，即调用方被阻塞，直到<code>f</code>运行结束。如果<code>get</code>和<code>wait</code>都没有被调用，<code>f</code>将不会被执行。（这是个简化说法。关键点不是要在其上调用<code>get</code>或<code>wait</code>的那个<em>future</em>，而是<em>future</em>引用的那个共享状态。（<a href="../7.TheConcurrencyAPI/item38.html">Item38</a>讨论了<em>future</em>与共享状态的关系。）因为<code>std::future</code>支持移动，也可以用来构造<code>std::shared_future</code>，并且因为<code>std::shared_future</code>可以被拷贝，对共享状态——对<code>f</code>传到的那个<code>std::async</code>进行调用产生的——进行引用的<em>future</em>对象，有可能与<code>std::async</code>返回的那个<em>future</em>对象不同。这非常绕口，所以经常回避这个事实，简称为在<code>std::async</code>返回的<em>future</em>上调用<code>get</code>或<code>wait</code>。）</li>
 </ul>
 <p>可能让人惊奇的是，<code>std::async</code>的默认启动策略——你不显式指定一个策略时它使用的那个——不是上面中任意一个。相反，是求或在一起的。下面的两种调用含义相同：</p>
 <pre><code class="language-cpp">auto fut1 = std::async(f);                      //使用默认启动策略运行f
@@ -152,7 +152,7 @@ auto fut2 = std::async(std::launch::async |     //使用async或者deferred运�
                        std::launch::deferred,
                        f);
 </code></pre>
-<p>因此默认策略允许<code>f</code>异步或者同步执行。如同<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.TheConcurrencyAPI/Item35.md">Item35</a>中指出，这种灵活性允许<code>std::async</code>和标准库的线程管理组件承担线程创建和销毁的责任，避免资源超额，以及平衡负载。这就是使用<code>std::async</code>并发编程如此方便的原因。</p>
+<p>因此默认策略允许<code>f</code>异步或者同步执行。如同<a href="../7.TheConcurrencyAPI/Item35.html">Item35</a>中指出，这种灵活性允许<code>std::async</code>和标准库的线程管理组件承担线程创建和销毁的责任，避免资源超额，以及平衡负载。这就是使用<code>std::async</code>并发编程如此方便的原因。</p>
 <p>但是，使用默认启动策略的<code>std::async</code>也有一些有趣的影响。给定一个线程<code>t</code>执行此语句：</p>
 <pre><code class="language-cpp">auto fut = std::async(f);   //使用默认启动策略运行f
 </code></pre>
@@ -165,7 +165,7 @@ auto fut2 = std::async(std::launch::async |     //使用async或者deferred运�
 <pre><code class="language-cpp">auto fut = std::async(f);   //f的TLS可能是为单独的线程建的，
                             //也可能是为在fut上调用get或者wait的线程建的
 </code></pre>
-<p>这还会影响到基于<code>wait</code>的循环使用超时机制，因为在一个延时的任务（参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.TheConcurrencyAPI/Item35.md">Item35</a>）上调用<code>wait_for</code>或者<code>wait_until</code>会产生<code>std::launch::deferred</code>值。意味着，以下循环看似应该最终会终止，但可能实际上永远运行：</p>
+<p>这还会影响到基于<code>wait</code>的循环使用超时机制，因为在一个延时的任务（参见<a href="../7.TheConcurrencyAPI/Item35.html">Item35</a>）上调用<code>wait_for</code>或者<code>wait_until</code>会产生<code>std::launch::deferred</code>值。意味着，以下循环看似应该最终会终止，但可能实际上永远运行：</p>
 <pre><code class="language-cpp">using namespace std::literals;      //为了使用C++14中的时间段后缀；参见条款34
 
 void f()                            //f休眠1秒，然后返回
@@ -220,7 +220,7 @@ reallyAsync(F&amp;&amp; f, Ts&amp;&amp;... params)          //返回异步调用
                       std::forward&lt;Ts&gt;(params)...);
 }
 </code></pre>
-<p>这个函数接受一个可调用对象<code>f</code>和0或多个形参<code>params</code>，然后完美转发（参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item25.md">Item25</a>）给<code>std::async</code>，使用<code>std::launch::async</code>作为启动策略。就像<code>std::async</code>一样，返回<code>std::future</code>作为用<code>params</code>调用<code>f</code>得到的结果。确定结果的类型很容易，因为<em>type trait</em> <code>std::result_of</code>可以提供给你。（参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item9.md">Item9</a>关于<em>type trait</em>的详细表述。）</p>
+<p>这个函数接受一个可调用对象<code>f</code>和0或多个形参<code>params</code>，然后完美转发（参见<a href="../5.RRefMovSemPerfForw/item25.html">Item25</a>）给<code>std::async</code>，使用<code>std::launch::async</code>作为启动策略。就像<code>std::async</code>一样，返回<code>std::future</code>作为用<code>params</code>调用<code>f</code>得到的结果。确定结果的类型很容易，因为<em>type trait</em> <code>std::result_of</code>可以提供给你。（参见<a href="../3.MovingToModernCpp/item9.html">Item9</a>关于<em>type trait</em>的详细表述。）</p>
 <p><code>reallyAsync</code>就像<code>std::async</code>一样使用：</p>
 <pre><code class="language-cpp">auto fut = reallyAsync(f); //异步运行f，如果std::async抛出异常它也会抛出
 </code></pre>

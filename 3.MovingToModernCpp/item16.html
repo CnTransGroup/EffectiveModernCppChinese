@@ -207,7 +207,7 @@ private:
 </code></pre>
 <p><code>std::mutex m</code>被声明为<code>mutable</code>，因为锁定和解锁它的都是non-<code>const</code>成员函数。在<code>roots</code>（<code>const</code>成员函数）中，<code>m</code>却被视为<code>const</code>对象。</p>
 <p>值得注意的是，因为<code>std::mutex</code>是一种只可移动类型（<em>move-only type</em>，一种可以移动但不能复制的类型），所以将<code>m</code>添加进<code>Polynomial</code>中的副作用是使<code>Polynomial</code>失去了被复制的能力。不过，它仍然可以移动。</p>
-<p>在某些情况下，互斥量的副作用显会得过大。例如，如果你所做的只是计算成员函数被调用了多少次，使用<code>std::atomic</code> 修饰的计数器（保证其他线程视它的操作为不可分割的整体，参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.TheConcurrencyAPI/item40.md">item40</a>）通常会是一个开销更小的方法。（然而它是否轻量取决于你使用的硬件和标准库中互斥量的实现。）以下是如何使用<code>std::atomic</code>来统计调用次数。</p>
+<p>在某些情况下，互斥量的副作用显会得过大。例如，如果你所做的只是计算成员函数被调用了多少次，使用<code>std::atomic</code> 修饰的计数器（保证其他线程视它的操作为不可分割的整体，参见<a href="../7.TheConcurrencyAPI/item40.html">item40</a>）通常会是一个开销更小的方法。（然而它是否轻量取决于你使用的硬件和标准库中互斥量的实现。）以下是如何使用<code>std::atomic</code>来统计调用次数。</p>
 <pre><code class="language-c++">class Point {                                   //2D点
 public:
     …

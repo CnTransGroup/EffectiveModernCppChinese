@@ -151,7 +151,7 @@
 </ul>
 <p>（译者注：<code>std::thread</code>可以视作状态保存的对象，保存的状态可能也包括可调用对象，有没有具体的线程承载就是有没有连接）</p>
 <p><code>std::thread</code>的可结合性如此重要的原因之一就是当可结合的线程的析构函数被调用，程序执行会终止。比如，假定有一个函数<code>doWork</code>，使用一个过滤函数<code>filter</code>，一个最大值<code>maxVal</code>作为形参。<code>doWork</code>检查是否满足计算所需的条件，然后使用在0到<code>maxVal</code>之间的通过过滤器的所有值进行计算。如果进行过滤非常耗时，并且确定<code>doWork</code>条件是否满足也很耗时，则将两件事并发计算是很合理的。</p>
-<p>我们希望为此采用基于任务的设计（参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.TheConcurrencyAPI/Item35.md">Item35</a>），但是假设我们希望设置做过滤的线程的优先级。<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.TheConcurrencyAPI/Item35.md">Item35</a>阐释了那需要线程的原生句柄，只能通过<code>std::thread</code>的API来完成；基于任务的API（比如<em>future</em>）做不到。所以最终采用基于线程而不是基于任务。</p>
+<p>我们希望为此采用基于任务的设计（参见<a href="../7.TheConcurrencyAPI/Item35.html">Item35</a>），但是假设我们希望设置做过滤的线程的优先级。<a href="../7.TheConcurrencyAPI/Item35.html">Item35</a>阐释了那需要线程的原生句柄，只能通过<code>std::thread</code>的API来完成；基于任务的API（比如<em>future</em>）做不到。所以最终采用基于线程而不是基于任务。</p>
 <p>我们可能写出以下代码：</p>
 <p>代码如下：</p>
 <pre><code class="language-cpp">constexpr auto tenMillion = 10000000;           //constexpr见条款15
@@ -181,7 +181,7 @@ bool doWork(std::function&lt;bool(int)&gt; filter,    //返回计算是否执行
 <p>在解释这份代码为什么有问题之前，我先把<code>tenMillion</code>的初始化值弄得更可读一些，这利用了C++14的能力，使用单引号作为数字分隔符：</p>
 <pre><code class="language-cpp">constexpr auto tenMillion = 10'000'000;         //C++14
 </code></pre>
-<p>还要指出，在开始运行之后设置<code>t</code>的优先级就像把马放出去之后再关上马厩门一样（译者注：太晚了）。更好的设计是在挂起状态时开始<code>t</code>（这样可以在执行任何计算前调整优先级），但是我不想你为考虑那些代码而分心。如果你对代码中忽略的部分感兴趣，可以转到<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.TheConcurrencyAPI/item39.md">Item39</a>，那个Item告诉你如何以开始那些挂起状态的线程。</p>
+<p>还要指出，在开始运行之后设置<code>t</code>的优先级就像把马放出去之后再关上马厩门一样（译者注：太晚了）。更好的设计是在挂起状态时开始<code>t</code>（这样可以在执行任何计算前调整优先级），但是我不想你为考虑那些代码而分心。如果你对代码中忽略的部分感兴趣，可以转到<a href="../7.TheConcurrencyAPI/item39.html">Item39</a>，那个Item告诉你如何以开始那些挂起状态的线程。</p>
 <p>返回<code>doWork</code>。如果<code>conditionsAreSatisfied()</code>返回<code>true</code>，没什么问题，但是如果返回<code>false</code>或者抛出异常，在<code>doWork</code>结束调用<code>t</code>的析构函数时，<code>std::thread</code>对象<code>t</code>会是可结合的。这造成程序执行中止。</p>
 <p>你可能会想，为什么<code>std::thread</code>析构的行为是这样的，那是因为另外两种显而易见的方式更糟：</p>
 <ul>
@@ -195,7 +195,7 @@ bool doWork(std::function&lt;bool(int)&gt; filter,    //返回计算是否执行
 </ul>
 <p>标准委员会认为，销毁可结合的线程如此可怕以至于实际上禁止了它（规定销毁可结合的线程导致程序终止）。</p>
 <p>这使你有责任确保使用<code>std::thread</code>对象时，在所有的路径上超出定义所在的作用域时都是不可结合的。但是覆盖每条路径可能很复杂，可能包括自然执行通过作用域，或者通过<code>return</code>，<code>continue</code>，<code>break</code>，<code>goto</code>或异常跳出作用域，有太多可能的路径。</p>
-<p>每当你想在执行跳至块之外的每条路径执行某种操作，最通用的方式就是将该操作放入局部对象的析构函数中。这些对象称为<strong>RAII对象</strong>（<em>RAII objects</em>），从<strong>RAII类</strong>中实例化。（RAII全称为 “Resource Acquisition Is Initialization”（资源获得即初始化），尽管技术关键点在析构上而不是实例化上）。RAII类在标准库中很常见。比如STL容器（每个容器析构函数都销毁容器中的内容物并释放内存），标准智能指针（<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item18.md">Item18</a>-<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item20.md">20</a>解释了，<code>std::uniqu_ptr</code>的析构函数调用他指向的对象的删除器，<code>std::shared_ptr</code>和<code>std::weak_ptr</code>的析构函数递减引用计数），<code>std::fstream</code>对象（它们的析构函数关闭对应的文件）等。但是标准库没有<code>std::thread</code>的RAII类，可能是因为标准委员会拒绝将<code>join</code>和<code>detach</code>作为默认选项，不知道应该怎么样完成RAII。</p>
+<p>每当你想在执行跳至块之外的每条路径执行某种操作，最通用的方式就是将该操作放入局部对象的析构函数中。这些对象称为<strong>RAII对象</strong>（<em>RAII objects</em>），从<strong>RAII类</strong>中实例化。（RAII全称为 “Resource Acquisition Is Initialization”（资源获得即初始化），尽管技术关键点在析构上而不是实例化上）。RAII类在标准库中很常见。比如STL容器（每个容器析构函数都销毁容器中的内容物并释放内存），标准智能指针（<a href="../4.SmartPointers/item18.html">Item18</a>-<a href="../4.SmartPointers/item20.html">20</a>解释了，<code>std::uniqu_ptr</code>的析构函数调用他指向的对象的删除器，<code>std::shared_ptr</code>和<code>std::weak_ptr</code>的析构函数递减引用计数），<code>std::fstream</code>对象（它们的析构函数关闭对应的文件）等。但是标准库没有<code>std::thread</code>的RAII类，可能是因为标准委员会拒绝将<code>join</code>和<code>detach</code>作为默认选项，不知道应该怎么样完成RAII。</p>
 <p>幸运的是，完成自行实现的类并不难。比如，下面的类实现允许调用者指定<code>ThreadRAII</code>对象（一个<code>std::thread</code>的RAII对象）析构时，调用<code>join</code>或者<code>detach</code>：</p>
 <pre><code class="language-cpp">class ThreadRAII {
 public:
@@ -275,8 +275,8 @@ private:
 }
 </code></pre>
 <p>这种情况下，我们选择在<code>ThreadRAII</code>的析构函数对异步执行的线程进行<code>join</code>，因为在先前分析中，<code>detach</code>可能导致噩梦般的调试过程。我们之前也分析了<code>join</code>可能会导致表现异常（坦率说，也可能调试困难），但是在未定义行为（<code>detach</code>导致），程序终止（使用原生<code>std::thread</code>导致），或者表现异常之间选择一个后果，可能表现异常是最好的那个。</p>
-<p>哎，<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.TheConcurrencyAPI/item39.md">Item39</a>表明了使用<code>ThreadRAII</code>来保证在<code>std::thread</code>的析构时执行<code>join</code>有时不仅可能导致程序表现异常，还可能导致程序挂起。“适当”的解决方案是此类程序应该和异步执行的<em>lambda</em>通信，告诉它不需要执行了，可以直接返回，但是C++11中不支持<strong>可中断线程</strong>（<em>interruptible threads</em>）。可以自行实现，但是这不是本书讨论的主题。（关于这一点，Anthony Williams的《C++ Concurrency in Action》（Manning Publications，2012）的section 9.2中有详细讨论。）（译者注：此书中文版已出版，名为《C++并发编程实战》，且本文翻译时（2020）已有第二版出版。）</p>
-<p><a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item17.md">Item17</a>说明因为<code>ThreadRAII</code>声明了一个析构函数，因此不会有编译器生成移动操作，但是没有理由<code>ThreadRAII</code>对象不能移动。如果要求编译器生成这些函数，函数的功能也正确，所以显式声明来告诉编译器自动生成也是合适的：</p>
+<p>哎，<a href="../7.TheConcurrencyAPI/item39.html">Item39</a>表明了使用<code>ThreadRAII</code>来保证在<code>std::thread</code>的析构时执行<code>join</code>有时不仅可能导致程序表现异常，还可能导致程序挂起。“适当”的解决方案是此类程序应该和异步执行的<em>lambda</em>通信，告诉它不需要执行了，可以直接返回，但是C++11中不支持<strong>可中断线程</strong>（<em>interruptible threads</em>）。可以自行实现，但是这不是本书讨论的主题。（关于这一点，Anthony Williams的《C++ Concurrency in Action》（Manning Publications，2012）的section 9.2中有详细讨论。）（译者注：此书中文版已出版，名为《C++并发编程实战》，且本文翻译时（2020）已有第二版出版。）</p>
+<p><a href="../3.MovingToModernCpp/item17.html">Item17</a>说明因为<code>ThreadRAII</code>声明了一个析构函数，因此不会有编译器生成移动操作，但是没有理由<code>ThreadRAII</code>对象不能移动。如果要求编译器生成这些函数，函数的功能也正确，所以显式声明来告诉编译器自动生成也是合适的：</p>
 <pre><code class="language-cpp">class ThreadRAII {
 public:
     enum class DtorAction { join, detach };         //跟之前一样

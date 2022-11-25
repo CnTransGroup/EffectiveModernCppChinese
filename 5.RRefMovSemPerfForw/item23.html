@@ -172,9 +172,9 @@ move(T&amp;&amp; param)
     return static_cast&lt;ReturnType&gt;(param);
 }
 </code></pre>
-<p>我为你们高亮了这段代码的两部分（译者注：高亮的部分为函数名<code>move</code>和<code>static_cast&lt;ReturnType&gt;(param)</code>）。一个是函数名字，因为函数的返回值非常具有干扰性，而且我不想你们被它搞得晕头转向。另外一个高亮的部分是包含这段函数的本质的转换。正如你所见，<code>std::move</code>接受一个对象的引用（准确的说，一个通用引用（universal reference），见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item24.md">Item24</a>)，返回一个指向同对象的引用。</p>
-<p>该函数返回类型的<code>&amp;&amp;</code>部分表明<code>std::move</code>函数返回的是一个右值引用，但是，正如<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item28.md">Item28</a>所解释的那样，如果类型<code>T</code>恰好是一个左值引用，那么<code>T&amp;&amp;</code>将会成为一个左值引用。为了避免如此，<em>type trait</em>（见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item9.md">Item9</a>）<code>std::remove_reference</code>应用到了类型<code>T</code>上，因此确保了<code>&amp;&amp;</code>被正确的应用到了一个不是引用的类型上。这保证了<code>std::move</code>返回的真的是右值引用，这很重要，因为函数返回的右值引用是右值。因此，<code>std::move</code>将它的实参转换为一个右值，这就是它的全部作用。</p>
-<p>此外，<code>std::move</code>在C++14中可以被更简单地实现。多亏了函数返回值类型推导（见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item3.md">Item3</a>）和标准库的模板别名<code>std::remove_reference_t</code>（见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item9.md">Item9</a>），<code>std::move</code>可以这样写：</p>
+<p>我为你们高亮了这段代码的两部分（译者注：高亮的部分为函数名<code>move</code>和<code>static_cast&lt;ReturnType&gt;(param)</code>）。一个是函数名字，因为函数的返回值非常具有干扰性，而且我不想你们被它搞得晕头转向。另外一个高亮的部分是包含这段函数的本质的转换。正如你所见，<code>std::move</code>接受一个对象的引用（准确的说，一个通用引用（universal reference），见<a href="../5.RRefMovSemPerfForw/item24.html">Item24</a>)，返回一个指向同对象的引用。</p>
+<p>该函数返回类型的<code>&amp;&amp;</code>部分表明<code>std::move</code>函数返回的是一个右值引用，但是，正如<a href="../5.RRefMovSemPerfForw/item28.html">Item28</a>所解释的那样，如果类型<code>T</code>恰好是一个左值引用，那么<code>T&amp;&amp;</code>将会成为一个左值引用。为了避免如此，<em>type trait</em>（见<a href="../3.MovingToModernCpp/item9.html">Item9</a>）<code>std::remove_reference</code>应用到了类型<code>T</code>上，因此确保了<code>&amp;&amp;</code>被正确的应用到了一个不是引用的类型上。这保证了<code>std::move</code>返回的真的是右值引用，这很重要，因为函数返回的右值引用是右值。因此，<code>std::move</code>将它的实参转换为一个右值，这就是它的全部作用。</p>
+<p>此外，<code>std::move</code>在C++14中可以被更简单地实现。多亏了函数返回值类型推导（见<a href="../1.DeducingTypes/item3.html">Item3</a>）和标准库的模板别名<code>std::remove_reference_t</code>（见<a href="../3.MovingToModernCpp/item9.html">Item9</a>），<code>std::move</code>可以这样写：</p>
 <pre><code class="language-cpp">template&lt;typename T&gt;
 decltype(auto) move(T&amp;&amp; param)          //C++14，仍然在std命名空间
 {
@@ -185,7 +185,7 @@ decltype(auto) move(T&amp;&amp; param)          //C++14，仍然在std命名空�
 <p>看起来更简单，不是吗？</p>
 <p>因为<code>std::move</code>除了转换它的实参到右值以外什么也不做，有一些提议说它的名字叫<code>rvalue_cast</code>之类可能会更好。虽然可能确实是这样，但是它的名字已经是<code>std::move</code>，所以记住<code>std::move</code>做什么和不做什么很重要。它只进行转换，不移动任何东西。</p>
 <p>当然，右值本来就是移动操作的候选者，所以对一个对象使用<code>std::move</code>就是告诉编译器，这个对象很适合被移动。所以这就是为什么<code>std::move</code>叫现在的名字：更容易指定可以被移动的对象。</p>
-<p>事实上，右值只不过<strong>经常</strong>是移动操作的候选者。假设你有一个类，它用来表示一段注解。这个类的构造函数接受一个包含有注解的<code>std::string</code>作为形参，然后它复制该形参到数据成员。假设你了解<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/8.Tweaks/item41.md">Item41</a>，你声明一个值传递的形参：</p>
+<p>事实上，右值只不过<strong>经常</strong>是移动操作的候选者。假设你有一个类，它用来表示一段注解。这个类的构造函数接受一个包含有注解的<code>std::string</code>作为形参，然后它复制该形参到数据成员。假设你了解<a href="../8.Tweaks/item41.html">Item41</a>，你声明一个值传递的形参：</p>
 <pre><code class="language-cpp">class Annotation {
 public:
     explicit Annotation(std::string text);  //将会被复制的形参，
@@ -199,7 +199,7 @@ public:
     …
 };
 </code></pre>
-<p>当复制<code>text</code>到一个数据成员的时候，为了避免一次复制操作的代价，你仍然记得来自<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/8.Tweaks/item41.md">Item41</a>的建议，把<code>std::move</code>应用到<code>text</code>上，因此产生一个右值：</p>
+<p>当复制<code>text</code>到一个数据成员的时候，为了避免一次复制操作的代价，你仍然记得来自<a href="../8.Tweaks/item41.html">Item41</a>的建议，把<code>std::move</code>应用到<code>text</code>上，因此产生一个右值：</p>
 <pre><code class="language-cpp">class Annotation {
 public:
     explicit Annotation(const std::string text)
@@ -246,7 +246,7 @@ logAndProcess(std::move(w));    //用右值调用
 </code></pre>
 <p>在<code>logAndProcess</code>函数的内部，形参<code>param</code>被传递给函数<code>process</code>。函数<code>process</code>分别对左值和右值做了重载。当我们使用左值来调用<code>logAndProcess</code>时，自然我们期望该左值被当作左值转发给<code>process</code>函数，而当我们使用右值来调用<code>logAndProcess</code>函数时，我们期望<code>process</code>函数的右值重载版本被调用。</p>
 <p>但是<code>param</code>，正如所有的其他函数形参一样，是一个左值。每次在函数<code>logAndProcess</code>内部对函数<code>process</code>的调用，都会因此调用函数<code>process</code>的左值重载版本。为防如此，我们需要一种机制：当且仅当传递给函数<code>logAndProcess</code>的用以初始化<code>param</code>的实参是一个右值时，<code>param</code>会被转换为一个右值。这就是<code>std::forward</code>做的事情。这就是为什么<code>std::forward</code>是一个<strong>有条件</strong>的转换：它的实参用右值初始化时，转换为一个右值。</p>
-<p>你也许会想知道<code>std::forward</code>是怎么知道它的实参是否是被一个右值初始化的。举个例子，在上述代码中，<code>std::forward</code>是怎么分辨<code>param</code>是被一个左值还是右值初始化的？ 简短的说，该信息藏在函数<code>logAndProcess</code>的模板参数<code>T</code>中。该参数被传递给了函数<code>std::forward</code>，它解开了含在其中的信息。该机制工作的细节可以查询<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item28.md">Item28</a>。</p>
+<p>你也许会想知道<code>std::forward</code>是怎么知道它的实参是否是被一个右值初始化的。举个例子，在上述代码中，<code>std::forward</code>是怎么分辨<code>param</code>是被一个左值还是右值初始化的？ 简短的说，该信息藏在函数<code>logAndProcess</code>的模板参数<code>T</code>中。该参数被传递给了函数<code>std::forward</code>，它解开了含在其中的信息。该机制工作的细节可以查询<a href="../5.RRefMovSemPerfForw/item28.html">Item28</a>。</p>
 <p>考虑到<code>std::move</code>和<code>std::forward</code>都可以归结于转换，它们唯一的区别就是<code>std::move</code>总是执行转换，而<code>std::forward</code>偶尔为之。你可能会问是否我们可以免于使用<code>std::move</code>而在任何地方只使用<code>std::forward</code>。 从纯技术的角度，答案是yes：<code>std::forward</code>是可以完全胜任，<code>std::move</code>并非必须。当然，其实两者中没有哪一个函数是<strong>真的必须</strong>的，因为我们可以到处直接写转换代码，但是我希望我们能同意：这将相当的，嗯，让人恶心。</p>
 <p><code>std::move</code>的吸引力在于它的便利性：减少了出错的可能性，增加了代码的清晰程度。考虑一个类，我们希望统计有多少次移动构造函数被调用了。我们只需要一个<code>static</code>的计数器，它会在移动构造的时候自增。假设在这个类中，唯一一个非静态的数据成员是<code>std::string</code>，一种经典的移动构造函数（即，使用<code>std::move</code>）可以被实现如下：</p>
 <pre><code class="language-cpp">class Widget {
@@ -273,7 +273,7 @@ public:
 
 }
 </code></pre>
-<p>注意，第一，<code>std::move</code>只需要一个函数实参（<code>rhs.s</code>），而<code>std::forward</code>不但需要一个函数实参（<code>rhs.s</code>），还需要一个模板类型实参<code>std::string</code>。其次，我们传递给<code>std::forward</code>的类型应当是一个non-reference，因为惯例是传递的实参应该是一个右值（见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item28.md">Item28</a>）。同样，这意味着<code>std::move</code>比起<code>std::forward</code>来说需要打更少的字，并且免去了传递一个表示我们正在传递一个右值的类型实参。同样，它根绝了我们传递错误类型的可能性（例如，<code>std::string&amp;</code>可能导致数据成员<code>s</code>被复制而不是被移动构造）。</p>
+<p>注意，第一，<code>std::move</code>只需要一个函数实参（<code>rhs.s</code>），而<code>std::forward</code>不但需要一个函数实参（<code>rhs.s</code>），还需要一个模板类型实参<code>std::string</code>。其次，我们传递给<code>std::forward</code>的类型应当是一个non-reference，因为惯例是传递的实参应该是一个右值（见<a href="../5.RRefMovSemPerfForw/item28.html">Item28</a>）。同样，这意味着<code>std::move</code>比起<code>std::forward</code>来说需要打更少的字，并且免去了传递一个表示我们正在传递一个右值的类型实参。同样，它根绝了我们传递错误类型的可能性（例如，<code>std::string&amp;</code>可能导致数据成员<code>s</code>被复制而不是被移动构造）。</p>
 <p>更重要的是，<code>std::move</code>的使用代表着无条件向右值的转换，而使用<code>std::forward</code>只对绑定了右值的引用进行到右值转换。这是两种完全不同的动作。前者是典型地为了移动操作，而后者只是传递（亦为转发）一个对象到另外一个函数，保留它原有的左值属性或右值属性。因为这些动作实在是差异太大，所以我们拥有两个不同的函数（以及函数名）来区分这些动作。</p>
 <p><strong>请记住：</strong></p>
 <ul>

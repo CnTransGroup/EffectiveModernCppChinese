@@ -180,7 +180,7 @@ makeInvestment(Ts&amp;&amp;... params);
     …
 }                                       //销毁 *pInvestment
 </code></pre>
-<p>但是也可以在所有权转移的场景中使用它，比如将工厂返回的<code>std::unique_ptr</code>移入容器中，然后将容器元素移入一个对象的数据成员中，然后对象过后被销毁。发生这种情况时，这个对象的<code>std::unique_ptr</code>数据成员也被销毁，并且智能指针数据成员的析构将导致从工厂返回的资源被销毁。如果所有权链由于异常或者其他非典型控制流出现中断（比如提前从函数return或者循环中的<code>break</code>），则拥有托管资源的<code>std::unique_ptr</code>将保证指向内容的析构函数被调用，销毁对应资源。（这个规则也有些例外。大多数情况发生于不正常的程序终止。如果一个异常传播到线程的基本函数（比如程序初始线程的<code>main</code>函数）外，或者违反<code>noexcept</code>说明（见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item14.md">Item14</a>），局部变量可能不会被销毁；如果<code>std::abort</code>或者退出函数（如<code>std::_Exit</code>，<code>std::exit</code>，或<code>std::quick_exit</code>）被调用，局部变量一定没被销毁。）</p>
+<p>但是也可以在所有权转移的场景中使用它，比如将工厂返回的<code>std::unique_ptr</code>移入容器中，然后将容器元素移入一个对象的数据成员中，然后对象过后被销毁。发生这种情况时，这个对象的<code>std::unique_ptr</code>数据成员也被销毁，并且智能指针数据成员的析构将导致从工厂返回的资源被销毁。如果所有权链由于异常或者其他非典型控制流出现中断（比如提前从函数return或者循环中的<code>break</code>），则拥有托管资源的<code>std::unique_ptr</code>将保证指向内容的析构函数被调用，销毁对应资源。（这个规则也有些例外。大多数情况发生于不正常的程序终止。如果一个异常传播到线程的基本函数（比如程序初始线程的<code>main</code>函数）外，或者违反<code>noexcept</code>说明（见<a href="../3.MovingToModernCpp/item14.html">Item14</a>），局部变量可能不会被销毁；如果<code>std::abort</code>或者退出函数（如<code>std::_Exit</code>，<code>std::exit</code>，或<code>std::quick_exit</code>）被调用，局部变量一定没被销毁。）</p>
 <p>默认情况下，销毁将通过<code>delete</code>进行，但是在构造过程中，<code>std::unique_ptr</code>对象可以被设置为使用（对资源的）<strong>自定义删除器</strong>：当资源需要销毁时可调用的任意函数（或者函数对象，包括<em>lambda</em>表达式）。如果通过<code>makeInvestment</code>创建的对象不应仅仅被<code>delete</code>，而应该先写一条日志，<code>makeInvestment</code>可以以如下方式实现。（代码后有说明，别担心有些东西的动机不那么明显。）</p>
 <pre><code class="language-cpp">auto delInvmt = [](Investment* pInvestment)         //自定义删除器
                 {                                   //（lambda表达式）
@@ -216,7 +216,7 @@ makeInvestment(Ts&amp;&amp;... params)
 <p><code>delInvmt</code>是从<code>makeInvestment</code>返回的对象的自定义的删除器。所有的自定义的删除行为接受要销毁对象的原始指针，然后执行所有必要行为实现销毁操作。在上面情况中，操作包括调用<code>makeLogEntry</code>然后应用<code>delete</code>。使用<em>lambda</em>创建<code>delInvmt</code>是方便的，而且，正如稍后看到的，比编写常规的函数更有效。</p>
 </li>
 <li>
-<p>当使用自定义删除器时，删除器类型必须作为第二个类型实参传给<code>std::unique_ptr</code>。在上面情况中，就是<code>delInvmt</code>的类型，这就是为什么<code>makeInvestment</code>返回类型是<code>std::unique_ptr&lt;Investment, decltype(delInvmt)&gt;</code>。（对于<code>decltype</code>，更多信息查看<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item3.md">Item3</a>）</p>
+<p>当使用自定义删除器时，删除器类型必须作为第二个类型实参传给<code>std::unique_ptr</code>。在上面情况中，就是<code>delInvmt</code>的类型，这就是为什么<code>makeInvestment</code>返回类型是<code>std::unique_ptr&lt;Investment, decltype(delInvmt)&gt;</code>。（对于<code>decltype</code>，更多信息查看<a href="../1.DeducingTypes/item3.html">Item3</a>）</p>
 </li>
 <li>
 <p><code>makeInvestment</code>的基本策略是创建一个空的<code>std::unique_ptr</code>，然后指向一个合适类型的对象，然后返回。为了将自定义删除器<code>delInvmt</code>与<code>pInv</code>关联，我们把<code>delInvmt</code>作为<code>pInv</code>构造函数的第二个实参。</p>
@@ -225,7 +225,7 @@ makeInvestment(Ts&amp;&amp;... params)
 <p>尝试将原始指针（比如<code>new</code>创建）赋值给<code>std::unique_ptr</code>通不过编译，因为是一种从原始指针到智能指针的隐式转换。这种隐式转换会出问题，所以C++11的智能指针禁止这个行为。这就是通过<code>reset</code>来让<code>pInv</code>接管通过<code>new</code>创建的对象的所有权的原因。</p>
 </li>
 <li>
-<p>使用<code>new</code>时，我们使用<code>std::forward</code>把传给<code>makeInvestment</code>的实参完美转发出去（查看<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item25.md">Item25</a>）。这使调用者提供的所有信息可用于正在创建的对象的构造函数。</p>
+<p>使用<code>new</code>时，我们使用<code>std::forward</code>把传给<code>makeInvestment</code>的实参完美转发出去（查看<a href="../5.RRefMovSemPerfForw/item25.html">Item25</a>）。这使调用者提供的所有信息可用于正在创建的对象的构造函数。</p>
 </li>
 <li>
 <p>自定义删除器的一个形参，类型是<code>Investment*</code>，不管在<code>makeInvestment</code>内部创建的对象的真实类型（如<code>Stock</code>，<code>Bond</code>，或<code>RealEstate</code>）是什么，它最终在<em>lambda</em>表达式中，作为<code>Investment*</code>对象被删除。这意味着我们通过基类指针删除派生类实例，为此，基类<code>Investment</code>必须有虚析构函数：</p>
@@ -238,7 +238,7 @@ public:
 </code></pre>
 </li>
 </ul>
-<p>在C++14中，函数的返回类型推导存在（参阅<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item3.md">Item3</a>），意味着<code>makeInvestment</code>可以以更简单，更封装的方式实现：</p>
+<p>在C++14中，函数的返回类型推导存在（参阅<a href="../1.DeducingTypes/item3.html">Item3</a>），意味着<code>makeInvestment</code>可以以更简单，更封装的方式实现：</p>
 <pre><code class="language-cpp">template&lt;typename... Ts&gt;
 auto makeInvestment(Ts&amp;&amp;... params)                 //C++14
 {
@@ -286,14 +286,14 @@ std::unique_ptr&lt;Investment, void (*)(Investment*)&gt;  //Investment*的指针
 makeInvestment(Ts&amp;&amp;... params);                     //加至少一个函数指针的大小
 </code></pre>
 <p>具有很多状态的自定义删除器会产生大尺寸<code>std::unique_ptr</code>对象。如果你发现自定义删除器使得你的<code>std::unique_ptr</code>变得过大，你需要审视修改你的设计。</p>
-<p>工厂函数不是<code>std::unique_ptr</code>的唯一常见用法。作为实现<strong>Pimpl Idiom</strong>（译注：<em>pointer to implementation</em>，一种隐藏实际实现而减弱编译依赖性的设计思想，《Effective C++》条款31对此有过叙述）的一种机制，它更为流行。代码并不复杂，但是在某些情况下并不直观，所以这安排在<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item22.md">Item22</a>的专门主题中。</p>
+<p>工厂函数不是<code>std::unique_ptr</code>的唯一常见用法。作为实现<strong>Pimpl Idiom</strong>（译注：<em>pointer to implementation</em>，一种隐藏实际实现而减弱编译依赖性的设计思想，《Effective C++》条款31对此有过叙述）的一种机制，它更为流行。代码并不复杂，但是在某些情况下并不直观，所以这安排在<a href="../4.SmartPointers/item22.html">Item22</a>的专门主题中。</p>
 <p><code>std::unique_ptr</code>有两种形式，一种用于单个对象（<code>std::unique_ptr&lt;T&gt;</code>），一种用于数组（<code>std::unique_ptr&lt;T[]&gt;</code>）。结果就是，指向哪种形式没有歧义。<code>std::unique_ptr</code>的API设计会自动匹配你的用法，比如<code>operator[]</code>就是数组对象，解引用操作符（<code>operator*</code>和<code>operator-&gt;</code>）就是单个对象专有。</p>
 <p>你应该对数组的<code>std::unique_ptr</code>的存在兴趣泛泛，因为<code>std::array</code>，<code>std::vector</code>，<code>std::string</code>这些更好用的数据容器应该取代原始数组。<code>std::unique_ptr&lt;T[]&gt;</code>有用的唯一情况是你使用类似C的API返回一个指向堆数组的原始指针，而你想接管这个数组的所有权。</p>
 <p><code>std::unique_ptr</code>是C++11中表示专有所有权的方法，但是其最吸引人的功能之一是它可以轻松高效的转换为<code>std::shared_ptr</code>：</p>
 <pre><code class="language-cpp">std::shared_ptr&lt;Investment&gt; sp =            //将std::unique_ptr
     makeInvestment(arguments);              //转为std::shared_ptr
 </code></pre>
-<p>这就是<code>std::unique_ptr</code>非常适合用作工厂函数返回类型的原因的关键部分。 工厂函数无法知道调用者是否要对它们返回的对象使用专有所有权语义，或者共享所有权（即<code>std::shared_ptr</code>）是否更合适。 通过返回<code>std::unique_ptr</code>，工厂为调用者提供了最有效的智能指针，但它们并不妨碍调用者用其更灵活的兄弟替换它。（有关<code>std::shared_ptr</code>的信息，请转到<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item19.md">Item19</a>。)</p>
+<p>这就是<code>std::unique_ptr</code>非常适合用作工厂函数返回类型的原因的关键部分。 工厂函数无法知道调用者是否要对它们返回的对象使用专有所有权语义，或者共享所有权（即<code>std::shared_ptr</code>）是否更合适。 通过返回<code>std::unique_ptr</code>，工厂为调用者提供了最有效的智能指针，但它们并不妨碍调用者用其更灵活的兄弟替换它。（有关<code>std::shared_ptr</code>的信息，请转到<a href="../4.SmartPointers/item19.html">Item19</a>。)</p>
 <p><strong>请记住：</strong></p>
 <ul>
 <li><code>std::unique_ptr</code>是轻量级、快速的、只可移动（<em>move-only</em>）的管理专有所有权语义资源的智能指针</li>

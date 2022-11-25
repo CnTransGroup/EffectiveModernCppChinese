@@ -178,7 +178,7 @@ private:
     int z(0);                   //错误！
 }
 </code></pre>
-<p>另一方面，不可拷贝的对象（例如<code>std::atomic</code>——见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.TheConcurrencyAPI/item40.md">Item40</a>）可以使用花括号初始化或者小括号初始化，但是不能使用&quot;=&quot;初始化：</p>
+<p>另一方面，不可拷贝的对象（例如<code>std::atomic</code>——见<a href="../7.TheConcurrencyAPI/item40.html">Item40</a>）可以使用花括号初始化或者小括号初始化，但是不能使用&quot;=&quot;初始化：</p>
 <pre><code class="language-cpp">std::atomic&lt;int&gt; ai1{ 0 };      //没问题
 std::atomic&lt;int&gt; ai2(0);        //没问题
 std::atomic&lt;int&gt; ai3 = 0;       //错误！
@@ -204,7 +204,7 @@ int sum3 = x + y + z;           //同上
 <pre><code class="language-cpp">Widget w3{};                    //调用没有参数的构造函数构造对象
 </code></pre>
 <p>关于括号初始化还有很多要说的。它的语法能用于各种不同的上下文，它防止了隐式的变窄转换，而且对于C++最令人头疼的解析也天生免疫。既然好到这个程度那为什么这个条款不叫“Prefer braced initialization syntax”呢？</p>
-<p>括号初始化的缺点是有时它有一些令人惊讶的行为。这些行为使得括号初始化、<code>std::initializer_list</code>和构造函数重载决议本来就不清不楚的暧昧关系进一步混乱。把它们放到一起会让看起来应该左转的代码右转。举个例子，<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item2.md">Item2</a>解释了当<code>auto</code>声明的变量使用花括号初始化，变量类型就会被推导为<code>std::initializer_list</code>，尽管使用相同内容的其他初始化方式会产生正常的结果。所以，你越喜欢用<code>auto</code>，你就越不能用括号初始化。</p>
+<p>括号初始化的缺点是有时它有一些令人惊讶的行为。这些行为使得括号初始化、<code>std::initializer_list</code>和构造函数重载决议本来就不清不楚的暧昧关系进一步混乱。把它们放到一起会让看起来应该左转的代码右转。举个例子，<a href="../1.DeducingTypes/item2.html">Item2</a>解释了当<code>auto</code>声明的变量使用花括号初始化，变量类型就会被推导为<code>std::initializer_list</code>，尽管使用相同内容的其他初始化方式会产生正常的结果。所以，你越喜欢用<code>auto</code>，你就越不能用括号初始化。</p>
 <p>在构造函数调用中，只要不包含<code>std::initializer_list</code>形参，那么花括号初始化和小括号初始化都会产生一样的结果：</p>
 <pre><code class="language-cpp">class Widget { 
 public:  
@@ -326,7 +326,7 @@ void doSomeWork(Ts&amp;&amp;... params)
     …
 } 
 </code></pre>
-<p>在现实中我们有两种方式实现这个伪代码（关于<code>std::forward</code>请参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item25.md">Item25</a>）：</p>
+<p>在现实中我们有两种方式实现这个伪代码（关于<code>std::forward</code>请参见<a href="../5.RRefMovSemPerfForw/item25.html">Item25</a>）：</p>
 <pre><code class="language-cpp">T localObject(std::forward&lt;Ts&gt;(params)...);             //使用小括号
 T localObject{std::forward&lt;Ts&gt;(params)...};             //使用花括号
 </code></pre>
@@ -336,7 +336,7 @@ T localObject{std::forward&lt;Ts&gt;(params)...};             //使用花括号
 doSomeWork&lt;std::vector&lt;int&gt;&gt;(10, 20);
 </code></pre>
 <p>如果<code>doSomeWork</code>创建<code>localObject</code>时使用的是小括号，<code>std::vector</code>就会包含10个元素。如果<code>doSomeWork</code>创建<code>localObject</code>时使用的是花括号，<code>std::vector</code>就会包含2个元素。哪个是正确的？<code>doSomeWork</code>的作者不知道，只有调用者知道。</p>
-<p>这正是标准库函数<code>std::make_unique</code>和<code>std::make_shared</code>（参见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item21.md">Item21</a>）面对的问题。它们的解决方案是使用小括号，并被记录在文档中作为接口的一部分。（注：更灵活的设计——允许调用者决定从模板来的函数应该使用小括号还是花括号——是有可能的。详情参见<a href="http://akrzemi1.wordpress.com/">Andrzej’s C++ blog</a>在2013年6月5日的文章，“<a href="http://akrzemi1.wordpress.com/2013/06/05/intuitive-interface-part-i/">Intuitive interface — Part I.</a>”）</p>
+<p>这正是标准库函数<code>std::make_unique</code>和<code>std::make_shared</code>（参见<a href="../4.SmartPointers/item21.html">Item21</a>）面对的问题。它们的解决方案是使用小括号，并被记录在文档中作为接口的一部分。（注：更灵活的设计——允许调用者决定从模板来的函数应该使用小括号还是花括号——是有可能的。详情参见<a href="http://akrzemi1.wordpress.com/">Andrzej’s C++ blog</a>在2013年6月5日的文章，“<a href="http://akrzemi1.wordpress.com/2013/06/05/intuitive-interface-part-i/">Intuitive interface — Part I.</a>”）</p>
 <p><strong>请记住：</strong></p>
 <ul>
 <li>括号初始化是最广泛使用的初始化语法，它防止变窄转换，并且对于C++最令人头疼的解析有天生的免疫性</li>

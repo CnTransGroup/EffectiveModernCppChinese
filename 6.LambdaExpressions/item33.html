@@ -154,15 +154,15 @@ public:
 };
 </code></pre>
 <p>在这个样例中，<em>lambda</em>对变量<code>x</code>做的唯一一件事就是把它转发给函数<code>normalize</code>。如果函数<code>normalize</code>对待左值右值的方式不一样，这个<em>lambda</em>的实现方式就不大合适了，因为即使传递到<em>lambda</em>的实参是一个右值，<em>lambda</em>传递进<code>normalize</code>的总是一个左值（形参<code>x</code>）。</p>
-<p>实现这个<em>lambda</em>的正确方式是把<code>x</code>完美转发给函数<code>normalize</code>。这样做需要对代码做两处修改。首先，<code>x</code>需要改成通用引用（见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item24.md">Item24</a>），其次，需要使用<code>std::forward</code>将<code>x</code>转发到函数<code>normalize</code>（见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item25.md">Item25</a>）。理论上，这都是小改动：</p>
+<p>实现这个<em>lambda</em>的正确方式是把<code>x</code>完美转发给函数<code>normalize</code>。这样做需要对代码做两处修改。首先，<code>x</code>需要改成通用引用（见<a href="../5.RRefMovSemPerfForw/item24.html">Item24</a>），其次，需要使用<code>std::forward</code>将<code>x</code>转发到函数<code>normalize</code>（见<a href="../5.RRefMovSemPerfForw/item25.html">Item25</a>）。理论上，这都是小改动：</p>
 <pre><code class="language-c++">auto f = [](auto&amp;&amp; x)
          { return func(normalize(std::forward&lt;???&gt;(x))); };
 </code></pre>
 <p>在理论和实际之间存在一个问题：你应该传递给<code>std::forward</code>的什么类型，即确定我在上面写的<code>???</code>该是什么。</p>
 <p>一般来说，当你在使用完美转发时，你是在一个接受类型参数为<code>T</code>的模版函数里，所以你可以写<code>std::forward&lt;T&gt;</code>。但在泛型<em>lambda</em>中，没有可用的类型参数<code>T</code>。在<em>lambda</em>生成的闭包里，模版化的<code>operator()</code>函数中的确有一个<code>T</code>，但在<em>lambda</em>里却无法直接使用它，所以也没什么用。</p>
-<p><a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item28.md">Item28</a>解释过如果一个左值实参被传给通用引用的形参，那么形参类型会变成左值引用。传递的是右值，形参就会变成右值引用。这意味着在这个<em>lambda</em>中，可以通过检查形参<code>x</code>的类型来确定传递进来的实参是一个左值还是右值，<code>decltype</code>就可以实现这样的效果（见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item3.md">Item3</a>）。传递给<em>lambda</em>的是一个左值，<code>decltype(x)</code>就能产生一个左值引用；如果传递的是一个右值，<code>decltype(x)</code>就会产生右值引用。</p>
-<p><a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item28.md">Item28</a>也解释过在调用<code>std::forward</code>时，惯例决定了类型实参是左值引用时来表明要传进左值，类型实参是非引用就表明要传进右值。在前面的<em>lambda</em>中，如果<code>x</code>绑定的是一个左值，<code>decltype(x)</code>就能产生一个左值引用。这符合惯例。然而如果<code>x</code>绑定的是一个右值，<code>decltype(x)</code>就会产生右值引用，而不是常规的非引用。</p>
-<p>再看一下<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item28.md">Item28</a>中关于<code>std::forward</code>的C++14实现：</p>
+<p><a href="../5.RRefMovSemPerfForw/item28.html">Item28</a>解释过如果一个左值实参被传给通用引用的形参，那么形参类型会变成左值引用。传递的是右值，形参就会变成右值引用。这意味着在这个<em>lambda</em>中，可以通过检查形参<code>x</code>的类型来确定传递进来的实参是一个左值还是右值，<code>decltype</code>就可以实现这样的效果（见<a href="../1.DeducingTypes/item3.html">Item3</a>）。传递给<em>lambda</em>的是一个左值，<code>decltype(x)</code>就能产生一个左值引用；如果传递的是一个右值，<code>decltype(x)</code>就会产生右值引用。</p>
+<p><a href="../5.RRefMovSemPerfForw/item28.html">Item28</a>也解释过在调用<code>std::forward</code>时，惯例决定了类型实参是左值引用时来表明要传进左值，类型实参是非引用就表明要传进右值。在前面的<em>lambda</em>中，如果<code>x</code>绑定的是一个左值，<code>decltype(x)</code>就能产生一个左值引用。这符合惯例。然而如果<code>x</code>绑定的是一个右值，<code>decltype(x)</code>就会产生右值引用，而不是常规的非引用。</p>
+<p>再看一下<a href="../5.RRefMovSemPerfForw/item28.html">Item28</a>中关于<code>std::forward</code>的C++14实现：</p>
 <pre><code class="language-c++">template&lt;typename T&gt;                        //在std命名空间
 T&amp;&amp; forward(remove_reference_t&lt;T&gt;&amp; param)
 {

@@ -141,7 +141,7 @@
                     <main>
                         <h2 id="条款六auto推导若非己愿使用显式类型初始化惯用法"><a class="header" href="#条款六auto推导若非己愿使用显式类型初始化惯用法">条款六：<code>auto</code>推导若非己愿，使用显式类型初始化惯用法</a></h2>
 <p><strong>Item 6: Use the explicitly typed initializer idiom when <code>auto</code> deduces undesired types</strong></p>
-<p>在<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/2.Auto/item5.md">Item5</a>中解释了比起显式指定类型使用<code>auto</code>声明变量有若干技术优势，但是有时当你想向左转<code>auto</code>却向右转。举个例子，假如我有一个函数，参数为<code>Widget</code>，返回一个<code>std::vector&lt;bool&gt;</code>，这里的<code>bool</code>表示<code>Widget</code>是否提供一个独有的特性。</p>
+<p>在<a href="../2.Auto/item5.html">Item5</a>中解释了比起显式指定类型使用<code>auto</code>声明变量有若干技术优势，但是有时当你想向左转<code>auto</code>却向右转。举个例子，假如我有一个函数，参数为<code>Widget</code>，返回一个<code>std::vector&lt;bool&gt;</code>，这里的<code>bool</code>表示<code>Widget</code>是否提供一个独有的特性。</p>
 <pre><code class="language-cpp">std::vector&lt;bool&gt; features(const Widget&amp; w);
 </code></pre>
 <p>更进一步假设第5个<em>bit</em>表示<code>Widget</code>是否具有高优先级，我们可以写这样的代码：</p>
@@ -172,7 +172,7 @@ processWidget(w, highPriority);         //根据它的优先级处理w
 <pre><code class="language-cpp">processWidget(w, highPriority);         //未定义行为！
                                         //highPriority包含一个悬置指针！
 </code></pre>
-<p><code>std::vector&lt;bool&gt;::reference</code>是一个代理类（<em>proxy class</em>）的例子：所谓代理类就是以模仿和增强一些类型的行为为目的而存在的类。很多情况下都会使用代理类，<code>std::vector&lt;bool&gt;::reference</code>展示了对<code>std::vector&lt;bool&gt;</code>使用<code>operator[]</code>来实现引用<em>bit</em>这样的行为。另外，C++标准模板库中的智能指针（见<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item18.md">第4章</a>）也是用代理类实现了对原始指针的资源管理行为。代理类的功能已被大家广泛接受。事实上，“Proxy”设计模式是软件设计这座万神庙中一直都存在的高级会员。</p>
+<p><code>std::vector&lt;bool&gt;::reference</code>是一个代理类（<em>proxy class</em>）的例子：所谓代理类就是以模仿和增强一些类型的行为为目的而存在的类。很多情况下都会使用代理类，<code>std::vector&lt;bool&gt;::reference</code>展示了对<code>std::vector&lt;bool&gt;</code>使用<code>operator[]</code>来实现引用<em>bit</em>这样的行为。另外，C++标准模板库中的智能指针（见<a href="../4.SmartPointers/item18.html">第4章</a>）也是用代理类实现了对原始指针的资源管理行为。代理类的功能已被大家广泛接受。事实上，“Proxy”设计模式是软件设计这座万神庙中一直都存在的高级会员。</p>
 <p>一些代理类被设计于用以对客户可见。比如<code>std::shared_ptr</code>和<code>std::unique_ptr</code>。其他的代理类则或多或少不可见，比如<code>std::vector&lt;bool&gt;::reference</code>就是不可见代理类的一个例子，还有它在<code>std::bitset</code>的胞弟<code>std::bitset::reference</code>。</p>
 <p>在后者的阵营（注：指不可见代理类）里一些C++库也是用了表达式模板（<em>expression templates</em>）的黑科技。这些库通常被用于提高数值运算的效率。给出一个矩阵类<code>Matrix</code>和矩阵对象<code>m1</code>，<code>m2</code>，<code>m3</code>，<code>m4</code>，举个例子，这个表达式</p>
 <pre><code class="language-cpp">Matrix sum = m1 + m2 + m3 + m4;
@@ -182,7 +182,7 @@ processWidget(w, highPriority);         //根据它的优先级处理w
 <p>因此你想避开这种形式的代码：</p>
 <pre><code class="language-cpp">auto someVar = expression of &quot;invisible&quot; proxy class type;
 </code></pre>
-<p>但是你怎么能意识到你正在使用代理类？应用他们的软件不可能宣告它们的存在。它们被设计为<strong>不可见</strong>，至少概念上说是这样！每当你发现它们，你真的应该舍弃<a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/2.Auto/item5.md">Item5</a>演示的<code>auto</code>所具有的诸多好处吗？</p>
+<p>但是你怎么能意识到你正在使用代理类？应用他们的软件不可能宣告它们的存在。它们被设计为<strong>不可见</strong>，至少概念上说是这样！每当你发现它们，你真的应该舍弃<a href="../2.Auto/item5.html">Item5</a>演示的<code>auto</code>所具有的诸多好处吗？</p>
 <p>让我们首先回到如何找到它们的问题上。虽然“不可见”代理类都在程序员日常使用的雷达下方飞行，但是很多库都证明它们可以上方飞行。当你越熟悉你使用的库的基本设计理念，你的思维就会越活跃，不至于思维僵化认为代理类只能在这些库中使用。</p>
 <p>当缺少文档的时候，可以去看看头文件。很少会出现源代码全都用代理对象，它们通常用于一些函数的返回类型，所以通常能从函数签名中看出它们的存在。这里有一份<code>std::vector&lt;bool&gt;::operator[]</code>的说明书：</p>
 <pre><code class="language-cpp">namespace std{                                  //来自于C++标准库
