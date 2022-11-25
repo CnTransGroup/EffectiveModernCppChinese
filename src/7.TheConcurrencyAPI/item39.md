@@ -72,7 +72,7 @@ while (!flag);                          //等待事件
 
 不好的一点是反应任务中轮询的开销。在任务等待flag被置位的时间里，任务基本被阻塞了，但是一直在运行。这样，反应线程占用了可能能给另一个任务使用的硬件线程，每次启动或者完成它的时间片都增加了上下文切换的开销，并且保持核心一直在运行状态，否则的话本来可以停下来省电。一个真正阻塞的任务不会发生上面的任何情况。这也是基于条件变量的优点，因为`wait`调用中的任务真的阻塞住了。
 
-将条件变量和flag的设计组合起来很常用。一个flag表示是否发生了感兴趣的事件，但是通过互斥锁同步了对该flag的访问。因为互斥锁阻止并发访问该flag，所以如[Item40](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.TheConcurrencyAPI/item40.md)所述，不需要将flag设置为`std::atomic`。一个简单的`bool`类型就可以，检测任务代码如下：
+将条件变量和flag的设计组合起来很常用。一个flag表示是否发生了感兴趣的事件，但是通过互斥锁同步了对该flag的访问。因为互斥锁阻止并发访问该flag，所以如[Item40](../7.TheConcurrencyAPI/item40.md)所述，不需要将flag设置为`std::atomic`。一个简单的`bool`类型就可以，检测任务代码如下：
 
 ```cpp
 std::condition_variable cv;             //跟之前一样
@@ -100,7 +100,7 @@ cv.notify_one();                        //通知反应任务（第2部分）
 
 这份代码解决了我们一直讨论的问题。无论在检测线程对条件变量发出通知之前反应线程是否调用了`wait`都可以工作，即使出现了虚假唤醒也可以工作，而且不需要轮询。但是仍然有些古怪，因为检测任务通过奇怪的方式与反应线程通信。（译者注：下面的话挺绕的，可以参考原文）检测任务通过通知条件变量告诉反应线程，等待的事件可能发生了，但是反应线程必须通过检查flag来确保事件发生了。检测线程置位flag来告诉反应线程事件确实发生了，但是检测线程仍然还要先需要通知条件变量，以唤醒反应线程来检查flag。这种方案是可以工作的，但是不太优雅。
 
-一个替代方案是让反应任务通过在检测任务设置的*future*上`wait`来避免使用条件变量，互斥锁和flag。这可能听起来也是个古怪的方案。毕竟，[Item38](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.TheConcurrencyAPI/item38.md)中说明了*future*代表了从被调用方到（通常是异步的）调用方的通信信道的接收端，这里的检测任务和反应任务没有调用-被调用的关系。然而，[Item38](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.TheConcurrencyAPI/item38.md)中也说说明了发送端是个`std::promise`，接收端是个*future*的通信信道不是只能用在调用-被调用场景。这样的通信信道可以用在任何你需要从程序一个地方传递信息到另一个地方的场景。这里，我们用来在检测任务和反应任务之间传递信息，传递的信息就是感兴趣的事件已经发生。
+一个替代方案是让反应任务通过在检测任务设置的*future*上`wait`来避免使用条件变量，互斥锁和flag。这可能听起来也是个古怪的方案。毕竟，[Item38](../7.TheConcurrencyAPI/item38.md)中说明了*future*代表了从被调用方到（通常是异步的）调用方的通信信道的接收端，这里的检测任务和反应任务没有调用-被调用的关系。然而，[Item38](../7.TheConcurrencyAPI/item38.md)中也说说明了发送端是个`std::promise`，接收端是个*future*的通信信道不是只能用在调用-被调用场景。这样的通信信道可以用在任何你需要从程序一个地方传递信息到另一个地方的场景。这里，我们用来在检测任务和反应任务之间传递信息，传递的信息就是感兴趣的事件已经发生。
 
 方案很简单。检测任务有一个`std::promise`对象（即通信信道的写入端），反应任务有对应的*future*。当检测任务看到事件已经发生，设置`std::promise`对象（即写入到通信信道）。同时，`wait`会阻塞住反应任务直到`std::promise`被设置。
 
@@ -129,7 +129,7 @@ p.get_future().wait();                  //等待对应于p的那个future
 
 像使用flag的方法一样，此设计不需要互斥锁，无论在反应线程调用`wait`之前检测线程是否设置了`std::promise`都可以工作，并且不受虚假唤醒的影响（只有条件变量才容易受到此影响）。与基于条件变量的方法一样，反应任务在调用`wait`之后是真被阻塞住的，不会一直占用系统资源。是不是很完美？
 
-当然不是，基于*future*的方法没有了上述问题，但是有其他新的问题。比如，[Item38](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.TheConcurrencyAPI/item38.md)中说明，`std::promise`和*future*之间有个共享状态，并且共享状态是动态分配的。因此你应该假定此设计会产生基于堆的分配和释放开销。
+当然不是，基于*future*的方法没有了上述问题，但是有其他新的问题。比如，[Item38](../7.TheConcurrencyAPI/item38.md)中说明，`std::promise`和*future*之间有个共享状态，并且共享状态是动态分配的。因此你应该假定此设计会产生基于堆的分配和释放开销。
 
 也许更重要的是，`std::promise`只能设置一次。`std::promise`和*future*之间的通信是**一次性**的：不能重复使用。这是与基于条件变量或者基于flag的设计的明显差异，条件变量和flag都可以通信多次。（条件变量可以被重复通知，flag也可以重复清除和设置。）
 
@@ -154,7 +154,7 @@ void detect()                           //检测任务的函数
 }
 ```
 
-因为所有离开`detect`的路径中`t`都要是不可结合的，所以使用类似于[Item37](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.TheConcurrencyAPI/item37.md)中`ThreadRAII`的RAII类很明智。代码如下：
+因为所有离开`detect`的路径中`t`都要是不可结合的，所以使用类似于[Item37](../7.TheConcurrencyAPI/item37.md)中`ThreadRAII`的RAII类很明智。代码如下：
 
 ```cpp
 void detect()

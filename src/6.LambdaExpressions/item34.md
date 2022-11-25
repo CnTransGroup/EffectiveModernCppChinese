@@ -6,7 +6,7 @@ C++11中的`std::bind`是C++98的`std::bind1st`和`std::bind2nd`的后续，但�
 
 这个条款假设你熟悉`std::bind`。 如果不是这样，你将需要获得基本的了解，然后再继续。 无论如何，这样的理解都是值得的，因为你永远不知道何时会在阅读或维护的代码库中遇到`std::bind`。
 
-与[Item32](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/6.LambdaExpressions/item32.md)中一样，我们将从`std::bind`返回的函数对象称为**bind对象**（*bind objects*）。
+与[Item32](../6.LambdaExpressions/item32.md)中一样，我们将从`std::bind`返回的函数对象称为**bind对象**（*bind objects*）。
 
 优先*lambda*而不是`std::bind`的最重要原因是*lambda*更易读。 例如，假设我们有一个设置警报器的函数：
 
@@ -246,8 +246,8 @@ compressRateB(CompLevel::High);     //实参如何传递？
 
 与*lambda*相比，使用`std::bind`进行编码的代码可读性较低，表达能力较低，并且效率可能较低。 在C++14中，没有`std::bind`的合理用例。 但是，在C++11中，可以在两个受约束的情况下证明使用`std::bind`是合理的：
 
-+ **移动捕获**。C++11的*lambda*不提供移动捕获，但是可以通过结合*lambda*和`std::bind`来模拟。 有关详细信息，请参阅[Item32](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/6.LambdaExpressions/item32.md)，该条款还解释了在C++14中，*lambda*对初始化捕获的支持消除了这个模拟的需求。
-+ **多态函数对象**。因为bind对象上的函数调用运算符使用完美转发，所以它可以接受任何类型的实参（以[Item30](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item30.md)中描述的完美转发的限制为界限）。当你要绑定带有模板化函数调用运算符的对象时，此功能很有用。 例如这个类，
++ **移动捕获**。C++11的*lambda*不提供移动捕获，但是可以通过结合*lambda*和`std::bind`来模拟。 有关详细信息，请参阅[Item32](../6.LambdaExpressions/item32.md)，该条款还解释了在C++14中，*lambda*对初始化捕获的支持消除了这个模拟的需求。
++ **多态函数对象**。因为bind对象上的函数调用运算符使用完美转发，所以它可以接受任何类型的实参（以[Item30](../5.RRefMovSemPerfForw/item30.md)中描述的完美转发的限制为界限）。当你要绑定带有模板化函数调用运算符的对象时，此功能很有用。 例如这个类，
 
 ```c++
 class PolyWidget {

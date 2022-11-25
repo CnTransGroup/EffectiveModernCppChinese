@@ -8,7 +8,7 @@
 
 **Item 41: Consider pass by value for copyable parameters that are cheap to move and always copied**
 
-有些函数的形参是可拷贝的。（在本条款中，“拷贝”一个形参通常意思是，将形参作为拷贝或移动操作的源对象。[简介](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/Introduction.md)中提到，C++没有术语来区分拷贝操作得到的副本和移动操作得到的副本。）比如说，`addName`成员函数可以拷贝自己的形参到一个私有容器。为了提高效率，应该拷贝左值，移动右值。
+有些函数的形参是可拷贝的。（在本条款中，“拷贝”一个形参通常意思是，将形参作为拷贝或移动操作的源对象。[简介](../Introduction.md)中提到，C++没有术语来区分拷贝操作得到的副本和移动操作得到的副本。）比如说，`addName`成员函数可以拷贝自己的形参到一个私有容器。为了提高效率，应该拷贝左值，移动右值。
 
 ```cpp
 class Widget {
@@ -28,7 +28,7 @@ private:
 
 此外，目标代码中会有两个函数——你可能会担心程序的空间占用。这种情况下，两个函数都可能内联，可能会避免同时两个函数同时存在导致的代码膨胀问题，但是一旦没有被内联，目标代码就会出现两个函数。
 
-另一种方法是使`addName`函数成为具有通用引用的函数模板（参考[Item24](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item24.md)）：
+另一种方法是使`addName`函数成为具有通用引用的函数模板（参考[Item24](../5.RRefMovSemPerfForw/item24.md)）：
 
 ```cpp
 class Widget {
@@ -41,7 +41,7 @@ public:
 };
 ```
 
-这减少了源代码的维护工作，但是通用引用会导致其他复杂性。作为模板，`addName`的实现必须放置在头文件中。在编译器展开的时候，可能会产生多个函数，因为不止为左值和右值实例化，也可能为`std::string`和可转换为`std::string`的类型分别实例化为多个函数（参考[Item25](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item25.md)）。同时有些实参类型不能通过通用引用传递（参考[Item30](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item30.md)），而且如果传递了不合法的实参类型，编译器错误会令人生畏（参考[Item27](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item27.md)）。
+这减少了源代码的维护工作，但是通用引用会导致其他复杂性。作为模板，`addName`的实现必须放置在头文件中。在编译器展开的时候，可能会产生多个函数，因为不止为左值和右值实例化，也可能为`std::string`和可转换为`std::string`的类型分别实例化为多个函数（参考[Item25](../5.RRefMovSemPerfForw/item25.md)）。同时有些实参类型不能通过通用引用传递（参考[Item30](../5.RRefMovSemPerfForw/item30.md)），而且如果传递了不合法的实参类型，编译器错误会令人生畏（参考[Item27](../5.RRefMovSemPerfForw/item27.md)）。
 
 是否存在一种编写`addName`的方法，可以左值拷贝，右值移动，只用处理一个函数（源代码和目标代码中），且避免使用通用引用？答案是是的。你要做的就是放弃你学习C++编程的第一条规则。这条规则是避免在传递用户定义的对象时使用传值方式。像是`addName`函数中的`newName`形参，按值传递可能是一种完全合理的策略。
 
@@ -259,7 +259,7 @@ private:
 
 这种潜在的开销增加仅在传递左值实参时才适用，因为执行内存分配和释放通常发生在真正的拷贝操作（即，不是移动）中。对右值实参，移动几乎就足够了。
 
-结论是，使用通过赋值拷贝一个形参进行按值传递的函数的额外开销，取决于传递的类型，左值和右值的比例，这个类型是否需要动态分配内存，以及，如果需要分配内存的话，赋值操作符的具体实现，还有赋值目标占的内存至少要跟赋值源占的内存一样大。对于`std::string`来说，开销还取决于实现是否使用了小字符串优化（SSO——参考[Item29](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item29.md)），如果是，那么要赋值的值是否匹配SSO缓冲区。
+结论是，使用通过赋值拷贝一个形参进行按值传递的函数的额外开销，取决于传递的类型，左值和右值的比例，这个类型是否需要动态分配内存，以及，如果需要分配内存的话，赋值操作符的具体实现，还有赋值目标占的内存至少要跟赋值源占的内存一样大。对于`std::string`来说，开销还取决于实现是否使用了小字符串优化（SSO——参考[Item29](../5.RRefMovSemPerfForw/item29.md)），如果是，那么要赋值的值是否匹配SSO缓冲区。
 
 所以，正如我所说，当形参通过赋值进行拷贝时，分析按值传递的开销是复杂的。通常，最有效的经验就是“在证明没问题之前假设有问题”，就是除非已证明按值传递会为你需要的形参类型产生可接受的执行效率，否则使用重载或者通用引用的实现方式。
 

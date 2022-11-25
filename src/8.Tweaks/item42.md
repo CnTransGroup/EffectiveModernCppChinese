@@ -44,7 +44,7 @@ vs.push_back(std::string("xyzzy")); //创建临时std::string，把它传给push
 为了在`std::string`容器中创建新元素，调用了`std::string`的构造函数，但是这份代码并不仅调用了一次构造函数，而是调用了两次，而且还调用了`std::string`析构函数。下面是在`push_back`运行时发生了什么：
 
 1. 一个`std::string`的临时对象从字面量“`xyzzy`”被创建。这个对象没有名字，我们可以称为`temp`。`temp`的构造是第一次`std::string`构造。因为是临时变量，所以`temp`是右值。
-2. `temp`被传递给`push_back`的右值重载函数，绑定到右值引用形参`x`。在`std::vector`的内存中一个`x`的副本被创建。这次构造——也是第二次构造——在`std::vector`内部真正创建一个对象。（将`x`副本拷贝到`std::vector`内部的构造函数是移动构造函数，因为`x`在它被拷贝前被转换为一个右值，成为右值引用。有关将右值引用形参强制转换为右值的信息，请参见[Item25](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item25.md)）。
+2. `temp`被传递给`push_back`的右值重载函数，绑定到右值引用形参`x`。在`std::vector`的内存中一个`x`的副本被创建。这次构造——也是第二次构造——在`std::vector`内部真正创建一个对象。（将`x`副本拷贝到`std::vector`内部的构造函数是移动构造函数，因为`x`在它被拷贝前被转换为一个右值，成为右值引用。有关将右值引用形参强制转换为右值的信息，请参见[Item25](../5.RRefMovSemPerfForw/item25.md)）。
 3. 在`push_back`返回之后，`temp`立刻被销毁，调用了一次`std::string`的析构函数。
 
 对于性能执着的人不禁注意到是否存在一种方法可以获取字符串字面量并将其直接传入到步骤2里在`std::vector`内构造`std::string`的代码中，可以避免临时对象`temp`的创建与销毁。这样的效率最好，对于性能执着的人也不会有什么意见了。
@@ -57,7 +57,7 @@ vs.push_back(std::string("xyzzy")); //创建临时std::string，把它传给push
 vs.emplace_back("xyzzy");           //直接用“xyzzy”在vs内构造std::string
 ```
 
-`emplace_back`使用完美转发，因此只要你没有遇到完美转发的限制（参见[Item30](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item30.md)），就可以传递任何实参以及组合到`emplace_back`。比如，如果你想通过接受一个字符和一个数量的`std::string`构造函数，在`vs`中创建一个`std::string`，代码如下：
+`emplace_back`使用完美转发，因此只要你没有遇到完美转发的限制（参见[Item30](../5.RRefMovSemPerfForw/item30.md)），就可以传递任何实参以及组合到`emplace_back`。比如，如果你想通过接受一个字符和一个数量的`std::string`构造函数，在`vs`中创建一个`std::string`，代码如下：
 
 ```cpp
 vs.emplace_back(50, 'x');           //插入由50个“x”组成的一个std::string
@@ -117,7 +117,7 @@ vs.emplace_back(50, 'x');              //同上
 std::list<std::shared_ptr<Widget>> ptrs;
 ```
 
-然后你想添加一个通过自定义删除器释放的`std::shared_ptr`（参见[Item19](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item19.md)）。[Item21](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item21.md)说明你应该使用`std::make_shared`来创建`std::shared_ptr`，但是它也承认有时你无法做到这一点。比如当你要指定一个自定义删除器时。这时，你必须直接`new`一个原始指针，然后通过`std::shared_ptr`来管理。
+然后你想添加一个通过自定义删除器释放的`std::shared_ptr`（参见[Item19](../4.SmartPointers/item19.md)）。[Item21](../4.SmartPointers/item21.md)说明你应该使用`std::make_shared`来创建`std::shared_ptr`，但是它也承认有时你无法做到这一点。比如当你要指定一个自定义删除器时。这时，你必须直接`new`一个原始指针，然后通过`std::shared_ptr`来管理。
 
 如果自定义删除器是这个函数，
 
@@ -160,7 +160,7 @@ ptrs.emplace_back(new Widget, killWidget);
 
 在对存储资源管理类对象的容器（比如`std::list<std::shared_ptr<Widget>>`）调用插入函数时，函数的形参类型通常确保在资源的获取（比如使用`new`）和资源管理对象的创建之间没有其他操作。在置入函数中，完美转发推迟了资源管理对象的创建，直到可以在容器的内存中构造它们为止，这给“异常导致资源泄漏”提供了可能。所有的标准库容器都容易受到这个问题的影响。在使用资源管理对象的容器时，必须注意确保在使用置入函数而不是插入函数时，不会为提高效率带来的降低异常安全性付出代价。
 
-坦白说，无论如何，你不应该将“`new Widget`”之类的表达式传递给`emplace_back`或者`push_back`或者大多数这种函数，因为，就像[Item21](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item21.md)中解释的那样，这可能导致我们刚刚讨论的异常安全性问题。消除资源泄漏可能性的方法是，使用独立语句把从“`new Widget`”获取的指针传递给资源管理类对象，然后这个对象作为右值传递给你本来想传递“`new Widget`”的函数（[Item21](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item21.md)有这个观点的详细讨论）。使用`push_back`的代码应该如下：
+坦白说，无论如何，你不应该将“`new Widget`”之类的表达式传递给`emplace_back`或者`push_back`或者大多数这种函数，因为，就像[Item21](../4.SmartPointers/item21.md)中解释的那样，这可能导致我们刚刚讨论的异常安全性问题。消除资源泄漏可能性的方法是，使用独立语句把从“`new Widget`”获取的指针传递给资源管理类对象，然后这个对象作为右值传递给你本来想传递“`new Widget`”的函数（[Item21](../4.SmartPointers/item21.md)有这个观点的详细讨论）。使用`push_back`的代码应该如下：
 
 ```cpp
 std::shared_ptr<Widget> spw(new Widget,      //创建Widget，让spw管理它

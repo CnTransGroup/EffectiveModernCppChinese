@@ -2,10 +2,10 @@
 
 **Item 36: Specify `std::launch::async` if asynchronicity is essential.**
 
-当你调用`std::async`执行函数时（或者其他可调用对象），你通常希望异步执行函数。但是这并不一定是你要求`std::async`执行的操作。你事实上要求这个函数按照`std::async`启动策略来执行。有两种标准策略，每种都通过`std::launch`这个限域`enum`的一个枚举名表示（关于枚举的更多细节参见[Item10](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item10.md)）。假定一个函数`f`传给`std::async`来执行：
+当你调用`std::async`执行函数时（或者其他可调用对象），你通常希望异步执行函数。但是这并不一定是你要求`std::async`执行的操作。你事实上要求这个函数按照`std::async`启动策略来执行。有两种标准策略，每种都通过`std::launch`这个限域`enum`的一个枚举名表示（关于枚举的更多细节参见[Item10](../3.MovingToModernCpp/item10.md)）。假定一个函数`f`传给`std::async`来执行：
 
 - **`std::launch::async`启动策略**意味着`f`必须异步执行，即在不同的线程。
-- **`std::launch::deferred`启动策略**意味着`f`仅当在`std::async`返回的*future*上调用`get`或者`wait`时才执行。这表示`f`**推迟**到存在这样的调用时才执行（译者注：异步与并发是两个不同概念，这里侧重于惰性求值）。当`get`或`wait`被调用，`f`会同步执行，即调用方被阻塞，直到`f`运行结束。如果`get`和`wait`都没有被调用，`f`将不会被执行。（这是个简化说法。关键点不是要在其上调用`get`或`wait`的那个*future*，而是*future*引用的那个共享状态。（[Item38](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.TheConcurrencyAPI/item38.md)讨论了*future*与共享状态的关系。）因为`std::future`支持移动，也可以用来构造`std::shared_future`，并且因为`std::shared_future`可以被拷贝，对共享状态——对`f`传到的那个`std::async`进行调用产生的——进行引用的*future*对象，有可能与`std::async`返回的那个*future*对象不同。这非常绕口，所以经常回避这个事实，简称为在`std::async`返回的*future*上调用`get`或`wait`。）
+- **`std::launch::deferred`启动策略**意味着`f`仅当在`std::async`返回的*future*上调用`get`或者`wait`时才执行。这表示`f`**推迟**到存在这样的调用时才执行（译者注：异步与并发是两个不同概念，这里侧重于惰性求值）。当`get`或`wait`被调用，`f`会同步执行，即调用方被阻塞，直到`f`运行结束。如果`get`和`wait`都没有被调用，`f`将不会被执行。（这是个简化说法。关键点不是要在其上调用`get`或`wait`的那个*future*，而是*future*引用的那个共享状态。（[Item38](../7.TheConcurrencyAPI/item38.md)讨论了*future*与共享状态的关系。）因为`std::future`支持移动，也可以用来构造`std::shared_future`，并且因为`std::shared_future`可以被拷贝，对共享状态——对`f`传到的那个`std::async`进行调用产生的——进行引用的*future*对象，有可能与`std::async`返回的那个*future*对象不同。这非常绕口，所以经常回避这个事实，简称为在`std::async`返回的*future*上调用`get`或`wait`。）
 
 可能让人惊奇的是，`std::async`的默认启动策略——你不显式指定一个策略时它使用的那个——不是上面中任意一个。相反，是求或在一起的。下面的两种调用含义相同：
 
@@ -16,7 +16,7 @@ auto fut2 = std::async(std::launch::async |     //使用async或者deferred运�
                        f);
 ```
 
-因此默认策略允许`f`异步或者同步执行。如同[Item35](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.TheConcurrencyAPI/Item35.md)中指出，这种灵活性允许`std::async`和标准库的线程管理组件承担线程创建和销毁的责任，避免资源超额，以及平衡负载。这就是使用`std::async`并发编程如此方便的原因。
+因此默认策略允许`f`异步或者同步执行。如同[Item35](../7.TheConcurrencyAPI/Item35.md)中指出，这种灵活性允许`std::async`和标准库的线程管理组件承担线程创建和销毁的责任，避免资源超额，以及平衡负载。这就是使用`std::async`并发编程如此方便的原因。
 
 但是，使用默认启动策略的`std::async`也有一些有趣的影响。给定一个线程`t`执行此语句：
 
@@ -35,7 +35,7 @@ auto fut = std::async(f);   //f的TLS可能是为单独的线程建的，
                             //也可能是为在fut上调用get或者wait的线程建的
 ```
 
-这还会影响到基于`wait`的循环使用超时机制，因为在一个延时的任务（参见[Item35](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.TheConcurrencyAPI/Item35.md)）上调用`wait_for`或者`wait_until`会产生`std::launch::deferred`值。意味着，以下循环看似应该最终会终止，但可能实际上永远运行：
+这还会影响到基于`wait`的循环使用超时机制，因为在一个延时的任务（参见[Item35](../7.TheConcurrencyAPI/Item35.md)）上调用`wait_for`或者`wait_until`会产生`std::launch::deferred`值。意味着，以下循环看似应该最终会终止，但可能实际上永远运行：
 
 ```cpp
 using namespace std::literals;      //为了使用C++14中的时间段后缀；参见条款34
@@ -104,7 +104,7 @@ reallyAsync(F&& f, Ts&&... params)          //返回异步调用f(params...)得�
 }
 ```
 
-这个函数接受一个可调用对象`f`和0或多个形参`params`，然后完美转发（参见[Item25](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item25.md)）给`std::async`，使用`std::launch::async`作为启动策略。就像`std::async`一样，返回`std::future`作为用`params`调用`f`得到的结果。确定结果的类型很容易，因为*type trait* `std::result_of`可以提供给你。（参见[Item9](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item9.md)关于*type trait*的详细表述。）
+这个函数接受一个可调用对象`f`和0或多个形参`params`，然后完美转发（参见[Item25](../5.RRefMovSemPerfForw/item25.md)）给`std::async`，使用`std::launch::async`作为启动策略。就像`std::async`一样，返回`std::future`作为用`params`调用`f`得到的结果。确定结果的类型很容易，因为*type trait* `std::result_of`可以提供给你。（参见[Item9](../3.MovingToModernCpp/item9.md)关于*type trait*的详细表述。）
 
 `reallyAsync`就像`std::async`一样使用：
 

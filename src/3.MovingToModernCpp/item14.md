@@ -33,7 +33,7 @@ Widget w;
 vw.push_back(w);    //把w添加进vw
 …
 ```
-假设这个代码能正常工作，你也无意修改为C++11风格。但是你确实想要C++11移动语义带来的性能优势，毕竟这里的类型是可以移动的（move-enabled types）。因此你需要确保`Widget`有移动操作，可以手写代码也可以让编译器自动生成，当然前提是能满足自动生成的条件（参见[Item17](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item17.md)）。
+假设这个代码能正常工作，你也无意修改为C++11风格。但是你确实想要C++11移动语义带来的性能优势，毕竟这里的类型是可以移动的（move-enabled types）。因此你需要确保`Widget`有移动操作，可以手写代码也可以让编译器自动生成，当然前提是能满足自动生成的条件（参见[Item17](../3.MovingToModernCpp/item17.md)）。
 
 当新元素添加到`std::vector`，`std::vector`可能没地方放它，换句话说，`std::vector`的大小（size）等于它的容量（capacity）。这时候，`std::vector`会分配一个新的更大块的内存用于存放其中元素，然后将元素从老内存区移动到新内存区，然后析构老内存区里的对象。在C++98中，移动是通过复制老内存区的每一个元素到新内存区完成的，然后老内存区的每个元素发生析构。这种方法使得`push_back`可以提供很强的异常安全保证：如果在复制元素期间抛出异常，`std::vector`状态保持不变，因为老内存元素析构必须建立在它们已经成功复制到新内存的前提下。
 
@@ -41,7 +41,7 @@ vw.push_back(w);    //把w添加进vw
 
 这是个很严重的问题，因为老代码可能依赖于`push_back`提供的强烈的异常安全保证。因此，C++11版本的实现不能简单的将`push_back`里面的复制操作替换为移动操作，除非知晓移动操作绝不抛异常，这时复制替换为移动就是安全的，唯一的副作用就是性能得到提升。
 
-`std::vector::push_back`受益于“如果可以就移动，如果必要则复制”策略，并且它不是标准库中唯一采取该策略的函数。C++98中还有一些函数（如`std::vector::reverse`，`std::deque::insert`等）也受益于这种强异常保证。对于这个函数只有在知晓移动不抛异常的情况下用C++11的移动操作替换C++98的复制操作才是安全的。但是如何知道一个函数中的移动操作是否产生异常？答案很明显：它检查这个操作是否被声明为`noexcept`。（这个检查非常弯弯绕。像是`std::vector::push_back`之类的函数调用`std::move_if_noexcept`，这是个`std::move`的变体，根据其中类型的移动构造函数是否为`noexcept`的，视情况转换为右值或保持左值（参见[Item23](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item23.md)）。反过来，`std::move_if_noexcept`查阅`std::is_nothrow_move_constructible`这个*type trait*，基于移动构造函数是否有`noexcept`（或者`throw()`）的设计，编译器设置这个*type trait*的值。）
+`std::vector::push_back`受益于“如果可以就移动，如果必要则复制”策略，并且它不是标准库中唯一采取该策略的函数。C++98中还有一些函数（如`std::vector::reverse`，`std::deque::insert`等）也受益于这种强异常保证。对于这个函数只有在知晓移动不抛异常的情况下用C++11的移动操作替换C++98的复制操作才是安全的。但是如何知道一个函数中的移动操作是否产生异常？答案很明显：它检查这个操作是否被声明为`noexcept`。（这个检查非常弯弯绕。像是`std::vector::push_back`之类的函数调用`std::move_if_noexcept`，这是个`std::move`的变体，根据其中类型的移动构造函数是否为`noexcept`的，视情况转换为右值或保持左值（参见[Item23](../5.RRefMovSemPerfForw/item23.md)）。反过来，`std::move_if_noexcept`查阅`std::is_nothrow_move_constructible`这个*type trait*，基于移动构造函数是否有`noexcept`（或者`throw()`）的设计，编译器设置这个*type trait*的值。）
 
 `swap`函数是`noexcept`的另一个绝佳用地。`swap`是STL算法实现的一个关键组件，它也常用于拷贝运算符重载中。它的广泛使用意味着对其施加不抛异常的优化是非常有价值的。有趣的是，标准库的`swap`是否`noexcept`有时依赖于用户定义的`swap`是否`noexcept`。比如，数组和`std::pair`的`swap`声明如下：
 

@@ -2,7 +2,7 @@
 
 **Item 28: Understand reference collapsing**
 
-[Item23](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item23.md)中指出，当实参传递给模板函数时，被推导的模板形参`T`根据实参是左值还是右值来编码。但是那条款并没有提到只有当实参被用来实例化通用引用形参时，上述推导才会发生，但是有充分的理由忽略这一点：因为通用引用是[Item24](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item24.md)中才提到。回过头来看，对通用引用和左值/右值编码的观察意味着对于这个模板，
+[Item23](../5.RRefMovSemPerfForw/item23.md)中指出，当实参传递给模板函数时，被推导的模板形参`T`根据实参是左值还是右值来编码。但是那条款并没有提到只有当实参被用来实例化通用引用形参时，上述推导才会发生，但是有充分的理由忽略这一点：因为通用引用是[Item24](../5.RRefMovSemPerfForw/item24.md)中才提到。回过头来看，对通用引用和左值/右值编码的观察意味着对于这个模板，
 
 ```cpp
 template<typename T>
@@ -45,7 +45,7 @@ func(w);                    //用左值调用func；T被推导为Widget&
 void func(Widget& && param);
 ```
 
-引用的引用！但是编译器没有报错。我们从[Item24](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item24.md)中了解到因为通用引用`param`被传入一个左值，所以`param`的类型应该为左值引用，但是编译器如何把`T`推导的类型带入模板变成如下的结果，也就是最终的函数签名？
+引用的引用！但是编译器没有报错。我们从[Item24](../5.RRefMovSemPerfForw/item24.md)中了解到因为通用引用`param`被传入一个左值，所以`param`的类型应该为左值引用，但是编译器如何把`T`推导的类型带入模板变成如下的结果，也就是最终的函数签名？
 
 ```cpp
 void func(Widget& param);
@@ -59,7 +59,7 @@ void func(Widget& param);
 
 在我们上面的例子中，将推导类型`Widget&`替换进模板`func`会产生对左值引用的右值引用，然后引用折叠规则告诉我们结果就是左值引用。
 
-引用折叠是`std::forward`工作的一种关键机制。就像[Item25](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item25.md)中解释的一样，`std::forward`应用在通用引用参数上，所以经常能看到这样使用：
+引用折叠是`std::forward`工作的一种关键机制。就像[Item25](../5.RRefMovSemPerfForw/item25.md)中解释的一样，`std::forward`应用在通用引用参数上，所以经常能看到这样使用：
 
 ```cpp
 template<typename T>
@@ -93,7 +93,7 @@ Widget& && forward(typename
 { return static_cast<Widget& &&>(param); }
 ```
 
-`std::remove_reference<Widget&>::type`这个*type trait*产生`Widget`（查看[Item9](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item9.md)），所以`std::forward`成为：
+`std::remove_reference<Widget&>::type`这个*type trait*产生`Widget`（查看[Item9](../3.MovingToModernCpp/item9.md)），所以`std::forward`成为：
 
 ```cpp
 Widget& && forward(Widget& param)
@@ -138,7 +138,7 @@ T&& forward(remove_reference_t<T>& param)
 }
 ```
 
-引用折叠发生在四种情况下。第一，也是最常见的就是模板实例化。第二，是`auto`变量的类型生成，具体细节类似于模板，因为`auto`变量的类型推导基本与模板类型推导雷同（参见[Item2](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item2.md)）。考虑本条款前面的例子：
+引用折叠发生在四种情况下。第一，也是最常见的就是模板实例化。第二，是`auto`变量的类型生成，具体细节类似于模板，因为`auto`变量的类型推导基本与模板类型推导雷同（参见[Item2](../1.DeducingTypes/item2.md)）。考虑本条款前面的例子：
 
 ```cpp
 Widget widgetFactory();     //返回右值的函数
@@ -173,14 +173,14 @@ Widget&& w2 = widgetFactory()
 ```
 没有引用的引用，这就是最终结果，`w2`是个右值引用。
 
-现在我们真正理解了[Item24](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item24.md)中引入的通用引用。通用引用不是一种新的引用，它实际上是满足以下两个条件下的右值引用：
+现在我们真正理解了[Item24](../5.RRefMovSemPerfForw/item24.md)中引入的通用引用。通用引用不是一种新的引用，它实际上是满足以下两个条件下的右值引用：
 
 - **类型推导区分左值和右值**。`T`类型的左值被推导为`T&`类型，`T`类型的右值被推导为`T`。
 - **发生引用折叠**。
 
 通用引用的概念是有用的，因为它使你不必一定意识到引用折叠的存在，从直觉上推导左值和右值的不同类型，在凭直觉把推导的类型代入到它们出现的上下文中之后应用引用折叠规则。
 
-我说了有四种情况会发生引用折叠，但是只讨论了两种：模板实例化和`auto`的类型生成。第三种情况是`typedef`和别名声明的产生和使用中（参见[Item9](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item9.md)）。如果，在创建或者评估`typedef`过程中出现了引用的引用，则引用折叠就会起作用。举例子来说，假设我们有一个`Widget`的类模板，该模板具有右值引用类型的嵌入式`typedef`：
+我说了有四种情况会发生引用折叠，但是只讨论了两种：模板实例化和`auto`的类型生成。第三种情况是`typedef`和别名声明的产生和使用中（参见[Item9](../3.MovingToModernCpp/item9.md)）。如果，在创建或者评估`typedef`过程中出现了引用的引用，则引用折叠就会起作用。举例子来说，假设我们有一个`Widget`的类模板，该模板具有右值引用类型的嵌入式`typedef`：
 
 ```cpp
 template<typename T>
@@ -211,7 +211,7 @@ typedef int& RvalueRefToT;
 
 这清楚表明我们为`typedef`选择的名字可能不是我们希望的那样：当使用左值引用类型实例化`Widget`时，`RvalueRefToT`是**左值引用**的`typedef`。
 
-最后一种引用折叠发生的情况是，`decltype`使用的情况。如果在分析`decltype`期间，出现了引用的引用，引用折叠规则就会起作用（关于`decltype`，参见[Item3](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item3.md)）
+最后一种引用折叠发生的情况是，`decltype`使用的情况。如果在分析`decltype`期间，出现了引用的引用，引用折叠规则就会起作用（关于`decltype`，参见[Item3](../1.DeducingTypes/item3.md)）
 
 **请记住：**
 

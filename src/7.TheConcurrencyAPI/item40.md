@@ -60,7 +60,7 @@ volatile int vc(0);             //“volatile计数器”
 
 不仅只有这一种可能的结果，通常来说`vc`的最终结果是不可预测的，因为`vc`会发生数据竞争，对于数据竞争造成未定义行为，标准规定表示编译器生成的代码可能是任何逻辑。当然，编译器不会利用这种行为来作恶。但是它们通常做出一些没有数据竞争的程序中才有效的优化，这些优化在存在数据竞争的程序中会造成异常和不可预测的行为。
 
-RMW操作不是仅有的`std::atomic`在并发中有效而`volatile`无效的例子。假定一个任务计算第二个任务需要的一个重要的值。当第一个任务完成计算，必须传递给第二个任务。[Item39](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.TheConcurrencyAPI/item39.md)表明一种使用`std::atomic<bool>`的方法来使第一个任务通知第二个任务计算完成。计算值的任务的代码如下：
+RMW操作不是仅有的`std::atomic`在并发中有效而`volatile`无效的例子。假定一个任务计算第二个任务需要的一个重要的值。当第一个任务完成计算，必须传递给第二个任务。[Item39](../7.TheConcurrencyAPI/item39.md)表明一种使用`std::atomic<bool>`的方法来使第一个任务通知第二个任务计算完成。计算值的任务的代码如下：
 
 ```cpp
 std::atomic<bool> valVailable(false); 
@@ -181,7 +181,7 @@ x = 20;                                 //再次写x
 
 如果`x`是内存映射的（或者已经映射到跨进程共享的内存位置等），这正是我们想要的。
 
-突击测试！在最后一段代码中，`y`是什么类型：`int`还是`volatile int`？（`y`的类型使用`auto`类型推导，所以使用[Item2](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item2.md)中的规则。规则上说非引用非指针类型的声明（就是`y`的情况），`const`和`volatile`限定符被拿掉。`y`的类型因此仅仅是`int`。这意味着对`y`的冗余读取和写入可以被消除。在例子中，编译器必须执行对`y`的初始化和赋值两个语句，因为`x`是`volatile`的，所以第二次对`x`的读取可能会产生一个与第一次不同的值。）
+突击测试！在最后一段代码中，`y`是什么类型：`int`还是`volatile int`？（`y`的类型使用`auto`类型推导，所以使用[Item2](../1.DeducingTypes/item2.md)中的规则。规则上说非引用非指针类型的声明（就是`y`的情况），`const`和`volatile`限定符被拿掉。`y`的类型因此仅仅是`int`。这意味着对`y`的冗余读取和写入可以被消除。在例子中，编译器必须执行对`y`的初始化和赋值两个语句，因为`x`是`volatile`的，所以第二次对`x`的读取可能会产生一个与第一次不同的值。）
 
 在处理特殊内存时，必须保留看似冗余访问和无用存储的事实，顺便说明了为什么`std::atomic`不适合这种场景。编译器被允许消除对`std::atomic`的冗余操作。代码的编写方式与`volatile`那些不那么相同，但是如果我们暂时忽略它，只关注编译器执行的操作，则概念上可以说，编译器看到这个，
 
@@ -210,7 +210,7 @@ auto y = x;                             //错误
 y = x;                                  //错误
 ```
 
-这是因为`std::atomic`类型的拷贝操作是被删除的（参见[Item11](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item11.md)）。因为有个很好的理由删除。想象一下如果`y`使用`x`来初始化会发生什么。因为`x`是`std::atomic`类型，`y`的类型被推导为`std::atomic`（参见[Item2](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item2.md)）。我之前说了`std::atomic`最好的特性之一就是所有成员函数都是原子性的，但是为了使从`x`拷贝初始化`y`的过程是原子性的，编译器不得不生成代码，把读取`x`和写入`y`放在一个单独的原子性操作中。硬件通常无法做到这一点，因此`std::atomic`不支持拷贝构造。出于同样的原因，拷贝赋值也被删除了，这也是为什么从`x`赋值给`y`也编译失败。（移动操作在`std::atomic`没有显式声明，因此根据[Item17](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item17.md)中描述的规则来看，`std::atomic`不支持移动构造和移动赋值）。
+这是因为`std::atomic`类型的拷贝操作是被删除的（参见[Item11](../3.MovingToModernCpp/item11.md)）。因为有个很好的理由删除。想象一下如果`y`使用`x`来初始化会发生什么。因为`x`是`std::atomic`类型，`y`的类型被推导为`std::atomic`（参见[Item2](../1.DeducingTypes/item2.md)）。我之前说了`std::atomic`最好的特性之一就是所有成员函数都是原子性的，但是为了使从`x`拷贝初始化`y`的过程是原子性的，编译器不得不生成代码，把读取`x`和写入`y`放在一个单独的原子性操作中。硬件通常无法做到这一点，因此`std::atomic`不支持拷贝构造。出于同样的原因，拷贝赋值也被删除了，这也是为什么从`x`赋值给`y`也编译失败。（移动操作在`std::atomic`没有显式声明，因此根据[Item17](../3.MovingToModernCpp/item17.md)中描述的规则来看，`std::atomic`不支持移动构造和移动赋值）。
 
 可以将`x`的值传递给`y`，但是需要使用`std::atomic`的`load`和`store`成员函数。`load`函数原子性地读取，`store`原子性地写入。要使用`x`初始化`y`，然后将`x`的值放入`y`，代码应该这样写：
 

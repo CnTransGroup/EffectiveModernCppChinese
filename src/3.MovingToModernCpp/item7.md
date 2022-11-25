@@ -52,7 +52,7 @@ private:
     int z(0);                   //错误！
 }
 ````
-另一方面，不可拷贝的对象（例如`std::atomic`——见[Item40](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/7.TheConcurrencyAPI/item40.md)）可以使用花括号初始化或者小括号初始化，但是不能使用"="初始化：
+另一方面，不可拷贝的对象（例如`std::atomic`——见[Item40](../7.TheConcurrencyAPI/item40.md)）可以使用花括号初始化或者小括号初始化，但是不能使用"="初始化：
 ````cpp
 std::atomic<int> ai1{ 0 };      //没问题
 std::atomic<int> ai2(0);        //没问题
@@ -87,7 +87,7 @@ Widget w3{};                    //调用没有参数的构造函数构造对象
 ````
 关于括号初始化还有很多要说的。它的语法能用于各种不同的上下文，它防止了隐式的变窄转换，而且对于C++最令人头疼的解析也天生免疫。既然好到这个程度那为什么这个条款不叫“Prefer braced initialization syntax”呢？
 
-括号初始化的缺点是有时它有一些令人惊讶的行为。这些行为使得括号初始化、`std::initializer_list`和构造函数重载决议本来就不清不楚的暧昧关系进一步混乱。把它们放到一起会让看起来应该左转的代码右转。举个例子，[Item2](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/1.DeducingTypes/item2.md)解释了当`auto`声明的变量使用花括号初始化，变量类型就会被推导为`std::initializer_list`，尽管使用相同内容的其他初始化方式会产生正常的结果。所以，你越喜欢用`auto`，你就越不能用括号初始化。
+括号初始化的缺点是有时它有一些令人惊讶的行为。这些行为使得括号初始化、`std::initializer_list`和构造函数重载决议本来就不清不楚的暧昧关系进一步混乱。把它们放到一起会让看起来应该左转的代码右转。举个例子，[Item2](../1.DeducingTypes/item2.md)解释了当`auto`声明的变量使用花括号初始化，变量类型就会被推导为`std::initializer_list`，尽管使用相同内容的其他初始化方式会产生正常的结果。所以，你越喜欢用`auto`，你就越不能用括号初始化。
 
 在构造函数调用中，只要不包含`std::initializer_list`形参，那么花括号初始化和小括号初始化都会产生一样的结果：
 ````cpp
@@ -229,7 +229,7 @@ void doSomeWork(Ts&&... params)
     …
 } 
 ````
-在现实中我们有两种方式实现这个伪代码（关于`std::forward`请参见[Item25](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item25.md)）：
+在现实中我们有两种方式实现这个伪代码（关于`std::forward`请参见[Item25](../5.RRefMovSemPerfForw/item25.md)）：
 ````cpp
 T localObject(std::forward<Ts>(params)...);             //使用小括号
 T localObject{std::forward<Ts>(params)...};             //使用花括号
@@ -242,7 +242,7 @@ doSomeWork<std::vector<int>>(10, 20);
 ````
 如果`doSomeWork`创建`localObject`时使用的是小括号，`std::vector`就会包含10个元素。如果`doSomeWork`创建`localObject`时使用的是花括号，`std::vector`就会包含2个元素。哪个是正确的？`doSomeWork`的作者不知道，只有调用者知道。
 
-这正是标准库函数`std::make_unique`和`std::make_shared`（参见[Item21](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item21.md)）面对的问题。它们的解决方案是使用小括号，并被记录在文档中作为接口的一部分。（注：更灵活的设计——允许调用者决定从模板来的函数应该使用小括号还是花括号——是有可能的。详情参见[Andrzej’s C++ blog](http://akrzemi1.wordpress.com/)在2013年6月5日的文章，“[Intuitive interface — Part I.](http://akrzemi1.wordpress.com/2013/06/05/intuitive-interface-part-i/)”）
+这正是标准库函数`std::make_unique`和`std::make_shared`（参见[Item21](../4.SmartPointers/item21.md)）面对的问题。它们的解决方案是使用小括号，并被记录在文档中作为接口的一部分。（注：更灵活的设计——允许调用者决定从模板来的函数应该使用小括号还是花括号——是有可能的。详情参见[Andrzej’s C++ blog](http://akrzemi1.wordpress.com/)在2013年6月5日的文章，“[Intuitive interface — Part I.](http://akrzemi1.wordpress.com/2013/06/05/intuitive-interface-part-i/)”）
 
 **请记住：**
 
