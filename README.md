@@ -1,15 +1,14 @@
 # 《Effective Modern C++ 》翻译
 
-<img src="0.Public/1.png?raw=true" align="right" weight="300" height="400"/>
+<img src="public/1.png?raw=true" align="right" weight="300" height="400"/>
 
 [![Backers on Open Collective](https://opencollective.com/EffectiveModernCppChinese/backers/badge.svg)](#backers)
- [![Sponsors on Open Collective](https://opencollective.com/EffectiveModernCppChinese/sponsors/badge.svg)](#sponsors) 
+ [![Sponsors on Open Collective](https://opencollective.com/EffectiveModernCppChinese/sponsors/badge.svg)](#sponsors)
 
-> ! 标注“已修订”的章节表示已经没有大致的错误<br>
-> ! 我没有版权，我没有版权，我没有版权<br>
-> ! 本书要求读者具有C++基础<br>
-> ! [在线浏览](https://cntransgroup.github.io/EffectiveModernCppChinese)<br>
-> ! [PDF格式英文版下载](0.Public/EffectiveModernCpp.pdf),仅供翻译参考<br>
+> + 标注“已修订”的章节表示已经没有大致的错误
+> + 本书要求读者具有C++基础
+> + [PDF格式英文版下载](public/EffectiveModernCpp.pdf),仅供翻译参考
+> + **[在线浏览(推荐)](https://cntransgroup.github.io/EffectiveModernCppChinese)**
 
 ## 目录
 0. [__简介__](src/Introduction.md)
@@ -31,43 +30,43 @@
 	7. [Item 13:优先考虑const_iterator而非iterator](src/3.MovingToModernCpp/item13.md)
 	8. [Item 14:如果函数不抛出异常请使用noexcept](src/3.MovingToModernCpp/item14.md)
 	9. [Item 15:尽可能的使用constexpr](src/3.MovingToModernCpp/item15.md)
-	10. [Item 16:让const成员函数线程安全](src/3.MovingToModernCpp/item16.md) 由 @windski贡献
-	11. [Item 17:理解特殊成员函数函数的生成](src/3.MovingToModernCpp/item17.md) 
+	10. [Item 16:让const成员函数线程安全](src/3.MovingToModernCpp/item16.md)
+	11. [Item 17:理解特殊成员函数函数的生成](src/3.MovingToModernCpp/item17.md)
 4. __智能指针__
-	1. [Item 18:对于独占资源使用std::unique_ptr](src/4.SmartPointers/item18.md) 由 @wendajiang贡献
+	1. [Item 18:对于独占资源使用std::unique_ptr](src/4.SmartPointers/item18.md)
 	2. [Item 19:对于共享资源使用std::shared_ptr](src/4.SmartPointers/item19.md) 已修订
 	3. [Item 20:当std::shared_ptr可能悬空时使用std::weak_ptr](src/4.SmartPointers/item20.md)
-	4. [Item 21:优先考虑使用std::make_unique和std::make_shared，而非直接使用new](src/4.SmartPointers/item21.md) 由 @pusidun贡献
-	5. [Item 22:当使用Pimpl惯用法，请在实现文件中定义特殊成员函数](src/4.SmartPointers/item22.md) 由 @BlurryLight贡献
+	4. [Item 21:优先考虑使用std::make_unique和std::make_shared，而非直接使用new](src/4.SmartPointers/item21.md)
+	5. [Item 22:当使用Pimpl惯用法，请在实现文件中定义特殊成员函数](src/4.SmartPointers/item22.md)
 5. __右值引用，移动语义，完美转发__
-	1. [Item 23:理解std::move和std::forward](src/5.RRefMovSemPerfForw/item23.md) 由 @BlurryLight贡献
-	2. [Item 24:区别通用引用和右值引用](src/5.RRefMovSemPerfForw/item24.md) 由 @BlurryLight贡献
-	3. [Item 25:对于右值引用使用std::move，对于通用引用使用std::forward](src/5.RRefMovSemPerfForw/item25.md)由 @wendajiang贡献
-	4. [Item 26:避免重载通用引用](src/5.RRefMovSemPerfForw/item26.md) 由 @wendajiang贡献
-	5. [Item 27:熟悉重载通用引用的替代品](src/5.RRefMovSemPerfForw/item27.md) 由 @wendajiang贡献
-	6. [Item 28:理解引用折叠](src/5.RRefMovSemPerfForw/item28.md) 由 @wendajiang贡献
-	7. [Item 29:认识移动操作的缺点](src/5.RRefMovSemPerfForw/item29.md) 由 @wendajiang贡献
-	8. [Item 30:熟悉完美转发失败的情况](src/5.RRefMovSemPerfForw/item30.md) 由 @wendajiang贡献
+	1. [Item 23:理解std::move和std::forward](src/5.RRefMovSemPerfForw/item23.md)
+	2. [Item 24:区别通用引用和右值引用](src/5.RRefMovSemPerfForw/item24.md)
+	3. [Item 25:对于右值引用使用std::move，对于通用引用使用std::forward](src/5.RRefMovSemPerfForw/item25.md)
+	4. [Item 26:避免重载通用引用](src/5.RRefMovSemPerfForw/item26.md)
+	5. [Item 27:熟悉重载通用引用的替代品](src/5.RRefMovSemPerfForw/item27.md)
+	6. [Item 28:理解引用折叠](src/5.RRefMovSemPerfForw/item28.md)
+	7. [Item 29:认识移动操作的缺点](src/5.RRefMovSemPerfForw/item29.md)
+	8. [Item 30:熟悉完美转发失败的情况](src/5.RRefMovSemPerfForw/item30.md)
 6. __Lambda表达式__
-	1. [Item 31:避免使用默认捕获模式](src/6.LambdaExpressions/item31.md) 由 @LucienXian贡献
-	2. [Item 32:使用初始化捕获来移动对象到闭包中](src/6.LambdaExpressions/item32.md) 由 @LucienXian贡献
-	3. [Item 33:对于std::forward的auto&&形参使用decltype](src/6.LambdaExpressions/item33.md) 由 @LucienXian贡献
-	4. [Item 34:优先考虑lambda表达式而非std::bind](src/6.LambdaExpressions/item34.md) 由 @LucienXian贡献
+	1. [Item 31:避免使用默认捕获模式](src/6.LambdaExpressions/item31.md)
+	2. [Item 32:使用初始化捕获来移动对象到闭包中](src/6.LambdaExpressions/item32.md)
+	3. [Item 33:对于std::forward的auto&&形参使用decltype](src/6.LambdaExpressions/item33.md)
+	4. [Item 34:优先考虑lambda表达式而非std::bind](src/6.LambdaExpressions/item34.md)
 7. __并发API__
-	1. [Item 35:优先考虑基于任务的编程而非基于线程的编程](src/7.TheConcurrencyAPI/Item35.md) 由 @wendajiang贡献
-	2. [Item 36:如果有异步的必要请指定std::launch::threads](src/7.TheConcurrencyAPI/item36.md) 由 @wendajiang贡献
-	3. [Item 37:从各个方面使得std::threads unjoinable](src/7.TheConcurrencyAPI/item37.md) 由 @wendajiang贡献
-	4. [Item 38:关注不同线程句柄析构行为](src/7.TheConcurrencyAPI/item38.md) 由 @wendajiang贡献
-	5. [Item 39:考虑对于单次事件通信使用void](src/7.TheConcurrencyAPI/item39.md) 由 @wendajiang贡献
-	6. [Item 40:对于并发使用std::atomic，volatile用于特殊内存区](src/7.TheConcurrencyAPI/item40.md) 由 @wendajiang贡献
+	1. [Item 35:优先考虑基于任务的编程而非基于线程的编程](src/7.TheConcurrencyAPI/Item35.md)
+	2. [Item 36:如果有异步的必要请指定std::launch::threads](src/7.TheConcurrencyAPI/item36.md)
+	3. [Item 37:从各个方面使得std::threads unjoinable](src/7.TheConcurrencyAPI/item37.md)
+	4. [Item 38:关注不同线程句柄析构行为](src/7.TheConcurrencyAPI/item38.md)
+	5. [Item 39:考虑对于单次事件通信使用void](src/7.TheConcurrencyAPI/item39.md)
+	6. [Item 40:对于并发使用std::atomic，volatile用于特殊内存区](src/7.TheConcurrencyAPI/item40.md)
 8. __微调__
-	1. [Item 41:对于那些可移动总是被拷贝的形参使用传值方式](src/8.Tweaks/item41.md) 由 @wendajiang贡献
-	2. [Item 42:考虑就地创建而非插入](src/8.Tweaks/item42.md) 由 @wendajiang贡献
+	1. [Item 41:对于那些可移动总是被拷贝的形参使用传值方式](src/8.Tweaks/item41.md)
+	2. [Item 42:考虑就地创建而非插入](src/8.Tweaks/item42.md)
 
 ## 其他资源
-+ [**在线阅读**](https://cntransgroup.github.io/EffectiveModernCppChinese)
-+ 本书[PDF格式的中文版](./0.Public/translated/translate-zh-combine.pdf)见于此，该版本通常同步或者滞后于当前Markdown文档
-+ [Effective C++ Xmind Doc](./0.Public/EffectModernC++.xmind)
++ **[在线阅读(推荐，与翻译内容同步更新)](https://cntransgroup.github.io/EffectiveModernCppChinese)**
++ 本书[PDF格式的中文版](./public/translated/translate-zh-combine.pdf)见于此，该版本通常同步或者滞后于当前Markdown文档
++ [Effective C++ Xmind Doc](./public/EffectModernC++.xmind)
 
 ## 贡献者
 
