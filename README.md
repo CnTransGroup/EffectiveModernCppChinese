@@ -74,8 +74,5 @@
 感谢所有参与翻译/勘误/建议的贡献者们~
 <a href="https://github.com/kelthuzadx/EffectiveModernCppChinese/graphs/contributors"><img src="https://opencollective.com/EffectiveModernCppChinese/contributors.svg?width=890&button=false" /></a>
 
-## 赞助翻译
-
- 🙏 [[Become a backer](https://opencollective.com/EffectiveModernCppChinese#backer)]
-
-<a href="https://opencollective.com/EffectiveModernCppChinese#backers" target="_blank"><img src="https://opencollective.com/EffectiveModernCppChinese/backers.svg?width=890"></a>
+## 免责声明
+译者纯粹出于学习目的与个人兴趣翻译本书，不追求任何经济利益。译者保留对此版本译文的署名权，其他权利以原作者和出版社的主张为准。本译文只供学习研究参考之用，不得公开传播发行或用于商业用途。有能力阅读英文书籍者请购买正版支持。
