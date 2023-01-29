@@ -264,7 +264,7 @@ f(x);                           //用一个int类型的变量调用f
 <p>我们可能很自然的期望<code>T</code>和传递进函数的实参是相同的类型，也就是，<code>T</code>为<code>expr</code>的类型。在上面的例子中，事实就是那样：<code>x</code>是<code>int</code>，<code>T</code>被推导为<code>int</code>。但有时情况并非总是如此，<code>T</code>的类型推导不仅取决于<code>expr</code>的类型，也取决于<code>ParamType</code>的类型。这里有三种情况：</p>
 <ul>
 <li><code>ParamType</code>是一个指针或引用，但不是通用引用（关于通用引用请参见<a href="1.DeducingTypes/../5.RRefMovSemPerfForw/item24.html">Item24</a>。在这里你只需要知道它存在，而且不同于左值引用和右值引用）</li>
-<li><code>ParamType</code>一个通用引用</li>
+<li><code>ParamType</code>是一个通用引用</li>
 <li><code>ParamType</code>既不是指针也不是引用</li>
 </ul>
 <p>我们下面将分成三个情景来讨论这三种情况，每个情景的都基于我们之前给出的模板：</p>
@@ -726,7 +726,7 @@ decltype(auto) f2()
 </code></pre>
 <p>注意不仅<code>f2</code>的返回类型不同于<code>f1</code>，而且它还引用了一个局部变量！这样的代码将会把你送上未定义行为的特快列车，一辆你绝对不想上第二次的车。</p>
 <p>当使用<code>decltype(auto)</code>的时候一定要加倍的小心，在表达式中看起来无足轻重的细节将会影响到<code>decltype(auto)</code>的推导结果。为了确认类型推导是否产出了你想要的结果，请参见<a href="1.DeducingTypes/../1.DeducingTypes/item4.html">Item4</a>描述的那些技术。</p>
-<p>同时你也不应该忽略<code>decltype</code>这块大蛋糕。没错，<code>decltype</code>（单独使用或者与<code>auto</code>一起用）可能会偶尔产生一些令人惊讶的结果，但那毕竟是少数情况。通常，<code>decltype</code>都会产生你想要的结果，尤其是当你对一个名字使用<code>decltype</code>时，因为在这种情况下，<code>decltype</code>只是做一件本分之事：它产出名字的声明类型。</p>
+<p>同时你也不应该忽略<code>decltype</code>这块大蛋糕。没错，<code>decltype</code>（单独使用或者与<code>auto</code>一起用）可能会偶尔产生一些令人惊讶的结果，但那毕竟是少数情况。通常，<code>decltype</code>都会产生你想要的结果，尤其是当你对一个变量使用<code>decltype</code>时，因为在这种情况下，<code>decltype</code>只是做一件本分之事：它产出变量的声明类型。</p>
 <p><strong>请记住：</strong></p>
 <ul>
 <li><code>decltype</code>总是不加修改的产生变量或者表达式的类型。</li>
@@ -961,7 +961,7 @@ for(const std::pair&lt;std::string, int&gt;&amp; p : m)
 }
 </code></pre>
 <p>这样无疑更具效率，且更容易书写。而且，这个代码有一个非常吸引人的特性，如果你获取<code>p</code>的地址，你确实会得到一个指向<code>m</code>中元素的指针。在没有<code>auto</code>的版本中<code>p</code>会指向一个临时变量，这个临时变量在每次迭代完成时会被销毁。</p>
-<p>后面这两个例子——应当写<code>std::vector&lt;int&gt;::size_type</code>时写了<code>unsigned</code>，应当写<code>std::pair&lt;const std::string, int&gt;</code>时写了<code>std::pair&lt;std::string, int&gt;</code>——说明了显式的指定类型可能会导致你不像看到的类型转换。如果你使用<code>auto</code>声明目标变量你就不必担心这个问题。</p>
+<p>前面这两个例子——应当写<code>std::vector&lt;int&gt;::size_type</code>时写了<code>unsigned</code>，应当写<code>std::pair&lt;const std::string, int&gt;</code>时写了<code>std::pair&lt;std::string, int&gt;</code>——说明了显式的指定类型可能会导致你不想看到的类型转换。如果你使用<code>auto</code>声明目标变量你就不必担心这个问题。</p>
 <p>基于这些原因我建议你优先考虑<code>auto</code>而非显式类型声明。然而<code>auto</code>也不是完美的。每个<code>auto</code>变量都从初始化表达式中推导类型，有一些表达式的类型和我们期望的大相径庭。关于在哪些情况下会发生这些问题，以及你可以怎么解决这些问题我们在<a href="2.Auto/../1.DeducingTypes/item2.html">Item2</a>和<a href="2.Auto/../2.Auto/item6.html">6</a>讨论，所以这里我不再赘述。我想把注意力放到你可能关心的另一点：使用auto代替传统类型声明对源码可读性的影响。</p>
 <p>首先，深呼吸，放松，<code>auto</code>是<strong>可选项</strong>，不是<strong>命令</strong>，在某些情况下如果你的专业判断告诉你使用显式类型声明比<code>auto</code>要更清晰更易维护，那你就不必再坚持使用<code>auto</code>。但是要牢记，C++没有在其他众所周知的语言所拥有的类型推导（<em>type inference</em>）上开辟新土地。其他静态类型的过程式语言（如C#、D、Sacla、Visual Basic）或多或少都有等价的特性，更不必提那些静态类型的函数式语言了（如ML、Haskell、OCaml、F#等）。在某种程度上，这是因为动态类型语言，如Perl、Python、Ruby等的成功；在这些语言中，几乎没有显式的类型声明。软件开发社区对于类型推导有丰富的经验，他们展示了在维护大型工业强度的代码上使用这种技术没有任何争议。</p>
 <p>一些开发者也担心使用<code>auto</code>就不能瞥一眼源代码便知道对象的类型，然而，IDE扛起了部分担子（也考虑到了<a href="2.Auto/../1.DeducingTypes/item4.html">Item4</a>中提到的IDE类型显示问题），在很多情况下，少量显示一个对象的类型对于知道对象的确切类型是有帮助的，这通常已经足够了。举个例子，要想知道一个对象是容器还是计数器还是智能指针，不需要知道它的确切类型。一个适当的变量名称就能告诉我们大量的抽象类型信息。</p>
@@ -1354,7 +1354,7 @@ auto result2 = lockAndCall(f2, f2m, NULL);      //错误！
 ...
 auto result3 = lockAndCall(f3, f3m, nullptr);   //没问题
 </code></pre>
-<p>代码虽然可以这样写，但是就像注释中说的，前两个情况不能通过编译。在第一个调用中存在的问题是当<code>0</code>被传递给<code>lockAndCall</code>模板，模板类型推导会尝试去推导实参类型，<code>0</code>的类型总是<code>int</code>，所以这就是这次调用<code>lockAndCall</code>实例化出的<code>ptr</code>的类型。不幸的是，这意味着<code>lockAndCall</code>中<code>func</code>会被<code>int</code>类型的实参调用，这与<code>f1</code>期待的<code>std::shared_ptr&lt;Widget&gt;</code>形参不符。传递<code>0</code>给<code>lockAndCall</code>本来想表示空指针，结果<code>f1</code>得到的是和它相差十万八千里的<code>int</code>。把<code>int</code>类型看做<code>std::shared_ptr&lt;Widget&gt;</code>类型给<code>f1</code>自然是一个类型错误。在模板<code>lockAndCall</code>中使用<code>0</code>之所以失败是因为在模板中，传给的是<code>int</code>但实际上函数期待的是一个<code>std::shared_ptr&lt;Widget&gt;</code>。</p>
+<p>代码虽然可以这样写，但是就像注释中说的，前两个情况不能通过编译。在第一个调用中存在的问题是当<code>0</code>被传递给<code>lockAndCall</code>模板，模板类型推导会尝试去推导实参类型，<code>0</code>的类型总是<code>int</code>，所以这就是这次调用<code>lockAndCall</code>实例化出的<code>ptr</code>的类型。不幸的是，这意味着<code>lockAndCall</code>中<code>func</code>会被<code>int</code>类型的实参调用，这与<code>f1</code>期待的<code>std::shared_ptr&lt;Widget&gt;</code>形参不符。传递<code>0</code>给<code>lockAndCall</code>本来想表示空指针，但是实际上得到的一个普通的<code>int</code>。把<code>int</code>类型看做<code>std::shared_ptr&lt;Widget&gt;</code>类型给<code>f1</code>自然是一个类型错误。在模板<code>lockAndCall</code>中使用<code>0</code>之所以失败是因为在模板中，传给的是<code>int</code>但实际上函数期待的是一个<code>std::shared_ptr&lt;Widget&gt;</code>。</p>
 <p>第二个使用<code>NULL</code>调用的分析也是一样的。当<code>NULL</code>被传递给<code>lockAndCall</code>，形参<code>ptr</code>被推导为整型（译注：由于依赖于具体实现所以不一定是整数类型，所以用整型泛指<code>int</code>，<code>long</code>等类型），然后当<code>ptr</code>——一个<code>int</code>或者类似<code>int</code>的类型——传递给<code>f2</code>的时候就会出现类型错误，<code>f2</code>期待的是<code>std::unique_ptr&lt;Widget&gt;</code>。</p>
 <p>然而，使用<code>nullptr</code>是调用没什么问题。当<code>nullptr</code>传给<code>lockAndCall</code>时，<code>ptr</code>被推导为<code>std::nullptr_t</code>。当<code>ptr</code>被传递给<code>f3</code>的时候，隐式转换使<code>std::nullptr_t</code>转换为<code>Widget</code>，因为<code>std::nullptr_t</code>可以隐式转换为任何指针类型。</p>
 <p>模板类型推导将<code>0</code>和<code>NULL</code>推导为一个错误的类型（即它们的实际类型，而不是作为空指针的隐含意义），这就导致在当你想要一个空指针时，它们的替代品<code>nullptr</code>很吸引人。使用<code>nullptr</code>，模板不会有什么特殊的转换。另外，使用<code>nullptr</code>不会让你受到同重载决议特殊对待<code>0</code>和<code>NULL</code>一样的待遇。当你想用一个空指针，使用<code>nullptr</code>，不用<code>0</code>或者<code>NULL</code>。</p>
@@ -1727,7 +1727,7 @@ template&lt;&gt;
 void processPointer&lt;const char&gt;(const char*) = delete;
 </code></pre>
 <p>如果你想做得更彻底一些，你还要删除<code>const volatile void*</code>和<code>const volatile char*</code>重载版本，另外还需要一并删除其他标准字符类型的重载版本：<code>std::wchar_t</code>，<code>std::char16_t</code>和<code>std::char32_t</code>。</p>
-<p>有趣的是，如果的类里面有一个函数模板，你可能想用<code>private</code>（经典的C++98惯例）来禁止这些函数模板实例化，但是不能这样做，因为不能给特化的成员模板函数指定一个不同于主函数模板的访问级别。如果<code>processPointer</code>是类<code>Widget</code>里面的模板函数， 你想禁止它接受<code>void*</code>参数，那么通过下面这样C++98的方法就不能通过编译：</p>
+<p>有趣的是，如果类里面有一个函数模板，你可能想用<code>private</code>（经典的C++98惯例）来禁止这些函数模板实例化，但是不能这样做，因为不能给特化的成员模板函数指定一个不同于主函数模板的访问级别。如果<code>processPointer</code>是类<code>Widget</code>里面的模板函数， 你想禁止它接受<code>void*</code>参数，那么通过下面这样C++98的方法就不能通过编译：</p>
 <pre><code class="language-cpp">class Widget {
 public:
     …

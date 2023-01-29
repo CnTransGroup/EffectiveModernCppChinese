@@ -167,7 +167,7 @@ f(x);                           //用一个int类型的变量调用f
 <p>我们可能很自然的期望<code>T</code>和传递进函数的实参是相同的类型，也就是，<code>T</code>为<code>expr</code>的类型。在上面的例子中，事实就是那样：<code>x</code>是<code>int</code>，<code>T</code>被推导为<code>int</code>。但有时情况并非总是如此，<code>T</code>的类型推导不仅取决于<code>expr</code>的类型，也取决于<code>ParamType</code>的类型。这里有三种情况：</p>
 <ul>
 <li><code>ParamType</code>是一个指针或引用，但不是通用引用（关于通用引用请参见<a href="../5.RRefMovSemPerfForw/item24.html">Item24</a>。在这里你只需要知道它存在，而且不同于左值引用和右值引用）</li>
-<li><code>ParamType</code>一个通用引用</li>
+<li><code>ParamType</code>是一个通用引用</li>
 <li><code>ParamType</code>既不是指针也不是引用</li>
 </ul>
 <p>我们下面将分成三个情景来讨论这三种情况，每个情景的都基于我们之前给出的模板：</p>

@@ -210,7 +210,7 @@ template&lt;&gt;
 void processPointer&lt;const char&gt;(const char*) = delete;
 </code></pre>
 <p>如果你想做得更彻底一些，你还要删除<code>const volatile void*</code>和<code>const volatile char*</code>重载版本，另外还需要一并删除其他标准字符类型的重载版本：<code>std::wchar_t</code>，<code>std::char16_t</code>和<code>std::char32_t</code>。</p>
-<p>有趣的是，如果的类里面有一个函数模板，你可能想用<code>private</code>（经典的C++98惯例）来禁止这些函数模板实例化，但是不能这样做，因为不能给特化的成员模板函数指定一个不同于主函数模板的访问级别。如果<code>processPointer</code>是类<code>Widget</code>里面的模板函数， 你想禁止它接受<code>void*</code>参数，那么通过下面这样C++98的方法就不能通过编译：</p>
+<p>有趣的是，如果类里面有一个函数模板，你可能想用<code>private</code>（经典的C++98惯例）来禁止这些函数模板实例化，但是不能这样做，因为不能给特化的成员模板函数指定一个不同于主函数模板的访问级别。如果<code>processPointer</code>是类<code>Widget</code>里面的模板函数， 你想禁止它接受<code>void*</code>参数，那么通过下面这样C++98的方法就不能通过编译：</p>
 <pre><code class="language-cpp">class Widget {
 public:
     …

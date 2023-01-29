@@ -277,7 +277,7 @@ decltype(auto) f2()
 </code></pre>
 <p>注意不仅<code>f2</code>的返回类型不同于<code>f1</code>，而且它还引用了一个局部变量！这样的代码将会把你送上未定义行为的特快列车，一辆你绝对不想上第二次的车。</p>
 <p>当使用<code>decltype(auto)</code>的时候一定要加倍的小心，在表达式中看起来无足轻重的细节将会影响到<code>decltype(auto)</code>的推导结果。为了确认类型推导是否产出了你想要的结果，请参见<a href="../1.DeducingTypes/item4.html">Item4</a>描述的那些技术。</p>
-<p>同时你也不应该忽略<code>decltype</code>这块大蛋糕。没错，<code>decltype</code>（单独使用或者与<code>auto</code>一起用）可能会偶尔产生一些令人惊讶的结果，但那毕竟是少数情况。通常，<code>decltype</code>都会产生你想要的结果，尤其是当你对一个名字使用<code>decltype</code>时，因为在这种情况下，<code>decltype</code>只是做一件本分之事：它产出名字的声明类型。</p>
+<p>同时你也不应该忽略<code>decltype</code>这块大蛋糕。没错，<code>decltype</code>（单独使用或者与<code>auto</code>一起用）可能会偶尔产生一些令人惊讶的结果，但那毕竟是少数情况。通常，<code>decltype</code>都会产生你想要的结果，尤其是当你对一个变量使用<code>decltype</code>时，因为在这种情况下，<code>decltype</code>只是做一件本分之事：它产出变量的声明类型。</p>
 <p><strong>请记住：</strong></p>
 <ul>
 <li><code>decltype</code>总是不加修改的产生变量或者表达式的类型。</li>
