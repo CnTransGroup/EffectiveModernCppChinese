@@ -20,7 +20,7 @@ public:
 }; 
 
 std::unique_ptr<Base> upb =         //创建基类指针指向派生类对象
-    std::make_unique<Derived>();    //关于std：：make_unique
+    std::make_unique<Derived>();    //关于std::make_unique
 …                                   //请参见Item21
 
     
