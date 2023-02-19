@@ -178,8 +178,8 @@ fwd( expression );		//但调用fwd执行另一个操作，则fwd不能完美转�
 <p>所有这种错误有相同的原因。在对<code>f</code>的直接调用（例如<code>f({ 1, 2, 3 })</code>），编译器看看调用地传入的实参，看看<code>f</code>声明的形参类型。它们把调用地的实参和声明的实参进行比较，看看是否匹配，并且必要时执行隐式转换操作使得调用成功。在上面的例子中，从<code>{ 1, 2, 3 }</code>生成了临时<code>std::vector&lt;int&gt;</code>对象，因此<code>f</code>的形参<code>v</code>会绑定到<code>std::vector&lt;int&gt;</code>对象上。</p>
 <p>当通过调用函数模板<code>fwd</code>间接调用<code>f</code>时，编译器不再把调用地传入给<code>fwd</code>的实参和<code>f</code>的声明中形参类型进行比较。而是<strong>推导</strong>传入给<code>fwd</code>的实参类型，然后比较推导后的实参类型和<code>f</code>的形参声明类型。当下面情况任何一个发生时，完美转发就会失败：</p>
 <ul>
-<li>**编译器不能推导出<code>fwd</code>的一个或者多个形参类型。**这种情况下代码无法编译。</li>
-<li>**编译器推导“错”了<code>fwd</code>的一个或者多个形参类型。**在这里，“错误”可能意味着<code>fwd</code>的实例将无法使用推导出的类型进行编译，但是也可能意味着使用<code>fwd</code>的推导类型调用<code>f</code>，与用传给<code>fwd</code>的实参直接调用<code>f</code>表现出不一致的行为。这种不同行为的原因可能是因为<code>f</code>是个重载函数的名字，并且由于是“不正确的”类型推导，在<code>fwd</code>内部调用的<code>f</code>重载和直接调用的<code>f</code>重载不一样。</li>
+<li><strong>编译器不能推导出<code>fwd</code>的一个或者多个形参类型。</strong> 这种情况下代码无法编译。</li>
+<li><strong>编译器推导“错”了<code>fwd</code>的一个或者多个形参类型。</strong> 在这里，“错误”可能意味着<code>fwd</code>的实例将无法使用推导出的类型进行编译，但是也可能意味着使用<code>fwd</code>的推导类型调用<code>f</code>，与用传给<code>fwd</code>的实参直接调用<code>f</code>表现出不一致的行为。这种不同行为的原因可能是因为<code>f</code>是个重载函数的名字，并且由于是“不正确的”类型推导，在<code>fwd</code>内部调用的<code>f</code>重载和直接调用的<code>f</code>重载不一样。</li>
 </ul>
 <p>在上面的<code>fwd({ 1, 2, 3 })</code>例子中，问题在于，将花括号初始化传递给未声明为<code>std::initializer_list</code>的函数模板形参，被判定为——就像标准说的——“非推导上下文”。简单来讲，这意味着编译器不准在对<code>fwd</code>的调用中推导表达式<code>{ 1, 2, 3 }</code>的类型，因为<code>fwd</code>的形参没有声明为<code>std::initializer_list</code>。对于<code>fwd</code>形参的推导类型被阻止，编译器只能拒绝该调用。</p>
 <p>有趣的是，<a href="../1.DeducingTypes/item2.html">Item2</a>说明了使用花括号初始化的<code>auto</code>的变量的类型推导是成功的。这种变量被视为<code>std::initializer_list</code>对象，在转发函数应推导出类型为<code>std::initializer_list</code>的情况，这提供了一种简单的解决方法——使用<code>auto</code>声明一个局部变量，然后将局部变量传进转发函数：</p>
