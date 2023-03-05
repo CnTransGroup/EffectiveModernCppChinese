@@ -141,11 +141,11 @@
                     <main>
                         <h1 id="第3章-移步现代c"><a class="header" href="#第3章-移步现代c">第3章 移步现代C++</a></h1>
 <p><strong>CHAPTER 3 Moving to Modern C++</strong></p>
-<p>说起知名的特性，C++11/14有一大堆可以吹的东西，<code>auto</code>，智能指针（<em>smart pointer</em>），移动语义（<em>move semantics</em>），<em>lambda</em>，并发（<em>concurrency</em>）——每个都是如此的重要，这章将覆盖这些内容。精通这些特性是必要的，但是成为高效率的现代C++程序员也要求一系列小步骤。从C++98移步现代C++遇到的每个细节问题都会在本章得到答复。你什么时候应该用{}而不是()创建对象？为什么别名（<em>alias</em>）声明比<code>typedef</code>好？<code>constexpr</code>和<code>const</code>有什么不同？常量（<code>const</code>）成员函数和线程安全有什么关系？这个列表越列越多。这章将会逐个回答这些问题。</p>
+<p>说起知名的特性，C++11/14有一大堆可以吹的东西，<code>auto</code>，智能指针（<em>smart pointer</em>），移动语义（<em>move semantics</em>），<em>lambda</em>，并发（<em>concurrency</em>）——每个都是如此的重要，这章将覆盖这些内容。掌握这些特性是必要的，要想成为高效率的现代C++程序员需要小步迈进。在从C++98小步迈进到现代C++过程中遇到的每个问题，本章都会一一回答。你什么时候应该用{}而不是()创建对象？为什么别名（<em>alias</em>）声明比<code>typedef</code>好？<code>constexpr</code>和<code>const</code>有什么不同？常量（<code>const</code>）成员函数和线程安全有什么关系？这个列表越列越多，这章将会逐个回答这些问题。</p>
 <h2 id="条款七区别使用和创建对象"><a class="header" href="#条款七区别使用和创建对象">条款七：区别使用<code>()</code>和<code>{}</code>创建对象</a></h2>
 <p><strong>Item 7: Distinguish between <code>()</code> and <code>{}</code> when creating objects</strong></p>
-<p>从你的角度看，C++11初始化对象的语法选择既丰富得让人尴尬又混乱得让人糊涂。一般来说，初始化值要用()或者{}括起来或者放到等号&quot;=&quot;的右边：</p>
-<pre><code class="language-cpp">int x(0);               //使用小括号初始化
+<p>取决于你看问题的角度，C++11对象初始化的语法可能会让你觉得丰富的让人难以选择，亦或是乱的一塌糊涂。一般来说，初始化值要用圆括号()或者花括号{}括起来，或者放到等号&quot;=&quot;的右边：</p>
+<pre><code class="language-cpp">int x(0);               //使用圆括号初始化
 
 int y = 0;              //使用&quot;=&quot;初始化
 
@@ -155,16 +155,16 @@ int z{ 0 };             //使用花括号初始化
 <pre><code class="language-cpp">int z = { 0 };          //使用&quot;=&quot;和花括号
 </code></pre>
 <p>在这个条款的剩下部分，我通常会忽略&quot;=&quot;和花括号组合初始化的语法，因为C++通常把它视作和只有花括号一样。</p>
-<p>“混乱得令人糊涂”指出在初始化中使用&quot;=&quot;可能会误导C++新手，使他们以为这里发生了赋值运算。对于像<code>int</code>这样的内置类型，研究两者区别是个学术问题，但是对于用户定义的类型而言，区别赋值运算符和初始化就非常重要了，因为这可能包含不同的函数调用：</p>
+<p>“乱的一塌糊涂”是指在初始化中使用&quot;=&quot;可能会误导C++新手，使他们以为这里发生了赋值运算，然而实际并没有。对于像<code>int</code>这样的内置类型，研究两者区别就像在做学术，但是对于用户定义的类型而言，区别赋值运算符和初始化就非常重要了，因为它们涉及不同的函数调用：</p>
 <pre><code class="language-cpp">Widget w1;              //调用默认构造函数
 
 Widget w2 = w1;         //不是赋值运算，调用拷贝构造函数
 
 w1 = w2;                //是赋值运算，调用拷贝赋值运算符（copy operator=）
 </code></pre>
-<p>甚至对于一些初始化语法，在一些情况下C++98没有办法去表达初始化。举个例子，要想直接表示一个存放一些特殊值的STL容器是不可能的（比如1,3,5）。</p>
-<p>C++11使用统一初始化（<em>uniform initialization</em>）来整合这些混乱且不适于所有情景的初始化语法，所谓统一初始化是指使用单一初始化语法在任何地方（译注：结合上下文得知这里的“任何地方”指的是初始化表达式存在的地方而不是广义上源代码的各处）表达任何东西。
-它基于花括号，出于这个原因我更喜欢称之为括号初始化。（译注：注意，这里的括号初始化指的是花括号初始化，在没有歧义的情况下下文的括号初始化指的都是用花括号进行初始化；当与小括号初始化同时存在并可能产生歧义时我会直接指出。）统一初始化是一个概念上的东西，而括号初始化是一个具体语法构型。</p>
+<p>甚至对于一些初始化语法，在一些情况下C++98没有办法表达预期的初始化行为。举个例子，要想直接创建并初始化一个存放一些特殊值的STL容器是不可能的（比如1,3,5）。</p>
+<p>C++11使用统一初始化（<em>uniform initialization</em>）来整合这些混乱且不适于所有情景的初始化语法，所谓统一初始化是指在任何涉及初始化的地方都使用单一的初始化语法。
+它基于花括号，出于这个原因我更喜欢称之为括号初始化。（<strong>译注：注意，这里的括号初始化指的是花括号初始化，在没有歧义的情况下下文的括号初始化指的都是用花括号进行初始化；当与圆括号初始化同时存在并可能产生歧义时我会直接指出。</strong>）统一初始化是一个概念上的东西，而括号初始化是一个具体语法结构。</p>
 <p>括号初始化让你可以表达以前表达不出的东西。使用花括号，指定一个容器的元素变得很容易：</p>
 <pre><code class="language-cpp">std::vector&lt;int&gt; v{ 1, 3, 5 };  //v初始内容为1,3,5
 </code></pre>
@@ -178,13 +178,13 @@ private:
     int z(0);                   //错误！
 }
 </code></pre>
-<p>另一方面，不可拷贝的对象（例如<code>std::atomic</code>——见<a href="../7.TheConcurrencyAPI/item40.html">Item40</a>）可以使用花括号初始化或者小括号初始化，但是不能使用&quot;=&quot;初始化：</p>
+<p>另一方面，不可拷贝的对象（例如<code>std::atomic</code>——见<a href="../7.TheConcurrencyAPI/item40.html">Item40</a>）可以使用花括号初始化或者圆括号初始化，但是不能使用&quot;=&quot;初始化：</p>
 <pre><code class="language-cpp">std::atomic&lt;int&gt; ai1{ 0 };      //没问题
 std::atomic&lt;int&gt; ai2(0);        //没问题
 std::atomic&lt;int&gt; ai3 = 0;       //错误！
 </code></pre>
-<p>因此我们很容易理解为什么括号初始化又叫统一初始化，在C++中这三种方式都被指派为初始化表达式，但是只有括号任何地方都能被使用。</p>
-<p>括号表达式有一个异常的特性，它不允许内置类型间隐式的变窄转换（<em>narrowing conversion</em>）。如果一个使用了括号初始化的表达式的值，不能保证由被初始化的对象的类型来表示，代码就不会通过编译：</p>
+<p>因此我们很容易理解为什么括号初始化又叫统一初始化，在C++中这三种方式都被看做是初始化表达式，但是只有括号任何地方都能被使用。</p>
+<p>括号表达式有一个少见的特性，即它不允许内置类型间隐式的变窄转换（<em>narrowing conversion</em>）。如果一个使用了括号初始化的表达式的值，不能保证由被初始化的对象的类型来表示，代码就不会通过编译：</p>
 <pre><code class="language-cpp">double x, y, z;
 
 int sum1{ x + y + z };          //错误！double的和可能不能表示为int
@@ -194,18 +194,18 @@ int sum1{ x + y + z };          //错误！double的和可能不能表示为int
 
 int sum3 = x + y + z;           //同上
 </code></pre>
-<p>另一个值得注意的特性是括号表达式对于C++最令人头疼的解析问题有天生的免疫性。（译注：所谓最令人头疼的解析即<em>most vexing parse</em>，更多信息请参见<a href="https://en.wikipedia.org/wiki/Most_vexing_parse">https://en.wikipedia.org/wiki/Most_vexing_parse</a>。）C++规定任何能被决议为一个声明的东西必须被决议为声明。这个规则的副作用是让很多程序员备受折磨：当他们想创建一个使用默认构造函数构造的对象，却不小心变成了函数声明。问题的根源是如果你想使用一个实参调用一个构造函数，你可以这样做：</p>
+<p>另一个值得注意的特性是括号表达式对于C++最令人头疼的解析问题有天生的免疫性。（译注：所谓最令人头疼的解析即<em>most vexing parse</em>，更多信息请参见<a href="https://en.wikipedia.org/wiki/Most_vexing_parse">https://en.wikipedia.org/wiki/Most_vexing_parse</a>。）C++规定任何<em>可以被解析</em>为一个声明的东西<em>必须被解析</em>为声明。这个规则的副作用是让很多程序员备受折磨：他们可能想创建一个使用默认构造函数构造的对象，却不小心变成了函数声明。问题的根源是如果你调用带参构造函数，你可以这样做：</p>
 <pre><code class="language-cpp">Widget w1(10);                  //使用实参10调用Widget的一个构造函数
 </code></pre>
-<p>但是如果你尝试使用相似的语法调用没有参数的<code>Widget</code>构造函数，它就会变成函数声明：</p>
+<p>但是如果你尝试使用相似的语法调用<code>Widget</code>无参构造函数，它就会变成函数声明：</p>
 <pre><code class="language-cpp">Widget w2();                    //最令人头疼的解析！声明一个函数w2，返回Widget
 </code></pre>
-<p>由于函数声明中形参列表不能使用花括号，所以使用花括号初始化表明你想调用默认构造函数构造对象就没有问题：</p>
+<p>由于函数声明中形参列表不能带花括号，所以使用花括号初始化表明你想调用默认构造函数构造对象就没有问题：</p>
 <pre><code class="language-cpp">Widget w3{};                    //调用没有参数的构造函数构造对象
 </code></pre>
-<p>关于括号初始化还有很多要说的。它的语法能用于各种不同的上下文，它防止了隐式的变窄转换，而且对于C++最令人头疼的解析也天生免疫。既然好到这个程度那为什么这个条款不叫“Prefer braced initialization syntax”呢？</p>
+<p>关于括号初始化还有很多要说的。它的语法能用于各种不同的上下文，它防止了隐式的变窄转换，而且对于C++最令人头疼的解析也天生免疫。既然好到这个程度那为什么这个条款不叫“优先考虑括号初始化语法”呢？</p>
 <p>括号初始化的缺点是有时它有一些令人惊讶的行为。这些行为使得括号初始化、<code>std::initializer_list</code>和构造函数重载决议本来就不清不楚的暧昧关系进一步混乱。把它们放到一起会让看起来应该左转的代码右转。举个例子，<a href="../1.DeducingTypes/item2.html">Item2</a>解释了当<code>auto</code>声明的变量使用花括号初始化，变量类型就会被推导为<code>std::initializer_list</code>，尽管使用相同内容的其他初始化方式会产生正常的结果。所以，你越喜欢用<code>auto</code>，你就越不能用括号初始化。</p>
-<p>在构造函数调用中，只要不包含<code>std::initializer_list</code>形参，那么花括号初始化和小括号初始化都会产生一样的结果：</p>
+<p>在构造函数调用中，只要不包含<code>std::initializer_list</code>形参，那么花括号初始化和圆括号初始化都会产生一样的结果：</p>
 <pre><code class="language-cpp">class Widget { 
 public:  
     Widget(int i, bool b);      //构造函数未声明
@@ -227,14 +227,14 @@ public:
 }; 
 </code></pre>
 <p><code>w2</code>和<code>w4</code>将会使用新添加的构造函数构造，即使另一个非<code>std::initializer_list</code>构造函数对于实参是更好的选择：</p>
-<pre><code class="language-cpp">Widget w1(10, true);    //使用小括号初始化，同之前一样
+<pre><code class="language-cpp">Widget w1(10, true);    //使用圆括号初始化，同之前一样
                         //调用第一个构造函数
 
 Widget w2{10, true};    //使用花括号初始化，但是现在
                         //调用std::initializer_list版本构造函数
                         //(10 和 true 转化为long double)
 
-Widget w3(10, 5.0);     //使用小括号初始化，同之前一样
+Widget w3(10, 5.0);     //使用圆括号初始化，同之前一样
                         //调用第二个构造函数 
 
 Widget w4{10, 5.0};     //使用花括号初始化，但是现在
@@ -283,9 +283,9 @@ public:
     …                                                   //没有隐式转换函数
 };
 
-Widget w1(10, true);     // 使用小括号初始化，调用第一个构造函数
+Widget w1(10, true);     // 使用圆括号初始化，调用第一个构造函数
 Widget w2{10, true};     // 使用花括号初始化，现在调用第一个构造函数
-Widget w3(10, 5.0);      // 使用小括号初始化，调用第二个构造函数
+Widget w3(10, 5.0);      // 使用圆括号初始化，调用第二个构造函数
 Widget w4{10, 5.0};      // 使用花括号初始化，现在调用第二个构造函数
 </code></pre>
 <p>代码的行为和我们刚刚的论述如出一辙。这里还有一个有趣的<a href="https://en.wikipedia.org/wiki/Edge_case">edge case</a>。假如你使用的花括号初始化是空集，并且你欲构建的对象有默认构造函数，也有<code>std::initializer_list</code>构造函数。你的空的花括号意味着什么？如果它们意味着没有实参，就该使用默认构造函数，但如果它意味着一个空的<code>std::initializer_list</code>，就该调用<code>std::initializer_list</code>构造函数。</p>
@@ -316,7 +316,7 @@ std::vector&lt;int&gt; v2{10, 20};    //使用std::initializer_list构造函数
 </code></pre>
 <p>让我们退回之前的讨论。从这个讨论中我有两个重要结论。第一，作为一个类库作者，你需要意识到如果你的一堆重载的构造函数中有一个或者多个含有<code>std::initializer_list</code>形参，用户代码如果使用了括号初始化，可能只会看到你<code>std::initializer_list</code>版本的重载的构造函数。因此，你最好把你的构造函数设计为不管用户是小括号还是使用花括号进行初始化都不会有什么影响。换句话说，现在看到<code>std::vector</code>设计的缺点以后你设计的时候避免它。</p>
 <p>这里的暗语是如果一个类没有<code>std::initializer_list</code>构造函数，然后你添加一个，用户代码中如果使用括号初始化，可能会发现过去被决议为非<code>std::initializer_list</code>构造函数而现在被决议为新的函数。当然，这种事情也可能发生在你添加一个函数到那堆重载函数的时候：过去被决议为旧的重载函数而现在调用了新的函数。<code>std::initializer_list</code>重载不会和其他重载函数比较，它直接盖过了其它重载函数，其它重载函数几乎不会被考虑。所以如果你要加入<code>std::initializer_list</code>构造函数，请三思而后行。</p>
-<p>第二个，作为一个类库使用者，你必须认真的在花括号和小括号之间选择一个来创建对象。大多数开发者都使用其中一种作为默认情况，只有当他们不能使用这种的时候才会考虑另一种。如果使用默认使用花括号初始化，会得到大范围适用面的好处，它禁止变窄转换，免疫C++最令人头疼的解析。他们知道在一些情况下（比如给一个容器大小和一个值创建<code>std::vector</code>）要使用小括号。如果默认使用小括号初始化，它们能和C++98语法保持一致，它避开了自动推导<code>std::initializer_list</code>的问题，也不会不经意间就调用了<code>std::initializer_list</code>构造函数。他们承认有时候只能使用花括号（比如创建一个包含着特定值的容器）。关于花括号和小括号的使用没有一个一致的观点，所以我的建议是选择一个方法并遵守它。</p>
+<p>第二个，作为一个类库使用者，你必须认真的在花括号和小括号之间选择一个来创建对象。大多数开发者都使用其中一种作为默认情况，只有当他们不能使用这种的时候才会考虑另一种。如果使用默认使用花括号初始化，会得到大范围适用面的好处，它禁止变窄转换，免疫C++最令人头疼的解析。他们知道在一些情况下（比如给一个容器大小和一个值创建<code>std::vector</code>）要使用小括号。如果默认使用圆括号初始化，它们能和C++98语法保持一致，它避开了自动推导<code>std::initializer_list</code>的问题，也不会不经意间就调用了<code>std::initializer_list</code>构造函数。他们承认有时候只能使用花括号（比如创建一个包含着特定值的容器）。关于花括号和小括号的使用没有一个一致的观点，所以我的建议是选择一个方法并遵守它。</p>
 <p>如果你是一个模板的作者，花括号和小括号创建对象就更麻烦了。通常不能知晓哪个会被使用。举个例子，假如你想创建一个接受任意数量的参数来创建的对象。使用可变参数模板（<em>variadic template</em>）可以非常简单的解决：</p>
 <pre><code class="language-cpp">template&lt;typename T,            //要创建的对象类型
          typename... Ts&gt;        //要使用的实参的类型
@@ -341,8 +341,8 @@ doSomeWork&lt;std::vector&lt;int&gt;&gt;(10, 20);
 <ul>
 <li>括号初始化是最广泛使用的初始化语法，它防止变窄转换，并且对于C++最令人头疼的解析有天生的免疫性</li>
 <li>在构造函数重载决议中，括号初始化尽最大可能与<code>std::initializer_list</code>参数匹配，即便其他构造函数看起来是更好的选择</li>
-<li>对于数值类型的<code>std::vector</code>来说使用花括号初始化和小括号初始化会造成巨大的不同</li>
-<li>在模板类选择使用小括号初始化或使用花括号初始化创建对象是一个挑战。</li>
+<li>对于数值类型的<code>std::vector</code>来说使用花括号初始化和圆括号初始化会造成巨大的不同</li>
+<li>在模板类选择使用圆括号初始化或使用花括号初始化创建对象是一个挑战。</li>
 </ul>
 
                     </main>
