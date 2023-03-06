@@ -21,7 +21,7 @@
 	1. [Item 5:优先考虑auto而非显式类型声明](src/2.Auto/item5.md)
 	2. [Item 6:auto推导若非己愿，使用显式类型初始化惯用法](src/2.Auto/item6.md)
 3. __移步现代C++__
-	1. [Item 7:区别使用()和{}创建对象](src/3.MovingToModernCpp/item7.md)
+	1. [Item 7:区别使用()和{}创建对象](src/3.MovingToModernCpp/item7.md) 已修订
 	2. [Item 8:优先考虑nullptr而非0和NULL](src/3.MovingToModernCpp/item8.md)
 	3. [Item 9:优先考虑别名声明而非typedefs](src/3.MovingToModernCpp/item9.md)
 	4. [Item 10:优先考虑限域枚举而非未限域枚举](src/3.MovingToModernCpp/item10.md) 已修订
