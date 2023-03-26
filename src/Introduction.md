@@ -80,7 +80,7 @@ someFunc(std::move(wid));       //在这个someFunc调用中，w是通过移动�
 
 右值副本通常由移动构造产生，左值副本通常由拷贝构造产生。如果你仅仅知道一个对象是其他对象的副本，构造这个副本需要花费多大代价是没法说的。比如在上面的代码中，在不知道是用左值还是右值传给`someFunc`情况下，没法说来创建形参`w`花费代价有多大。（你必须还要知道移动和拷贝`Widget`的代价。）
 
-在函数调用中，调用地传入的表达式称为函数的**实参**（*argument*）。实参被用来初始化函数的**形参**（*parameter*）。在上面第一次调用`someFunc`中，实参为`wid`。在第二次调用中，实参是`std::move(wid)`。两个调用中，形参都是`w`。实参和形参的区别非常重要，因为形参是左值，而用来初始化形参的实参可能是左值或者右值。这一点尤其与**完美转发**（*perfect forwarding*）过程有关，被传给函数的实参以原实参的右值性（*rvalueness*）或左值性（*lvalueness*），再被传给第二个函数。（完美转发讨论细节在[Item30](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/5.RRefMovSemPerfForw/item30.md)。）
+在函数调用中，调用地传入的表达式称为函数的**实参**（*argument*）。实参被用来初始化函数的**形参**（*parameter*）。在上面第一次调用`someFunc`中，实参为`wid`。在第二次调用中，实参是`std::move(wid)`。两个调用中，形参都是`w`。实参和形参的区别非常重要，因为形参是左值，而用来初始化形参的实参可能是左值或者右值。这一点尤其与**完美转发**（*perfect forwarding*）过程有关，被传给函数的实参以原实参的右值性（*rvalueness*）或左值性（*lvalueness*），再被传给第二个函数。（完美转发讨论细节在[Item30](./5.RRefMovSemPerfForw/item30.md)。）
 
 设计优良的函数是**异常安全**（*exception safe*）的，意味着他们至少提供基本的异常安全保证（即基本保证*basic guarantee*）。这样的函数保证调用者在异常抛出时，程序不变量保持完整（即没有数据结构是毁坏的），且没有资源泄漏。有强异常安全保证的函数确保调用者在异常产生时，程序保持在调用前的状态。
 
@@ -118,13 +118,13 @@ enum class Color
 
 定义也有资格称为声明，所以我倾向于只有声明，除非这个东西有个定义非常重要。
 
-我定义一个函数的**签名**（*signature*）为它声明的一部分，这个声明指定了形参类型和返回类型。函数名和形参名不是签名的一部分。在上面的例子中，`func`的签名是`bool(const Widget&)`。函数声明中除了形参类型和返回类型之外的元素（比如`noexcept`或者`constexpr`，如果存在的话）都被排除在外。（`noexcept`和`constexpr`在[Item14](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item14.md)和[15](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/3.MovingToModernCpp/item15.md)叙述。）“签名”的官方定义和我的有点不一样，但是对本书来说，我的定义更有用。（官方定义有时排除返回类型。）
+我定义一个函数的**签名**（*signature*）为它声明的一部分，这个声明指定了形参类型和返回类型。函数名和形参名不是签名的一部分。在上面的例子中，`func`的签名是`bool(const Widget&)`。函数声明中除了形参类型和返回类型之外的元素（比如`noexcept`或者`constexpr`，如果存在的话）都被排除在外。（`noexcept`和`constexpr`在[Item14](./3.MovingToModernCpp/item14.md)和[15](./3.MovingToModernCpp/item15.md)叙述。）“签名”的官方定义和我的有点不一样，但是对本书来说，我的定义更有用。（官方定义有时排除返回类型。）
 
 新的C++标准保持了旧标准写的代码的有效性，但是偶尔标准化委员会**废弃**（*deprecate*）一些特性。这些特性在标准化的“死囚区”中，可能在未来的标准中被移除。编译器可能警告也可能不警告这些废弃特性的使用，但是你应当尽量避免使用它们。它们不仅可能导致将来对移植的头痛，也通常不如来替代它们的新特性。例如，`std::auto_ptr`在C++11中被废弃，因为`std::unique_ptr`可以做同样的工作，而且只会做的更好。
 
 有时标准说一个操作的结果有**未定义的行为**（*undefined behavior*）。这意味着运行时表现是不可预测的，不用说你也想避开这种不确定性。有未定义行为的行动的例子是，在`std::vector`范围外使用方括号（“`[]`”），解引用未初始化的迭代器，或者引入数据竞争（即有两个或以上线程，至少一个是writer，同时访问相同的内存位置）。
 
-我将那些比如从`new`返回的内置指针（*build-in pointers*）称为**原始指针**（*raw pointers*）。原始指针的“反义词”是**智能指针**（*smart pointers*）。智能指针通常重载指针解引用运算符（`operator->`和`operator*`），但在[Item20](https://github.com/kelthuzadx/EffectiveModernCppChinese/blob/master/4.SmartPointers/item20.md)中解释看`std::weak_ptr`是个例外。
+我将那些比如从`new`返回的内置指针（*build-in pointers*）称为**原始指针**（*raw pointers*）。原始指针的“反义词”是**智能指针**（*smart pointers*）。智能指针通常重载指针解引用运算符（`operator->`和`operator*`），但在[Item20](./4.SmartPointers/item20.md)中解释看`std::weak_ptr`是个例外。
 
 在源代码注释中，我有时将“constructor”（构造函数）缩写为`ctor`，将“destructor”（析构函数）缩写为`dtor`。（译者注：但译文中基本都完整翻译了而没使用缩写。）
 
