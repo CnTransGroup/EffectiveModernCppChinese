@@ -1258,7 +1258,7 @@ doSomeWork&lt;std::vector&lt;int&gt;&gt;(10, 20);
 <p>这正是标准库函数<code>std::make_unique</code>和<code>std::make_shared</code>（参见<a href="3.MovingToModernCpp/../4.SmartPointers/item21.html">Item21</a>）面对的问题。它们的解决方案是使用圆括号，并被记录在文档中作为接口的一部分。（注：更灵活的设计——允许调用者决定从模板来的函数应该使用圆括号还是花括号——是有可能的。详情参见<a href="http://akrzemi1.wordpress.com/">Andrzej’s C++ blog</a>在2013年6月5日的文章，“<a href="http://akrzemi1.wordpress.com/2013/06/05/intuitive-interface-part-i/">Intuitive interface — Part I.</a>”）</p>
 <p><strong>请记住：</strong></p>
 <ul>
-<li>括号初始化是最广泛使用的初始化语法，它防止变窄转换，并且对于C++最令人头疼的解析有天生的免疫性</li>
+<li>花括号初始化是最广泛使用的初始化语法，它防止变窄转换，并且对于C++最令人头疼的解析有天生的免疫性</li>
 <li>在构造函数重载决议中，编译器会尽最大努力将括号初始化与<code>std::initializer_list</code>参数匹配，即便其他构造函数看起来是更好的选择</li>
 <li>对于数值类型的<code>std::vector</code>来说使用花括号初始化和圆括号初始化会造成巨大的不同</li>
 <li>在模板类选择使用圆括号初始化或使用花括号初始化创建对象是一个挑战。</li>
