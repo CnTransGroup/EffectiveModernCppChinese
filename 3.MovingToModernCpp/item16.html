@@ -141,7 +141,7 @@
                     <main>
                         <h2 id="条款十六让const成员函数线程安全"><a class="header" href="#条款十六让const成员函数线程安全">条款十六：让<code>const</code>成员函数线程安全</a></h2>
 <p><strong>Item 16: Make <code>const</code> member functions thread safe</strong></p>
-<p>如果我们在数学领域中工作，我们就会发现用一个类表示多项式是很方便的。在这个类中，使用一个函数来计算多项式的根是很有用的，也就是多项式的值为零的时候。这样的一个函数它不会更改多项式。所以，它自然被声明为<code>const</code>函数。</p>
+<p>如果我们在数学领域中工作，我们就会发现用一个类表示多项式是很方便的。在这个类中，使用一个函数来计算多项式的根是很有用的，也就是多项式的值为零的时候（译者注：通常也被叫做零点，即使得多项式值为零的那些取值）。这样的一个函数它不会更改多项式。所以，它自然被声明为<code>const</code>函数。</p>
 <pre><code class="language-c++">class Polynomial {
 public:
     using RootsType =           //数据结构保存多项式为零的值
@@ -206,7 +206,7 @@ private:
 };
 </code></pre>
 <p><code>std::mutex m</code>被声明为<code>mutable</code>，因为锁定和解锁它的都是non-<code>const</code>成员函数。在<code>roots</code>（<code>const</code>成员函数）中，<code>m</code>却被视为<code>const</code>对象。</p>
-<p>值得注意的是，因为<code>std::mutex</code>是一种只可移动类型（<em>move-only type</em>，一种可以移动但不能复制的类型），所以将<code>m</code>添加进<code>Polynomial</code>中的副作用是使<code>Polynomial</code>失去了被复制的能力。不过，它仍然可以移动。</p>
+<p><del>值得注意的是，因为<code>std::mutex</code>是一种只可移动类型（<em>move-only type</em>，一种可以移动但不能复制的类型），所以将<code>m</code>添加进<code>Polynomial</code>中的副作用是使<code>Polynomial</code>失去了被复制的能力。不过，它仍然可以移动。</del> （译者注：实际上 <code>std::mutex</code> 既不可移动，也不可复制。因而包含他们的类也同时是不可移动和不可复制的。）</p>
 <p>在某些情况下，互斥量的副作用显会得过大。例如，如果你所做的只是计算成员函数被调用了多少次，使用<code>std::atomic</code> 修饰的计数器（保证其他线程视它的操作为不可分割的整体，参见<a href="../7.TheConcurrencyAPI/item40.html">item40</a>）通常会是一个开销更小的方法。（然而它是否轻量取决于你使用的硬件和标准库中互斥量的实现。）以下是如何使用<code>std::atomic</code>来统计调用次数。</p>
 <pre><code class="language-c++">class Point {                                   //2D点
 public:
@@ -223,7 +223,7 @@ private:
     double x, y;
 };
 </code></pre>
-<p>与<code>std::mutex</code>一样，<code>std::atomic</code>是只可移动类型，所以在<code>Point</code>中存在<code>callCount</code>就意味着<code>Point</code>也是只可移动的。</p>
+<p><del>与<code>std::mutex</code>一样，<code>std::atomic</code>是只可移动类型，所以在<code>Point</code>中存在<code>callCount</code>就意味着<code>Point</code>也是只可移动的。</del>（译者注：与 <code>std::mutex</code> 类似的，实际上 <code>std::atomic</code> 既不可移动，也不可复制。因而包含他们的类也同时是不可移动和不可复制的。）</p>
 <p>因为对<code>std::atomic</code>变量的操作通常比互斥量的获取和释放的消耗更小，所以你可能会过度倾向与依赖<code>std::atomic</code>。例如，在一个类中，缓存一个开销昂贵的<code>int</code>，你就会尝试使用一对<code>std::atomic</code>变量而不是互斥量。</p>
 <pre><code class="language-c++">class Widget {
 public:
@@ -298,7 +298,7 @@ private:
 };
 
 </code></pre>
-<p>现在，这个条款是基于，多个线程可以同时在一个对象上执行一个<code>const</code>成员函数这个假设的。如果你不是在这种情况下编写一个<code>const</code>成员函数——你可以<strong>保证</strong>在一个对象上永远不会有多个线程执行该成员函数——该函数的线程安全是无关紧要的。比如，为独占单线程使用而设计的类的成员函数是否线程安全并不重要。在这种情况下，你可以避免因使用互斥量和<code>std::atomics</code>所消耗的资源，以及包含它们的类只能使用移动语义带来的副作用。然而，这种线程无关的情况越来越少见，而且很可能会越来越少。可以肯定的是，<code>const</code>成员函数应支持并发执行，这就是为什么你应该确保<code>const</code>成员函数是线程安全的。</p>
+<p>现在，这个条款是基于，多个线程可以同时在一个对象上执行一个<code>const</code>成员函数这个假设的。如果你不是在这种情况下编写一个<code>const</code>成员函数——你可以<strong>保证</strong>在一个对象上永远不会有多个线程执行该成员函数——该函数的线程安全是无关紧要的。比如，为独占单线程使用而设计的类的成员函数是否线程安全并不重要。在这种情况下，你可以避免因使用互斥量和<code>std::atomics</code>所消耗的资源，以及包含它们的类~~只能使用移动语义~~（译者注：既不能移动也不能复制）带来的副作用。然而，这种线程无关的情况越来越少见，而且很可能会越来越少。可以肯定的是，<code>const</code>成员函数应支持并发执行，这就是为什么你应该确保<code>const</code>成员函数是线程安全的。</p>
 <p><strong>请记住：</strong></p>
 <ul>
 <li>确保<code>const</code>成员函数线程安全，除非你<strong>确定</strong>它们永远不会在并发上下文（<em>concurrent context</em>）中使用。</li>
