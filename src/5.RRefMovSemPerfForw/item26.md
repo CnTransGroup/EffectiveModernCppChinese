@@ -36,7 +36,7 @@ logAndAdd("Patty Dog");                 //传递字符串字面值
 template<typename T>
 void logAndAdd(T&& name)
 {
-    auto now = std::chrono::system_lock::now();
+    auto now = std::chrono::system_clock::now();
     log(now, "logAndAdd");
     names.emplace(std::forward<T>(name));
 }
@@ -57,7 +57,7 @@ std::string nameFromIdx(int idx);   //返回idx对应的名字
 
 void logAndAdd(int idx)             //新的重载
 {
-    auto now = std::chrono::system_lock::now();
+    auto now = std::chrono::system_clock::now();
     log(now, "logAndAdd");
     names.emplace(nameFromIdx(idx));
 }
