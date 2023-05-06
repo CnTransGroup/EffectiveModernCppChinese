@@ -41,7 +41,7 @@
 	- [Item 34:优先考虑lambda表达式而非std::bind](./6.LambdaExpressions/item34.md)
 - [第七章 并发API]()
 	- [Item 35:优先考虑基于任务的编程而非基于线程的编程](./7.TheConcurrencyAPI/Item35.md)
-	- [Item 36:如果有异步的必要请指定std::launch::threads](./7.TheConcurrencyAPI/item36.md)
+	- [Item 36:如果有异步的必要请指定std::launch::async](./7.TheConcurrencyAPI/item36.md)
 	- [Item 37:从各个方面使得std::threads unjoinable](./7.TheConcurrencyAPI/item37.md)
 	- [Item 38:关注不同线程句柄析构行为](./7.TheConcurrencyAPI/item38.md)
 	- [Item 39:考虑对于单次事件通信使用void](./7.TheConcurrencyAPI/item39.md)
