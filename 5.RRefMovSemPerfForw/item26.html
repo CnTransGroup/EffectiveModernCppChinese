@@ -164,7 +164,7 @@ logAndAdd(&quot;Patty Dog&quot;);                 //传递字符串字面值
 <pre><code class="language-cpp">template&lt;typename T&gt;
 void logAndAdd(T&amp;&amp; name)
 {
-    auto now = std::chrono::system_lock::now();
+    auto now = std::chrono::system_clock::now();
     log(now, &quot;logAndAdd&quot;);
     names.emplace(std::forward&lt;T&gt;(name));
 }
@@ -181,7 +181,7 @@ logAndAdd(&quot;Patty Dog&quot;);                 //在multiset直接创建std::
 
 void logAndAdd(int idx)             //新的重载
 {
-    auto now = std::chrono::system_lock::now();
+    auto now = std::chrono::system_clock::now();
     log(now, &quot;logAndAdd&quot;);
     names.emplace(nameFromIdx(idx));
 }
