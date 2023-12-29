@@ -144,7 +144,7 @@ T&& forward(remove_reference_t<T>& param)
 Widget widgetFactory();     //返回右值的函数
 Widget w;                   //一个变量（左值）
 func(w);                    //用左值调用func；T被推导为Widget&
-func(widgetFactory());      //用又值调用func；T被推导为Widget
+func(widgetFactory());      //用右值调用func；T被推导为Widget
 ```
 
 在auto的写法中，规则是类似的。声明
