@@ -4146,7 +4146,7 @@ T&amp;&amp; forward(remove_reference_t&lt;T&gt;&amp; param)
 <pre><code class="language-cpp">Widget widgetFactory();     //返回右值的函数
 Widget w;                   //一个变量（左值）
 func(w);                    //用左值调用func；T被推导为Widget&amp;
-func(widgetFactory());      //用又值调用func；T被推导为Widget
+func(widgetFactory());      //用右值调用func；T被推导为Widget
 </code></pre>
 <p>在auto的写法中，规则是类似的。声明</p>
 <pre><code class="language-cpp">auto&amp;&amp; w1 = w;
