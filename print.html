@@ -5389,7 +5389,7 @@ auto fut = pt.get_future();     //从pt获取future
 <p><code>std::packaged_task</code>不可拷贝，所以当<code>pt</code>被传递给<code>std::thread</code>构造函数时，必须先转为右值（通过<code>std::move</code>，参见<a href="7.TheConcurrencyAPI/../5.RRefMovSemPerfForw/item23.html">Item23</a>）：</p>
 <pre><code class="language-cpp">std::thread t(std::move(pt));   //在t上运行pt
 </code></pre>
-<p>这个例子是你对于<em>future</em>的析构函数的正常行为有一些了解，但是将这些语句放在一个作用域的语句块里更容易看：</p>
+<p>这个例子使你对于<em>future</em>的析构函数的正常行为有一些了解，但是将这些语句放在一个作用域的语句块里会使其更易于阅读：</p>
 <pre><code class="language-cpp">{                                   //开始代码块
     std::packaged_task&lt;int()&gt;
         pt(calcValue); 
