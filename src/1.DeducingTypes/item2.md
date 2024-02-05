@@ -30,9 +30,9 @@ const auto cx = x;
 ````
 类型说明符是`const auto`。另一个：
 ````cpp
-const auto & rx=cx;
+const auto& rx = x;
 ````
-类型说明符是`const auto&`。在这里例子中要推导`x`，`rx`和`cx`的类型，编译器的行为看起来就像是认为这里每个声明都有一个模板，然后使用合适的初始化表达式进行调用：
+类型说明符是`const auto&`。在这里例子中要推导`x`，`cx`和`rx`的类型，编译器的行为看起来就像是认为这里每个声明都有一个模板，然后使用合适的初始化表达式进行调用：
 ````cpp
 template<typename T>            //概念化的模板用来推导x的类型
 void func_for_x(T param);
