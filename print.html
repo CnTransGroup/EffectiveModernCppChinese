@@ -470,9 +470,9 @@ void f(ParmaType param);
 <pre><code class="language-cpp">const auto cx = x;
 </code></pre>
 <p>类型说明符是<code>const auto</code>。另一个：</p>
-<pre><code class="language-cpp">const auto &amp; rx=cx;
+<pre><code class="language-cpp">const auto&amp; rx = x;
 </code></pre>
-<p>类型说明符是<code>const auto&amp;</code>。在这里例子中要推导<code>x</code>，<code>rx</code>和<code>cx</code>的类型，编译器的行为看起来就像是认为这里每个声明都有一个模板，然后使用合适的初始化表达式进行调用：</p>
+<p>类型说明符是<code>const auto&amp;</code>。在这里例子中要推导<code>x</code>，<code>cx</code>和<code>rx</code>的类型，编译器的行为看起来就像是认为这里每个声明都有一个模板，然后使用合适的初始化表达式进行调用：</p>
 <pre><code class="language-cpp">template&lt;typename T&gt;            //概念化的模板用来推导x的类型
 void func_for_x(T param);
 
@@ -2587,7 +2587,7 @@ public:
 </code></pre>
 </li>
 </ul>
-<p>在C++14中，函数的返回类型推导存在（参阅<a href="4.SmartPointers/../1.DeducingTypes/item3.html">Item3</a>），意味着<code>makeInvestment</code>可以以更简单，更封装的方式实现：</p>
+<p>在C++14中，函数返回类型推导的存在（参阅<a href="4.SmartPointers/../1.DeducingTypes/item3.html">Item3</a>），意味着<code>makeInvestment</code>可以以更简单，更封装的方式实现：</p>
 <pre><code class="language-cpp">template&lt;typename... Ts&gt;
 auto makeInvestment(Ts&amp;&amp;... params)                 //C++14
 {
@@ -2614,7 +2614,7 @@ auto makeInvestment(Ts&amp;&amp;... params)                 //C++14
     return pInv;                                    //同之前一样
 }
 </code></pre>
-<p>我之前说过，当使用默认删除器时（如<code>delete</code>），你可以合理假设<code>std::unique_ptr</code>对象和原始指针大小相同。当自定义删除器时，情况可能不再如此。函数指针形式的删除器，通常会使<code>std::unique_ptr</code>的从一个字（<em>word</em>）大小增加到两个。对于函数对象形式的删除器来说，变化的大小取决于函数对象中存储的状态多少，无状态函数（stateless function）对象（比如不捕获变量的<em>lambda</em>表达式）对大小没有影响，这意味当自定义删除器可以实现为函数或者<em>lambda</em>时，尽量使用<em>lambda</em>：</p>
+<p>我之前说过，当使用默认删除器时（如<code>delete</code>），你可以合理假设<code>std::unique_ptr</code>对象和原始指针大小相同。当自定义删除器时，情况可能不再如此。函数指针形式的删除器，通常会使<code>std::unique_ptr</code>的大小从一个字（<em>word</em>）增加到两个。对于函数对象形式的删除器来说，变化的大小取决于函数对象中存储的状态多少，无状态函数（stateless function）对象（比如不捕获变量的<em>lambda</em>表达式）对大小没有影响，这意味当自定义删除器可以实现为函数或者<em>lambda</em>时，尽量使用<em>lambda</em>：</p>
 <pre><code class="language-cpp">auto delInvmt1 = [](Investment* pInvestment)        //无状态lambda的
                  {                                  //自定义删除器
                      makeLogEntry(pInvestment);
