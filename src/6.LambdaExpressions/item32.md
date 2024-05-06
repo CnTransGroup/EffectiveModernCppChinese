@@ -69,7 +69,7 @@ private:
     DataType pw;
 };
 
-auto func = IsValAndArch(std::make_unique<Widget>());
+auto func = IsValAndArch(std::make_unique<Widget>())();
 ```
 
 这个代码量比*lambda*表达式要多，但这并不难改变这样一个事实，即如果你希望使用一个C++11的类来支持其数据成员的移动初始化，那么你唯一要做的就是在键盘上多花点时间。
