@@ -193,7 +193,7 @@ private:
     DataType pw;
 };
 
-auto func = IsValAndArch(std::make_unique&lt;Widget&gt;());
+auto func = IsValAndArch(std::make_unique&lt;Widget&gt;())();
 </code></pre>
 <p>这个代码量比<em>lambda</em>表达式要多，但这并不难改变这样一个事实，即如果你希望使用一个C++11的类来支持其数据成员的移动初始化，那么你唯一要做的就是在键盘上多花点时间。</p>
 <p>如果你坚持要使用<em>lambda</em>（并且考虑到它们的便利性，你可能会这样做），移动捕获可以在C++11中这样模拟：</p>
