@@ -1,6 +1,6 @@
-## 条款九：优先考虑别名声明而非`typedef`s
+## 条款九：优先考虑别名声明而非`typedef`
 
-**Item 9: Prefer alias declarations to `typedef`s**
+**Item 9: Prefer alias declarations to `typedef`**
 
 我相信每个人都同意使用STL容器是个好主意，并且我希望[Item18](../4.SmartPointers/item18.md)能说服你让你觉得使用`std:unique_ptr`也是个好主意，但我猜没有人喜欢写上几次 `std::unique_ptr<std::unordered_map<std::string, std::string>>`这样的类型，它可能会让你患上腕管综合征的风险大大增加。
 
