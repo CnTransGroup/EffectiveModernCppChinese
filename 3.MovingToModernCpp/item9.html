@@ -139,8 +139,8 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h2 id="条款九优先考虑别名声明而非typedefs"><a class="header" href="#条款九优先考虑别名声明而非typedefs">条款九：优先考虑别名声明而非<code>typedef</code>s</a></h2>
-<p><strong>Item 9: Prefer alias declarations to <code>typedef</code>s</strong></p>
+                        <h2 id="条款九优先考虑别名声明而非typedef"><a class="header" href="#条款九优先考虑别名声明而非typedef">条款九：优先考虑别名声明而非<code>typedef</code></a></h2>
+<p><strong>Item 9: Prefer alias declarations to <code>typedef</code></strong></p>
 <p>我相信每个人都同意使用STL容器是个好主意，并且我希望<a href="../4.SmartPointers/item18.html">Item18</a>能说服你让你觉得使用<code>std:unique_ptr</code>也是个好主意，但我猜没有人喜欢写上几次 <code>std::unique_ptr&lt;std::unordered_map&lt;std::string, std::string&gt;&gt;</code>这样的类型，它可能会让你患上腕管综合征的风险大大增加。</p>
 <p>避免上述医疗悲剧也很简单，引入<code>typedef</code>即可：</p>
 <pre><code class="language-cpp">typedef

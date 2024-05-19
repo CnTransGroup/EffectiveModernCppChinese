@@ -210,7 +210,7 @@ enum class Color;   //没问题
             };
 </code></pre>
 <p>这里值的范围从<code>0</code>到<code>0xFFFFFFFF</code>。除了在不寻常的机器上（比如一个<code>char</code>至少有32bits的那种），编译器都会选择一个比<code>char</code>大的整型类型来表示<code>Status</code>。</p>
-<p>为了高效使用内存，编译器通常在确保能包含所有枚举值的前提下为<code>enum</code>选择一个最小的底层类型。在一些情况下，编译器将会优化速度，舍弃大小，这种情况下它可能不会选择最小的底层类型，而是选择对优化大小有帮助的类型。为此，C++98只支持<code>enum</code>定义（所有枚举名全部列出来）；<code>enum</code>声明是不被允许的。这使得编译器能在使用之前为每一个<code>enum</code>选择一个底层类型。</p>
+<p>为了高效使用内存，编译器通常在确保能包含所有枚举值的前提下为<code>enum</code>选择一个最小的底层类型。在一些情况下，编译器将会优化速度，舍弃大小，这种情况下它可能不会选择最小的底层类型，但它们当然希望能够针对大小进行优化。为此，C++98只支持<code>enum</code>定义（所有枚举名全部列出来）；<code>enum</code>声明是不被允许的。这使得编译器能在使用之前为每一个<code>enum</code>选择一个底层类型。</p>
 <p>但是不能前置声明<code>enum</code>也是有缺点的。最大的缺点莫过于它可能增加编译依赖。再次考虑<code>Status</code> <code>enum</code>：</p>
 <pre><code class="language-cpp">enum Status { good = 0,
               failed = 1,
