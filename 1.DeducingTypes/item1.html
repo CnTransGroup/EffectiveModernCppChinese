@@ -310,7 +310,7 @@ void f(T&amp; param);                       //传引用形参的模板
 <p>我们这样进行调用，</p>
 <pre><code class="language-cpp">f(name);                                //传数组给f
 </code></pre>
-<p><code>T</code>被推导为了真正的数组！这个类型包括了数组的大小，在这个例子中<code>T</code>被推导为<code>const char[13]</code>，<code>f</code>的形参（对这个数组的引用）的类型则为<code>const char (&amp;)[13]</code>。是的，这种语法看起来简直有毒，但是知道它将会让你在关心这些问题的人的提问中获得大神的称号。</p>
+<p><code>T</code>被推导为了真正的数组！这个类型包括了数组的大小，在这个例子中<code>T</code>被推导为<code>const char[13]</code>，<code>f</code>的形参（该数组的引用）的类型则为<code>const char (&amp;)[13]</code>。是的，这种语法看起来又臭又长，但是知道它将会让你在关心这些问题的人的提问中获得大神的称号。</p>
 <p>有趣的是，可声明指向数组的引用的能力，使得我们可以创建一个模板函数来推导出数组的大小：</p>
 <pre><code class="language-cpp">//在编译期间返回一个数组大小的常量值（//数组形参没有名字，
 //因为我们只关心数组的大小）
