@@ -155,7 +155,7 @@ auto cloneOfP(p);       //用左值初始化
 - **是否是个引用**。对于决定是否通用引用构造函数启用的目的来说，`Person`，`Person&`，`Person&&`都是跟`Person`一样的。
 - **是不是`const`或者`volatile`**。如上所述，`const Person`，`volatile Person` ，`const volatile Person`也是跟`Person`一样的。
 
-这意味着我们需要一种方法消除对于`T`的引用，`const`，`volatile`修饰。再次，标准库提供了这样功能的*type trait*，就是`std::decay`。`std::decay<T>::value`与`T`是相同的，只不过会移除引用和cv限定符（*cv-qualifiers*，即`const`或`volatile`标识符）的修饰。（这里我没有说出另外的真相，`std::decay`如同其名一样，可以将数组或者函数退化成指针，参考[Item1](../1.DeducingTypes/item1.md)，但是在这里讨论的问题中，它刚好合适）。我们想要控制构造函数是否启用的条件可以写成：
+这意味着我们需要一种方法消除对于`T`的引用，`const`，`volatile`修饰。再次，标准库提供了这样功能的*type trait*，就是`std::decay`。`std::decay<T>::type`与`T`是相同的，只不过会移除引用和cv限定符（*cv-qualifiers*，即`const`或`volatile`标识符）的修饰。（这里我没有说出另外的真相，`std::decay`如同其名一样，可以将数组或者函数退化成指针，参考[Item1](../1.DeducingTypes/item1.md)，但是在这里讨论的问题中，它刚好合适）。我们想要控制构造函数是否启用的条件可以写成：
 
 ```cpp
 !std::is_same<Person, typename std::decay<T>::type>::value
