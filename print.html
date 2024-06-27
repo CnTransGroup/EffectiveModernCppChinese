@@ -3915,7 +3915,7 @@ auto cloneOfP(p);       //用左值初始化
 <li><strong>是否是个引用</strong>。对于决定是否通用引用构造函数启用的目的来说，<code>Person</code>，<code>Person&amp;</code>，<code>Person&amp;&amp;</code>都是跟<code>Person</code>一样的。</li>
 <li><strong>是不是<code>const</code>或者<code>volatile</code></strong>。如上所述，<code>const Person</code>，<code>volatile Person</code> ，<code>const volatile Person</code>也是跟<code>Person</code>一样的。</li>
 </ul>
-<p>这意味着我们需要一种方法消除对于<code>T</code>的引用，<code>const</code>，<code>volatile</code>修饰。再次，标准库提供了这样功能的<em>type trait</em>，就是<code>std::decay</code>。<code>std::decay&lt;T&gt;::value</code>与<code>T</code>是相同的，只不过会移除引用和cv限定符（<em>cv-qualifiers</em>，即<code>const</code>或<code>volatile</code>标识符）的修饰。（这里我没有说出另外的真相，<code>std::decay</code>如同其名一样，可以将数组或者函数退化成指针，参考<a href="5.RRefMovSemPerfForw/../1.DeducingTypes/item1.html">Item1</a>，但是在这里讨论的问题中，它刚好合适）。我们想要控制构造函数是否启用的条件可以写成：</p>
+<p>这意味着我们需要一种方法消除对于<code>T</code>的引用，<code>const</code>，<code>volatile</code>修饰。再次，标准库提供了这样功能的<em>type trait</em>，就是<code>std::decay</code>。<code>std::decay&lt;T&gt;::type</code>与<code>T</code>是相同的，只不过会移除引用和cv限定符（<em>cv-qualifiers</em>，即<code>const</code>或<code>volatile</code>标识符）的修饰。（这里我没有说出另外的真相，<code>std::decay</code>如同其名一样，可以将数组或者函数退化成指针，参考<a href="5.RRefMovSemPerfForw/../1.DeducingTypes/item1.html">Item1</a>，但是在这里讨论的问题中，它刚好合适）。我们想要控制构造函数是否启用的条件可以写成：</p>
 <pre><code class="language-cpp">!std::is_same&lt;Person, typename std::decay&lt;T&gt;::type&gt;::value
 </code></pre>
 <p>即<code>Person</code>和<code>T</code>的类型不同，忽略了所有引用和cv限定符。（如<a href="5.RRefMovSemPerfForw/../3.MovingToModernCpp/item9.html">Item9</a>所述，<code>std::decay</code>前的“<code>typename</code>”是必需的，因为<code>std::decay&lt;T&gt;::type</code>的类型取决于模板形参<code>T</code>。）</p>
