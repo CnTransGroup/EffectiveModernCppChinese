@@ -118,7 +118,7 @@ auto s = authAndAccess(makeStringDeque(), 5);
 template<typename Containter, typename Index>   //现在c是通用引用
 decltype(auto) authAndAccess(Container&& c, Index i);
 ````
-在这个模板中，我们不知道我们操纵的容器的类型是什么，那意味着我们同样不知道它使用的索引对象（index objects）的类型，对一个未知类型的对象使用传值通常会造成不必要的拷贝，对程序的性能有极大的影响，还会造成对象切片行为（参见[item41](../8.Tweaks/item41.md)），以及给同事落下笑柄。但是就容器索引来说，我们遵照标准模板库对于索引的处理是有理由的（比如`std::string`，`std::vector`和`std::deque`的`operator[]`），所以我们坚持传值调用。
+在这个模板中，我们不知道我们操纵的容器的类型是什么，那意味着我们同样不知道它使用的索引对象（index objects）的类型。对一个未知类型的对象（这里指索引对象，也就是authAndAccess的函数的第二个参数）使用传值通常会造成不必要的拷贝，对程序的性能有极大的影响，还会造成对象切片行为（参见[item41](../8.Tweaks/item41.md)），以及给同事落下笑柄。但是就容器索引来说，我们遵照标准模板库对于索引的处理是有理由的（比如`std::string`，`std::vector`和`std::deque`的`operator[]`），所以我们坚持传值调用。
 
 然而，我们还需要更新一下模板的实现，让它能听从[Item25](../5.RRefMovSemPerfForw/item25.md)的告诫应用`std::forward`实现通用引用：
 ````cpp
