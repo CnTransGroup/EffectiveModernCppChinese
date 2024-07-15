@@ -4464,7 +4464,7 @@ FilterContainer filters;                    //过滤函数
 );
 </code></pre>
 <p>但通过显式的捕获，能更容易看到<em>lambda</em>的可行性依赖于变量<code>divisor</code>的生命周期。另外，写下“divisor”这个名字能够提醒我们要注意确保<code>divisor</code>的生命周期至少跟<em>lambda</em>闭包一样长。比起“<code>[&amp;]</code>”传达的意思，显式捕获能让人更容易想起“确保没有悬空变量”。</p>
-<p>如果你知道一个闭包将会被马上使用（例如被传入到一个STL算法中）并且不会被拷贝，那么在它的<em>lambda</em>被创建的环境中，将不会有持有的引用比局部变量和形参活得长的风险。在这种情况下，你可能会争论说，没有悬空引用的危险，就不需要避免使用默认的引用捕获模式。例如，我们的过滤<em>lambda</em>只会用做C++11中<code>std::all_of</code>的一个实参，返回满足条件的所有元素：</p>
+<p>如果你知道一个闭包将会被马上使用（例如被传入到一个STL算法中）并且不会被拷贝，那么在它的<em>lambda</em>被创建的环境中，将不会有闭包的引用比父函数的局部变量和形参活得长的风险。在这种情况下，你可能会争论说，没有悬空引用的危险，就不需要避免使用默认的引用捕获模式。例如，我们的过滤<em>lambda</em>只会用做C++11中<code>std::all_of</code>的一个实参，返回满足条件的所有元素：</p>
 <pre><code class="language-c++">template&lt;typename C&gt;
 void workWithContainer(const C&amp; container)
 {
