@@ -142,7 +142,18 @@ constexpr auto reflectedMid =         //reflectedMid的值
 本条款的建议是尽可能的使用`constexpr`，现在我希望大家已经明白缘由：`constexpr`对象和`constexpr`函数可以使用的范围比non-`constexpr`对象和函数大得多。使用`constexpr`关键字可以最大化你的对象和函数可以使用的场景。
 
 还有个重要的需要注意的是`constexpr`是对象和函数接口的一部分。加上`constexpr`相当于宣称“我能被用在C++要求常量表达式的地方”。如果你声明一个对象或者函数是`constexpr`，客户端程序员就可能会在那些场景中使用它。如果你后面认为使用`constexpr`是一个错误并想移除它，你可能造成大量客户端代码不能编译。（为了debug或者性能优化而添加I/O到一个函数中这样简单的动作可能就导致这样的问题，因为I/O语句一般不被允许出现在`constexpr`函数里）“尽可能”的使用`constexpr`表示你需要长期坚持对某个对象或者函数施加这种限制。
+```cpp
+constexpr int square(int x) {
+    return x * x;
+}
+constexpr int result = square(5); // 编译时计算，合法
 
+//去掉函数square的constexpr
+int square(int x) {
+    return x * x;
+}
+// constexpr int result = square(5); // 编译错误：square 不是常量表达式
+```
 **请记住：**
 
 + `constexpr`对象是`const`，它被在编译期可知的值初始化
