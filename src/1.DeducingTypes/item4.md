@@ -2,7 +2,7 @@
 
 **Item 4: Know how to view deduced types**
 
-选择使用工具查看类型推导，取决于软件开发过程中你想在哪个阶段显示类型推导信息。我们探究三种方案：在你编辑代码的时候获得类型推导的结果，在编译期间获得结果，在运行时获得结果。
+选择什麼工具查看类型推导，取决于软件开发过程中你想在哪个阶段显示类型推导信息。我们探究三种方案：在你编辑代码的时候获得类型推导的结果，在编译期间获得结果，在运行时获得结果。
 
 ### IDE编辑器
 
@@ -50,7 +50,7 @@ error: 'yType' uses undefined class 'TD<const int *>'
 
 ### 运行时输出
 
-使用`printf`的方法使类型信息只有在运行时才会显示出来（尽管我不是非常建议你使用`printf`），但是它提供了一种格式化输出的方法。现在唯一的问题是只需对于你关心的变量使用一种优雅的文本表示。“这有什么难的，“你这样想，”这正是`typeid`和`std::type_info::name`的价值所在”。为了实现我们想要查看`x`和`y`的类型的需求，你可能会这样写：
+使用`printf`的方法（并不是说我推荐你使用`printf`）类型信息要在运行时才会显示出来，但是它提供了一种格式化输出的方法。现在唯一的问题是对于你关心的变量使用一种优雅的文本表示。“这有什么难的，“你这样想，”这正是`typeid`和`std::type_info::name`的价值所在”。为了实现我们想要查看`x`和`y`的类型的需求，你可能会这样写：
 ````cpp
 std::cout << typeid(x).name() << '\n';  //显示x和y的类型
 std::cout << typeid(y).name() << '\n';
@@ -73,7 +73,7 @@ if (!vw.empty()){
     …
 }
 ````
-在这段代码中包含了一个用户定义的类型`Widget`，一个STL容器`std::vector`和一个`auto`变量`vw`，这个更现实的情况是你可能在会遇到的并且想获得他们类型推导的结果，比如模板类型形参`T`，比如函数`f`形参`param`。
+在这段代码中包含了一个用户定义的类型`Widget`，一个STL容器`std::vector`和一个`auto`变量`vw`，这个更现实的情况是你可能会遇到的并且想获得他们类型推导的结果，比如模板类型形参`T`，比如函数`f`形参`param`。
 
 从这里中我们不难看出`typeid`的问题所在。我们在`f`中添加一些代码来显示类型：
 ````cpp
@@ -99,9 +99,10 @@ Microsoft的编译器也同意上述言论：
 T =     class Widget const *
 param = class Widget const *
 ````
-这三个独立的编译器产生了相同的信息并表示信息非常准确，当然看起来不是那么准确。在模板`f`中，`param`的声明类型是`const T&`。难道你们不觉得`T`和`param`类型相同很奇怪吗？比如`T`是`int`，`param`的类型应该是`const int&`而不是相同类型才对吧。
+三个独立的编译器都产生了相同的信息，这表明信息应该是准确的。但仔细观察一下，在模板`f`中，`param`的声明类型是`const T&`。难道你们不觉得`T`和`param`类型相同很奇怪吗？比如`T`是`int`，`param`的类型应该是`const int&`而不是相同类型才对吧。
 
-遗憾的是，事实就是这样，`std::type_info::name`的结果并不总是可信的，就像上面一样，三个编译器对`param`的报告都是错误的。因为它们本质上可以不正确，因为`std::type_info::name`规范批准像传值形参一样来对待这些类型。正如[Item1](../1.DeducingTypes/item1.md)提到的，如果传递的是一个引用，那么引用部分（reference-ness）将被忽略，如果忽略后还具有`const`或者`volatile`，那么常量性`const`ness或者易变性`volatile`ness也会被忽略。那就是为什么`param`的类型`const Widget * const &`会输出为`const Widget *`，首先引用被忽略，然后这个指针自身的常量性`const`ness被忽略，剩下的就是指针指向一个常量对象。
+
+遗憾的是，事实就是这样，`std::type_info::name`的结果并不总是可信的，就像上面一样，三个编译器对`param`的报告都是错误的。此外，它们在本质上必须是这样的结果，因为`std::type_info::name`规范批准像传值形参一样来对待这些类型。正如[Item1](../1.DeducingTypes/item1.md)提到的，如果传递的是一个引用，那么引用部分（reference-ness）将被忽略，如果忽略后还具有`const`或者`volatile`，那么常量性`const`ness或者易变性`volatile`ness也会被忽略。那就是为什么`param`的类型`const Widget * const &`会输出为`const Widget *`，首先引用被忽略，然后这个指针自身的常量性`const`ness被忽略，剩下的就是指针指向一个常量对象。
 
 同样遗憾的是，IDE编辑器显示的类型信息也不总是可靠的，或者说不总是有用的。还是一样的例子，一个IDE编辑器可能会把`T`的类型显示为（我没有胡编乱造）：
 ````cpp
@@ -115,7 +116,7 @@ const std::_Simple_types<...>::value_type *const &
 ````
 这个比起`T`来说要简单一些，但是如果你不知道“`...`”表示编译器忽略`T`的部分类型那么可能你还是会产生困惑。如果你运气好点你的IDE可能表现得比这个要好一些。
 
-比起运气如果你更倾向于依赖库，那么你乐意被告知`std::type_info::name`和IDE不怎么好，Boost TypeIndex库（通常写作**Boost.TypeIndex**）是更好的选择。这个库不是标准C++的一部分，也不是IDE或者`TD`这样的模板。Boost库（可在[boost.com](http://boost.org)获得）是跨平台，开源，有良好的开源协议的库，这意味着使用Boost和STL一样具有高度可移植性。
+比起运气如果你更倾向于依赖库，那么你会很乐意被告知，在`std::type_info::name`和IDE失效的地方，Boost TypeIndex库（通常写作**Boost.TypeIndex**）被设计成可以正常运作。这个库不是标准C++的一部分，也不是IDE或者`TD`这样的模板。Boost库（可在[boost.com](http://boost.org)获得）是跨平台，开源，有良好的开源协议的库，这意味着使用Boost和STL一样具有高度可移植性。
 
 这里是如何使用Boost.TypeIndex得到`f`的类型的代码
 ````cpp
