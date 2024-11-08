@@ -26,7 +26,7 @@
 	3. [Item 9:优先考虑别名声明而非typedefs](src/3.MovingToModernCpp/item9.md)
 	4. [Item 10:优先考虑限域枚举而非未限域枚举](src/3.MovingToModernCpp/item10.md) 已修订
 	5. [Item 11:优先考虑使用deleted函数而非使用未定义的私有声明](src/3.MovingToModernCpp/item11.md)
-	6. [Item 12:使用override声明重载函数](src/3.MovingToModernCpp/item12.md)
+	6. [Item 12:使用override声明重写函数](src/3.MovingToModernCpp/item12.md)
 	7. [Item 13:优先考虑const_iterator而非iterator](src/3.MovingToModernCpp/item13.md)
 	8. [Item 14:如果函数不抛出异常请使用noexcept](src/3.MovingToModernCpp/item14.md)
 	9. [Item 15:尽可能的使用constexpr](src/3.MovingToModernCpp/item15.md)
