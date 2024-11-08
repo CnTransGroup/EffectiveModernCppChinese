@@ -865,7 +865,7 @@ param = class Widget const * const &amp;
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="第2章-auto"><a class="header" href="#第2章-auto">第2章 <code>auto</code></a></h1>
 <p><strong>CHAPTER 2 <code>auto</code></strong></p>
-<p>从概念上来说，<code>auto</code>要多简单有多简单，但是它比看起来要微妙一些。使用它可以存储类型，当然，它也会犯一些错误，而且比之手动声明一些复杂类型也会存在一些性能问题。此外，从程序员的角度来说，如果按照符合规定的流程走，那<code>auto</code>类型推导的一些结果是错误的。当这些情况发生时，对我们来说引导<code>auto</code>产生正确的结果是很重要的，因为严格按照说明书上面的类型写声明虽然可行但是最好避免。</p>
+<p>从概念上来说，<code>auto</code>要多简单有多简单，但是它比看起来要微妙一些。当然，使用它可以存储类型，但它也避免了困扰着手动声明类型的正确性和性能问题。此外，从程序员的角度来说，如果按照符合规定的流程走，那<code>auto</code>类型推导的一些结果是错误的。当这些情况发生时，对我们来说引导<code>auto</code>产生正确的结果是很重要的，因为回到手动声明类型是一种通常最好避免的替代方法。</p>
 <p>本章简单的覆盖了<code>auto</code>的里里外外。</p>
 <h2 id="条款五优先考虑auto而非显式类型声明"><a class="header" href="#条款五优先考虑auto而非显式类型声明">条款五：优先考虑<code>auto</code>而非显式类型声明</a></h2>
 <p><strong>Item 5: Prefer <code>auto</code> to explicit type declarations</strong></p>
@@ -2041,7 +2041,7 @@ vw.push_back(w);    //把w添加进vw
 <p>当新元素添加到<code>std::vector</code>，<code>std::vector</code>可能没地方放它，换句话说，<code>std::vector</code>的大小（size）等于它的容量（capacity）。这时候，<code>std::vector</code>会分配一个新的更大块的内存用于存放其中元素，然后将元素从老内存区移动到新内存区，然后析构老内存区里的对象。在C++98中，移动是通过复制老内存区的每一个元素到新内存区完成的，然后老内存区的每个元素发生析构。这种方法使得<code>push_back</code>可以提供很强的异常安全保证：如果在复制元素期间抛出异常，<code>std::vector</code>状态保持不变，因为老内存元素析构必须建立在它们已经成功复制到新内存的前提下。</p>
 <p>在C++11中，一个很自然的优化就是将上述复制操作替换为移动操作。但是很不幸运，这会破坏<code>push_back</code>的异常安全保证。如果<strong>n</strong>个元素已经从老内存移动到了新内存区，但异常在移动第<strong>n+1</strong>个元素时抛出，那么<code>push_back</code>操作就不能完成。但是原始的<code>std::vector</code>已经被修改：有<strong>n</strong>个元素已经移动走了。恢复<code>std::vector</code>至原始状态也不太可能，因为从新内存移动到老内存本身又可能引发异常。</p>
 <p>这是个很严重的问题，因为老代码可能依赖于<code>push_back</code>提供的强烈的异常安全保证。因此，C++11版本的实现不能简单的将<code>push_back</code>里面的复制操作替换为移动操作，除非知晓移动操作绝不抛异常，这时复制替换为移动就是安全的，唯一的副作用就是性能得到提升。</p>
-<p><code>std::vector::push_back</code>受益于“如果可以就移动，如果必要则复制”策略，并且它不是标准库中唯一采取该策略的函数。C++98中还有一些函数（如<code>std::vector::reverse</code>，<code>std::deque::insert</code>等）也受益于这种强异常保证。对于这个函数只有在知晓移动不抛异常的情况下用C++11的移动操作替换C++98的复制操作才是安全的。但是如何知道一个函数中的移动操作是否产生异常？答案很明显：它检查这个操作是否被声明为<code>noexcept</code>。（这个检查非常弯弯绕。像是<code>std::vector::push_back</code>之类的函数调用<code>std::move_if_noexcept</code>，这是个<code>std::move</code>的变体，根据其中类型的移动构造函数是否为<code>noexcept</code>的，视情况转换为右值或保持左值（参见<a href="3.MovingToModernCpp/../5.RRefMovSemPerfForw/item23.html">Item23</a>）。反过来，<code>std::move_if_noexcept</code>查阅<code>std::is_nothrow_move_constructible</code>这个<em>type trait</em>，基于移动构造函数是否有<code>noexcept</code>（或者<code>throw()</code>）的设计，编译器设置这个<em>type trait</em>的值。）</p>
+<p><code>std::vector::push_back</code>受益于“如果可以就移动，如果必要则复制”策略，并且它不是标准库中唯一采取该策略的函数。C++98中还有一些函数（如<code>std::vector::reserve</code>，<code>std::deque::insert</code>等）也受益于这种强异常保证。对于这个函数只有在知晓移动不抛异常的情况下用C++11的移动操作替换C++98的复制操作才是安全的。但是如何知道一个函数中的移动操作是否产生异常？答案很明显：它检查这个操作是否被声明为<code>noexcept</code>。（这个检查非常弯弯绕。像是<code>std::vector::push_back</code>之类的函数调用<code>std::move_if_noexcept</code>，这是个<code>std::move</code>的变体，根据其中类型的移动构造函数是否为<code>noexcept</code>的，视情况转换为右值或保持左值（参见<a href="3.MovingToModernCpp/../5.RRefMovSemPerfForw/item23.html">Item23</a>）。反过来，<code>std::move_if_noexcept</code>查阅<code>std::is_nothrow_move_constructible</code>这个<em>type trait</em>，基于移动构造函数是否有<code>noexcept</code>（或者<code>throw()</code>）的设计，编译器设置这个<em>type trait</em>的值。）</p>
 <p><code>swap</code>函数是<code>noexcept</code>的另一个绝佳用地。<code>swap</code>是STL算法实现的一个关键组件，它也常用于拷贝运算符重载中。它的广泛使用意味着对其施加不抛异常的优化是非常有价值的。有趣的是，标准库的<code>swap</code>是否<code>noexcept</code>有时依赖于用户定义的<code>swap</code>是否<code>noexcept</code>。比如，数组和<code>std::pair</code>的<code>swap</code>声明如下：</p>
 <pre><code class="language-cpp">template &lt;class T, size_t N&gt;
 void swap(T (&amp;a)[N],
@@ -2284,7 +2284,7 @@ private:
 </code></pre>
 <p><code>std::mutex m</code>被声明为<code>mutable</code>，因为锁定和解锁它的都是non-<code>const</code>成员函数。在<code>roots</code>（<code>const</code>成员函数）中，<code>m</code>却被视为<code>const</code>对象。</p>
 <p><del>值得注意的是，因为<code>std::mutex</code>是一种只可移动类型（<em>move-only type</em>，一种可以移动但不能复制的类型），所以将<code>m</code>添加进<code>Polynomial</code>中的副作用是使<code>Polynomial</code>失去了被复制的能力。不过，它仍然可以移动。</del> （译者注：实际上 <code>std::mutex</code> 既不可移动，也不可复制。因而包含他们的类也同时是不可移动和不可复制的。）</p>
-<p>在某些情况下，互斥量的副作用显会得过大。例如，如果你所做的只是计算成员函数被调用了多少次，使用<code>std::atomic</code> 修饰的计数器（保证其他线程视它的操作为不可分割的整体，参见<a href="3.MovingToModernCpp/../7.TheConcurrencyAPI/item40.html">item40</a>）通常会是一个开销更小的方法。（然而它是否轻量取决于你使用的硬件和标准库中互斥量的实现。）以下是如何使用<code>std::atomic</code>来统计调用次数。</p>
+<p>在某些情况下，互斥量的副作用会显得过大。例如，如果你所做的只是计算成员函数被调用了多少次，使用<code>std::atomic</code> 修饰的计数器（保证其他线程视它的操作为不可分割的整体，参见<a href="3.MovingToModernCpp/../7.TheConcurrencyAPI/item40.html">item40</a>）通常会是一个开销更小的方法。（然而它是否轻量取决于你使用的硬件和标准库中互斥量的实现。）以下是如何使用<code>std::atomic</code>来统计调用次数。</p>
 <pre><code class="language-c++">class Point {                                   //2D点
 public:
     …
@@ -4223,8 +4223,8 @@ auto aw2 = std::move(aw1);
 </code></pre>
 <p><img src="5.RRefMovSemPerfForw/media/item29_fig2.png" alt="item29_fig2" /></p>
 <p>注意<code>aw1</code>中的元素被<strong>移动</strong>到了<code>aw2</code>中。假定<code>Widget</code>类的移动操作比复制操作快，移动<code>Widget</code>的<code>std::array</code>就比复制要快。所以<code>std::array</code>确实支持移动操作。但是使用<code>std::array</code>的移动操作还是复制操作都将花费线性时间的开销，因为每个容器中的元素终归需要拷贝或移动一次，这与“移动一个容器就像操作几个指针一样方便”的含义相去甚远。</p>
-<p>另一方面，<code>std::string</code>提供了常数时间的移动操作和线性时间的复制操作。这听起来移动比复制快多了，但是可能不一定。许多字符串的实现采用了小字符串优化（<em>small string optimization</em>，SSO）。“小”字符串（比如长度小于15个字符的）存储在了<code>std::string</code>的缓冲区中，并没有存储在堆内存，移动这种存储的字符串并不必复制操作更快。</p>
-<p>SSO的动机是大量证据表明，短字符串是大量应用使用的习惯。使用内存缓冲区存储而不分配堆内存空间，是为了更好的效率。然而这种内存管理的效率导致移动的效率并不必复制操作高，即使一个半吊子程序员也能看出来对于这样的字符串，拷贝并不比移动慢。</p>
+<p>另一方面，<code>std::string</code>提供了常数时间的移动操作和线性时间的复制操作。这听起来移动比复制快多了，但是可能不一定。许多字符串的实现采用了小字符串优化（<em>small string optimization</em>，SSO）。“小”字符串（比如长度小于15个字符的）存储在了<code>std::string</code>的缓冲区中，并没有存储在堆内存，移动这种存储的字符串并不比复制操作更快。</p>
+<p>SSO的动机是大量证据表明，短字符串是大量应用使用的习惯。使用内存缓冲区存储而不分配堆内存空间，是为了更好的效率。然而这种内存管理的效率导致移动的效率并不比复制操作高，即使一个半吊子程序员也能看出来对于这样的字符串，拷贝并不比移动慢。</p>
 <p>即使对于支持快速移动操作的类型，某些看似可靠的移动操作最终也会导致复制。<a href="5.RRefMovSemPerfForw/../3.MovingToModernCpp/item14.html">Item14</a>解释了原因，标准库中的某些容器操作提供了强大的异常安全保证，确保依赖那些保证的C++98的代码在升级到C++11且仅当移动操作不会抛出异常，从而可能替换操作时，不会不可运行。结果就是，即使类提供了更具效率的移动操作，而且即使移动操作更合适（比如源对象是右值），编译器仍可能被迫使用复制操作，因为移动操作没有声明<code>noexcept</code>。</p>
 <p>因此，存在几种情况，C++11的移动语义并无优势：</p>
 <ul>
