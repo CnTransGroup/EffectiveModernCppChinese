@@ -195,7 +195,7 @@ auto authAndAccess(Container&amp; c, Index i)       //不那么正确
 …
 authAndAccess(d, 5) = 10;               //认证用户，返回d[5]，
                                         //然后把10赋值给它
-                                        //无法通过编译器！
+                                        //无法通过编译！
 </code></pre>
 <p>在这里<code>d[5]</code>本该返回一个<code>int&amp;</code>，但是模板类型推导会剥去引用的部分，因此产生了<code>int</code>返回类型。函数返回的那个<code>int</code>是一个右值，上面的代码尝试把10赋值给右值<code>int</code>，C++11禁止这样做，所以代码无法编译。</p>
 <p>要想让<code>authAndAccess</code>像我们期待的那样工作，我们需要使用<code>decltype</code>类型推导来推导它的返回值，即指定<code>authAndAccess</code>应该返回一个和<code>c[i]</code>表达式类型一样的类型。C++期望在某些情况下当类型被暗示时需要使用<code>decltype</code>类型推导的规则，C++14通过使用<code>decltype(auto)</code>说明符使得这成为可能。我们第一次看见<code>decltype(auto)</code>可能觉得非常的矛盾（到底是<code>decltype</code>还是<code>auto</code>？），实际上我们可以这样解释它的意义：<code>auto</code>说明符表示这个类型将会被推导，<code>decltype</code>说明<code>decltype</code>的规则将会被用到这个推导过程中。因此我们可以这样写<code>authAndAccess</code>：</p>
