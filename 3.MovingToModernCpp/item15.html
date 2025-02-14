@@ -163,7 +163,7 @@ std::array&lt;int, arraySize&gt; data;   //错误，arraySize值在编译期不�
 <p>简而言之，所有<code>constexpr</code>对象都是<code>const</code>，但不是所有<code>const</code>对象都是<code>constexpr</code>。如果你想编译器保证一个变量有一个值，这个值可以放到那些需要编译期常量（compile-time constants）的上下文的地方，你需要的工具是<code>constexpr</code>而不是<code>const</code>。</p>
 <p>涉及到<code>constexpr</code>函数时，<code>constexpr</code>对象的使用情况就更有趣了。如果实参是编译期常量，这些函数将产出编译期常量；如果实参是运行时才能知道的值，它们就将产出运行时值。这听起来就像你不知道它们要做什么一样，那么想是错误的，请这么看：</p>
 <ul>
-<li><code>constexpr</code>函数可以用于需求编译期常量的上下文。如果你传给<code>constexpr</code>函数的实参在编译期可知，那么结果将在编译期计算。如果实参的值在编译期不知道，你的代码就会被拒绝。</li>
+<li><code>constexpr</code>函数可以用于需求编译期常量的上下文。在需求编译期常量的上下文中，如果你传给<code>constexpr</code>函数的实参在编译期可知，那么结果将在编译期计算；如果实参的值在编译期不知道，你的代码就会被拒绝。</li>
 <li>当一个<code>constexpr</code>函数被一个或者多个编译期不可知值调用时，它就像普通函数一样，运行时计算它的结果。这意味着你不需要两个函数，一个用于编译期计算，一个用于运行时计算。<code>constexpr</code>全做了。</li>
 </ul>
 <p>假设我们需要一个数据结构来存储一个实验的结果，而这个实验可能以各种方式进行。实验期间风扇转速，温度等等都可能导致亮度值改变，亮度值可以是高，低，或者无。如果有<strong>n</strong>个实验相关的环境条件，它们每一个都有三个状态，最终可以得到的组合有3<sup>n</sup>个。储存所有实验结果的所有组合需要足够存放3<sup>n</sup>个值的数据结构。假设每个结果都是<code>int</code>并且<strong>n</strong>是编译期已知的（或者可以被计算出的），一个<code>std::array</code>是一个合理的选择。我们需要一个方法在编译期计算3<sup>n</sup>。C++标准库提供了<code>std::pow</code>，它的数学功能正是我们所需要的，但是，对我们来说，这里还有两个问题。第一，<code>std::pow</code>是为浮点类型设计的，我们需要整型结果。第二，<code>std::pow</code>不是<code>constexpr</code>（即，不保证使用编译期可知值调用而得到编译期可知的结果），所以我们不能用它作为<code>std::array</code>的大小。</p>
