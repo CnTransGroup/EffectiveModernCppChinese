@@ -1,7 +1,6 @@
 [book]
 authors = ["wendajiang"]
 language = "zh"
-multilingual = false
 src = "src"
 title = "Effective Modern C++"
 
@@ -9,4 +8,3 @@ title = "Effective Modern C++"
 mathjax-support = true
 no-section-label = true
 git-repository-url = "https://github.com/CnTransGroup/EffectiveModernCppChinese"
-git-repository-icon = "fa-github"
